@@ -238,7 +238,7 @@
 
 
             //执行数据初始化工作.
-            var hand = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_WorkOpt");
+            var hand = new HttpHandler("BP.WF.HttpHandler.WF_WorkOpt");
             hand.AddUrlData();
             var data = hand.DoMethodReturnString("CC_SaveAndClose");
 
@@ -292,7 +292,7 @@
         function SendIt() {
 
             //执行数据初始化工作.
-            var hand = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_WorkOpt");
+            var hand = new HttpHandler("BP.WF.HttpHandler.WF_WorkOpt");
             hand.AddUrlData();
             var data = hand.DoMethodReturnString("AccepterOfGener_Send");
 
@@ -408,7 +408,7 @@
                 }
 
                 //执行数据初始化工作.
-                var hand = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_WorkOpt");
+                var hand = new HttpHandler("BP.WF.HttpHandler.WF_WorkOpt");
                 hand.AddUrlData();
                 hand.AddPara("TB_Emps", $("#TB_Emps").val());
                 var data = hand.DoMethodReturnString("HuiQian_SelectEmps");

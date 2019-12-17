@@ -167,7 +167,7 @@
             document.title = window.lang.chichengwfsystem;
             $(".lang-setting").attr("title", window.lang.szgrxx);
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_AppClassic");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_AppClassic");
             var data = handler.DoMethodReturnString("Home_Init");
 
             if (data.indexOf('err@') == 0) {

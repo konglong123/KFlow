@@ -54,7 +54,7 @@
 
         layui.use(['form', 'layer'], function () {
             //从后台获取当前登录会话的信息.
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_AppClassic");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_AppClassic");
             var data = handler.DoMethodReturnString("Login_Init");
             if (data.indexOf('err@') == 0) {
                 alert(data);
@@ -87,7 +87,7 @@
                 return false;
             }
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_AppClassic");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_AppClassic");
 
             handler.AddPara("TB_No", userNo);
             handler.AddPara("TB_PW", userPass);

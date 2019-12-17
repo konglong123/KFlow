@@ -2,7 +2,7 @@ package cn.jflow.ws;
 
 import javax.jws.WebService;
 
-import com.kong.kflowweb.BP.DA.*;
+import BP.DA.*;
 
 /**
  * OverrideInterface 的摘要说明
@@ -43,31 +43,31 @@ public class PortalInterfaceWSImpl implements PortalInterfaceWS{
 		json += " \"Addr\": 'xxxx',";
 		json += " \"Tel\": 'xxxx'}";
 
-		// com.kong.kflowweb.BP.DA.Log.DefaultLogWriteLineInfo("接口调用成功: SendToWebServices " + tel
+		// BP.DA.Log.DefaultLogWriteLineInfo("接口调用成功: SendToWebServices " + tel
 		// + " msgInfo:" + msgInfo);
-		// if (com.kong.kflowweb.BP.Sys.SystemConfig.IsEnableCCIM && sendToEmpNo != null)
-		// com.kong.kflowweb.BP.WF.Glo.SendMessageToCCIM(sender, sendToEmpNo, msgInfo,
-		// com.kong.kflowweb.BP.DA.DataType.CurrentDataTime);
+		// if (BP.Sys.SystemConfig.IsEnableCCIM && sendToEmpNo != null)
+		// BP.WF.Glo.SendMessageToCCIM(sender, sendToEmpNo, msgInfo,
+		// BP.DA.DataType.CurrentDataTime);
 		return true;
 	}
 
 	// [WebMethod(EnableSession = true)]
 	public final boolean SendWhen(String msgPK, String sender, String sendToEmpNo, String tel, String msgInfo) {
-		// com.kong.kflowweb.BP.DA.Log.DefaultLogWriteLineInfo("接口调用成功: SendToWebServices " + tel
+		// BP.DA.Log.DefaultLogWriteLineInfo("接口调用成功: SendToWebServices " + tel
 		// + " msgInfo:" + msgInfo);
-		// if (com.kong.kflowweb.BP.Sys.SystemConfig.IsEnableCCIM && sendToEmpNo != null)
-		// com.kong.kflowweb.BP.WF.Glo.SendMessageToCCIM(sender, sendToEmpNo, msgInfo,
-		// com.kong.kflowweb.BP.DA.DataType.CurrentDataTime);
+		// if (BP.Sys.SystemConfig.IsEnableCCIM && sendToEmpNo != null)
+		// BP.WF.Glo.SendMessageToCCIM(sender, sendToEmpNo, msgInfo,
+		// BP.DA.DataType.CurrentDataTime);
 		return true;
 	}
 
 	// [WebMethod(EnableSession = true)]
 	public final boolean FlowOverBefore(String msgPK, String sender, String sendToEmpNo, String tel, String msgInfo) {
-		// com.kong.kflowweb.BP.DA.Log.DefaultLogWriteLineInfo("接口调用成功: SendToWebServices " + tel
+		// BP.DA.Log.DefaultLogWriteLineInfo("接口调用成功: SendToWebServices " + tel
 		// + " msgInfo:" + msgInfo);
-		// if (com.kong.kflowweb.BP.Sys.SystemConfig.IsEnableCCIM && sendToEmpNo != null)
-		// com.kong.kflowweb.BP.WF.Glo.SendMessageToCCIM(sender, sendToEmpNo, msgInfo,
-		// com.kong.kflowweb.BP.DA.DataType.CurrentDataTime);
+		// if (BP.Sys.SystemConfig.IsEnableCCIM && sendToEmpNo != null)
+		// BP.WF.Glo.SendMessageToCCIM(sender, sendToEmpNo, msgInfo,
+		// BP.DA.DataType.CurrentDataTime);
 		return true;
 	}
 
@@ -89,12 +89,12 @@ public class PortalInterfaceWSImpl implements PortalInterfaceWS{
 
 	// [WebMethod(EnableSession = true)]
 	public final boolean SendToDingDing(String mypk, String sender, String sendToEmpNo, String tel, String msgInfo) {
-		// com.kong.kflowweb.BP.DA.Log.DefaultLogWriteLineInfo("接口调用成功: SendToWebServices MyPK" +
+		// BP.DA.Log.DefaultLogWriteLineInfo("接口调用成功: SendToWebServices MyPK" +
 		// mypk +" UserNo:"+userNo+ " Tel:" + tel + " msgInfo:" + msgInfo);
 
-		// if (com.kong.kflowweb.BP.Sys.SystemConfig.IsEnableCCIM && sendToEmpNo != null)
-		// com.kong.kflowweb.BP.WF.Glo.SendMessageToCCIM(sender, sendToEmpNo, msgInfo,
-		// com.kong.kflowweb.BP.DA.DataType.CurrentDataTime);
+		// if (BP.Sys.SystemConfig.IsEnableCCIM && sendToEmpNo != null)
+		// BP.WF.Glo.SendMessageToCCIM(sender, sendToEmpNo, msgInfo,
+		// BP.DA.DataType.CurrentDataTime);
 		return true;
 	}
 
@@ -114,11 +114,11 @@ public class PortalInterfaceWSImpl implements PortalInterfaceWS{
 
 	// [WebMethod]
 	public final boolean SendToWeiXin(String mypk, String sender, String sendToEmpNo, String tel, String msgInfo) {
-		// com.kong.kflowweb.BP.DA.Log.DefaultLogWriteLineInfo("接口调用成功: SendToWeiXin MyPK" + mypk
+		// BP.DA.Log.DefaultLogWriteLineInfo("接口调用成功: SendToWeiXin MyPK" + mypk
 		// + " UserNo:" + userNo + " Tel:" + tel + " msgInfo:" + msgInfo);
 
-		if (com.kong.kflowweb.BP.Sys.SystemConfig.getIsEnableCCIM() && sendToEmpNo != null) {
-			com.kong.kflowweb.BP.WF.Glo.SendMessageToCCIM(sender, sendToEmpNo, msgInfo, com.kong.kflowweb.BP.DA.DataType.getCurrentDataTime());
+		if (BP.Sys.SystemConfig.getIsEnableCCIM() && sendToEmpNo != null) {
+			BP.WF.Glo.SendMessageToCCIM(sender, sendToEmpNo, msgInfo, BP.DA.DataType.getCurrentDataTime());
 		}
 		return true;
 	}
@@ -146,11 +146,11 @@ public class PortalInterfaceWSImpl implements PortalInterfaceWS{
 	// [WebMethod]
 	public final boolean SendToEmail(String mypk, String sender, String sendToEmpNo, String email, String title,
 			String maildoc) {
-		// com.kong.kflowweb.BP.DA.Log.DefaultLogWriteLineInfo("接口调用成功: SendToEmail MyPK" + mypk +
+		// BP.DA.Log.DefaultLogWriteLineInfo("接口调用成功: SendToEmail MyPK" + mypk +
 		// " email:" + email + " title:" + title + " maildoc:" + maildoc);
-		if (com.kong.kflowweb.BP.Sys.SystemConfig.getIsEnableCCIM() && sendToEmpNo != null) {
-			com.kong.kflowweb.BP.WF.Glo.SendMessageToCCIM(sender, sendToEmpNo, title + " \t\n " + maildoc,
-					com.kong.kflowweb.BP.DA.DataType.getCurrentDataTime());
+		if (BP.Sys.SystemConfig.getIsEnableCCIM() && sendToEmpNo != null) {
+			BP.WF.Glo.SendMessageToCCIM(sender, sendToEmpNo, title + " \t\n " + maildoc,
+					BP.DA.DataType.getCurrentDataTime());
 		}
 		return true;
 	}
@@ -175,13 +175,13 @@ public class PortalInterfaceWSImpl implements PortalInterfaceWS{
 
 	// [WebMethod]
 	public final boolean SendToCCIM(String mypk, String userNo, String msg, String sourceUserNo, String tag) {
-		// com.kong.kflowweb.BP.DA.Log.DefaultLogWriteLineInfo("接口调用成功: SendToEmail MyPK" + mypk +
+		// BP.DA.Log.DefaultLogWriteLineInfo("接口调用成功: SendToEmail MyPK" + mypk +
 		// " userNo:" + userNo + " msg:" + msg);
 
-		if (com.kong.kflowweb.BP.Sys.SystemConfig.getIsEnableCCIM() && userNo != null) {
-			com.kong.kflowweb.BP.WF.Glo.SendMessageToCCIM(com.kong.kflowweb.BP.Web.WebUser.getNo(), userNo, msg, com.kong.kflowweb.BP.DA.DataType.getCurrentDataTime());
+		if (BP.Sys.SystemConfig.getIsEnableCCIM() && userNo != null) {
+			BP.WF.Glo.SendMessageToCCIM(BP.Web.WebUser.getNo(), userNo, msg, BP.DA.DataType.getCurrentDataTime());
 		}
-		// com.kong.kflowweb.BP.CCIM.Glo.SendMsg(userNo, sourceUserNo, msg);
+		// BP.CCIM.Glo.SendMsg(userNo, sourceUserNo, msg);
 		return true;
 	}
 
@@ -226,11 +226,11 @@ public class PortalInterfaceWSImpl implements PortalInterfaceWS{
 				return false;
 			}
 
-			if (com.kong.kflowweb.BP.DA.DBAccess.IsView("Port_Emp") == true) {
+			if (BP.DA.DBAccess.IsView("Port_Emp") == true) {
 				return false;
 			}
 			String sql = "UPDATE Port_Emp SET SID='" + sid + "' WHERE No='" + userNo + "'";
-			com.kong.kflowweb.BP.DA.DBAccess.RunSQL(sql);
+			BP.DA.DBAccess.RunSQL(sql);
 			return true;
 		} catch (RuntimeException ex) {
 			return false;
@@ -255,7 +255,7 @@ public class PortalInterfaceWSImpl implements PortalInterfaceWS{
 		/// #region 简单Demo
 		try {
 			String sql = "SELECT Pass FROM Port_Emp WHERE No='" + userNo + "'";
-			Object tempVar = com.kong.kflowweb.BP.DA.DBAccess.RunSQLReturnVal(sql);
+			Object tempVar = BP.DA.DBAccess.RunSQLReturnVal(sql);
 			String pass = (String) ((tempVar instanceof String) ? tempVar : null);
 			if (password.equals(pass)) {
 				return 1; // 成功返回1.
@@ -279,7 +279,7 @@ public class PortalInterfaceWSImpl implements PortalInterfaceWS{
 
 		/// #region 简单 Demo
 		try {
-			return com.kong.kflowweb.BP.DA.DBAccess.RunSQLReturnTable("SELECT No,Name,ParentNo FROM Port_Dept WHERE No='" + deptNo + "'");
+			return BP.DA.DBAccess.RunSQLReturnTable("SELECT No,Name,ParentNo FROM Port_Dept WHERE No='" + deptNo + "'");
 		} catch (RuntimeException ex) {
 			throw new RuntimeException("@获得部门出现错误:" + ex.getMessage()); // 连接错误，直接抛出异常.
 		}
@@ -298,7 +298,7 @@ public class PortalInterfaceWSImpl implements PortalInterfaceWS{
 
 		/// #region 简单 Demo
 		try {
-			return com.kong.kflowweb.BP.DA.DBAccess.RunSQLReturnTable("SELECT No,Name,ParentNo FROM Port_Dept ORDER BY ParentNo,No");
+			return BP.DA.DBAccess.RunSQLReturnTable("SELECT No,Name,ParentNo FROM Port_Dept ORDER BY ParentNo,No");
 		} catch (RuntimeException ex) {
 			throw new RuntimeException("@获得部门出现错误:" + ex.getMessage()); // 连接错误，直接抛出异常.
 		}
@@ -317,7 +317,7 @@ public class PortalInterfaceWSImpl implements PortalInterfaceWS{
 
 		/// #region 简单 Demo
 		try {
-			return com.kong.kflowweb.BP.DA.DBAccess.RunSQLReturnTable("SELECT No,Name,ParentNo FROM Port_Dept WHERE ParentNo='"
+			return BP.DA.DBAccess.RunSQLReturnTable("SELECT No,Name,ParentNo FROM Port_Dept WHERE ParentNo='"
 					+ parentDeptNo + "' ORDER BY ParentNo,No");
 		} catch (RuntimeException ex) {
 			throw new RuntimeException("@获得部门出现错误:" + ex.getMessage()); // 连接错误，直接抛出异常.
@@ -337,7 +337,7 @@ public class PortalInterfaceWSImpl implements PortalInterfaceWS{
 
 		/// #region 简单 Demo
 		try {
-			return com.kong.kflowweb.BP.DA.DBAccess
+			return BP.DA.DBAccess
 					.RunSQLReturnTable("SELECT No,Name,FK_StationType FROM Port_Station ORDER BY FK_StationType,No");
 		} catch (RuntimeException ex) {
 			throw new RuntimeException("@获得岗位出现错误:" + ex.getMessage()); // 连接错误，直接抛出异常.
@@ -357,7 +357,7 @@ public class PortalInterfaceWSImpl implements PortalInterfaceWS{
 
 		/// #region 简单 Demo
 		try {
-			return com.kong.kflowweb.BP.DA.DBAccess
+			return BP.DA.DBAccess
 					.RunSQLReturnTable("SELECT No,Name,FK_StationType FROM Port_Station WHERE No='" + stationNo + "'");
 		} catch (RuntimeException ex) {
 			throw new RuntimeException("@获得岗位出现错误:" + ex.getMessage()); // 连接错误，直接抛出异常.
@@ -377,7 +377,7 @@ public class PortalInterfaceWSImpl implements PortalInterfaceWS{
 
 		/// #region 简单 Demo
 		try {
-			return com.kong.kflowweb.BP.DA.DBAccess.RunSQLReturnTable(
+			return BP.DA.DBAccess.RunSQLReturnTable(
 					"SELECT a.No,a.Name,a.FK_Dept,b.Name as FK_DeptText FROM Port_Emp a, Port_Dept b WHERE (a.FK_Dept=b.No) ");
 		} catch (RuntimeException ex) {
 			throw new RuntimeException("@获得人员信息:" + ex.getMessage()); // 连接错误，直接抛出异常.
@@ -397,7 +397,7 @@ public class PortalInterfaceWSImpl implements PortalInterfaceWS{
 
 		/// #region 简单 Demo
 		try {
-			return com.kong.kflowweb.BP.DA.DBAccess.RunSQLReturnTable(
+			return BP.DA.DBAccess.RunSQLReturnTable(
 					"SELECT a.No,a.Name,a.FK_Dept,b.Name as FK_DeptText FROM Port_Emp a, Port_Dept b WHERE a.FK_Dept=b.No AND A.FK_Dept='"
 							+ deptNo + "' ");
 		} catch (RuntimeException ex) {
@@ -418,7 +418,7 @@ public class PortalInterfaceWSImpl implements PortalInterfaceWS{
 
 		/// #region 简单 Demo
 		try {
-			return com.kong.kflowweb.BP.DA.DBAccess.RunSQLReturnTable(
+			return BP.DA.DBAccess.RunSQLReturnTable(
 					"SELECT a.No,a.Name,a.FK_Dept,b.Name as FK_DeptText FROM Port_Emp a, Port_Dept b WHERE (a.No='" + no
 							+ "') AND (a.FK_Dept=b.No) ");
 		} catch (RuntimeException ex) {
@@ -440,7 +440,7 @@ public class PortalInterfaceWSImpl implements PortalInterfaceWS{
 		/// #region 简单 Demo
 		try {
 
-			return com.kong.kflowweb.BP.DA.DBAccess.RunSQLReturnTable("SELECT FK_Dept,FK_Emp FROM Port_DeptEmp");
+			return BP.DA.DBAccess.RunSQLReturnTable("SELECT FK_Dept,FK_Emp FROM Port_DeptEmp");
 		} catch (RuntimeException ex) {
 			throw new RuntimeException("@获得部门人员信息:" + ex.getMessage()); // 连接错误，直接抛出异常.
 		}
@@ -461,7 +461,7 @@ public class PortalInterfaceWSImpl implements PortalInterfaceWS{
 		try {
 			String sql = "SELECT No,Name,ParentNo FROM Port_Dept WHERE No IN(SELECT FK_Dept FROM Port_DeptEmp WHERE FK_Emp='"
 					+ empNo + "')";
-			return com.kong.kflowweb.BP.DA.DBAccess.RunSQLReturnTable(sql);
+			return BP.DA.DBAccess.RunSQLReturnTable(sql);
 		} catch (RuntimeException ex) {
 			throw new RuntimeException("@获得人员他的部门实体信息:" + ex.getMessage()); // 连接错误，直接抛出异常.
 		}
@@ -482,7 +482,7 @@ public class PortalInterfaceWSImpl implements PortalInterfaceWS{
 		try {
 			String sql = "SELECT No,Name,FK_StationType FROM Port_Station WHERE No IN(SELECT FK_Station FROM Port_DeptEmpStation WHERE FK_Emp='"
 					+ empNo + "')";
-			return com.kong.kflowweb.BP.DA.DBAccess.RunSQLReturnTable(sql);
+			return BP.DA.DBAccess.RunSQLReturnTable(sql);
 		} catch (RuntimeException ex) {
 			throw new RuntimeException("@获得人员他的岗位实体信息:" + ex.getMessage()); // 连接错误，直接抛出异常.
 		}
@@ -501,7 +501,7 @@ public class PortalInterfaceWSImpl implements PortalInterfaceWS{
 
 		/// #region 简单 Demo
 		try {
-			return com.kong.kflowweb.BP.DA.DBAccess.RunSQLReturnTable("SELECT FK_Dept,FK_Emp,FK_Station FROM Port_DeptEmpStation");
+			return BP.DA.DBAccess.RunSQLReturnTable("SELECT FK_Dept,FK_Emp,FK_Station FROM Port_DeptEmpStation");
 		} catch (RuntimeException ex) {
 			throw new RuntimeException("@获得部门人员岗位对应信息:" + ex.getMessage()); // 连接错误，直接抛出异常.
 		}
@@ -525,7 +525,7 @@ public class PortalInterfaceWSImpl implements PortalInterfaceWS{
 
 		/// #region 简单 Demo
 		try {
-			return com.kong.kflowweb.BP.DA.DBAccess.RunSQLReturnTable(
+			return BP.DA.DBAccess.RunSQLReturnTable(
 					"SELECT a.No,a.Name,a.FK_Dept FROM Port_Emp A, Port_DeptEmpStation B WHERE A.No=B.FK_Emp AND B.FK_Station IN ("
 							+ stationNos + ")");
 		} catch (RuntimeException ex) {
@@ -548,7 +548,7 @@ public class PortalInterfaceWSImpl implements PortalInterfaceWS{
 
 		/// #region 简单 Demo
 		try {
-			return com.kong.kflowweb.BP.DA.DBAccess.RunSQLReturnTable(
+			return BP.DA.DBAccess.RunSQLReturnTable(
 					"SELECT a.No,a.Name,a.FK_Dept FROM Port_Emp A, Port_DeptEmp B WHERE A.No=B.No AND B.FK_Dept IN ("
 							+ deptNos + ")");
 		} catch (RuntimeException ex) {
@@ -575,7 +575,7 @@ public class PortalInterfaceWSImpl implements PortalInterfaceWS{
 		try {
 			String sql = "SELECT a.No,a.Name,a.FK_Dept FROM Port_Emp A, Port_DeptEmpStation B WHERE A.No=B.FK_Emp AND B.FK_Station IN ("
 					+ stations + ") AND A.FK_Dept='" + deptNo + "'";
-			return com.kong.kflowweb.BP.DA.DBAccess.RunSQLReturnTable(sql);
+			return BP.DA.DBAccess.RunSQLReturnTable(sql);
 		} catch (RuntimeException ex) {
 			throw new RuntimeException("@ 指定部门与一个岗位集合，获得他们的人员:" + ex.getMessage()); // 连接错误，直接抛出异常.
 		}

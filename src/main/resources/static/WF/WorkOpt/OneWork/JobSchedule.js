@@ -123,7 +123,7 @@ function GenerMNode(tracks, nodeID, gwf) {
     for (var i = 0; i < tracks.length; i++) {
 
         var tk = tracks[i];
-      //  debugger
+      //  //debugger
         if (tk.FK_Node != nodeID) continue;
         if (emps.indexOf(tk.EmpNo + ',') >= 0) continue; //已经出现的，就不处理了.
         track = tk;
@@ -184,7 +184,7 @@ function GenerIcon(icon, step, docs, isEndNode, nodeName) {
     var url = basePath + "/WF/WorkOpt/OneWork/Img/" + icon + "-" + step + ".png";
 
 
-  //  debugger;
+  //  //debugger;
 
     var barUrlLeft = "";
     var barUrlRight = "";
@@ -233,7 +233,7 @@ function GenerStart() {
 
 //根据当前节点获得下一个节点.
 function GetNextNodeID(nodeID, dirs) {
-    //   debugger
+    //   //debugger
 
     var toNodeID = 0;
     for (var i = 0; i < dirs.length; i++) {

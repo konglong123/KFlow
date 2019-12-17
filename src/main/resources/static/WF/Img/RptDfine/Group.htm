@@ -68,7 +68,7 @@
         function InitPage() {
 
             //创建处理器.
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_RptDfine");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_RptDfine");
             handler.AddPara("GroupType", groupType);
             handler.AddPara("FK_Flow", fk_flow);
 
@@ -270,7 +270,7 @@
         function Group_Search() {
 
             //创建处理器.
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_RptDfine");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_RptDfine");
             handler.AddUrlData();  //增加参数.
             handler.AddFormData();
             var groupList = "";
@@ -823,7 +823,7 @@
         }
 
         function Exp() {
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_RptDfine");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_RptDfine");
             handler.AddPara("EnsName", GetQueryString("EnsName"));
             //查询集合
             var data = handler.DoMethodReturnString("FlowGroup_Exp");

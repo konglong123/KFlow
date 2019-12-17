@@ -81,7 +81,7 @@
                 DoType: "Dot2DotStationModel_GetStructureTreeRoot",
                 parentrootid: "0"
             };
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_Comm_RefFunc");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_Comm_RefFunc");
             handler.AddPara("parentrootid", 0);
             var data = handler.DoMethodReturnString("Dot2DotStationModel_GetStructureTreeRoot");
             if (data.indexOf("err@") != -1) {
@@ -100,7 +100,7 @@
                     ttype: cnode.attributes.TType,
                     stype: isUnitModel ? "UNIT" : "ST"
                 };
-                var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_Comm_RefFunc");
+                var handler = new HttpHandler("BP.WF.HttpHandler.WF_Comm_RefFunc");
                 handler.AddPara("parentid", cnode.attributes.No);
                 handler.AddPara("nodeid", nodeid);
                 handler.AddPara("ttype", cnode.attributes.TType);
@@ -138,7 +138,7 @@
             if (children[0].text != "loading...") {
                 return;
             }
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_Comm_RefFunc");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_Comm_RefFunc");
             handler.AddPara("parentid", cnode.attributes.No);
             handler.AddPara("nodeid", nodeid);
             handler.AddPara("ttype", cnode.attributes.TType);
@@ -166,7 +166,7 @@
 
             $("#save").linkbutton("disable");
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_Comm_RefFunc");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_Comm_RefFunc");
             handler.AddPara("pagesize", pagesize);
             handler.AddPara("pageidx", pageidx);
             handler.AddPara("nodeid", nodeid);
@@ -346,7 +346,7 @@
             else {
                 param.data = savedatas.shift();
 
-                var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_Comm_RefFunc");
+                var handler = new HttpHandler("BP.WF.HttpHandler.WF_Comm_RefFunc");
                 handler.AddJson(param);
                 var data = handler.DoMethodReturnString("Dot2DotStationModel_SaveNodeStations");
                 $("#save").linkbutton("enable");

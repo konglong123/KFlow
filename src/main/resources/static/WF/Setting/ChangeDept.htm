@@ -35,7 +35,7 @@
 
             $("#Msg").html("<img src='../Img/loading.gif' /><font color=blue>ccbpm 正在获取部门信息.</font>");
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_Setting");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_Setting");
             var data = handler.DoMethodReturnString("ChangeDept_Init");
             if (data.indexOf('err@') == 0) {
                 alert(data);
@@ -72,7 +72,7 @@
 
         function ChangeDept_Submit(deptNo) {
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_Setting");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_Setting");
             handler.AddPara("DeptNo", deptNo);
             var data = handler.DoMethodReturnString("ChangeDept_Submit");
 

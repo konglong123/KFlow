@@ -24,7 +24,7 @@
 
         function Init() {
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_WorkOpt");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_WorkOpt");
             handler.AddPara("FK_Flow", fk_flow);
             handler.AddPara("FK_Node", fk_node);
             handler.AddPara("WorkID", workid);
@@ -55,7 +55,7 @@
                 alert("请选择删除方式!");
                 return;
             }
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_WorkOpt");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_WorkOpt");
             handler.AddPara("FK_Flow", fk_flow);
             handler.AddPara("FK_Node", fk_node);
             handler.AddPara("WorkID", workid);

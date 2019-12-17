@@ -51,7 +51,7 @@
         var webUser = new WebUser();
         $(function () {
 
-            var httpHandler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_CommEntity");
+            var httpHandler = new HttpHandler("BP.WF.HttpHandler.WF_CommEntity");
             httpHandler.AddUrlData();
             var data = httpHandler.DoMethodReturnString("EntityOnly_Init");
             if (data.indexOf('err@') == 0) {

@@ -133,7 +133,7 @@
         //页面启动函数.
         $(function () {
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_AppClassic");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_AppClassic");
             var data = handler.DoMethodReturnString("Home_Init");
 
             if (data.indexOf('err@') == 0) {

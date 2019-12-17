@@ -101,7 +101,7 @@
 
             if (window.confirm('您确定要删除吗？') == false)
                 return false;
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_Admin_FoolFormDesigner_MapExt");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_Admin_FoolFormDesigner_MapExt");
             handler.AddPara("FK_MapData", GetQueryString('FK_MapData'));
             handler.AddPara("KeyOfEn", GetQueryString("KeyOfEn"));
             var data = handler.DoMethodReturnString("TBFullCtrl_Delete");

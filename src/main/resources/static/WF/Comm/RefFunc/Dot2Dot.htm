@@ -156,7 +156,7 @@
             entities.RetrieveAll();
 
             //处理
-            var hand = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_CommEntity");
+            var hand = new HttpHandler("BP.WF.HttpHandler.WF_CommEntity");
             hand.AddUrlData();
 
             var groups = hand.DoMethodReturnJSON("Dot2Dot_GenerGroupEntitis");
@@ -292,7 +292,7 @@
             });
 
             //处理
-            var hand = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_CommEntity");
+            var hand = new HttpHandler("BP.WF.HttpHandler.WF_CommEntity");
             hand.AddUrlData();
             hand.AddPara("ElesAAA", strs);
 

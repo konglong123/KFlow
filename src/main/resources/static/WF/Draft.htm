@@ -73,7 +73,7 @@
         //初始化数据.
         function InitPage() {
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF");
             var data = handler.DoMethodReturnString("Draft_Init");
 
 
@@ -127,7 +127,7 @@
             if (window.confirm('您确定要删除草稿吗？') == false)
                 return;
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF");
             handler.AddPara("WorkID", workid);
             handler.AddPara("FK_Flow", flowNo);
             var data = handler.DoMethodReturnString("Draft_Delete");

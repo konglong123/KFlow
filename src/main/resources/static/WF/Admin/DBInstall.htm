@@ -26,7 +26,7 @@
             document.getElementById("Btn_Submit").disabled = 'disabled';
 
             //创建处理类.
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_Admin");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_Admin");
             var data = handler.DoMethodReturnString("DBInstall_Init"); //执行方法，返回执行结果.
 
             if (data.indexOf('err@') == 0) {

@@ -17,7 +17,7 @@
         var fid = GetQueryString("FID");
         $(function () {
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_WorkOpt_OneWork");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_WorkOpt_OneWork");
 
             handler.AddUrlData();
             var data = handler.DoMethodReturnString("OP_GetStatus");
@@ -128,7 +128,7 @@
             if (msg == null)
                 return;
 
-            var handler = new HttpHandler("com.kong.kflowweb.com.kong.kflowweb.BP.WF.HttpHandler.WF");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF");
             handler.AddPara("FK_Flow", fk_flow);
             handler.AddPara("WorkID", workid);
             handler.AddPara("FID", fid);
@@ -157,7 +157,7 @@
             if (confirm('您确定要结束流程操作吗 ?') == false)
                 return;
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_MyFlow");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_MyFlow");
             handler.AddPara("FK_Flow", fk_flow);
             handler.AddPara("WorkID", workid);
             var data = handler.DoMethodReturnString("MyFlow_StopFlow");
@@ -233,7 +233,7 @@
                     return;
             }
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_WorkOpt_OneWork");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_WorkOpt_OneWork");
             handler.AddPara("WorkID", workid);
             handler.AddPara("FK_Flow", fk_flow);
             handler.AddPara("FK_Node", fk_node);
@@ -254,7 +254,7 @@
 
             var url = Handler + "?DoType=OP_UnSend&FK_Node=<%=FK_Node %>&FK_Flow=" + fk_flow + "&WorkID=" + workID;
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_WorkOpt_OneWork");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_WorkOpt_OneWork");
             handler.AddUrlData();
             var data = handler.DoMethodReturnString("OP_UnSend");
             $("#opmsg").empty().append(data);

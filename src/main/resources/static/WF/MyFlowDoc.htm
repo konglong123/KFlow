@@ -23,7 +23,7 @@
         //初始化数据.
         function InitPage() {
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF");
             handler.AddUrlData();
 
             var data = handler.DoMethodReturnString("Port_Init");

@@ -19,7 +19,7 @@
         //页面启动函数.
         $(function () {
             var doMethod = "Siganture_Init";
-            var httpHandlerName = "com.kong.kflowweb.BP.WF.HttpHandler.WF_Setting";
+            var httpHandlerName = "BP.WF.HttpHandler.WF_Setting";
             var url = dynamicHandler + "?DoType=HttpHandler&DoMethod=" + doMethod + "&HttpHandlerName=" + httpHandlerName;
             //初始化
             $.ajax({
@@ -53,7 +53,7 @@
                 return;
             }
             var doMethod = "Siganture_Save";
-            var httpHandlerName = "com.kong.kflowweb.BP.WF.HttpHandler.WF_Setting";
+            var httpHandlerName = "BP.WF.HttpHandler.WF_Setting";
             var url = dynamicHandler + "?DoType=HttpHandler&DoMethod="+ doMethod +"&HttpHandlerName=" + httpHandlerName;
 
             //提交数据

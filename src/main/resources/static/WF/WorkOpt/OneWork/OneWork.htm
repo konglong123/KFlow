@@ -64,7 +64,7 @@
             });
 
             //  
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_WorkOpt_OneWork");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_WorkOpt_OneWork");
             handler.AddUrlData();
             var data = handler.DoMethodReturnString("OneWork_GetTabs");
             if (data.indexOf('err@') == 0) {

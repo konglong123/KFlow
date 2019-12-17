@@ -24,7 +24,7 @@
 
             var frmID = GetQueryString("FK_MapData");
             //创建处理类.
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_Admin_FoolFormDesigner_MapExt");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_Admin_FoolFormDesigner_MapExt");
             handler.AddUrlData();
             var data = handler.DoMethodReturnString("InitScript_Init"); //执行方法，返回执行结果.
 
@@ -42,7 +42,7 @@
         function Save() {
             var frmID = GetQueryString("FK_MapData");
             //创建处理类.
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_Admin_FoolFormDesigner_MapExt");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_Admin_FoolFormDesigner_MapExt");
             var jsDocVal=$("#TB_JSDoc").val();
             handler.AddUrlData();
             handler.AddPara("JSDoc", jsDocVal);
@@ -57,7 +57,7 @@
         function Delete() {
             var frmID = GetQueryString("FK_MapData");
             //创建处理类.
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_Admin_FoolFormDesigner_MapExt");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_Admin_FoolFormDesigner_MapExt");
             handler.AddUrlData();
             var data = handler.DoMethodReturnString("InitScript_Delete"); //执行方法，返回执行结果.
 

@@ -160,7 +160,7 @@
                 toNode = pageUrlParam.toNode;
             }
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_WorkOpt");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_WorkOpt");
             handler.AddUrlData();
             handler.AddPara("ToNode", toNode);
             var data = handler.DoMethodReturnString("Accepter_Init");
@@ -423,7 +423,7 @@
                 toNode = pageUrlParam.toNode;
             }
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_WorkOpt");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_WorkOpt");
             handler.AddUrlData();
             handler.AddPara("SelectEmps", encodeURI(selectedEmps));
             var data = handler.DoMethodReturnString(doType);

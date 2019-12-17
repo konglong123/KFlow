@@ -209,7 +209,7 @@
 
             $('#lists').html(window.lang.loading);
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF");
             handler.AddUrlData();
             var data = handler.DoMethodReturnString("Start_Init");
             if (data.indexOf('err@') == 0) {

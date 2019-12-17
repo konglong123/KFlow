@@ -98,7 +98,7 @@
             var cdt = getNowFormatDate();
             var timeKey = Math.random();
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF");
             handler.AddJson();
             handler.AddUrlData();
             var data = handler.DoMethodReturnString("HuiQianAdderList_Init");

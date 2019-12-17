@@ -30,7 +30,7 @@
             document.getElementById("TB_Val").style.display = "none";
             document.getElementById("DDL_Val").style.display = "none";
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_Admin_Cond");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_Admin_Cond");
             handler.AddUrlData();
             var data = handler.DoMethodReturnString("StandAloneFrm_Init");
 

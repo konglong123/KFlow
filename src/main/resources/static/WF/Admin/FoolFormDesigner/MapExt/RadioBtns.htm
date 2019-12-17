@@ -34,7 +34,7 @@
                 document.getElementById("RB_IsEnableJS_1").checked = true;
 
             //获得的数据.
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_Admin_FoolFormDesigner_MapExt");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_Admin_FoolFormDesigner_MapExt");
             handler.AddUrlData();
             var data = handler.DoMethodReturnString("RadioBtns_Init");
             $('#lb_EnName').text(pageData.KeyOfEn);
@@ -236,7 +236,7 @@
 
             //保存当前打开表单信息
             SaveCurrentConfig();
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_Admin_FoolFormDesigner_MapExt");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_Admin_FoolFormDesigner_MapExt");
             handler.AddPara("data", JSON.stringify(initData.Sys_FrmRB));
             handler.AddPara("FK_MapData", pageData.FK_MapData);
             handler.AddPara("FK_MapExt", pageData.MyPK);

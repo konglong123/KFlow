@@ -28,7 +28,7 @@
                 $("#Lab_1").html("执行的SFTable");
             }
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_Admin_FoolFormDesigner_MapExt");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_Admin_FoolFormDesigner_MapExt");
             handler.AddPara("FK_MapData", GetQueryString("FK_MapData"));
             handler.AddPara("KeyOfEn", GetQueryString("KeyOfEn"));
             handler.AddPara("MyPK", GetQueryString("MyPK"));
@@ -150,7 +150,7 @@
             // alert(frmData);
             //            var myurl = Handler + "?DoType=TBFullCtrlDDL_Save&MyPK=" + GetQueryString("MyPK") + "&FK_MapData=" + GetQueryString('FK_MapData') + "&Tag=" + str + "&m=" + Math.random();
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_Admin_FoolFormDesigner_MapExt");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_Admin_FoolFormDesigner_MapExt");
             handler.AddPara("FK_MapData", GetQueryString("FK_MapData"));
             handler.AddPara("Tag", str);
             handler.AddPara("MyPK", GetQueryString("MyPK"));
@@ -179,7 +179,7 @@
 
             if (window.confirm('您确定要删除吗？') == false)
                 return false;
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_Admin_FoolFormDesigner_MapExt");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_Admin_FoolFormDesigner_MapExt");
             handler.AddPara("FK_MapData", GetQueryString("FK_MapData"));
             handler.AddPara("KeyOfEn", GetQueryString("KeyOfEn"));
             var data = handler.DoMethodReturnString("TBFullCtrl_Delete");

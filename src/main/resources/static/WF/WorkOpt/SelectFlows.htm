@@ -167,7 +167,7 @@
                         //初始化根节点
                         if (node.id == "#") {
 
-                            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_Admin_CCBPMDesigner");
+                            var handler = new HttpHandler("BP.WF.HttpHandler.WF_Admin_CCBPMDesigner");
                             //handler.AddPara("FK_Node", GetQueryString("FK_Node"));
                             if (pageData.FK_FlowSort != undefined)
                                 handler.AddPara("FK_FlowSort", pageData.FK_FlowSort);
@@ -190,7 +190,7 @@
                             else {
                                 pageData.FK_FlowSort = node.id;
 
-                                var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_Admin_CCBPMDesigner");
+                                var handler = new HttpHandler("BP.WF.HttpHandler.WF_Admin_CCBPMDesigner");
                                 //handler.AddPara("FK_Node", GetQueryString("FK_Node"));
                                 handler.AddPara("FK_FlowSort", pageData.FK_FlowSort);
                                 var data = handler.DoMethodReturnString("SelectEmps_Init");

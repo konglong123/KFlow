@@ -40,7 +40,7 @@
             }
 
             //获取当前用户批处理的流程及对应的节点
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF");
             handler.AddPara("FK_Node", GetQueryString("FK_Node"));
             var data = handler.DoMethodReturnString("Batch_Init");
             if (data.indexOf("err@") != -1) {

@@ -19,7 +19,7 @@
         //初始加载
         $(function () {
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_Admin_FoolFormDesigner_MapExt");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_Admin_FoolFormDesigner_MapExt");
             handler.AddUrlData();
             var data = handler.DoMethodReturnString("RegularExpressionNum_Init");
 
@@ -63,7 +63,7 @@
         //保存
         function Save() {
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_Admin_FoolFormDesigner_MapExt");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_Admin_FoolFormDesigner_MapExt");
             handler.AddUrlData();
             handler.AddFormData();
             var data = handler.DoMethodReturnString("RegularExpression_Save");

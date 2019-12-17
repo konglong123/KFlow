@@ -4,7 +4,7 @@ import javax.jws.WebMethod;
 import javax.jws.WebResult;
 import javax.jws.WebService;
 
-import com.kong.kflowweb.BP.DA.DataTable;
+import BP.DA.DataTable;
  
 @WebService
 public interface PortalInterfaceWS {

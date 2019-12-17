@@ -27,7 +27,7 @@
 
             var fk_node = GetQueryString("FK_Node");
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF");
             handler.AddPara("FK_Node", GetQueryString("FK_Node"));
             var data = handler.DoMethodReturnString("BatchList_Init");
             if (data.indexOf("err@") != -1) {
@@ -144,7 +144,7 @@
         function Btn_Send(label) {
             if (window.confirm('您确定要执行本次批处理发送操作吗？') == false)
                 return;
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF");
             handler.AddFormData();
             handler.AddPara("FK_Node", GetQueryString("FK_Node"));
             var data = handler.DoMethodReturnString("Batch_Send");
@@ -171,7 +171,7 @@
         function Btn_Group() {
             if (window.confirm('您确定要执行本次合卷批复操作吗？') == false)
                 return;
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF");
             handler.AddFormData();
             handler.AddPara("FK_Node", GetQueryString("FK_Node"));
             var data = handler.DoMethodReturnString("Batch_Group");
@@ -180,7 +180,7 @@
         function Btn_Return() {
             if (window.confirm('您确定要执行本次批处理退回操作吗？') == false)
                 return;
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF");
             handler.AddFormData();
             handler.AddPara("FK_Node", GetQueryString("FK_Node"));
             var data = handler.DoMethodReturnString("Batch_Return");
@@ -189,7 +189,7 @@
         function Btn_Delete() {
             if (window.confirm('您确定要执行本次批处理删除操作吗？') == false)
                 return;
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF");
             handler.AddFormData();
             handler.AddPara("FK_Node", GetQueryString("FK_Node"));
             var data = handler.DoMethodReturnString("Batch_Delete");

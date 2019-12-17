@@ -119,7 +119,7 @@
 
         function OpenFrm(workID, fid, flowNo, nodeID) {
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_WorkOpt_OneWork");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_WorkOpt_OneWork");
             handler.AddUrlData();
 
             handler.AddPara("FromWorkOpt", "1");
@@ -159,7 +159,7 @@
             if (confirm('您缺少要终止该子线程吗？') == false)
                 return;
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_WorkOpt");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_WorkOpt");
             handler.AddPara("FK_Flow", flowNo);
             handler.AddPara("WorkID", workID);
 

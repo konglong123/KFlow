@@ -39,7 +39,7 @@
             $("#Table1  tr:not(:first)").html("");
 
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_WorkOpt_OneWork");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_WorkOpt_OneWork");
             handler.AddUrlData();
             var data = handler.DoMethodReturnString("FlowBBSList");
 
@@ -65,7 +65,7 @@
             if (window.confirm('您确定要删除吗？') == false)
                 return;
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_WorkOpt_OneWork");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_WorkOpt_OneWork");
             handler.AddUrlData();
             handler.AddPara("MyPK", mypk);
             var data = handler.DoMethodReturnString("FlowBBS_Delete");
@@ -98,7 +98,7 @@
         //统计评论条数
         function Count() {
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_WorkOpt_OneWork");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_WorkOpt_OneWork");
             handler.AddUrlData();
             var data = handler.DoMethodReturnString("FlowBBS_Count");
             if (data.indexOf('err@') == 0) {
@@ -112,7 +112,7 @@
 
             $("#Table1  tr:not(:first)").html("");
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_WorkOpt_OneWork");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_WorkOpt_OneWork");
             handler.AddUrlData();
             handler.AddPara("UserName", encodeURIComponent(empName));
             var data = handler.DoMethodReturnString("FlowBBS_Check");
@@ -152,7 +152,7 @@
 
             });
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_WorkOpt_OneWork");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_WorkOpt_OneWork");
             handler.AddUrlData();
             handler.AddFormData();
             var data = handler.DoMethodReturnString("FlowBBS_Save");
@@ -177,7 +177,7 @@
         //评论回复
         function Rel(empNo, pk, empName) {
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_WorkOpt_OneWork");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_WorkOpt_OneWork");
             handler.AddUrlData();
 
             var data = handler.DoMethodReturnString("FlowBBSUserName");
@@ -192,7 +192,7 @@
             var empName = data.EmpFromT;
             var msg = data.Msg;
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_WorkOpt_OneWork");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_WorkOpt_OneWork");
             handler.AddUrlData();
             handler.AddPara("UserName", empNo);
             var data = handler.DoMethodReturnString("FlowBBSDept");
@@ -216,7 +216,7 @@
             var empName = data.EmpFromT;
             var msg = data.Msg;
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_WorkOpt_OneWork");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_WorkOpt_OneWork");
             handler.AddUrlData();
             handler.AddPara("UserName", empNo);
             var data = handler.DoMethodReturnString("FlowBBSDept");

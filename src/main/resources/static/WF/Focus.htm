@@ -45,7 +45,7 @@
         //页面启动函数.
         $(function () {
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF");
             var data = handler.DoMethodReturnString("Focus_Init");
 
             if (data.indexOf('err@') == 0) {
@@ -181,7 +181,7 @@
             if (window.confirm('您确定要删除吗？') == false)
                 return;
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF");
             handler.AddPara("WorkID", no);
             var data = handler.DoMethodReturnString("Focus_Delete");
 

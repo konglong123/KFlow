@@ -89,7 +89,7 @@
 
             var formData = new FormData($("#cc")[0]);
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_Admin_FoolFormDesigner_MapExt");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_Admin_FoolFormDesigner_MapExt");
             handler.AddPara("FK_Node", GetQueryString("FK_Node"));
             handler.AddFormData();
             var data = handler.DoMethodReturnString("Bill_Save");

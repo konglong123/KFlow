@@ -26,7 +26,7 @@
             if (dbType == "2") {
                 $("#Lab_1").html("执行的SFTable");
             }
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_Admin_FoolFormDesigner_MapExt");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_Admin_FoolFormDesigner_MapExt");
             handler.AddPara("FK_MapData", GetQueryString("FK_MapData"));
             handler.AddPara("KeyOfEn", GetQueryString("KeyOfEn"));
             handler.AddPara("MyPK", GetQueryString("MyPK"));
@@ -147,7 +147,7 @@
             $("#Msg").html("正在保存,请稍后......");
 
             var str = "";
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_Admin_FoolFormDesigner_MapExt");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_Admin_FoolFormDesigner_MapExt");
             handler.AddPara("FK_MapData", GetQueryString("FK_MapData"));
             handler.AddPara("MyPK", GetQueryString("MyPK"));
             handler.AddPara("Tag", str);

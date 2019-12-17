@@ -111,7 +111,7 @@
             var timeKey = Math.random();
 
             //初始化表格.
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF");
             handler.AddPara("FK_Node", GetQueryString("FK_Node"));
             var data = handler.DoMethodReturnString("Todolist_Init");
 

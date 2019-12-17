@@ -23,7 +23,7 @@
                 return;
 
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF");
             handler.AddPara("No", fk_emp);
             var msg = handler.DoMethodReturnString("LoginAs");
 
@@ -60,7 +60,7 @@
             var fk_node = GetQueryString("FK_Node");
 
             //初始化表格.
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF");
             handler.AddPara("FK_Node", fk_node);
             var data = handler.DoMethodReturnString("TodolistOfAuth_Init");
 
@@ -86,7 +86,7 @@
                 conMenu += "</tr>";
 
                 //输出待办详细信息
-                var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF");
+                var handler = new HttpHandler("BP.WF.HttpHandler.WF");
                 handler.AddPara("FK_Node", fk_node);
                 handler.AddPara("No", data[i].NO);
                 var msg = handler.DoMethodReturnString("Todolist_Author");

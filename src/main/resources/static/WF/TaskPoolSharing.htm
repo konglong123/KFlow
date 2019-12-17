@@ -103,7 +103,7 @@
 
 
             //初始化表格.
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF");
             handler.AddPara("FK_Node", GetQueryString("FK_Node"));
             var data = handler.DoMethodReturnString("TaskPoolSharing_Init");
 
@@ -344,7 +344,7 @@
             }
 
             //执行撤销.
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF");
             handler.AddPara("WorkID", workid);
             var data = handler.DoMethodReturnString("TaskPoolSharing_Apply");
             if (data.indexOf('err@') == 0) {

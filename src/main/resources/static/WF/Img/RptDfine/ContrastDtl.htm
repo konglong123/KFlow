@@ -27,7 +27,7 @@
         //初始化数据.
         function InitPage() {
             //创建处理器.
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_RptDfine");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_RptDfine");
             handler.AddUrlData();  //增加参数.
 
             //获得map基本信息.
@@ -121,7 +121,7 @@
 
         //导出
         function Exp() {
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_RptDfine");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_RptDfine");
             handler.AddUrlData();  //增加参数.
             //查询集合
             var data = handler.DoMethodReturnString("FlowGroupDtl_Exp");

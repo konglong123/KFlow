@@ -50,7 +50,7 @@
             }
 
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_WorkOpt");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_WorkOpt");
             handler.AddUrlData();
             var data = handler.DoMethodReturnString("FlowSkip_Init");
 
@@ -98,7 +98,7 @@
             $('.foot input').css('background', 'gray');
 
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_WorkOpt");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_WorkOpt");
             handler.AddUrlData();
             handler.AddPara("ReturnToNode", $('#DDL_Nodes option:checked').val());
             handler.AddPara("ReturnInfo", escape($('#TB_Doc').val()));

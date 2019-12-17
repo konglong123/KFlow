@@ -995,7 +995,6 @@
             flowNo = GetQueryString("FK_Flow");
             if (flowNo == null || flowNo == undefined)
                 flowNo = "002";
-
             //节点. 取出来显示
             var nodes = new Entities("BP.WF.Nodes");
             nodes.Retrieve("FK_Flow", flowNo);

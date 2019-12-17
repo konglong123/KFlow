@@ -23,7 +23,7 @@
         $(function () {
             var params = document.location.search.substr(1);
             params = params.replace("DoType", "ActionType");
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF");
             var data = handler.DoMethodReturnJSON("PCAndMobileUrl")
             
             if (IsPC() == false) 
@@ -32,7 +32,7 @@
                 return;
             }
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF");
             handler.AddUrlData(params);
 
             var data = handler.DoMethodReturnString("Do_Init");

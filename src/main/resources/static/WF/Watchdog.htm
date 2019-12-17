@@ -40,7 +40,7 @@
 
             $('#docs').html(window.lang.loading);
             debugger;
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF");
             var data = handler.DoMethodReturnString("Watchdog_Init");
             if (data.indexOf('err@') == 0) {
                 alert(data);
@@ -84,7 +84,7 @@
             html += "<th>状态</th>";
             html += "</tr></thead>";
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF");
             handler.AddPara("FK_Flow", flowNo);
             var data = handler.DoMethodReturnJSON("Watchdog_InitFlows");
 

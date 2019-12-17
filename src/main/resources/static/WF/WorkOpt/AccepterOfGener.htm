@@ -115,7 +115,7 @@
 
             //$("#HelpInfo").hide();
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_WorkOpt");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_WorkOpt");
             handler.AddUrlData();
             var data = handler.DoMethodReturnString("AccepterOfGener_Init");
 
@@ -192,7 +192,7 @@
             //            if (window.confirm('您确定要移除[' + empNo +' , '+ empName + ']') == false)
             //                return;
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_WorkOpt");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_WorkOpt");
             handler.AddUrlData();
             handler.AddPara("FK_Emp", empNo);
 
@@ -218,7 +218,7 @@
 
         function AddEmpsExt(isSend, emps) {
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_WorkOpt");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_WorkOpt");
             handler.AddUrlData();
             handler.AddPara("AddEmps", emps);
             var data = handler.DoMethodReturnString("AccepterOfGener_AddEmps");
@@ -267,7 +267,7 @@
 
         function SendIt() {
 
-            var httphandler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_WorkOpt");
+            var httphandler = new HttpHandler("BP.WF.HttpHandler.WF_WorkOpt");
             httphandler.AddUrlData();
 
             $("#Btn_Send").attr("disabled", "disabled");
@@ -423,7 +423,7 @@
                     return;
                 }
 
-                var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_WorkOpt");
+                var handler = new HttpHandler("BP.WF.HttpHandler.WF_WorkOpt");
                 handler.AddPara("FK_Node", GetQueryString("FK_Node"));
                 handler.AddPara("WorkID", GetQueryString("WorkID"));
                 handler.AddPara("ToNode", GetQueryString("ToNode"));

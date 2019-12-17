@@ -84,7 +84,7 @@
             };
 
             //调用查询返回数据.
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_RptDfine");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_RptDfine");
             handler.AddPara("SearchType", searchType);
             handler.AddPara("FK_Flow", fk_flow);
             handler.AddPara("pageSize", $("#dg").datagrid("options").pageSize);
@@ -187,7 +187,7 @@
                                 break;
                         }
                     });
-                    var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_RptDfine");
+                    var handler = new HttpHandler("BP.WF.HttpHandler.WF_RptDfine");
                     handler.AddPara("SearchType", GetQueryString("SearchType"));
                     handler.AddPara("FK_Flow", fk_flow);
                     handler.AddPara("key", key);
@@ -466,7 +466,7 @@
                 }
             });
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_RptDfine");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_RptDfine");
             handler.AddPara("FK_Flow", fk_flow);
             handler.AddPara("SearchType", GetQueryString("SearchType"));
             handler.AddPara("key", key);

@@ -100,7 +100,7 @@
         //页面启动函数.
         $(function () {
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_Setting");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_Setting");
             var data = handler.DoMethodReturnString("Default_Init");
             if (data.indexOf('err@') == 0) {
                 alert(data);

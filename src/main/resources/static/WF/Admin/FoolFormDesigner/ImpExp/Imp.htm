@@ -72,7 +72,7 @@
             *  首先要把初始化控件的代码写入到这里,不然会导致界面的批量赋值失败.
             */
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_Admin_FoolFormDesigner_ImpExp");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_Admin_FoolFormDesigner_ImpExp");
             handler.AddUrlData();
             var data = handler.DoMethodReturnString("Imp_Init");
 
@@ -317,7 +317,7 @@
                 return;
             }
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_Admin_FoolFormDesigner_ImpExp");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_Admin_FoolFormDesigner_ImpExp");
 
             handler.AddPara("FK_MapData", GetQueryString("FK_MapData"));
             handler.AddPara("FromFrmID", "ND" + nodeIdSelected);

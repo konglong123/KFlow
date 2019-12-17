@@ -29,7 +29,7 @@
 
             var btn = $("#Btn_Press");
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_WorkOpt");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_WorkOpt");
             handler.AddUrlData();
             handler.AddPara("Msg", encodeURI(msg));
             var data = handler.DoMethodReturnString("Press");

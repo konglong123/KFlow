@@ -48,7 +48,7 @@
 
         $(function () {
 
-            var httpHandler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_CommEntity");
+            var httpHandler = new HttpHandler("BP.WF.HttpHandler.WF_CommEntity");
             httpHandler.AddUrlData();  //增加参数属性.
 
             var data = httpHandler.DoMethodReturnString("Dtl_Init");
@@ -508,7 +508,7 @@
         function Save() {
             //点击保存后按钮不可编辑
             $("#Btn_Save").attr("disabled", true);
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_CommEntity");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_CommEntity");
             handler.AddUrlData();  //增加参数属性.
             handler.AddFormData();
             handler.AddPara("NewRowCount", newRowCount);
@@ -559,7 +559,7 @@
 
         //导出
         function Export() {
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_CommEntity");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_CommEntity");
             handler.AddPara("EnsName", GetQueryString("EnsName"));
             handler.AddPara("RefKey", GetQueryString("RefKey"));
             handler.AddPara("RefVal", GetQueryString("RefVal"));

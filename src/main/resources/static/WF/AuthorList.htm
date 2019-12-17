@@ -39,7 +39,7 @@
                 return;              
             }
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF");
             var data = handler.DoMethodReturnString("AuthorList_Init");
             data = JSON.parse(data);
 
@@ -90,7 +90,7 @@
             if (window.confirm('您确定要以[' + empName + ']授权方式登陆处理工作吗？') == false)
                 return;
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF");
             handler.AddPara("No", fk_emp);
             var data = handler.DoMethodReturnString("AuthorList_LoginAs");
 

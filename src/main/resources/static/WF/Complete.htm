@@ -221,7 +221,7 @@
 		        //查询
 		        var TB_Key = $("#TB_Key").val();
 
-		        var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF");
+		        var handler = new HttpHandler("BP.WF.HttpHandler.WF");
 		        var data = handler.DoMethodReturnString("Complete_Init");
 
 		        if (data.indexOf('err@') == 0) {

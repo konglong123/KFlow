@@ -65,7 +65,7 @@
         //页面启动函数.
         $(function () {
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF");
             handler.AddUrlData();
             var data = handler.DoMethodReturnString("CC_Init");
 

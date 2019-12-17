@@ -140,7 +140,7 @@
 				if(window.confirm('您确定要撤销本次发送吗？') == false)
 				    return;
 
-				var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF");
+				var handler = new HttpHandler("BP.WF.HttpHandler.WF");
 				handler.AddPara("FK_Flow", fk_flow);
 				handler.AddPara("WorkID", workid);
 				handler.AddPara("FID", fid);
@@ -171,7 +171,7 @@
 			    if (msg == null)
 			        return;
 
-			    var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF");
+			    var handler = new HttpHandler("BP.WF.HttpHandler.WF");
 			    handler.AddPara("FK_Flow", fk_flow);
 			    handler.AddPara("WorkID", workid);
 			    handler.AddPara("FID", fid);
@@ -339,7 +339,7 @@
                 //查询
                 var TB_Key = $("#TB_Key").val();
 
-                var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF");
+                var handler = new HttpHandler("BP.WF.HttpHandler.WF");
                  handler.AddPara("IsContainFuture", isContainFuture);
                 var data = handler.DoMethodReturnString("Runing_Init");
 

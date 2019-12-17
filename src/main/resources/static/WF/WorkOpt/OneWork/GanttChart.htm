@@ -24,7 +24,7 @@
         /* 打开表单. */
         function OpenFrm(nodeID) {
 
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_WorkOpt_OneWork");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_WorkOpt_OneWork");
             handler.AddUrlData();
             if (nodeID != undefined)
                 handler.AddPara("FK_Node", nodeID);

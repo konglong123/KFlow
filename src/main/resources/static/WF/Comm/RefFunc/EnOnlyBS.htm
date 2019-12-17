@@ -51,7 +51,7 @@
             if (window.parent && window.parent.$('#EnLayout').length == 1 && pkVal == null)
                 window.parent.$('#EnLayout').layout('remove', 'west');
 
-            var httpHandler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_CommEntity");
+            var httpHandler = new HttpHandler("BP.WF.HttpHandler.WF_CommEntity");
             var enName = GetQueryString("EnName");
             var type = GetQueryString("type");
             httpHandler.AddPara("EnName", enName);

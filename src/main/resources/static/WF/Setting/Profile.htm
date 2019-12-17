@@ -19,7 +19,7 @@
 
         //页面启动函数.
         $(function () {
-            var handler = new HttpHandler("com.kong.kflowweb.BP.WF.HttpHandler.WF_Setting");
+            var handler = new HttpHandler("BP.WF.HttpHandler.WF_Setting");
             var data = handler.DoMethodReturnString("Default_Init");
             if (data.indexOf('err@') == 0) {
                 alert(data);
@@ -33,7 +33,7 @@
             $("#_TB_Email").val(data.Email);
             //显示头像
             var doMethod = "Siganture_Init";
-            var httpHandlerName = "com.kong.kflowweb.BP.WF.HttpHandler.WF_Setting";
+            var httpHandlerName = "BP.WF.HttpHandler.WF_Setting";
             var url = dynamicHandler + "?DoType=HttpHandler&DoMethod=" + doMethod + "&HttpHandlerName=" + httpHandlerName;
             //初始化
             $.ajax({
@@ -86,7 +86,7 @@
                 return;
             }
             var doMethod = "HeadPic_Save";
-            var httpHandlerName = "com.kong.kflowweb.BP.WF.HttpHandler.WF_Setting";
+            var httpHandlerName = "BP.WF.HttpHandler.WF_Setting";
             var url = dynamicHandler + "?DoType=HttpHandler&DoMethod=" + doMethod + "&HttpHandlerName=" + httpHandlerName;
 
 
