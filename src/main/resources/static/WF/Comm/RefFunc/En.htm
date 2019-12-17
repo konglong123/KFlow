@@ -1,0 +1,320 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>ccform正在加载请稍候...</title>
+
+
+	<link rel="stylesheet" type="text/css" href="../../Scripts/easyUI/themes/gray/easyui.css" />
+	<link rel="stylesheet" type="text/css" href="../../Scripts/easyUI/themes/icon.css" />
+	<script type="text/javascript" src="../../Scripts/easyUI/jquery-1.8.0.min.js"></script>
+	<script type="text/javascript" src="../../Scripts/easyUI/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="../../Scripts/easyUI/locale/easyui-lang-zh_CN.js"></script>
+	<script type="text/javascript" src="../../Scripts/EasyUIUtility.js"></script>
+    
+    <script src="../JS/Calendar/WdatePicker.js" type="text/javascript"></script>
+    <link href="../JS/Calendar/skin/WdatePicker.css" rel="stylesheet" type="text/css" />
+
+	<script type="text/javascript" src="../../Scripts/Cookie.js"></script>
+	<script type="text/javascript" src="../../Scripts/QueryString.js"></script>
+	<link href="../Style/CommStyle.css" rel="stylesheet" type="text/css" />
+ 
+	<link href="En.css" rel="stylesheet" type="text/css" />
+    <!-- 该文件可以被集成厂商自己定义风格,可以自己修改,以达到流程设计器与自己的系统风格统一. -->
+    <link href="../../../DataUser/Style/ccbpm.css" rel="Stylesheet" />
+
+    <!-- 位置必须放在 jquery 之后. -->
+    <script type="text/javascript" src="../../Scripts/QueryString.js"></script>
+    <script type="text/javascript" src="../../Scripts/config.js"></script>
+    <script type="text/javascript" src="../Gener.js"></script>
+
+    <!--UEditor-->
+    <link href="../../Comm/umeditor1.2.3-utf8/themes/default/css/umeditor.css" type="text/css" rel="stylesheet" />
+    <script type="text/javascript" src="../../Comm/umeditor1.2.3-utf8/third-party/template.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../../Comm/umeditor1.2.3-utf8/umeditor.config.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../../Comm/umeditor1.2.3-utf8/umeditor.min.js"></script>
+    <script type="text/javascript" src="../../Comm/umeditor1.2.3-utf8/lang/zh-cn/zh-cn.js"></script>
+    <script src="../../Admin/CCFlowEnum.js" type="text/javascript"></script>   
+    <script src="../../Scripts/EasyUIUtility.js" type="text/javascript"></script> 
+    <style type="text/css">
+        .navlist li a {
+            line-height: 24px;
+            color: gray;
+            display: block;
+            width: 100%;
+            text-decoration: none;
+        }
+    </style>
+
+    <!--杨玉慧 -->
+    <script type="text/javascript">
+
+        var frmData;
+
+        var dtM; //方法集合.
+        var url;
+        $(function () {
+
+            var httpHandler = new HttpHandler("BP.WF.HttpHandler.WF_CommEntity");
+            var enName = GetQueryString("EnName");
+            var type = GetQueryString("type");
+            var pkVal = GetPKVal();
+            var isTree = GetQueryString("isTree");
+            var isReadonly = GetQueryString("isReadonly");
+            httpHandler.AddPara("EnName", enName);
+
+
+            //获取URL的参数问题
+            var param = document.location.search.substr(1);
+
+
+            url = "../RefFunc/EnOnly.htm?" + param;
+            if (pkVal != null) {
+                httpHandler.AddPara("PKVal", pkVal);
+            }
+
+            var data = httpHandler.DoMethodReturnString("Entity_Init");
+            if (data.indexOf('err@') == 0) {
+                $("#CCFormTabs").html(data);
+                return;
+            }
+
+            //解析json.
+            frmData = JSON.parse(data);
+            dtM = frmData["dtM"];
+            RefMethod(); //初始化菜单.
+
+            //生成傻瓜表单.
+            OpenUrlInRightFrame(this, url);
+
+
+        })
+
+        function RefMethod() {
+
+            if (dtM.length == 0) 
+                return;
+            //用户设置
+            var mypk = new WebUser().No + "_Funcs_HS_" + GetQueryString("EnName");
+            var userRegedit = new Entity("BP.Sys.UserRegedit");
+            userRegedit.SetPKVal(mypk);
+            userRegedit.RetrieveFromDBSources();
+
+            //求出所有的分组名称.
+            var groupName = "@基本信息";
+            for (var i = 0; i < dtM.length; i++) {
+                var en = dtM[i];
+                if (en.GroupName == null)
+                    continue;
+                if (groupName.indexOf('@' + en.GroupName) == -1)
+                    groupName += "@" + en.GroupName;
+            }
+
+            var gNames = groupName.split('@');
+       
+            var mainData = frmData.MainTable[0];
+            var title = "主页";
+            if (mainData.Name != null && mainData.Name != "undefined" && mainData.Name != "")
+                title = mainData.Name;
+
+            //生成菜单.
+            var html = "<div class='easyui-accordion' data-options='fit:true' id='accordion'>";
+            html += "";
+            for (var i = 0; i < gNames.length; i++) {
+                var gName = gNames[i];
+                if (gName == "")
+                    continue;
+                if (userRegedit!=null && userRegedit!=undefined && userRegedit.MVals.indexOf(",dtM_" + gName + ",") != -1)
+                    continue;
+                if (gNames.length == 2 && gName.indexOf('基本信息') != -1)
+                    html += "";
+                else
+                    html += "<div title='" + gName + "' style='overflow:auto;'>";
+
+
+                //填入菜单内容.
+                html += "<ul class='navlist' >";
+                if (gName == "基本信息") {
+                    html += "<li><a href='javascript:OpenUrlInRightFrame(this,\"" + url + "\")'><img src='../../Img/Home.gif' border=0 style='width:16px;height:16px;' />"+title+"</a></li>";
+                }
+
+                for (var idx = 0; idx < dtM.length; idx++) {
+
+                    var en = dtM[idx];
+                    var myName = en.GroupName;
+                    if (myName == null || myName == "")
+                        myName = "基本信息";
+
+
+
+                    if (gName != myName)
+                        continue;
+
+
+                    if ((en.RefAttrKey != null && en.RefAttrKey != "") || en.IsCanBatch == "1" || en.Visable == "0")
+                        continue;
+
+                    if (userRegedit!=null && userRegedit!=undefined &&userRegedit.Vals.indexOf("," + en.No + ",") != -1)
+                        continue;
+
+                    html += "<li>" + GenerRM(en) + "</li>";
+                }
+                html += "</ul>";   //end填入菜单内容.
+                html += "</div>";
+            }
+            html += "</div>";
+
+            $("#Left").append(html);
+            $.parser.parse("#Left");
+        }
+
+        function GenerRM(rm) {
+
+            var icon = rm.Icon;
+            if (rm.Icon == "" || rm.Icon == null) {
+                icon = "../../Img/dot.png";
+            }
+
+            if (rm.Icon != null && rm.Icon != "" && rm.Icon.indexOf('http') != 0) {
+                icon = "../" + rm.Icon;
+            }
+
+            var html = "";
+
+            if (parseInt(rm.RefMethodType) == RefMethodType.LinkeWinOpen) {
+                html = "<a href='javascript:OpenIt(\"" + rm.Url + "\",\"" + rm.Title + "\",\"" + rm.W + "\",\"" + rm.H + "\",false)'><img src='" + icon + "' border=0 style='width:16px;height:16px;' />" + rm.Title + "</a>";
+            }
+
+            if (parseInt(rm.RefMethodType) == RefMethodType.Func) {
+                html = "<a href='javascript:OPenFun(\"" + rm.Url + "\",\"" + rm.Warning + "\",\"" + rm.Title + "\",\"" + rm.W + "\",\"" + rm.H + "\",\"" + rm.FunPara + "\")'><img src='" + icon + "' border=0 style='width:16px;height:16px;' />" + rm.Title + "</a>";
+            }
+
+            if (parseInt(rm.RefMethodType) == RefMethodType.LinkModel)
+                html = "<a href='javascript:OpenEasyUiDialogExt(\"" + rm.Url + "\",\"" + rm.Title + "\",540,450,true)'><img src='" + icon + "' border=0 style='width:16px;height:16px;' />" + rm.Title + "</a>";
+
+            if ( html=="" ||  parseInt(rm.RefMethodType) == RefMethodType.RightFrameOpen) {
+                html = "<a href='javascript:OpenUrlInRightFrame(this,\"" + rm.Url + "\")'><img src='" + icon + "' border=0 style='width:16px;height:16px;' />" + rm.Title + "</a>";
+            }
+
+            return html;
+        }
+        function OPenFun(url, warning, title, w, h, FunPara) {
+            if (title == "轨迹")
+                url = url + "&title=轨迹";
+
+            if (w == null || w == undefined)
+                w = document.body.clientWidth - 200;
+            if (h == null || h == undefined)
+                h = document.body.clientHeight - 140;
+
+            var W = document.body.clientWidth-40;
+            var H = document.body.clientHeight - 40;
+            if (w > W)
+                w = W;
+             if (h > H)
+                h = H;
+            if (FunPara == true || FunPara == "true")
+                OpenEasyUiDialogExt(url, title, w, h, false);
+            else {
+                if (warning == "null" || warning == "")
+                    warning = "确定要执行吗？";
+                else {
+                    warning = warning.replace(/,\s+/g, ",");
+                    warning = warning.replace(/\s+/g, "\r\n");
+                }
+                if (confirm("\"" + warning + "\"")) {
+                    OpenEasyUiDialogExt(url, title, w, h, false);
+                }
+            }
+            
+        }
+
+        function OpenIt(url, title, w, h) {
+            window.open(url);
+
+        }
+
+        //在右侧框架中显示指定url的页面
+        function OpenUrlInRightFrame(ele, url) {
+            if (ele != null && ele != undefined) {
+
+                currShow = $(ele).parents('li').text(); //有回车符
+
+                $.each($(ele).parents('ul').children('li'), function (i, e) {
+                    $(e).children('div').css('font-weight', $(e).text() == currShow ? 'bold' : 'normal');
+                });
+
+                if (url.indexOf('?') == -1)
+                    url += '?1=1';
+
+                $('#rightFrame').empty();
+                $('#rightFrame').append('<iframe scrolling="auto" frameborder="0"  src="' + url + '&s=' + Math.random() + '" style="width:100%;height:100%;fit:true"></iframe>');
+            }
+        }
+  
+
+        function CloseIt() {
+            if (window.parent && window.parent.CloseBootstrapDialog) {
+                window.parent.CloseBootstrapDialog("取消");
+            } else {
+                window.close();
+            }
+        }
+
+        $(function () {
+            var Accordion = function (el, multiple) {
+                this.el = el || {};
+                this.multiple = multiple || false;
+
+                // Variables privadas
+                var links = this.el.find('.link');
+                // Evento
+                links.on('click', { el: this.el, multiple: this.multiple }, this.dropdown)
+            }
+
+            Accordion.prototype.dropdown = function (e) {
+                var $el = e.data.el;
+                $this = $(this),
+			$next = $this.next();
+
+                $next.slideToggle();
+                $this.parent().toggleClass('open');
+
+                if (!e.data.multiple) {
+                    $el.find('.submenu').not($next).slideUp().parent().removeClass('open');
+                };
+            }
+
+            var accordion = new Accordion($('#accordion'), false);
+
+        });
+    </script>
+</head> 
+<body class="easyui-layout" data-options="fit:true">
+	
+	<!--<div id="EnLayout" class="easyui-layout" data-options="region:'center'" border="false">-->
+
+		<div id="Left" data-options="region:'west',title:'功能列表',split:true" style="width:195px; padding: 5px" ></div>
+       
+    	<div id="rightFrame" data-options="region:'center',noheader:true">
+            <div class="easyui-layout" data-options="fit:true">
+                <div id="Btns" data-options="region:'north',noheader:true,split:false,border:false" style="height: 30px;padding: 2px; background-color: #E0ECFF">
+                    <a id="Btn_New" href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-new'" onclick="New()">新建</a>
+                    <a id="Btn_Save" href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-save'" onclick="Update()">保存</a>
+                    <a id="Btn_Delete" href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-delete'" onclick="Delete()">删除</a>
+                    <a id="Btn_Close" href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-no'" onclick="CloseIt()">关闭</a>
+                </div>
+                <div data-options="region:'center',noheader:true,border:false" style="margin:0px">
+                    <div id="CCFormTabs" data-options="region:'center',noheader:true,border:false" style="margin:0px;padding:0px;overflow:auto">
+             
+			            <br />
+			            <img src='./../../Img/loading.gif' />正在初始化表单模板及数据，请耐心等待。。。
+			            <br />
+                    </div>
+                </div>
+            </div>
+	    </div>
+	<!--</div>-->
+</body>
+</html>

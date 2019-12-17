@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>流程检查</title>
+    <meta charset="UTF-8" />
+    <script type="text/javascript" src="../../Scripts/bootstrap/js/jquery.min.js"></script>
+    <script src="../../Scripts/QueryString.js" type="text/javascript"></script>
+    <link href="../../../DataUser/Style/ccbpm.css" rel="stylesheet"  type="text/css" />
+    <!-- 引用通用的js文件. -->
+    <script type="text/javascript" src="../../Scripts/config.js"></script>
+    <script type="text/javascript" src="../../Comm/Gener.js"></script>
+    <script type="text/javascript" language="javascript" >
+        //页面启动函数.
+        $(function () {
+
+            $("#Msg").html("<br><br><br><br><center ><img src='../../Img/loading.gif' /><font color=green>正在执行流程检查,大约持续1-3分钟时间,请稍后......</blue><br><br><br><br></center>");
+           
+            var en = new Entity("BP.WF.Flow", GetQueryString("FK_Flow"));
+            var data = en.DoMethodReturnString("DoCheck");
+
+            if (data.indexOf('err@') == 0) {
+                alert(data);
+                return;
+            }
+
+            var tips = data.split("@");
+            //第一个元素为空,删除掉
+            delete(tips[0]);
+            html = "<ul>";
+            for (index in tips) {
+                tip = tips[index];
+                html += "<li style='list-style-type:none;'>" + tip + "</li>";
+            }
+            html += "<ul>";
+
+            html = html.replace(/>信息:/g, "><font style='font-weight:bold;'>信息:</font>");
+            html = html.replace(/>警告:/g, "><font style='font-weigth:bold; color:green;'>警告:</font>");
+            html = html.replace(/>错误:/g, "><font style='font-weight:bold; color:red ;'>错误:</font>");
+
+            $("#Msg").html(html);
+            return;
+
+        });
+
+        //发起流程测试.
+        function StartTester() {
+            var url = '../TestFlow.htm?FK_Flow=' + GetQueryString("FK_Flow");
+            window.location.href = url;
+        }
+    </script>
+
+    <style type="text/css">
+        
+  body
+  { 
+   background-image:url(../../Img/doctor.png);
+   background-repeat:no-repeat;
+   background-position:right;
+  }
+    
+    </style>
+
+</head>
+<body >
+
+ <form id="form1" >
+
+ <table style="width:100%;">
+ <caption>流程检查</caption>
+ </table>
+
+ <fieldset>
+ <legend>流程检查信息 - <a href='javascript:StartTester();'>发起流程测试</a></legend>
+
+ <div id="Msg"/> 
+  
+ </fieldset>
+    </form>
+</body>
+</html>
