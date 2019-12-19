@@ -557,7 +557,7 @@ public class WF_Admin_CCBPMDesigner extends WebContralBase
              // 执行升级
              String str = BP.WF.Glo.UpdataCCFlowVer();
              if (str == null)
-                 str = "ccbpm 准备完毕,欢迎登录.";
+                 str = "KFlow准备完毕,欢迎登录.";
              return str;
          }
          catch (Exception ex)

@@ -436,7 +436,7 @@ public class SystemConfig {
 	public static String getSysName() {
 		String s = getAppSettings().get("SysName").toString();
 		if (s == null) {
-			s = "请在web.propertoes中配置SysName名称";
+			s = "请配置SysName名称";
 		}
 		return s;
 	}

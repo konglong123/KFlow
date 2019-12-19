@@ -31,10 +31,10 @@
                 // return;
             }
 
-            $("#Msg").html("<img src='../../Img/loading.gif' /><font color=blue>ccbpm 正在为登录/自动升级做准备.</font>");
+            $("#Msg").html("<img src='../../Img/loading.gif' /><font color=blue>KFlow正在为登录/自动升级做准备.</font>");
 
             document.getElementById("Btn_Login").disabled = 'disabled';
-            document.getElementById("Btn_LoginSimple").disabled = 'disabled';
+            /*document.getElementById("Btn_LoginSimple").disabled = 'disabled';*/
 
 
 
@@ -51,7 +51,7 @@
 
             if (data.indexOf('err@') == 0) {
 
-                $("#Msg").html("<font color=red>" + data + ". 也许是: java/.net/phtyon 运行环境没有准备好导致的. 请确认运行环境</font>");
+                $("#Msg").html("<font color=red>" + data + ". 也许是运行环境没有准备好导致的. 请确认运行环境</font>");
                 return;
             }
 
@@ -62,7 +62,7 @@
             }
 
             document.getElementById("Btn_Login").disabled = false;
-            document.getElementById("Btn_LoginSimple").disabled = false;
+            /*document.getElementById("Btn_LoginSimple").disabled = false;*/
 
             $("body").keydown(function () {
                 if (event.keyCode == 13) {
@@ -79,7 +79,7 @@
         //执行后台登录.
         function Login() {
 
-            $("#Msg").html("<font> ccbpm 正在登录流程&表单引擎设计器,请稍候... </font>");
+            $("#Msg").html("<font> KFLow正在登录,请稍候... </font>");
 
             var handler = new HttpHandler("BP.WF.HttpHandler.WF_Admin_CCBPMDesigner");
 
@@ -174,15 +174,16 @@
                     <div class="form-group">
                         <input type="password" id="TB_PW" name="TB_PW" placeholder="请输入密码" lay-verify="required" class="form-control" />
                     </div>
-                    <input type="button" class="btn btn-primary btn-block" value="登录ccbmp完整版" id="Btn_Login" onclick="Login();" />
-                    <input type="button" class="btn btn-primary btn-block" value="简洁版" id="Btn_LoginSimple" onclick="LoginSimple();" />
+                    <input type="button" class="btn btn-primary btn-block" value="登录KFlow" id="Btn_Login" onclick="Login();" />
+                    <!--<input type="button" class="btn btn-primary btn-block" value="简洁版" id="Btn_LoginSimple" onclick="LoginSimple();" />-->
 
                     <div class="row login-nav">
                         <div class="col-xs-6">默认密码：123</div>
                         <div class="col-xs-6 ">
 
-                            <a href="../../AppClassic/Login.htm" class="pull-right">前台登录</a><a href="../../../Portal/Login.htm" class="pull-right">GPM登录-</a>
-                            <a href="http://ccbpm.mydoc.io" target=_blank class="pull-right">帮助文档&nbsp;&nbsp;</a>
+                            <a href="../../AppClassic/Login.htm" class="pull-right">前台登录</a>
+                            <!--<a href="../../../Portal/Login.htm" class="pull-right">GPM登录-</a>
+                            <a href="http://ccbpm.mydoc.io" target=_blank class="pull-right">帮助文档&nbsp;&nbsp;</a>-->
 
                         </div>
                         <br />
