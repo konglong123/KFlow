@@ -265,7 +265,7 @@ public class StringUtils {
         return join(array, separator, 0, array.length);
     }
 	
-	 public static String join(final Object[] array, String separator, final int startIndex, final int endIndex) {
+    public static String join(final Object[] array, String separator, final int startIndex, final int endIndex) {
 	        if (array == null) {
 	            return null;
 	        }
@@ -291,19 +291,21 @@ public class StringUtils {
 	            }
 	        }
 	        return buf.toString();
-	    }
-	  public static String replacePattern(final String source, final String regex, final String replacement) {
+	}
+	public static String replacePattern(final String source, final String regex, final String replacement) {
 	        if (source == null || regex == null || replacement == null) {
 	            return source;
 	        }
 	        return Pattern.compile(regex, Pattern.DOTALL).matcher(source).replaceAll(replacement);
-	    }
+	}
 	  
-	  public static String[] toStringArray(Enumeration<String> enumeration) {
+	public static String[] toStringArray(Enumeration<String> enumeration) {
 			if (enumeration == null) {
 				return null;
 			}
 			List<String> list = Collections.list(enumeration);
 			return list.toArray(new String[list.size()]);
-		}
+	}
+
+
 }

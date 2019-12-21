@@ -1,6 +1,7 @@
 package BP.WF.Template;
 
 import java.io.File;
+import java.util.List;
 
 import BP.WF.CCBPM_DType;
 import BP.WF.Flow;
@@ -61,6 +62,19 @@ public class TemplateGlo
 		BP.WF.Flow fl = new Flow(flowNo);
 		BP.WF.Node nd = fl.DoNewNode(x, y);
 		return nd.getNodeID();
+	}
+	/**
+	 创建多个节点,复制节点（流程重组时使用）
+	 @param flowNo
+	 @param x
+	 @param y
+	 @return
+	  * @throws Exception
+	 */
+	public static List<Node> CopyNodes(String flowNo, String[] nodeIds, int[] x, int[] y) throws Exception
+	{
+		BP.WF.Flow fl = new Flow(flowNo);
+		return fl.DoNewNodes(nodeIds,x, y);
 	}
 	/** 
 	 删除节点.

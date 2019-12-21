@@ -78,13 +78,10 @@ function OldVer() {
 }
 
 function Help() {
-
     var msg = "<ul>";
-    msg += "<li>开发者:济南驰骋信息技术有限公司.</li>";
-    msg += "<li>官方网站: <a href='http://www.ccflow.org' target=_blank>http://ccflow.org</a></li>";
-    msg += "<li>商务联系:0531-82374939, 微信:18660153393 QQ:793719823</li>";
-    msg += "<li>地址:济南是高新区齐鲁软件园C座B301室.</li>";
-    msg += "<li>公众帐号<img src='' border=0/></li>";
+    msg += "<li>KFLow流程管理平台！</li>";
+    msg += "<li>交流方式：微信:17888821571 QQ:2332832734</li>";
+    msg += "<li>地址:北航新主楼A515</li>";
     msg += "</ul>";
     mAlert(msg, 20000);
 }
@@ -185,3 +182,83 @@ function OpenEasyUiDialogExt(url, title, w, h, isReload) {
         }
     });
 }
+
+//创建节点
+function createNode(flowNo,_canvas) {
+    //获取坐标
+    var mLeft = $("#jqContextMenu").css("left").replace('px', '');
+    var mTop = $("#jqContextMenu").css("top").replace('px', '');
+
+
+    //创建一个节点
+    var hander = new HttpHandler("BP.WF.HttpHandler.WF_Admin_CCBPMDesigner2018");
+    hander.AddPara("X", mLeft);
+    hander.AddPara("Y", mTop);
+    hander.AddPara("FK_Flow", flowNo);
+
+    var data = hander.DoMethodReturnString("CreateNode");
+    if (data.indexOf('err@') == 0) {
+        alert(data);
+        return;
+    }
+
+    //添加节点样式与坐标
+    data = JSON.parse(data);
+    var strs = "";
+    strs += "{'id':'" + data.NodeID + "',";
+    strs += "'flow_id':'" + flowNo + "',";
+    strs += "'process_name':'" + data.Name + "',";
+    strs += "'process_to':0,";
+    strs += "'icon':'icon-ok',";
+    strs += "'style':'width:auto;height:41px;line-height:41px;color:#0e76a8;left:" + mLeft + "px;top:" + mTop + "px;'";
+    strs += "}";
+    strs = eval("(" + strs + ")");
+
+    if (_canvas.addProcess(strs) == false) //添加
+    {
+        alert("添加失败");
+        return;
+    }
+}
+
+
+//粘贴节点
+function pasteNode(flowNo,_canvas,nodeIds) {
+    //获取坐标
+    var mLeft = $("#jqContextMenu").css("left").replace('px', '');
+    var mTop = $("#jqContextMenu").css("top").replace('px', '');
+    //创建一个节点
+    var hander = new HttpHandler("BP.WF.HttpHandler.WF_Admin_CCBPMDesigner2018");
+    hander.AddPara("Xs", mLeft);
+    hander.AddPara("Ys", mTop);
+    hander.AddPara("nodeIds",nodeIds);
+    hander.AddPara("FK_Flow", flowNo);
+
+    var data = hander.DoMethodReturnString("pasteNode");
+    if (data.indexOf('err@') == 0) {
+        alert(data);
+        return;
+    }
+
+    //添加节点样式与坐标
+    debugger
+    data = JSON.parse(data);
+    for (var node in data){
+        var strs = "";
+        strs += "{'id':'" + node.NodeID + "',";
+        strs += "'flow_id':'" + flowNo + "',";
+        strs += "'process_name':'" + node.Name + "',";
+        strs += "'process_to':0,";
+        strs += "'icon':'icon-ok',";
+        strs += "'style':'width:auto;height:41px;line-height:41px;color:#0e76a8;left:" + mLeft + "px;top:" + mTop + "px;'";
+        strs += "}";
+        strs = eval("(" + strs + ")");
+
+        if (_canvas.addProcess(strs) == false) //添加
+        {
+            alert("添加失败");
+            return;
+        }
+    }
+}
+

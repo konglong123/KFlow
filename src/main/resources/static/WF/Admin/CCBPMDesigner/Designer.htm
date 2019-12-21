@@ -26,6 +26,9 @@
     <link rel="stylesheet" type="text/css" href="Public/js/jquery.multiselect2side/css/jquery.multiselect2side.css" />
     <script src="../../Scripts/EasyUIUtility.js" type="text/javascript"></script>
     <!--JL.plus-->
+    <!--easyui-->
+    <link href="../../Scripts/easyUI/themes/default/easyui.css" rel="stylesheet" type="text/css" />
+    <script src="../../Scripts/easyUI/jquery.easyui.min.js" type="text/javascript"></script>
 </head>
 <body>
     <div id="ShowMsg" class="panel window mymask mymaskContainer" style="display: none;
@@ -53,7 +56,7 @@
                     <!--<button class="btn btn-info" type="button" id="Btn_Rpt" onclick="FlowRpt()">
                         定义报表
                     </button>-->
-                    <button class="btn btn-info" type="button" id="Btn_Check" onclick="FlowCheck()">
+                   <!-- <button class="btn btn-info" type="button" id="Btn_Check" onclick="FlowCheck()">
                         检查流程
                     </button>
                     <button class="btn btn-danger" type="button" id="Btn_Run" onclick="FlowRun()">
@@ -61,7 +64,7 @@
                     </button>
                     <button class="btn btn-danger" type="button" id="Btn_RunIt" onclick="FlowRunAdmin()">
                         admin运行
-                    </button>
+                    </button>-->
                     <!--<button class="btn btn-danger" type="button" id="leipi_clear">清空连接</button>-->
                     <!--<button class="btn btn-info" type="button" id="Btn_OldVer" onclick="OldVer()" >旧版本</button>-->
                     <button class="btn btn-help" type="button" id="Btn_Reload" onclick="Reload()">
@@ -196,6 +199,7 @@
             <li id="pmfun"><i class="icon-wrench"></i>&nbsp;<span class="_label">节点类型</span><i class="icon-chevron-right"></i></li>
             <li id="pmNodeAccepterRole"><i class="icon-user"></i>&nbsp;<span class="_label">接收人规则</span></li>
             <li id="pmDelete"><i class="icon-trash"></i>&nbsp;<span class="_label">删除节点</span></li>
+            <li id="pmCopy"><i class="icon-trash"></i>&nbsp;<span class="_label">复制节点</span></li>
             <li id="pmCondDir"><i class="icon-share"></i>&nbsp;<span class="_label">方向条件</span></li>
             <li id="Li1"><i class="icon-plus"></i>&nbsp;<span class="_label" onclick="alert('用鼠标按住节点icon,然后拖拉会出现连接线，然后指向要连接到的节点.');">增加连接线</span></li>
         </ul>
@@ -216,9 +220,9 @@
         <ul>
             <li id="cmNewNode"><i class="icon-plus"></i>&nbsp;<span class="_label">新建节点</span></li>
             <li id="cmNewLabel"><i class="icon-plus"></i>&nbsp;<span class="_label">添加标签</span></li>
-            <!--  <li id="cmSave"><i class="icon-ok"></i>&nbsp;<span class="_label">保存设计</span></li>
-            <li id="cmRefresh"><i class="icon-refresh"></i>&nbsp;<span class="_label">刷新 F5</span></li>
-            <li id="cmPaste"><i class="icon-share"></i>&nbsp;<span class="_label">粘贴</span></li>-->
+            <!--&lt;!&ndash;  <li id="cmSave"><i class="icon-ok"></i>&nbsp;<span class="_label">保存设计</span></li>
+            <li id="cmRefresh"><i class="icon-refresh"></i>&nbsp;<span class="_label">刷新 F5</span></li>-->
+            <li id="cmPaste"><i class="icon-share"></i>&nbsp;<span class="_label">粘贴节点</span></li>
             <li id="Li3"><i class="icon-plus"></i>&nbsp;<span class="_label" onclick="alert('用鼠标按住节点icon,然后拖拉会出现连接线，然后指向要连接到的节点.');">增加连接线</span></li>
             <li id="cmHelp"><i class="icon-search"></i>&nbsp;<span class="_label">获得帮助</span></li>
         </ul>
@@ -230,7 +234,7 @@
         </ul>
     </div>
     <!--end div-->
-    <div class="container mini-layout" id="flowdesign_canvas">
+    <div class="container mini-layout" style="background-color: #97CBFF" id="flowdesign_canvas">
         <!--div class="process-step btn" style="left: 189px; top: 340px;"><span class="process-num badge badge-inverse"><i class="icon-star icon-white"></i>3</span> 步骤3</div-->
     </div>
     <script type="text/javascript" src="Public/js/jquery-1.7.2.min.js?2025"></script>
@@ -388,12 +392,13 @@
 
         var flowNo = null;
         $(function () {
+            //页面初始化
             flowNo = GetQueryString("FK_Flow");
             if (flowNo == undefined || flowNo == null)
                 flowNo = "002";
 
-            var alertModal = $('#alertModal'), attributeModal = $("#attributeModal");
-            var alertModal1 = $('#alertModal1'), attributeModal = $("#attributeModal");
+            var alertModal = $('#alertModal');
+            var alertModal1 = $('#alertModal1');
             var alertModal3 = $('#alertModal3'), attributeModal = $("#attributeModal");
             //消息提示
             mAlert = function (messages, s) {
@@ -451,7 +456,7 @@
             var processData = GenerDrowFlowData();
             //标签数据
             var labNoteData = GetLabNoteData();
-            console.log(processData);
+            //console.log(processData);
             /*创建流程设计器*/
             var _canvas = $("#flowdesign_canvas").Flowdesign({
                 "processData": processData,
@@ -464,41 +469,7 @@
                     "cmNewNode": function (t) {
                         $(".mymaskContainer").offset({ left: ($(document).innerWidth() - 120) / 2, top: ($(document).innerHeight() - 50) / 2 });
                         $(".mymask").show();
-
-                        //获取坐标
-                        var mLeft = $("#jqContextMenu").css("left").replace('px', '');
-                        var mTop = $("#jqContextMenu").css("top").replace('px', '');
-
-
-                        //创建一个节点
-                        var hander = new HttpHandler("BP.WF.HttpHandler.WF_Admin_CCBPMDesigner2018");
-                        hander.AddPara("X", mLeft);
-                        hander.AddPara("Y", mTop);
-                        hander.AddPara("FK_Flow", flowNo);
-
-                        var data = hander.DoMethodReturnString("CreateNode");
-                        if (data.indexOf('err@') == 0) {
-                            alert(data);
-                            return;
-                        }
-
-                        //添加节点样式与坐标
-                        data = JSON.parse(data);
-                        var strs = "";
-                        strs += "{'id':'" + data.NodeID + "',";
-                        strs += "'flow_id':'" + flowNo + "',";
-                        strs += "'process_name':'" + data.Name + "',";
-                        strs += "'process_to':0,";
-                        strs += "'icon':'icon-ok',";
-                        strs += "'style':'width:auto;height:41px;line-height:41px;color:#0e76a8;left:" + mLeft + "px;top:" + mTop + "px;'";
-                        strs += "}";
-                        strs = eval("(" + strs + ")");
-
-                        if (_canvas.addProcess(strs) == false) //添加
-                        {
-                            alert("添加失败");
-                            return;
-                        }
+                        createNode(flowNo,_canvas);
                         $(".mymask").hide();
                     },
                     "cmSave": function (t) {
@@ -554,10 +525,9 @@
                             alert("你未复制任何步骤");
                             return;
                         }
-                        alert("粘贴:" + pasteId);
+                        pasteNode(flowNo,_canvas,pasteId);
                     },
                     "cmHelp": function (t) {
-
                         Help();
                     }
                 }
@@ -575,7 +545,6 @@
                     "pmCopy": function (t) {
                         //var activeId = _canvas.getActiveId();//右键当前的ID
                         _canvas.copy(); //右键当前的ID
-                        alert("复制成功");
                     },
                     "pmDelete": function (t) {
 
@@ -991,7 +960,6 @@
         }
         //获得流程数据并转化为指定格式的json.
         function GenerDrowFlowData() {
-
             flowNo = GetQueryString("FK_Flow");
             if (flowNo == null || flowNo == undefined)
                 flowNo = "002";
@@ -1025,7 +993,7 @@
                 strs += "'process_name':'" + node.Name.replace(/(^\s*)|(\s*$)/g, "") + "',";
                 strs += "'process_to':'" + toNodes + "',";
 
-                //判断是否是开始节点?
+                //判断是否是开始节点?(此处限制一个流程中节点数目不超过99，否则此处代码有bug)
                 var nodeID = "" + node.NodeID;
                 var str = nodeID.substring(nodeID.length - 2);
 

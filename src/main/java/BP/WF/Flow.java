@@ -2,11 +2,10 @@ package BP.WF;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.UUID;
+import java.util.*;
 
 import BP.DA.*;
+import BP.Tools.EntityIdUtil;
 import org.apache.commons.lang.StringUtils;
 
 import BP.Difference.ContextHolderUtils;
@@ -4903,7 +4902,7 @@ public class Flow extends BP.En.EntityNoName {
 	 * @param path
 	 *            流程名称
 	 * @return
-	 * @throws ExceptionNewWork
+	 * @throws
 	 */
 	public static Flow DoLoadFlowTemplate(String fk_flowSort, String path, ImpFlowTempleteModel model)
 			throws Exception {
@@ -6227,6 +6226,88 @@ public class Flow extends BP.En.EntityNoName {
 		DBAccess.RunSQL("UPDATE WF_Node SET FWC_H=300,FTC_H=300 WHERE NodeID='" + nd.getNodeID() + "'");
 
 		// 周朋@于庆海需要翻译.
+		CreatePushMsg(nd);
+		return nd;
+	}
+/**
+*@Description:  nodeIds=null则创建新节点，否则复制新节点
+*@Param:
+*@return:
+*@Author: Mr.kong
+*@Date: 2019/12/20
+*/
+	public final List<Node> DoNewNodes(String[] nodeIds, int[] x, int[] y) throws Exception {
+		List<Node> nodesCurrent=this.getHisNodes().toList();//该流程下已经存在的节点
+		int len=nodeIds.length;
+		List<Node> nodesNew=new ArrayList<>(len);//将要新建的节点
+		List<String> nodeIdsNew=EntityIdUtil.getNodeIds(nodesCurrent,this.getNo(),len);
+
+		if (nodeIds==null){//新建节点
+			for (int i=0;i<len;i++){
+				Node node=createNode(nodeIdsNew.get(i),x[i],y[i]);
+				nodesNew.add(node);
+			}
+		}else {//复制节点
+			for (int i=0;i<len;i++){
+				Node node=new Node();
+				String nodeId=nodeIdsNew.get(i);
+				node.setNodeID(Integer.parseInt(nodeIds[i]));
+				node.Retrieve();//查询节点
+				node.setNodeID(Integer.parseInt(nodeId));
+				node.setStep(Integer.parseInt(nodeId.substring(nodeId.length()-2)));
+				node.setFK_Flow(this.getNo());
+				node.setName(node.getName()+"(复制)");
+				node.setX(x[i]);
+				node.setY(y[i]);
+				node.Insert();
+				nodesNew.add(node);
+			}
+		}
+		return nodesNew;
+	}
+
+	private Node createNode(String nodeIdStr,int x,int y) throws Exception{
+		Node nd=new Node();
+		int nodeId=Integer.parseInt(nodeIdStr);
+		nd.setNodeID(nodeId);
+		nd.setHisNodeWorkType(NodeWorkType.Work);
+		int idx=Integer.valueOf(nodeIdStr.substring(nodeIdStr.length()-2));//截取nodeId后两位作为step
+		nd.setName("节点" + idx);
+		nd.setHisNodePosType(NodePosType.Mid);
+		nd.setFK_Flow(this.getNo());
+		nd.setFlowName(this.getName());
+		nd.setX(x);
+		nd.setY(y);
+		nd.setStep(idx);
+		// 增加了两个默认值值 . 2016.11.15. 目的是让创建的节点，就可以使用.
+		nd.setCondModel(CondModel.SendButtonSileSelect); // 默认的发送方向.
+		nd.setHisDeliveryWay(DeliveryWay.BySelected); // 上一步发送人来选择.
+		nd.setFormType(NodeFormType.FoolForm); // 表单类型.
+
+		// 为创建节点设置默认值 @于庆海.
+		String file = SystemConfig.getPathOfDataUser() + "XML/DefaultNewNodeAttr.xml";
+		if ((new java.io.File(file)).isFile()) {
+			DataSet ds = new DataSet();
+			ds.readXml(file);
+
+			DataTable dt = ds.Tables.get(0);
+			for (DataColumn dc : dt.Columns) {
+				nd.SetValByKey(dc.ColumnName, dt.Rows.get(0).getValue(dc.ColumnName));
+			}
+		}
+		nd.setFWCVer(1);
+		//节点保存到数据库
+		nd.Insert();
+		//创建节点表单
+		nd.CreateMap();
+
+		// 通用的人员选择器.
+		BP.WF.Template.Selector select = new Selector(nd.getNodeID());
+		select.setSelectorModel(BP.WF.Template.SelectorModel.GenerUserSelecter);
+		select.Update();
+
+		// 设置审核组件的高度
+		DBAccess.RunSQL("UPDATE WF_Node SET FWC_H=300,FTC_H=300 WHERE NodeID='" + nd.getNodeID() + "'");
 		CreatePushMsg(nd);
 		return nd;
 	}

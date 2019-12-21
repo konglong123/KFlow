@@ -2,9 +2,11 @@ package BP.WF.HttpHandler;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
+import BP.WF.Node;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import BP.DA.DBAccess;
@@ -37,7 +39,7 @@ import BP.WF.Template.WorkflowDefintionManager;
 import BP.WF.XML.AdminMenu;
 import BP.WF.XML.AdminMenus;
 import BP.Web.WebUser;
- 
+
 
 /** 
  初始化函数
@@ -586,12 +588,12 @@ public class WF_Admin_CCBPMDesigner2018 extends WebContralBase
   			{
   				iY = (int)Double.parseDouble(y);
   			}
-              int nodeId = BP.WF.Template.TemplateGlo.NewNode(FK_Flow, iX, iY);
+  			int nodeId = BP.WF.Template.TemplateGlo.NewNode(FK_Flow, iX, iY);
 
-              BP.WF.Node node = new BP.WF.Node(nodeId);
-              node.Update();
+  			BP.WF.Node node = new BP.WF.Node(nodeId);
+  			node.Update();
 
-              java.util.Hashtable ht = new java.util.Hashtable();
+  			java.util.Hashtable ht = new java.util.Hashtable();
   			ht.put("NodeID", node.getNodeID());
   			ht.put("Name", node.getName());
 
@@ -601,6 +603,51 @@ public class WF_Admin_CCBPMDesigner2018 extends WebContralBase
 		{
 			return "err@" + ex.getMessage();
 		}
+	}
+	/**
+	*@Description:  
+	*@Param:  
+	*@return:
+	*@Author: Mr.kong
+	*@Date: 2019/12/20 
+	*/
+	public final String pasteNode() throws Exception{
+		try {
+			String FK_Flow=this.GetRequestVal("FK_Flow");
+			String[] nodeIds = this.GetRequestVal("nodeIds").split(",");
+			String[] xs = this.GetRequestVal("Xs").split(",");
+			String[] ys = this.GetRequestVal("Ys").split(",");
+			int len=nodeIds.length;
+			int[] iXs = new int[len];
+			int[] iYs = new int[len];
+			for (int i=0;i<len;i++){
+				iXs[i]=30;
+				iYs[i]=30;
+				if (!DotNetToJavaStringHelper.isNullOrEmpty(xs[i])){
+					iXs[i] = (int)Double.parseDouble(xs[i]);
+				}
+				if (!DotNetToJavaStringHelper.isNullOrEmpty(ys[i])){
+					iYs[i] = (int)Double.parseDouble(ys[i]);
+				}
+			}
+			List<Node> nodes= BP.WF.Template.TemplateGlo.CopyNodes(FK_Flow,nodeIds, iXs, iYs);
+
+			//将list转换成Json对象
+			StringBuilder sb=new StringBuilder();
+			sb.append("{\"list\":[");
+			for (Node node:nodes){
+				sb.append("{\"NodeId\":");
+				sb.append("\""+node.getNodeID()+"\",");
+				sb.append("\"Name\":");
+				sb.append("\""+node.getName()+"\"},");
+			}
+			sb.deleteCharAt(sb.toString().length()-1);//去除最后的逗号
+			sb.append("]}");
+			return sb.toString();
+		} catch (RuntimeException ex) {
+			return "err@" + ex.getMessage();
+		}
+
 	}
 	public final String CreatLabNote()
 	{
@@ -1315,7 +1362,7 @@ public class WF_Admin_CCBPMDesigner2018 extends WebContralBase
 	/** 
 	 让admin 登陆
 	 
-	 @param lang 当前的语言
+	 @param
 	 @return 成功则为空，有异常时返回异常信息
 	 * @throws Exception 
 	*/

@@ -1511,7 +1511,7 @@ public class MapData extends EntityNoName
 	 导入数据
 	 
 	 @param ds
-	 @param isSetReadony
+	 @param
 	 @return 
 	*/
 	public static MapData ImpMapData(DataSet ds)
