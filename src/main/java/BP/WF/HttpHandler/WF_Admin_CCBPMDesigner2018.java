@@ -615,34 +615,35 @@ public class WF_Admin_CCBPMDesigner2018 extends WebContralBase
 		try {
 			String FK_Flow=this.GetRequestVal("FK_Flow");
 			String[] nodeIds = this.GetRequestVal("nodeIds").split(",");
-			String[] xs = this.GetRequestVal("Xs").split(",");
-			String[] ys = this.GetRequestVal("Ys").split(",");
-			int len=nodeIds.length;
-			int[] iXs = new int[len];
-			int[] iYs = new int[len];
-			for (int i=0;i<len;i++){
-				iXs[i]=30;
-				iYs[i]=30;
-				if (!DotNetToJavaStringHelper.isNullOrEmpty(xs[i])){
-					iXs[i] = (int)Double.parseDouble(xs[i]);
-				}
-				if (!DotNetToJavaStringHelper.isNullOrEmpty(ys[i])){
-					iYs[i] = (int)Double.parseDouble(ys[i]);
-				}
+			String x = this.GetRequestVal("X");
+			String y = this.GetRequestVal("Y");
+			//初始化鼠标点坐标
+			int iX = 30;
+			int iY = 30;
+			if (!DotNetToJavaStringHelper.isNullOrEmpty(x)){
+				iX = (int)Double.parseDouble(x);
 			}
-			List<Node> nodes= BP.WF.Template.TemplateGlo.CopyNodes(FK_Flow,nodeIds, iXs, iYs);
+			if (!DotNetToJavaStringHelper.isNullOrEmpty(y)){
+				iY = (int)Double.parseDouble(y);
+			}
+
+			List<Node> nodes= BP.WF.Template.TemplateGlo.CopyNodes(FK_Flow,nodeIds, iX, iY);
 
 			//将list转换成Json对象
 			StringBuilder sb=new StringBuilder();
-			sb.append("{\"list\":[");
+			sb.append("[");
 			for (Node node:nodes){
 				sb.append("{\"NodeId\":");
 				sb.append("\""+node.getNodeID()+"\",");
 				sb.append("\"Name\":");
-				sb.append("\""+node.getName()+"\"},");
+				sb.append("\""+node.getName()+"\",");
+				sb.append("\"X\":");
+				sb.append("\""+node.getX()+"\",");
+				sb.append("\"Y\":");
+				sb.append("\""+node.getY()+"\"},");
 			}
 			sb.deleteCharAt(sb.toString().length()-1);//去除最后的逗号
-			sb.append("]}");
+			sb.append("]");
 			return sb.toString();
 		} catch (RuntimeException ex) {
 			return "err@" + ex.getMessage();

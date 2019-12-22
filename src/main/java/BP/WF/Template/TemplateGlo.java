@@ -71,7 +71,7 @@ public class TemplateGlo
 	 @return
 	  * @throws Exception
 	 */
-	public static List<Node> CopyNodes(String flowNo, String[] nodeIds, int[] x, int[] y) throws Exception
+	public static List<Node> CopyNodes(String flowNo, String[] nodeIds, int x, int y) throws Exception
 	{
 		BP.WF.Flow fl = new Flow(flowNo);
 		return fl.DoNewNodes(nodeIds,x, y);

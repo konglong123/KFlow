@@ -6236,15 +6236,18 @@ public class Flow extends BP.En.EntityNoName {
 *@Author: Mr.kong
 *@Date: 2019/12/20
 */
-	public final List<Node> DoNewNodes(String[] nodeIds, int[] x, int[] y) throws Exception {
+	public final List<Node> DoNewNodes(String[] nodeIds, int x, int y) throws Exception {
 		List<Node> nodesCurrent=this.getHisNodes().toList();//该流程下已经存在的节点
 		int len=nodeIds.length;
 		List<Node> nodesNew=new ArrayList<>(len);//将要新建的节点
 		List<String> nodeIdsNew=EntityIdUtil.getNodeIds(nodesCurrent,this.getNo(),len);
-
-		if (nodeIds==null){//新建节点
+        int dx=20;//默认平移20
+        int dy=20;
+		if (nodeIds==null){//新建节点，目前新建节点没有切换到该方法,目前支持新建一个
 			for (int i=0;i<len;i++){
-				Node node=createNode(nodeIdsNew.get(i),x[i],y[i]);
+				Node node=createNode(nodeIdsNew.get(i));
+				node.setX(x);
+				node.setY(y);
 				nodesNew.add(node);
 			}
 		}else {//复制节点
@@ -6257,8 +6260,13 @@ public class Flow extends BP.En.EntityNoName {
 				node.setStep(Integer.parseInt(nodeId.substring(nodeId.length()-2)));
 				node.setFK_Flow(this.getNo());
 				node.setName(node.getName()+"(复制)");
-				node.setX(x[i]);
-				node.setY(y[i]);
+				//将复制的第一个节点放置在当前鼠标处，其余节点以第一节点为依据，平移
+				if (dx==20&&dy==20) {
+					dx=x-node.getX();
+					dy=y-node.getY();
+				}
+				node.setY(node.getY() + dy);
+				node.setX(node.getX() + dx);
 				node.Insert();
 				nodesNew.add(node);
 			}
@@ -6266,7 +6274,7 @@ public class Flow extends BP.En.EntityNoName {
 		return nodesNew;
 	}
 
-	private Node createNode(String nodeIdStr,int x,int y) throws Exception{
+	private Node createNode(String nodeIdStr) throws Exception{
 		Node nd=new Node();
 		int nodeId=Integer.parseInt(nodeIdStr);
 		nd.setNodeID(nodeId);
@@ -6276,15 +6284,13 @@ public class Flow extends BP.En.EntityNoName {
 		nd.setHisNodePosType(NodePosType.Mid);
 		nd.setFK_Flow(this.getNo());
 		nd.setFlowName(this.getName());
-		nd.setX(x);
-		nd.setY(y);
 		nd.setStep(idx);
 		// 增加了两个默认值值 . 2016.11.15. 目的是让创建的节点，就可以使用.
 		nd.setCondModel(CondModel.SendButtonSileSelect); // 默认的发送方向.
 		nd.setHisDeliveryWay(DeliveryWay.BySelected); // 上一步发送人来选择.
 		nd.setFormType(NodeFormType.FoolForm); // 表单类型.
 
-		// 为创建节点设置默认值 @于庆海.
+		// 为创建节点设置默认值
 		String file = SystemConfig.getPathOfDataUser() + "XML/DefaultNewNodeAttr.xml";
 		if ((new java.io.File(file)).isFile()) {
 			DataSet ds = new DataSet();

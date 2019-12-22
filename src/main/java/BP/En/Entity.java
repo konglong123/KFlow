@@ -898,8 +898,8 @@ public abstract class Entity implements Serializable {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public int Retrieve() throws Exception {
 
-        /*如果是没有放入缓存的实体. @wangyanyan */
-        if (this.getEnMap().getDepositaryOfEntity() == Depositary.Application)
+        /*如果是放入缓存的实体.*/
+       /* if (this.getEnMap().getDepositaryOfEntity() == Depositary.Application)
         {
         	Row row = BP.DA.Cash2019.GetRow(this.toString(), this.getPKVal().toString());
             if (row != null)
@@ -907,7 +907,7 @@ public abstract class Entity implements Serializable {
                 this.setRow(row);
                 return 1;
             }
-        }
+        }*/
 		
 		// 如果是没有放入缓存的实体.
 		try {
@@ -1240,10 +1240,10 @@ public abstract class Entity implements Serializable {
 			throw ex;
 		}
 		
-        //更新缓存.  @wangyanyan
+       /* //更新缓存.  @wangyanyan
         if (this.getEnMap().getDepositaryOfEntity() == Depositary.Application)
             Cash2019.DeleteRow(this.toString(), this.getPKVal().toString());
-
+*/
 		this.afterDelete();
 
 		return i;

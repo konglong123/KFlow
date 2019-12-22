@@ -221,6 +221,14 @@ function createNode(flowNo,_canvas) {
     }
 }
 
+//复制节点时，将选中信息同步到复制tab页中,
+function updateCopyTab(nodeId,directionId,labelId) {
+    /*url = "../../Comm/En.htm?EnName=BP.WF.Template.FlowExt&PKVal=" + flowNo + "&Lang=CH";
+
+    //OpenEasyUiDialogExt(url, "流程属性", 900, 500, false);
+    window.parent.addTab(flowNo, "流程属性" + flowNo, url);*/
+}
+
 
 //粘贴节点
 function pasteNode(flowNo,_canvas,nodeIds) {
@@ -229,8 +237,8 @@ function pasteNode(flowNo,_canvas,nodeIds) {
     var mTop = $("#jqContextMenu").css("top").replace('px', '');
     //创建一个节点
     var hander = new HttpHandler("BP.WF.HttpHandler.WF_Admin_CCBPMDesigner2018");
-    hander.AddPara("Xs", mLeft);
-    hander.AddPara("Ys", mTop);
+    hander.AddPara("X", mLeft);
+    hander.AddPara("Y", mTop);
     hander.AddPara("nodeIds",nodeIds);
     hander.AddPara("FK_Flow", flowNo);
 
@@ -241,16 +249,16 @@ function pasteNode(flowNo,_canvas,nodeIds) {
     }
 
     //添加节点样式与坐标
-    debugger
     data = JSON.parse(data);
-    for (var node in data){
+    for (var index in data){
+        var node=data[index];
         var strs = "";
-        strs += "{'id':'" + node.NodeID + "',";
+        strs += "{'id':'" + node.NodeId + "',";
         strs += "'flow_id':'" + flowNo + "',";
         strs += "'process_name':'" + node.Name + "',";
         strs += "'process_to':0,";
         strs += "'icon':'icon-ok',";
-        strs += "'style':'width:auto;height:41px;line-height:41px;color:#0e76a8;left:" + mLeft + "px;top:" + mTop + "px;'";
+        strs += "'style':'width:auto;height:41px;line-height:41px;color:#0e76a8;left:" + node.X + "px;top:" + node.Y + "px;'";
         strs += "}";
         strs = eval("(" + strs + ")");
 
@@ -260,5 +268,11 @@ function pasteNode(flowNo,_canvas,nodeIds) {
             return;
         }
     }
+}
+
+//复制流程（可选择性复制流程）
+function FlowCopy() {
+    url = "../../Admin/CCBPMDesigner/copyNodes.html?PKVal=" + flowNo;
+    window.parent.addTab(flowNo, "复制流程" + flowNo, url);
 }
 

@@ -266,16 +266,12 @@
 
             //删除节点方向连接线
             $("#lineDel").click(function () {
-
                 //获取连接线连接的ID
                 var fromNodeID = c.sourceId.replace('window', '');
                 var toNodeID = c.targetId.replace('window', '');
 
                 //获取流程编号
                 var flowNo = GetQueryString("FK_Flow");
-                if (window.confirm("您确定要删除从节点[" + fromNodeID + "]，到节点[" + toNodeID + "]吗？") == false)
-                    return;
-
                 var hander = new HttpHandler("BP.WF.HttpHandler.WF_Admin_CCBPMDesigner2018");
                 hander.AddPara("FK_Node", fromNodeID);
                 hander.AddPara("FK_Flow", flowNo);
@@ -530,12 +526,21 @@
             copy: function (active_id) {
                 if (!active_id)
                     active_id = _canvas.find("#leipi_active_id").val();
-
-                _canvas.find("#leipi_copy_id").val(active_id);
-                return true;
+                var temp=_canvas.find("#leipi_copy_id");
+                var ids=temp.val();
+                debugger
+                if (ids==null||ids==0){
+                    temp.val(active_id);
+                } else {
+                    temp.val(ids+","+active_id);
+                }
+                return active_id;//返回nodeID，以供同步复制tab页使用
             },
             paste: function () {
-                return _canvas.find("#leipi_copy_id").val();
+                var temp=_canvas.find("#leipi_copy_id");
+                var ids=temp.val();
+                temp.val(0);//每次粘贴后，清空复制内容
+                return ids;
             },
             getProcessInfo: function () {
                 try {

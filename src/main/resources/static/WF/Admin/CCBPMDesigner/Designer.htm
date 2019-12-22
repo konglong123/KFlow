@@ -7,6 +7,7 @@
     <script src="../../Scripts/config.js" type="text/javascript"></script>
     <script src="../../Comm/Gener.js" type="text/javascript"></script>
     <script src="Public/Designer2018.js" type="text/javascript"></script>
+    <script src="../../MyFlowTree2017.js" type="text/javascript"></script>
     <!--JL.plus-->
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -52,6 +53,9 @@
                     </button>
                     <button class="btn btn-Property" type="button" id="Btn_FlowAttr" onclick="FlowProperty()">
                         流程属性
+                    </button>
+                    <button class="btn btn-Property" type="button" id="Btn_FlowCopy" onclick="FlowCopy()">
+                        流程复制
                     </button>
                     <!--<button class="btn btn-info" type="button" id="Btn_Rpt" onclick="FlowRpt()">
                         定义报表
@@ -430,7 +434,7 @@
                 if (!s) s = 200000;
                 $("#LineModal").find(".modal-body").html(messages);
                 $("#LineModal").modal('toggle');
-                setTimeout(function () { alertModal1.modal("hide") }, s);
+                /*setTimeout(function () { alertModal1.modal("hide") }, s);*/
             }
             //属性设置
             attributeModal.on("hidden", function () {
@@ -520,12 +524,12 @@
                         }
                     },
                     "cmPaste": function (t) {
-                        var pasteId = _canvas.paste(); //右键当前的ID
-                        if (pasteId <= 0) {
+                        var pasteIds = _canvas.paste(); //复制的ids
+                        if (pasteIds <= 0) {
                             alert("你未复制任何步骤");
                             return;
                         }
-                        pasteNode(flowNo,_canvas,pasteId);
+                        pasteNode(flowNo,_canvas,pasteIds);
                     },
                     "cmHelp": function (t) {
                         Help();
@@ -544,7 +548,8 @@
                     },
                     "pmCopy": function (t) {
                         //var activeId = _canvas.getActiveId();//右键当前的ID
-                        _canvas.copy(); //右键当前的ID
+                        var nodeId=_canvas.copy(); //右键当前的ID
+                        updateCopyTab(nodeId,null,null);//更新复制tab
                     },
                     "pmDelete": function (t) {
 
@@ -1004,7 +1009,6 @@
                 } else {
                     /* 如果是其他的情况,就要考虑分合流 */
                 }
-
 
                 strs += "'style':'width:auto;minWidth:121px;height:41px;line-height:41px;color:#0e76a8;left:" + node.X + "px" + ";top:" + node.Y + "px;'";
 
