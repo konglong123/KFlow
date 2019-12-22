@@ -549,7 +549,7 @@
                     "pmCopy": function (t) {
                         //var activeId = _canvas.getActiveId();//右键当前的ID
                         var nodeId=_canvas.copy(); //右键当前的ID
-                        updateCopyTab(nodeId,null,null);//更新复制tab
+                        //updateCopyTab(nodeId,null,null);//更新复制tab
                     },
                     "pmDelete": function (t) {
 
@@ -560,9 +560,6 @@
                             alert('开始节点不允许删除.');
                             return;
                         }
-
-                        if (confirm("你确定删除节点吗？如果当前节点有待办或者有数据，系统将拒绝删除。") == false)
-                            return;
 
                         //节点.
                         var hander = new HttpHandler("BP.WF.HttpHandler.WF_Admin_CCBPMDesigner2018");
@@ -608,9 +605,6 @@
                 canvasLabMenu: {
                     "clmDelete": function (t) {
                         var activeId = _canvas.getActiveId(); //右键当前的ID.
-                        if (confirm("你确定删除该标签吗？") == false)
-                            return;
-
                         //删除标签.
                         var lb = new Entity("BP.WF.Template.LabNote", activeId);
                         lb.Delete();
@@ -666,6 +660,7 @@
 
             /*保存*/
             $("#Btn_Save").bind('click', function () {
+                debugger
                 $("#Btn_Save").attr("disabled", true);
                 $("#Btn_Save").html("保存中...");
 
@@ -910,8 +905,6 @@
             catch (e) {
                 alert(e);
             }
-
-            //alert('保存成功!');
 
             $("#Btn_Save").attr("disabled", false);
             $("#Btn_Save").html("保存");

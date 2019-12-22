@@ -223,12 +223,11 @@ function createNode(flowNo,_canvas) {
 
 //复制节点时，将选中信息同步到复制tab页中,
 function updateCopyTab(nodeId,directionId,labelId) {
-    /*url = "../../Comm/En.htm?EnName=BP.WF.Template.FlowExt&PKVal=" + flowNo + "&Lang=CH";
+    url = "../../Comm/En.htm?EnName=BP.WF.Template.FlowExt&PKVal=" + flowNo + "&Lang=CH";
 
     //OpenEasyUiDialogExt(url, "流程属性", 900, 500, false);
-    window.parent.addTab(flowNo, "流程属性" + flowNo, url);*/
+    window.parent.addTab(flowNo, "流程属性" + flowNo, url);
 }
-
 
 //粘贴节点
 function pasteNode(flowNo,_canvas,nodeIds) {
