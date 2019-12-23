@@ -5,6 +5,8 @@ server:
 
 
 spring:
+  application:
+    name: kflow_web
   datasource:
     url: jdbc:mysql://localhost:3306/ccflow9?serverTimezone=GMT%2B8
     username: root
@@ -15,3 +17,9 @@ spring:
     restart:
       enabled: true
       additional-paths: src/main/java
+
+#eureka配置
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:80/eureka/
