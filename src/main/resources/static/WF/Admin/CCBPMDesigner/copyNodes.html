@@ -4,69 +4,101 @@
 
     <link rel="stylesheet" type="text/css" href="../../Style/themes/default/easyui_copyFlow.css">
     <link rel="stylesheet" type="text/css" href="../../Style/themes/default/icon_copyFlow.css">
+    <link rel="stylesheet" type="text/css" href="Public/css/bootstrap/css/ie.css?2025">
     <script type="text/javascript" src="../../Scripts/bootstrap/js/jquery.min.js"></script>
     <script type="text/javascript" src="../../Scripts/jquery.easyui.min.js"></script>
     <script src="../../Scripts/config.js" type="text/javascript"></script>
     <script src="../../Scripts/QueryString.js" type="text/javascript"></script>
     <script src="../../Comm/Gener.js" type="text/javascript"></script>
+    <script src="Public/Designer2018.js" type="text/javascript"></script>
 
 </head>
 <body>
-<h2>请选择需要复制的节点！</h2>
-
-<div class="easyui-panel" style="padding:5px">
-    <ul id="tt" class="easyui-tree" data-options="checkbox:true"></ul>
-</div>
+    <div class="container">
+        <table>
+            <tr>
+                <td>
+                    <div>
+                        <h2>请选择需要复制的节点！</h2>
+                    </div>
+                </td>
+                <td>
+                    <div>
+                        <button class="btn btn-Property" type="button" id="Btn_FlowAttr" onclick="copyFlow()">
+                            复制选中内容
+                        </button>
+                    </div>
+                </td>
+                <td>
+                    <div>
+                        <button class="btn btn-Property" type="button" id="Btn_FlowCopy" onclick="cancleCopy()">
+                            清空复制内容
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="easyui-panel" style="padding:5px">
+      <ul id="tt" class="easyui-tree" data-options="checkbox:true"></ul>
+    </div>
 <script type="text/javascript">
-    var flowNo=null;
     //界面初始化
     $(function(){
-        alert("jjwj");
+        var flowNo=GetQueryString("PKVal");
+        var str=JSON.parse(getTreeData(flowNo));
         $('#tt').tree({
-            data: [{
-                "id":1,
-                "text":"Foodssss",
-                "children":[{
-                    "id":2,
-                    "text":"Fruits",
-                    "state":"closed",
-                    "children":[{
-                        "text":"apple",
-                        "checked":true
-                    },{
-                        "text":"orange"
-                    }]
-                },{
-                    "id":3,
-                    "text":"Vegetables",
-                    "state":"open",
-                    "children":[{
-                        "text":"tomato",
-                        "checked":true
-                    },{
-                        "text":"carrot",
-                        "checked":true
-                    },{
-                        "text":"cabbage"
-                    },{
-                        "text":"potato",
-                        "checked":true
-                    },{
-                        "text":"lettuce"
-                    }]
-                }]
-            }]
+            data:str,
+            onDblClick: function (node) {
+                NodeAttr(node.id);
+            }
         });
     });
+    //获取Flow下的节点数据，Tree中data
+    function getTreeData(flowNo) {
+        //节点. 取出来显示
+        var temp="[{" + "\"id\":1," + "\"text\":\"流程节点\"," + "\"iconCls\":\"icon-save\"," + "\"children\":[";
+        var nodes = new Entities("BP.WF.Nodes");
+        nodes.Retrieve("FK_Flow", flowNo);
+        for (var index = 0; index < nodes.length; index++){
+            var node = nodes[index];
+            temp=temp+"{\"id\":"+node.NodeID+",";
+            temp=temp+"\"text\":\""+node.Name+"\"},";
+        }
+        temp=temp.substring(0,temp.length-1);
+        temp+="]}]";
+        return temp;
+    }
+
+    //批量复制流程节点
+    function copyFlow() {
+        var s=getChecked();
+        if (s==''){
+            alert("请选择需要复制的节点！");
+            return;
+        }
+        document.cookie="copyFlow="+s;//添加cookie
+        messageShow("节点复制成功！");
+    }
+
+    //清空批量复制节点内容
+    function cancleCopy() {
+        document.cookie = "copyFlow=; expires=Thu, 01 Jan 1970 00:00:00 GMT";//删除cookie
+        messageShow("清空复制数据成功！");
+    }
+
+    //获取Tree中被选中的叶节点
     function getChecked(){
         var nodes = $('#tt').tree('getChecked');
         var s = '';
         for(var i=0; i<nodes.length; i++){
             if (s != '') s += ',';
-            s += nodes[i].text;
+            if (nodes[i].id>100) //过滤掉非根节点
+                s += nodes[i].id;
         }
-        alert(s);
+        return s;
     }
+
 
 
 </script>

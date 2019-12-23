@@ -57,6 +57,9 @@
                     <button class="btn btn-Property" type="button" id="Btn_FlowCopy" onclick="FlowCopy()">
                         流程复制
                     </button>
+                    <button class="btn btn-Property" type="button" id="Btn_FlowSearch" onclick="searchFlow()">
+                        检索流程
+                    </button>
                     <!--<button class="btn btn-info" type="button" id="Btn_Rpt" onclick="FlowRpt()">
                         定义报表
                     </button>-->
@@ -524,10 +527,14 @@
                         }
                     },
                     "cmPaste": function (t) {
-                        var pasteIds = _canvas.paste(); //复制的ids
-                        if (pasteIds <= 0) {
-                            alert("你未复制任何步骤");
+                        var cIds=getCookie("copyFlow");//读取批量复制的节点数据
+                        var pasteIds = _canvas.paste(); //读取手动单个复制的节点数据
+                        if (cIds==""&&pasteIds <= 0) {
+                            alert("你未复制任何步骤!");
                             return;
+                        }
+                        if (cIds!=""){//优先批量复制
+                            pasteIds=cIds;
                         }
                         pasteNode(flowNo,_canvas,pasteIds);
                     },

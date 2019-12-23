@@ -269,9 +269,15 @@ function pasteNode(flowNo,_canvas,nodeIds) {
     }
 }
 
-//复制流程（可选择性复制流程）
+//复制流程（批量可选择性复制流程）
 function FlowCopy() {
     url = "../../Admin/CCBPMDesigner/copyNodes.html?PKVal=" + flowNo;
     window.parent.addTab(flowNo, "复制流程" + flowNo, url);
+}
+
+//查询流程
+function searchFlow(){
+    url = "./../CCBPMDesigner/SearchFlow.htm?Lang=CH";
+    addTab("SPO", "查询流程", url);
 }
 

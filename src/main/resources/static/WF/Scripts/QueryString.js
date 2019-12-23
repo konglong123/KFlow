@@ -46,4 +46,30 @@ function replaceParamVal(url, paramName, replaceWith) {
     return nUrl;
 }
 
+//获取cookie中cname的值，获取后删除cookie
+function getCookie(cname)
+{
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i].trim();
+        if (c.indexOf(name) == 0) {
+            document.cookie = "copyFlow=; expires=Thu, 01 Jan 1970 00:00:00 GMT";//删除cookie
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
+//封装消息提示代码，message为提示内容
+function messageShow(message) {
+    $.messager.show({
+        title:'提示',
+        msg:message,
+        timeout:150,
+        showType:'fade'
+    });
+}
+
+
 
