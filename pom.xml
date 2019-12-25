@@ -61,6 +61,7 @@
         </dependency>
 
         <!--springCloud相关-->
+        <!--eureka-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>

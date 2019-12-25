@@ -234,8 +234,8 @@ public class DataSet {
 	}
 
 	public void readXmlm(String xml) {
-		if (StringHelper.isNullOrEmpty(xml))
-			return;
+		/*if (StringHelper.isNullOrEmpty(xml))
+			return;readXmlm
 		try {
 			xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\r\n <NewDataSets>" + xml + "</NewDataSets>";
 			// 创建xml解析对象
@@ -268,7 +268,7 @@ public class DataSet {
 			this.Tables.add(oratb);
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 
 	public String getName() {
