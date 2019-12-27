@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
@@ -59,7 +58,6 @@ public class FeignController {
             String input_rows=request.getParameter("rows");
             rows=(input_rows==null)?10:Integer.parseInt(input_rows);
             String abstracts=request.getParameter("abstracts");
-
             Map<String, Object> postBody = new HashMap<>();
             postBody.put("startPoint", (page-1)*rows);
             postBody.put("pageLength", rows);

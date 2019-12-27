@@ -6,21 +6,33 @@ $(function(){
         pagination:true,
         pageSize: 10,
         pageList:[10,25,50,100],
+        nowrap:false,//数据多行显示
+        fitColumns:true,//表头与数据对齐
         url:"/WF/feign/getWF",
         queryParams: {
-            abstracts: "国家"
-        }
+            abstracts: ""
+        },
+        columns:[[
+            {field:'action',title: '操作',align: 'center',width:10,
+                formatter:function(val,rec){
+                    return "<input type='button' value='查看' onclick='gotoWorkflow('"+rec.workflowNo+")'>";
+                }},
+            {field:'id',title: '流程id',align: 'center',width:10},
+            {field:'workflowNo',title: '流程编号',align: 'center',width:10},
+            {field:'workflowName',title: '流程名',align: 'center',width:10},
+            {field:'abstracts',title: '功能性描述',align: 'center',width:10},
+            {field:'score',title: '相似度分值',align: 'center',width:10},
+            {field:'updateTime',title: '更新时间',align: 'center',width:10}
+        ]]  
     });
 });
-
+function gotoWorkflow(workflowNo) {
+    alert(workflowNo+"workflowNo");
+}
 function queryWorkflow() {
-    var abstracts=$.trim($("#abstractsText").val());
-    if (abstracts==null||abstracts==""){
-        alert("请输入流程的功能性描述！");
-        return;
-    }
-    $('#dg').datagrid({loadFilter:pagerFilter}).datagrid('loadData', getWorkflowData());
-
+    var queryParams = $('#dg').datagrid('options').queryParams;
+    queryParams.abstracts = $("#abstractsText").val();
+    $("#dg").datagrid('reload');
 }
 function resetText() {
     $("#abstractsText").val("");
