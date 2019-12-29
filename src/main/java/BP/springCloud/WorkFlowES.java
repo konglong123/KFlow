@@ -12,8 +12,7 @@ import java.util.Date;
 
 public class WorkFlowES implements Serializable {
     private Long id;//ES主键
-    /**标题*/
-    private String title;
+    private String name;
 
     /**摘要……是es检索的重点内容*/
     private String abstracts;
@@ -32,12 +31,12 @@ public class WorkFlowES implements Serializable {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getAbstracts() {
@@ -76,7 +75,7 @@ public class WorkFlowES implements Serializable {
     public String toString() {
         return "WorkFlowES{" +
                 "id=" + id +
-                ", title='" + title + '\'' +
+                ", name='" + name + '\'' +
                 ", abstracts='" + abstracts + '\'' +
                 ", mysqlId='" + mysqlId + '\'' +
                 ", updateTime=" + updateTime +

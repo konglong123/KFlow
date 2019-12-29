@@ -8,16 +8,11 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import BP.springCloud.FeignTool;
 import org.apache.commons.lang.StringUtils;
 
 import com.sun.star.bridge.oleautomation.Decimal;
@@ -629,7 +624,9 @@ public class WF_Comm extends WebContralBase {
 	 */
 	public final String Entity_Update() throws Exception {
 		try {
-			Entity en = ClassFactory.GetEn(this.getEnName());
+			String enName=this.getEnName();
+			updateToEs(enName);
+			Entity en = ClassFactory.GetEn(enName);
 			en.setPKVal(this.getPKVal());
 			en.RetrieveFromDBSources();
 
@@ -641,6 +638,18 @@ public class WF_Comm extends WebContralBase {
 			return en.Update() + ""; // 返回影响行数.
 		} catch (RuntimeException ex) {
 			return "err@" + ex.getMessage();
+		}
+	}
+
+	private void updateToEs(String enName){
+		if (enName.equals("BP.WF.Template.FlowExt")){
+			java.util.Map<String, Object> postBody = new HashMap<>();
+			String no=this.GetRequestVal("No");
+			postBody.put("id",no);
+			postBody.put("mysqlId",no);
+			postBody.put("name",this.GetRequestVal("Name"));
+			postBody.put("abstracts",this.GetRequestVal("Note"));
+			FeignTool.updateToES(postBody);
 		}
 	}
 

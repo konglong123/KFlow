@@ -278,6 +278,6 @@ function FlowCopy() {
 //查询流程
 function searchFlow(){
     url = "./../CCBPMDesigner/SearchFlow.htm?Lang=CH";
-    window.parent.addTab(flowNo, "查询流程", url);
+    window.parent.addTab(flowNo, "语义查询", url);
 }
 

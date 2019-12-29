@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,13 +35,13 @@ import java.util.Map;
 @RequestMapping("feign")
 public class FeignController {
 
-    private static RestTemplate template=new RestTemplate();
 
     @RequestMapping("/addWF")
     @ResponseBody
     public String add(Long id,String abstracts){
-        String result=template.getForEntity("http://112.125.90.132:8082/es/addWorkflow?abstracts="+abstracts+"&id="+id,String.class).getBody();
-        return result;
+       /* String result=FeignTool.template.getForEntity("http://112.125.90.132:8082/es/addWorkflow?abstracts="+abstracts+"&id="+id,String.class).getBody();
+        return result;*/
+       return "no available";
     }
 
     @RequestMapping("/getWF")
@@ -63,11 +64,15 @@ public class FeignController {
             postBody.put("pageLength", rows);
             postBody.put("abstracts", abstracts);
             HttpEntity<Map> requestEntity = new HttpEntity<>(postBody, null);
-            ResponseEntity<Page> resTemp = template.postForEntity("http://112.125.90.132:8082/es/getWFDsl", requestEntity, Page.class);
+            ResponseEntity<Page> resTemp = FeignTool.template.postForEntity("http://112.125.90.132:8082/es/getWFDsl", requestEntity, Page.class);
             Page pageResult=resTemp.getBody();
             Map<String, Object> jsonMap = new HashMap<>();//定义map
             jsonMap.put("total", pageResult.getTotalNums());//total键 存放总记录数，必须的
-            jsonMap.put("rows", pageResult.getData());//rows键 存放每页记录 list
+            if (pageResult.getData()==null){
+                jsonMap.put("rows", new ArrayList<>());//消除查询结果为空时，前端报错
+            }else {
+                jsonMap.put("rows", pageResult.getData());//rows键 存放每页记录 list
+            }
             String result = JSONObject.fromObject(jsonMap).toString();//格式化result   一定要是JSONObject
             out.print(result);
             out.flush();
@@ -85,33 +90,7 @@ public class FeignController {
     *@Author: Mr.kong
     *@Date: 2019/12/26 
     */
-    private void setTemplate() throws Exception{
-        // 解决(响应数据可能)中文乱码的问题
-        List<HttpMessageConverter<?>> converterList = template.getMessageConverters();
-        converterList.remove(1); // 移除原来的转换器
-        // 设置字符编码为utf-8
-        HttpMessageConverter<?> converter = new StringHttpMessageConverter(StandardCharsets.UTF_8);
-        converterList.add(1, converter); // 添加新的转换器(注:convert顺序错误会导致失败)
-        template.setMessageConverters(converterList);
+    private void setTemplate() throws Exception {
 
-        String httpBody = null;
-        HttpEntity<String> httpEntity = new HttpEntity<String>(httpBody, null);
-        URI uri = URI.create("http://112.125.90.132:8082/es/getWF");
-
-        //  -------------------------------> 执行请求并返回结果
-        // 此处的泛型  对应 响应体数据   类型;即:这里指定响应体的数据装配为String
-        ResponseEntity<String> response =
-                template.exchange(uri, HttpMethod.GET, httpEntity, String.class);
-
-        // -------------------------------> 响应信息
-        //响应码,如:401、302、404、500、200等
-        System.err.println(response.getStatusCodeValue());
-        Gson gson = new Gson();
-        // 响应头
-        System.err.println(gson.toJson(response.getHeaders()));
-        // 响应体
-        if(response.hasBody()) {
-            System.err.println(response.getBody());
-        }
     }
 }

@@ -4603,7 +4603,8 @@ public class Flow extends BP.En.EntityNoName {
 
 		Map map = new Map("WF_Flow", "流程");
 		map.Java_SetDepositaryOfEntity(Depositary.Application);
-		map.Java_SetCodeStruct("3");
+		//folw编码长度，10
+		map.Java_SetCodeStruct("10");
 
 		map.AddTBStringPK(FlowAttr.No, null, "编号", true, true, 1, 10, 3);
 		map.AddTBString(FlowAttr.Name, null, "名称", true, false, 0, 500, 10);

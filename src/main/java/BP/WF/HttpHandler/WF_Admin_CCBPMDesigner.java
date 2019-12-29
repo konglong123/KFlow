@@ -98,10 +98,13 @@ public class WF_Admin_CCBPMDesigner extends WebContralBase
 		ds.Tables.add(dt);
 		return BP.Tools.Json.ToJson(ds);
 	}
-	 /// <summary>
-    /// 执行流程设计图的保存.
-    /// </summary>
-    /// <returns></returns>
+	/**
+	*@Description:  保存流程（节点位置、连接方向，标签位置）
+	*@Param:
+	*@return:
+	*@Author: Mr.kong
+	*@Date: 2019/12/28
+	*/
     public String Designer_Save()
     {
         String sql = "";
@@ -114,7 +117,7 @@ public class WF_Admin_CCBPMDesigner extends WebContralBase
             	if(item==null||item.length() ==0)
                 	continue;
                 String[] strs = item.split(",");
-                
+
                 sql = "UPDATE WF_Node SET X=" + strs[1] + ",Y=" + strs[2] + " WHERE NodeID=" + strs[0];
                 DBAccess.RunSQL(sql);
             }
@@ -143,8 +146,8 @@ public class WF_Admin_CCBPMDesigner extends WebContralBase
                 DBAccess.RunSQL(sql);
             }
 
-            Flow fl = new Flow(this.getFK_Flow());
-            fl.DoCheck();
+            /*Flow fl = new Flow(this.getFK_Flow());
+            fl.DoCheck();*/
 
             return "保存成功.";
         }
@@ -1499,6 +1502,14 @@ public class WF_Admin_CCBPMDesigner extends WebContralBase
 	{
 		return WorkflowDefintionManager.DeleteFlowTemplete(this.getFK_Flow());
 	}
+	
+	/**
+	*@Description: 新建流程时，
+	*@Param:  
+	*@return:  
+	*@Author: Mr.kong
+	*@Date: 2019/12/28 
+	*/
 	public final String NewFlow()
 	{
 		try

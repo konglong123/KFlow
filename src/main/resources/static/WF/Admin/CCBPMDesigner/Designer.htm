@@ -667,7 +667,6 @@
 
             /*保存*/
             $("#Btn_Save").bind('click', function () {
-                debugger
                 $("#Btn_Save").attr("disabled", true);
                 $("#Btn_Save").html("保存中...");
 
@@ -702,7 +701,6 @@
                 processInfo = JSON.parse(processInfo);
 
                 for (var nodeID in processInfo) {
-
                     var nodeIDStr = JSON.stringify(nodeID);
 
                     var nodeJSON = processInfo[nodeID];
@@ -809,50 +807,33 @@
             return;
         }
 
-        ///保存方法
+        //保存方法
         function SaveFlow(_canvas) {
-
             //获取所有节点信息.
             try {
-
                 var nodes = new Entities("BP.WF.Template.NodeSimples");
                 nodes.Retrieve("FK_Flow", flowNo);
-
-                // 保存x,y位置.
+                // processInfo格式[{"nodeId":｛"top":xx,"left":xx,"process_to":{"nodeId","nodeId"}｝},……]
                 var processInfo = _canvas.getProcessInfo(); //连接信息.
                 processInfo = JSON.parse(processInfo);
-
-                //定义要生成的字符串.
+                //定义要生成的字符串.位置信息字符串，@nodeId,x,y@nodeId,x,y的格式
                 var nodePos = "";
+                //方向的字符串.
+                var myDirs = "";
                 for (var nodeID in processInfo) {
-
                     var nodeIDStr = JSON.stringify(nodeID);
-
                     var nodeJSON = processInfo[nodeID];
-
-                    for (var idx = 0; idx < nodes.length; idx++) {
-
+                    //组装位置信息
+                    var nodesLen=nodes.length;
+                    for (var idx = 0; idx < nodesLen; idx++) {
                         var node = nodes[idx];
                         var myID = "\"" + node.NodeID + "\"";
                         if (myID != nodeIDStr)
                             continue;
-
                         nodePos += "@" + node.NodeID + "," + nodeJSON.left + "," + nodeJSON.top;
                         break;
                     }
-                }
-
-                //方向的字符串.
-                var myDirs = "";
-
-                //保存方向.
-                for (var nodeID in processInfo) {
-
-                    //获得toNode.
-                    var nodeJSON = processInfo[nodeID];
-                    var strs = JSON.stringify(nodeJSON);
-
-                    //获得toNode.
+                    //组装方向信息
                     var toNodes = nodeJSON.process_to;
                     if (toNodes == "")
                         continue;
@@ -884,38 +865,26 @@
                     }
                 }
 
-
                 var labs = "";
-                //标签.
+                //更新标签位置信息
                 var labNoteInfo = _canvas.getLabNoteInfo(); //标签信息.
                 labNoteInfo = JSON.parse(labNoteInfo);
                 for (var lab in labNoteInfo) {
-
                     var labJSON = labNoteInfo[lab];
-
                     labs += "@" + lab + "," + labJSON.left + "," + labJSON.top;
                 }
-
                 var handler = new HttpHandler("BP.WF.HttpHandler.WF_Admin_CCBPMDesigner");
                 handler.AddPara("Nodes", nodePos);
                 handler.AddPara("Dirs", myDirs);
                 handler.AddPara("Labs", labs);
                 handler.AddPara("FK_Flow", flowNo);
                 var data = handler.DoMethodReturnString("Designer_Save");
-
-                if (data.indexOf('err@') != 0) {
-                    alert(data);
-                }
-
-
+                alert(data);
+            } catch (e) {
+                alert(e);;
             }
-            catch (e) {
-                alert(e);
-            }
-
             $("#Btn_Save").attr("disabled", false);
             $("#Btn_Save").html("保存");
-            return;
         }
 
         //修改节点名称

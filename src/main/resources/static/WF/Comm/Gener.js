@@ -1274,7 +1274,6 @@ var Entity = (function () {
             return result;
         },   //一个参数直接传递,  多个参数，参数之间使用 ~隔开， 比如: zhangsna~123~1~山东济南.
         DoMethodReturnString: function (methodName, myparams) {
-            debugger
             var params = "";
             if (myparams == null || myparams == undefined)
                 myparams = "";

@@ -528,7 +528,6 @@
                     active_id = _canvas.find("#leipi_active_id").val();
                 var temp=_canvas.find("#leipi_copy_id");
                 var ids=temp.val();
-                debugger
                 if (ids==null||ids==0){
                     temp.val(active_id);
                 } else {

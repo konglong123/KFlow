@@ -385,6 +385,7 @@ public class FlowExt extends EntityNoName
             "ChartType", "@0=几何图形@1=肖像图片");
    	 //运行主机. 这个流程运行在那个子系统的主机上.
         map.AddTBString("HostRun", null, "运行主机(IP+端口)", true, false, 0, 40, 10, true);
+		map.AddTBStringDoc(FlowAttr.Note, null, "流程功能性描述", true, false, true);
       //  #endregion 基本属性。
 
        // #region 表单数据.
@@ -428,7 +429,6 @@ public class FlowExt extends EntityNoName
         //map.AddTBString("NodeAppType", null, "业务类型枚举", true, false, 0, 50, 10, true);
         map.AddTBString(FlowAttr.DesignerNo, null, "设计者编号", true, false, 0, 50, 10, false);
         map.AddTBString(FlowAttr.DesignerName, null, "设计者名称", true, false, 0, 50, 10, false);
-        map.AddTBStringDoc(FlowAttr.Note, null, "流程描述", true, false, true);
        // #endregion 开发者信息.
 
 
