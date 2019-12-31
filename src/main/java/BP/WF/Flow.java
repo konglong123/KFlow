@@ -6427,7 +6427,7 @@ public class Flow extends BP.En.EntityNoName {
 			nd.setY(150);
 			nd.setICON("前台");
 
-			// 增加了两个默认值值 . 2016.11.15. 目的是让创建的节点，就可以使用.
+			// 增加了两个默认值值 . 目的是让创建的节点，就可以使用.
 			nd.setCondModel(CondModel.SendButtonSileSelect); // 默认的发送方向.
 			nd.setHisDeliveryWay(DeliveryWay.BySelected); // 上一步发送人来选择.
 			nd.setFormType(NodeFormType.FoolForm); // 表单类型.
@@ -6435,7 +6435,6 @@ public class Flow extends BP.En.EntityNoName {
 			nd.CreateMap();
 			// nd.getHisWork().CheckPhysicsTable();
 
-			// 周朋@于庆海需要翻译.
 			CreatePushMsg(nd);
 			// 通用的人员选择器.
 			BP.WF.Template.Selector select = new Selector(nd.getNodeID());
@@ -6454,12 +6453,12 @@ public class Flow extends BP.En.EntityNoName {
 			nd.setY(250);
 			nd.setICON("审核");
 
-			// 增加了两个默认值值 . 2016.11.15. 目的是让创建的节点，就可以使用.
+			// 增加了两个默认值值  目的是让创建的节点，就可以使用.
 			nd.setCondModel(CondModel.SendButtonSileSelect); // 默认的发送方向.
 			nd.setHisDeliveryWay(DeliveryWay.BySelected); // 上一步发送人来选择.
 			nd.setFormType(NodeFormType.FoolForm); // 表单类型.
 
-			// 为创建节点设置默认值 @于庆海.
+			// 为创建节点设置默认值.
 			String fileNewNode = SystemConfig.getPathOfDataUser() + "XML/DefaultNewNodeAttr.xml";
 			if ((new java.io.File(fileNewNode)).isFile()) {
 				DataSet ds_NodeDef = new DataSet();
@@ -6474,7 +6473,6 @@ public class Flow extends BP.En.EntityNoName {
 			nd.Insert();
 			nd.CreateMap();
 			// nd.getHisWork().CheckPhysicsTable();
-			// 周朋@于庆海需要翻译.
 			CreatePushMsg(nd);
 
 			// 通用的人员选择器.

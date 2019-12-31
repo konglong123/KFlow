@@ -433,16 +433,8 @@ public class FrmSubFlow extends Entity
 
 		map.AddDDLSysEnum(FrmSubFlowAttr.SFOpenType,0, "打开子流程显示", true, true, FrmSubFlowAttr.SFOpenType, "@0=工作查看器@1=傻瓜表单轨迹查看器"); //此属性暂时没有用.
 
-
-
-
-			///#endregion 此处变更了 NodeSheet类中的，map 描述该部分也要变更.
-
 		this.set_enMap(map);
 		return this.get_enMap();
 	}
 
-		///#endregion
-
- 
 }

@@ -171,7 +171,7 @@
 					.attr("style", row.style)
 					.attr("process_to", row.process_to)
 					.attr("process_id", row.id)
-					.addClass("process-step btn btn-small")//给节点名称添加一个span元素
+					.addClass("process-step btn btn-small")//给节点名称添加一个span元素(该处未来可以更改节点形状)
 					.html('<span class="process-flag badge ' + badge + '"  alt=' + nodeId + ' ><i class="' + icon + ' icon-white"></i></span>&nbsp;<span id="span_' + row.id + '"  >' + row.process_name + '</span>')
 					.mousedown(function (e) {
 					    if (e.which == 3) { //右键绑定

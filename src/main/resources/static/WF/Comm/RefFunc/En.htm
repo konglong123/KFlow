@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <title>ccform正在加载请稍候...</title>
+    <title>KFLow正在加载请稍候...</title>
 
 
 	<link rel="stylesheet" type="text/css" href="../../Scripts/easyUI/themes/gray/easyui.css" />
@@ -54,7 +54,6 @@
         var dtM; //方法集合.
         var url;
         $(function () {
-
             var httpHandler = new HttpHandler("BP.WF.HttpHandler.WF_CommEntity");
             var enName = GetQueryString("EnName");
             var type = GetQueryString("type");
@@ -63,10 +62,8 @@
             var isReadonly = GetQueryString("isReadonly");
             httpHandler.AddPara("EnName", enName);
 
-
             //获取URL的参数问题
             var param = document.location.search.substr(1);
-
 
             url = "../RefFunc/EnOnly.htm?" + param;
             if (pkVal != null) {
@@ -99,7 +96,6 @@
             var userRegedit = new Entity("BP.Sys.UserRegedit");
             userRegedit.SetPKVal(mypk);
             userRegedit.RetrieveFromDBSources();
-
             //求出所有的分组名称.
             var groupName = "@基本信息";
             for (var i = 0; i < dtM.length; i++) {
@@ -126,7 +122,7 @@
                     continue;
                 if (userRegedit!=null && userRegedit!=undefined && userRegedit.MVals.indexOf(",dtM_" + gName + ",") != -1)
                     continue;
-                if (gNames.length == 2 && gName.indexOf('基本信息') != -1)
+                if (gNames.length == 2 && gName.indexOf('基本信息') != -1)//此时后面会发生错误，多了一个/div>，（原始设计不知道，因此先不改）
                     html += "";
                 else
                     html += "<div title='" + gName + "' style='overflow:auto;'>";
@@ -145,12 +141,10 @@
                     if (myName == null || myName == "")
                         myName = "基本信息";
 
-
-
                     if (gName != myName)
                         continue;
 
-
+                    //过滤掉Attr上设置的链接
                     if ((en.RefAttrKey != null && en.RefAttrKey != "") || en.IsCanBatch == "1" || en.Visable == "0")
                         continue;
 
@@ -168,6 +162,7 @@
             $.parser.parse("#Left");
         }
 
+        //组装每个Dtl的html语句
         function GenerRM(rm) {
 
             var icon = rm.Icon;

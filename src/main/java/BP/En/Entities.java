@@ -1605,29 +1605,23 @@ public abstract class Entities extends ArrayList<Entity>
 	 * 
 	 * @return DataTable
 	 */
-	public final DataTable ToDataTableField(String tableName)
-	{
+	public final DataTable ToDataTableField(String tableName) {
 		DataTable dt = this.ToEmptyTableField();
 		
 		Entity en = this.getGetNewEntity();
 		Attrs attrs = en.getEnMap().getAttrs();
 		
 		dt.TableName = tableName;
-		for (Entity myen : convertEntities(this))
-		{
+		for (Entity myen : convertEntities(this)) {
 			DataRow dr = dt.NewRow();
-			for (Attr attr : attrs)
-			{
-				if (attr.getMyDataType() == DataType.AppBoolean)
-				{
-					if (myen.GetValIntByKey(attr.getKey()) == 1)
-					{
+			for (Attr attr : attrs) {
+				if (attr.getMyDataType() == DataType.AppBoolean) {
+					if (myen.GetValIntByKey(attr.getKey()) == 1) {
 						dr.setValue(attr.getKey(), "1");
 						/*
 						 * warning dr[attr.getKey()] = "1";
 						 */
-					} else
-					{
+					} else {
 						dr.setValue(attr.getKey(), "0");
 						/*
 						 * warning dr[attr.getKey()] = "0";
@@ -1639,16 +1633,14 @@ public abstract class Entities extends ArrayList<Entity>
 				// 如果是外键 就要去掉左右空格。
 				// *
 				if (attr.getMyFieldType().equals(FieldType.FK)
-						|| attr.getMyFieldType().equals(FieldType.PKFK))
-				{
+						|| attr.getMyFieldType().equals(FieldType.PKFK)) {
 					dr.setValue(attr.getKey(), myen.GetValByKey(attr.getKey())
 							.toString().trim());
 					/*
 					 * warning dr[attr.getKey()] =
 					 * myen.GetValByKey(attr.getKey()).toString().trim();
 					 */
-				} else
-				{
+				} else {
 					dr.setValue(attr.getKey(), myen.GetValByKey(attr.getKey()));
 					/*
 					 * warning dr[attr.getKey()] =

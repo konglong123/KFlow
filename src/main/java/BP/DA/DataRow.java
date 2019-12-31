@@ -177,12 +177,10 @@ public class DataRow extends LinkedHashMap<String, Object>
 	 *            行名稱
 	 * @return Object
 	 */
-	public Object getValue(String columnName)
-	{
+	public Object getValue(String columnName){
 		 
 		Object obj = this.get(columnName);
-		if (obj == null)
-		{
+		if (obj == null) {
 			if(!StringUtils.isEmpty(this.get(columnName.toLowerCase()))){
 				obj = this.get(columnName.toLowerCase());
 			}if(!StringUtils.isEmpty(this.get(columnName.toUpperCase()))){

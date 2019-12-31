@@ -189,30 +189,27 @@ public class WF_CommEntity extends WebContralBase {
     }
     
 
-  //  #region 实体的操作.
-    /// <summary>
-    /// 实体初始化
-    /// </summary>
-    /// <returns></returns>
-    public final String EntityOnly_Init()
-    {
-        try
-        {
+/**
+*@Description: 初始化实体，针对页面“基础信息”中基本属性
+*@Param:  
+*@return:  
+*@Author: Mr.kong
+*@Date: 2019/12/30 
+*/
+    public final String EntityOnly_Init(){
+        try {
             //是否是空白记录.
             boolean isBlank = DataType.IsNullOrEmpty(this.getPKVal());
 
             //初始化entity.
             String enName = this.getEnName();
             Entity en = null;
-            if (isBlank == true)
-            {
+            if (isBlank == true) {
                 if (DataType.IsNullOrEmpty(this.getEnsName()) == true)
                     return "err@类名没有传递过来";
                 Entities ens = ClassFactory.GetEns(this.getEnsName());
                 en = ens.getGetNewEntity();
-            }
-            else
-            {
+            } else {
                 en = ClassFactory.GetEn(this.getEnName());
             }
 
@@ -222,21 +219,18 @@ public class WF_CommEntity extends WebContralBase {
             //获得描述.
             Map map = en.getEnMap();
             String pkVal = this.getPKVal();
-            if (isBlank == false)
-            {
+            if (isBlank == false) {
                 en.setPKVal(pkVal);
                 int i = en.RetrieveFromDBSources();
                 if(i == 0)
                 	 return "err@数据[" + map.getEnDesc() + "]主键为[" + pkVal + "]不存在，或者没有保存。";
             }
-            else
-            {
+            else {
                 for (Attr attr : en.getEnMap().getAttrs() )
                     en.SetValByKey(attr.getKey(), attr.getDefaultVal());
 
                 //设置默认的数据.
                 en.ResetDefaultVal();
-
                 en.SetValByKey("RefPKVal", this.getRefPKVal());
                 
                 //自动生成一个编号.
@@ -252,7 +246,7 @@ public class WF_CommEntity extends WebContralBase {
             md.setNo( this.getEnName());
             md.setName(  map.getEnDesc());
             
-            //附件类型.
+            //附件类型.(添加AtPara字段)
             md.SetPara("BPEntityAthType", map.HisBPEntityAthType.ordinal());
 
            // #region 加入权限信息.
@@ -261,13 +255,10 @@ public class WF_CommEntity extends WebContralBase {
                 md.SetPara("IsInsert", "1");
             if (en.getHisUAC().IsUpdate)
                 md.SetPara("IsUpdate", "1");
-            if (isBlank == true)
-            {                
+            if (isBlank == true) {
                 if (en.getHisUAC().IsDelete)
                     md.SetPara("IsDelete", "0");
-            }
-            else
-            {
+            } else {
                 if (en.getHisUAC().IsDelete)
                     md.SetPara("IsDelete", "1");
             }
@@ -280,11 +271,11 @@ public class WF_CommEntity extends WebContralBase {
             DataTable dtMain = en.ToDataTableField("MainTable");
             ds.Tables.add(dtMain);
 
-           // #region 增加上分组信息.
+           // #region 增加分组（基本属性的分组）信息.（开始）
             EnCfg ec = new EnCfg();
             ec.setNo(this.getEnName());
             ec.RetrieveFromDBSources();
-            
+            //配置信息暂不知道在哪完成配置，似乎是自定义属性
             
             String groupTitle = ec.getGroupTitle();
             if (DataType.IsNullOrEmpty(groupTitle) == true)
@@ -299,8 +290,7 @@ public class WF_CommEntity extends WebContralBase {
             dtGroups.Columns.Add(new DataColumn("CtrlID", String.class, true));
 
             String[] strs = groupTitle.split("@");
-            for (String str : strs)
-            {
+            for (String str : strs) {
                 if (DataType.IsNullOrEmpty(str))
                     continue;
 
@@ -334,22 +324,23 @@ public class WF_CommEntity extends WebContralBase {
 
             sys_MapAttrs.Columns.get(MapAttrAttr.GroupID).setDataType(String.class); //改变列类型.
 
-            //给字段增加分组.
+            //给字段增加分组.分组的前提是属性已经按照分组进行的有序排列,默认NoodId到Sendlab属于NoodId分组
+            //NoodId……，Sendlab……RunModel……AutoJumpRole
             String currGroupID = "";
-            for (DataRow drAttr : sys_MapAttrs.Rows)
-            {
+            for (DataRow drAttr : sys_MapAttrs.Rows) {
                 if (currGroupID.equals("") == true)
                     currGroupID = dtGroups.Rows.get(0).getValue("OID").toString();
 
                 String keyOfEn = drAttr.getValue(MapAttrAttr.KeyOfEn).toString();
-                for (DataRow drGroup : dtGroups.Rows)
-                {
+                for (DataRow drGroup : dtGroups.Rows) {
                     String field = drGroup.getValue("OID").toString();
                     if (keyOfEn.equals(field))
                     {
                         currGroupID = field;
                     }
                 }
+                ///
+                //
                 drAttr.setValue(MapAttrAttr.GroupID, currGroupID);
             }
             ds.Tables.add(sys_MapAttrs);
@@ -365,8 +356,7 @@ public class WF_CommEntity extends WebContralBase {
             //#region 把外键与枚举放入里面去.
 
             //加入外键.
-            for (DataRow dr : sys_MapAttrs.Rows)
-            {
+            for (DataRow dr : sys_MapAttrs.Rows) {
                 String uiBindKey = dr.getValue("UIBindKey").toString();
                 String lgType = dr.getValue("LGType").toString();
                 if (lgType.equals("2") ==false )
@@ -376,8 +366,7 @@ public class WF_CommEntity extends WebContralBase {
                 if (UIIsEnable.equals("0") )
                     continue;
 
-                if (DataType.IsNullOrEmpty(uiBindKey) == true)
-                {
+                if (DataType.IsNullOrEmpty(uiBindKey) == true) {
                     String myPK = dr.getValue("MyPK").toString();
                     /*如果是空的*/
                     //   throw new Exception("@属性字段数据不完整，流程:" + fl.No + fl.Name + ",节点:" + nd.NodeID + nd.Name + ",属性:" + myPK + ",的UIBindKey IsNull ");
@@ -391,8 +380,7 @@ public class WF_CommEntity extends WebContralBase {
                  // if (ds.Tables.contains(uiBindKey) == true)
                  //   continue;
                 
-                if (uiBindKey.contains("@"))
-                {
+                if (uiBindKey.contains("@")) {
                     for (Attr attr : en.getEnMap().getAttrs() )
                     	uiBindKey = uiBindKey.replace("@"+attr.getKey(),en.GetValStrByKey(attr.getKey())); 
  
@@ -407,8 +395,7 @@ public class WF_CommEntity extends WebContralBase {
             }
 
             //加入sql模式的外键.
-            for (Attr attr : en.getEnMap().getAttrs())
-            {
+            for (Attr attr : en.getEnMap().getAttrs()) {
                 if (attr.getIsRefAttr() == true)
                     continue;
 
@@ -418,8 +405,7 @@ public class WF_CommEntity extends WebContralBase {
                 if (attr.getUIIsReadonly() == true)
                     continue;
 
-                if (attr.getUIBindKey().contains("SELECT") == true || attr.getUIBindKey().contains("select") == true)
-                {
+                if (attr.getUIBindKey().contains("SELECT") == true || attr.getUIBindKey().contains("select") == true) {
                     /*是一个sql*/
                     String sqlBindKey = attr.getUIBindKey();
                     sqlBindKey = BP.WF.Glo.DealExp(sqlBindKey, en, null);
@@ -433,12 +419,10 @@ public class WF_CommEntity extends WebContralBase {
                         uiBindKey=uiBindKey.replace("@WebUser.No", WebUser.getNo());
                         uiBindKey=uiBindKey.replace("@WebUser.FK_Dept", WebUser.getFK_Dept()); 
                     }*/
-                    
 
                     DataTable dt = DBAccess.RunSQLReturnTable(sqlBindKey);
                     dt.TableName = attr.getKey();
 
-                    //@杜. 翻译当前部分.
                     if (SystemConfig.getAppCenterDBType() == DBType.Oracle)
                     {
                         dt.Columns.get("NO").ColumnName = "No";
@@ -451,37 +435,30 @@ public class WF_CommEntity extends WebContralBase {
 
             //加入枚举的外键.
             String enumKeys = "";
-            for (Attr attr : map.getAttrs())
-            {
-                if (attr.getMyFieldType() == FieldType.Enum)
-                {
+            for (Attr attr : map.getAttrs()) {
+                if (attr.getMyFieldType() == FieldType.Enum) {
                     enumKeys += "'" + attr.getUIBindKey() + "',";
                 }
             }
 
-            if (enumKeys.length() > 2)
-            {
+            if (enumKeys.length() > 2) {
                 enumKeys = enumKeys.substring(0, enumKeys.length() - 1);
                 // Sys_Enum
                 String sqlEnum = "SELECT * FROM Sys_Enum WHERE EnumKey IN (" + enumKeys + ")";
                 DataTable dtEnum = DBAccess.RunSQLReturnTable(sqlEnum);
                 dtEnum.TableName = "Sys_Enum";
 
-                if (SystemConfig.getAppCenterDBType() == DBType.Oracle)
-                {
-                	
+                if (SystemConfig.getAppCenterDBType() == DBType.Oracle) {
                 	dtEnum.Columns.get("MYPK").ColumnName = "MyPK";
                 	dtEnum.Columns.get("LAB").ColumnName = "Lab";
                 	dtEnum.Columns.get("ENUMKEY").ColumnName = "EnumKey";
                 	dtEnum.Columns.get("INTKEY").ColumnName = "IntKey";
                 	dtEnum.Columns.get("LANG").ColumnName = "Lang";
-                	 
                 }
 
                 ds.Tables.add(dtEnum);
             }
             //#endregion 把外键与枚举放入里面去.
-
 
             //#region 增加 上方法.
             DataTable dtM = new DataTable("dtM");
@@ -489,7 +466,6 @@ public class WF_CommEntity extends WebContralBase {
             dtM.Columns.Add("Title");
             dtM.Columns.Add("Tip");
             dtM.Columns.Add("Visable");
-
             dtM.Columns.Add("Url");
             dtM.Columns.Add("Target");
             dtM.Columns.Add("Warning");
@@ -502,11 +478,9 @@ public class WF_CommEntity extends WebContralBase {
             dtM.Columns.Add("RefAttrKey");
 
             RefMethods rms = map.getHisRefMethods();
-            for (RefMethod item : rms)
-            {
+            for (RefMethod item : rms) {
                 String myurl = "";
-                if (item.refMethodType != RefMethodType.Func)
-                {
+                if (item.refMethodType != RefMethodType.Func) {
                 	Object tempVar = null;
     				try {
     					tempVar = item.Do(null);
@@ -517,10 +491,7 @@ public class WF_CommEntity extends WebContralBase {
     				if (myurl == null) {
     					continue;
     				}
-                    
-                }
-                else
-                {
+                } else {
                     myurl = "../RefMethod.htm?Index=" + item.Index + "&EnName=" + en.toString() + "&EnsName=" + en.getGetNewEntities().toString() + "&PKVal=" + this.getPKVal();
                 }
 
@@ -535,8 +506,7 @@ public class WF_CommEntity extends WebContralBase {
                 
                 dr.setValue("RefAttrKey", item.RefAttrKey) ;
                 dr.setValue("Url", myurl) ;
-                
-                
+
                 dr.setValue("W", item.Width) ;
                 dr.setValue("H", item.Height) ;
                 dr.setValue("Icon", item.Icon) ;
@@ -557,9 +527,7 @@ public class WF_CommEntity extends WebContralBase {
            // BP.DA.DataType.WriteFile("C:\\EntityOnly_Init.TXT", str);
             return str;
             
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             return "err@" + ex.getMessage(); 
         }
     }
@@ -579,15 +547,12 @@ public class WF_CommEntity extends WebContralBase {
             //初始化entity.
             String enName = this.getEnName();
             Entity en = null;
-            if (DataType.IsNullOrEmpty(enName) == true)
-            {
+            if (DataType.IsNullOrEmpty(enName) == true) {
                 if (DataType.IsNullOrEmpty(this.getEnsName()) == true)
                     return "err@类名没有传递过来";
                 Entities ens = ClassFactory.GetEns(this.getEnsName());
                 en = ens.getGetNewEntity();
-            }
-            else
-            {
+            } else {
                 en = ClassFactory.GetEn(this.getEnName());
             }
 
@@ -604,12 +569,12 @@ public class WF_CommEntity extends WebContralBase {
             //定义容器.
             DataSet ds = new DataSet();
             
-            //把主数据放入里面去.
+            //把主数据放入里面去.主要处理EntityAttr中定义的属性以及AtPara字段信息（该字段组合了多个自定义属性信息）
             DataTable dtMain = en.ToDataTableField("MainTable");
             ds.Tables.add(dtMain);
            
 
-            //#region 增加 上方法.
+            //#region 增加 上方法（超链接属性）.
             DataTable dtM = new DataTable("dtM");
             dtM.Columns.Add("No");
             dtM.Columns.Add("Title");
@@ -628,13 +593,13 @@ public class WF_CommEntity extends WebContralBase {
             dtM.Columns.Add("RefAttrKey");
             dtM.Columns.Add("FunPara");
 
+
             RefMethods rms = map.getHisRefMethods();
             for (RefMethod item : rms)
             {
             	item.HisEn = en;
                 String myurl = "";
-                if (item.refMethodType != RefMethodType.Func)
-                {
+                if (item.refMethodType != RefMethodType.Func) {
                 	Object tempVar = null;
     				try {
     					tempVar = item.Do(null);
@@ -645,9 +610,7 @@ public class WF_CommEntity extends WebContralBase {
     				if (myurl == null) {
     					continue;
     				}
-                }
-                else
-                {
+                } else {
                     myurl = "../RefMethod.htm?Index=" + item.Index + "&EnName=" + en.toString() + "&EnsName=" + en.getGetNewEntities().toString() + "&PKVal=" + this.getPKVal();
                 }
 
@@ -790,18 +753,12 @@ public class WF_CommEntity extends WebContralBase {
                 DataRow dr = dtM.NewRow();
                 //string url = "Dtl.aspx?EnName=" + this.EnName + "&PK=" + this.PKVal + "&EnsName=" + enDtl.EnsName + "&RefKey=" + enDtl.RefKey + "&RefVal=" + en.PKVal.ToString() + "&MainEnsName=" + en.ToString() ;
                 String url = "Dtl.htm?EnName=" + this.getEnName() + "&PK=" + this.getPKVal() + "&EnsName=" + enDtl.getEnsName() + "&RefKey=" + enDtl.getRefKey() + "&RefVal=" + en.getPKVal().toString() + "&MainEnsName=" + en.toString();
-                try
-                {
+                try {
                     i = DBAccess.RunSQLReturnValInt("SELECT COUNT(*) FROM " + enDtl.getEns().getGetNewEntity().getEnMap().getPhysicsTable() + " WHERE " + enDtl.getRefKey() + "='" + en.getPKVal() + "'");
-                }
-                catch(Exception ex)
-                {
-                    try
-                    {
+                } catch(Exception ex) {
+                    try {
                         i = DBAccess.RunSQLReturnValInt("SELECT COUNT(*) FROM " + enDtl.getEns().getGetNewEntity().getEnMap().getPhysicsTable() + " WHERE " + enDtl.getRefKey() + "=" + en.getPKVal());
-                    }
-                    catch(Exception ex1)
-                    {
+                    } catch(Exception ex1) {
                         enDtl.getEns().getGetNewEntity().CheckPhysicsTable();
                     }
                 }

@@ -913,12 +913,12 @@ public class Map
 	}
 	
 	/**
-	 * 明细s
+	 * detail明细s
 	 */
 	private EnDtls _Dtls = null;
 	
 	/**
-	 * 他的明细
+	 * 明细
 	 */
 	public final EnDtls getDtls()
 	{

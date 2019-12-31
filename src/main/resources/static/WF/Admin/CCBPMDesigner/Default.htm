@@ -567,7 +567,7 @@
             $(".mymask").show();
 
             addTab(node.id, node.text, "Designer.htm?FK_Flow=" + node.id + "&UserNo=" + WebUser.No + "&SID=" + WebUser.SID + "&Flow_V=0", node.iconCls);
-            //延时3秒, 为什么要延迟？
+            //延时3秒, 界面基本渲染结束
             setTimeout(DesignerLoaded, 1000);
         }
 
@@ -601,8 +601,8 @@
 
             var currSort = $('#flowTree').tree('getSelected');
             var currSortId = "99";
-            if (currSort && currSort.attributes["ISPARENT"] != 0) { //edit by qin 2016/2/16
-                currSortId = $('#flowTree').tree('getSelected').id; //liuxc,20150323
+            if (currSort && currSort.attributes["ISPARENT"] != 0) {
+                currSortId = $('#flowTree').tree('getSelected').id;
             }
 
             var dgId = "iframDg";
@@ -627,7 +627,7 @@
                     }
                 }
                 var html = $("#ShowMsg").html();
-                $("#ShowMsg").html(html + " ccbpm 正在创建流程请稍后....");
+                $("#ShowMsg").html(html + " KFlow 正在创建流程请稍后....");
                 $("#ShowMsg").css({ "width": "320px" });
                 $(".mymask").show();
                 //传入参数
@@ -652,7 +652,8 @@
 
                     //在左侧流程树上增加新建的流程,并选中
                     //获取新建流程所属的类别节点
-                    //todo:此处还有问题，类别id与流程id可能重复，重复就会出问题，解决方案有待进一步确定
+                    //此处还有问题，类别id与流程id可能重复，重复就会出问题，解决方案有待进一步确定
+                    // (是否可以采用No标记，加上类前缀区分)
                     var parentNode = $('#flowTree').tree('find', "F" + newFlowInfo.flowSort);
                     var node = $('#flowTree').tree('append', {
                         parent: parentNode.target,
@@ -775,8 +776,11 @@
                 };
                 ajaxService(params, function (data) {
                     alert(data);
-                    //删除节点
+                    if (data.indexOf("err@") == 0){
+                        return;
+                    }
                     $('#flowTree').tree('remove', currSort.target);
+                    //删除节点
                 });
             });
         }

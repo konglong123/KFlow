@@ -910,7 +910,6 @@ public class Attrs extends ArrayList<Attr>
             mattr.setUIContralType(item.getUIContralType());
             mattr.setUIBindKey(item.getUIBindKey());
 
-            //@于庆海，这里需要翻译.
             mattr.setUIWidth(item.getUIWidthInt());
             mattr.setUIHeightInt(item.getUIHeight());
 
