@@ -381,7 +381,6 @@ public class WF_Admin_FoolFormDesigner extends WebContralBase
                 mymd.RetrieveFromDBSources();
                 mymd.setHisFrmType(FrmType.FoolForm);
                 mymd.Update();
-
             }
 
 			MapFrmFool cols = new MapFrmFool(this.getFK_MapData());

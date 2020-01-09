@@ -4,13 +4,14 @@ function InitBar(optionKey) {
     var html = "表单方案:";
     html += "<select id='changBar' onchange='changeOption()'>";
 
-    html += "<option value=null  disabled='disabled'>+内置表单</option>";
+ /*   html += "<option value=null  disabled='disabled'>+内置表单</option>";*/
     html += "<option value=" + FormType.FoolForm + ">&nbsp;&nbsp;傻瓜表单(默认)</option>";
     html += "<option value=" + FormType.FreeForm + ">&nbsp;&nbsp;自由表单</option>";
-    html += "<option value=" + FormType.FoolTruck + " >&nbsp;&nbsp;累加模式表单</option>";
+  /*  html += "<option value=" + FormType.FoolTruck + " >&nbsp;&nbsp;累加模式表单</option>";
     html += "<option value=" + FormType.CTFrm + "  >&nbsp;&nbsp;开发者表单(研发中)</option>";
-    html += "<option value=" + FormType.WebOffice + "  >&nbsp;&nbsp;公文表单(weboffice)</option>";
+    html += "<option value=" + FormType.WebOffice + "  >&nbsp;&nbsp;公文表单(weboffice)</option>";*/
 
+/*
 
     html += "<option value=null  disabled='disabled'>+自定义表单</option>";
     html += "<option value=" + FormType.SelfForm + " >&nbsp;&nbsp;嵌入式表单</option>";
@@ -20,6 +21,7 @@ function InitBar(optionKey) {
     html += "<option value=null  disabled='disabled'>+绑定表单库里的表单</option>";
     html += "<option value=" + FormType.RefOneFrmTree + " >&nbsp;&nbsp;绑定表单库的表单</option>";
     html += "<option value=" + FormType.SheetTree + " >&nbsp;&nbsp;绑定多表单(表单树)</option>";
+*/
 
     html += "</select >";
 
@@ -28,8 +30,8 @@ function InitBar(optionKey) {
 
     //  html += "<input type=button onclick='OldVer()' value='使用旧版本' />";
 
-    html += "<input  id='Btn_Help' type=button onclick='Help()' value='视频帮助' />";
-    html += "<input  id='Btn_Help' type=button onclick='HelpOnline()' value='在线帮助' />";
+ /*   html += "<input  id='Btn_Help' type=button onclick='Help()' value='视频帮助' />";
+    html += "<input  id='Btn_Help' type=button onclick='HelpOnline()' value='在线帮助' />";*/
 
 
     document.getElementById("bar").innerHTML = html;
@@ -73,7 +75,7 @@ function DFreeFrm() {
     var nodeID = GetQueryString("FK_Node");
     var node = new Entity("BP.WF.Node", nodeID);
     var url = '../../CCFormDesigner/FormDesigner.htm?FK_Flow=' + node.FK_Flow + '&FK_Node=' + nodeID + "&FK_MapData=ND" + nodeID;
-    OpenEasyUiDialogExt(url, '傻瓜表单设计器', 1100, 600, false);
+    OpenEasyUiDialogExt(url, '自由表单设计器', 1100, 600, false);
 }
 
 function HelpOnline() {
@@ -139,9 +141,7 @@ function Help() {
             break;
     }
 
-    //if (url.indexOf
-    //var url = "http://ccbpm.mydoc.io";
-    //window.open(url);
+
 }
 
 

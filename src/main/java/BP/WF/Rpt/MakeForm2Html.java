@@ -2046,7 +2046,7 @@ private static StringBuilder GenerHtmlOfFool(MapData mapData, String frmID, long
 	            if(nd.getNodeID()!=0 && nd.getNodeID()!=9999)
 	            	words = nd.getShuiYinModle();
 	            if(DataType.IsNullOrEmpty(words) == true)
-	            	words = SystemConfig.GetValByKey("PrintBackgroundWord","驰骋工作流引擎@开源驰骋 - ccflow@openc");
+	            	words = SystemConfig.GetValByKey("PrintBackgroundWord","KFlow工作流引擎@开源KFlow - ccflow@openc");
 	            
 	            words = words.replaceAll("@RDT", rdt);
 	            if (words.contains("@") == true)

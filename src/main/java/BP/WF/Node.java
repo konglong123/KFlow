@@ -2721,7 +2721,7 @@ public class Node extends Entity {
 	}
 
 	/**
-	 * 建立map
+	 * 建立map(此时创建了节点的表单，添加了表单的基本属性信息（sys_mapData），表单中基本控件信息（sys_mapAttr）)
 	 * 
 	 * @throws Exception
 	 */

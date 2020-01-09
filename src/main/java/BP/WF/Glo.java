@@ -1563,7 +1563,7 @@ public class Glo {
 					String sql = "";
 					sql = "INSERT INTO Demo_Resume (OID,RefPK,NianYue,GongZuoDanWei,ZhengMingRen,BeiZhu,QT) ";
 					sql += "VALUES(" + DBAccess.GenerOID("Demo_Resume") + ",'" + emp.getNo() + "','200" + myIdx
-							+ "-01','山东.济南.驰骋" + myIdx + "公司','张三','表现良好','其他-" + myIdx + "无')";
+							+ "-01','山东.济南.KFlow" + myIdx + "公司','张三','表现良好','其他-" + myIdx + "无')";
 					DBAccess.RunSQL(sql);
 				}
 			}
@@ -1575,7 +1575,7 @@ public class Glo {
 					String sql = "";
 					sql = "INSERT INTO Demo_Resume (OID,RefPK,NianYue,GongZuoDanWei,ZhengMingRen,BeiZhu,QT) ";
 					sql += "VALUES(" + DBAccess.GenerOID("Demo_Resume") + ",'" + no + "','200" + myIdx
-							+ "-01','山东.济南.驰骋" + myIdx + "公司','张三','表现良好','其他-" + myIdx + "无')";
+							+ "-01','山东.济南.KFlow" + myIdx + "公司','张三','表现良好','其他-" + myIdx + "无')";
 					DBAccess.RunSQL(sql);
 				}
 			}

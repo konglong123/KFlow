@@ -1,28 +1,19 @@
 package BP.springCloud;
 
-import com.alibaba.druid.support.json.JSONUtils;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.google.gson.Gson;
-import io.micrometer.core.instrument.util.JsonUtils;
+
 import net.sf.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.client.RestTemplate;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,7 +25,7 @@ import java.util.Map;
 @Controller
 @RequestMapping("feign")
 public class FeignController {
-
+    private final Logger logger = LoggerFactory.getLogger(FeignController.class);
 
     @RequestMapping("/addWF")
     @ResponseBody
@@ -78,7 +69,7 @@ public class FeignController {
             out.flush();
             out.close();
         }catch (Exception e){
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
 
     }

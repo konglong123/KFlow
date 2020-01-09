@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-    <title>CCForm 表单设计器 For Html5 </title>
+    <title>表单设计器</title>
     <!-- 引用配置文件.-->
     <meta http-equiv="X-UA-Compatible" content="IE=9" />
     <link rel="stylesheet" type="text/css" href="../../Scripts/easyUI/themes/default/easyui.css" />
@@ -101,7 +101,7 @@
             //清空mapData的缓存
             mapData.DoMethodReturnString("ClearCash");
 
-            document.title = mapData.Name + " - CCForm H5表单设计.";
+            document.title = mapData.Name + "表单设计.";
 
             $("#Msg").html("");
             var fromDtl = Application.common.getArgsFromHref("FromDtl");
@@ -240,13 +240,13 @@
         <img class="separator" src="assets/images/toolbar_separator.gif" border="0" width="1" height="18" />
         <input type="checkbox" onclick="propertyForm();" id="propertyCheckbox" title="属性窗口" style="vertical-align: middle;" />
         <label for="propertyCheckbox" class="toolbarText">属性窗口</label>-->
-        <img class="separator" src="assets/images/toolbar_separator.gif" border="0" width="1"
+      <!--  <img class="separator" src="assets/images/toolbar_separator.gif" border="0" width="1"
             height="18" />
         <a style="text-decoration: none;" href="javascript:Mobile();" title="手机表单">
             <img src="Img/toolbar/mobile.png" id="Img4" border="0" width="16" height="16" alt="" />
             <label class="toolbarText">
                 手机</label>
-        </a>
+        </a>-->
         <!--<img class="separator" src="assets/images/toolbar_separator.gif" border="0" width="1"
             height="18" />
         <a style="text-decoration: none;" href="javascript:ResetFrm();" title="重置表单">
@@ -254,14 +254,14 @@
             <label class="toolbarText">
                 重置表单</label>
         </a>-->
-        <img class="separator" src="assets/images/toolbar_separator.gif" border="0" width="1"
+      <!--  <img class="separator" src="assets/images/toolbar_separator.gif" border="0" width="1"
             height="18" />
         <a style="text-decoration: none; display: inline;" href="http://www.ccflow.org" target="_blank"
             title="打开官方网站在线帮助.">
             <img src="Img/Home.png" id="Img1" border="0" alt="" />
             <label class="toolbarText">
-                驰骋官网</label>
-        </a>
+                KFlow官网</label>
+        </a>-->
         <script type="text/javascript" language="javascript">
             if (!isBrowserReady()) {
                 document.write('<span style="background-color: red;" >');

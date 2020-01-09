@@ -114,7 +114,7 @@ public class Dept extends EntityTree
 			//比如xx分公司财务部
 		map.AddTBString(DeptAttr.Name, null, "名称", true, false, 0, 100, 30);
 
-			//比如:\\驰骋集团\\南方分公司\\财务部
+			//比如:\\KFlow集团\\南方分公司\\财务部
 		map.AddTBString(DeptAttr.NameOfPath, null, "部门路径", false, false, 0, 300, 30);
 		map.AddTBString(DeptAttr.ParentNo, null, "父节点编号", false, false, 0, 100, 30);
 

@@ -638,13 +638,13 @@ public class NodeExt extends Entity
         rm.GroupName = "表单设置";
         map.AddRefMethod(rm);
 
-        rm = new RefMethod();
+       /* rm = new RefMethod();
         rm.Title = "手机表单字段顺序";
         rm.Icon = "../../WF/Admin/CCFormDesigner/Img/telephone.png";
         rm.ClassMethodName = this.toString() + ".DoSortingMapAttrs";
         rm.refMethodType = RefMethodType.RightFrameOpen;
         rm.GroupName = "表单设置";
-        map.AddRefMethod(rm);
+        map.AddRefMethod(rm);*/
 
         rm = new RefMethod();
         rm.Title = "节点组件";
@@ -701,17 +701,17 @@ public class NodeExt extends Entity
         map.AddRefMethod(rm);
        // #endregion 考核.
  
-        //高级功能.
+     /*   //高级功能.
         rm = new RefMethod();
         rm.Title = "工作批处理规则";
         rm.Icon = "../../WF/Img/Btn/DTS.gif";
         rm.ClassMethodName = this.toString() + ".DoBatchStartFields()";
         rm.refMethodType = RefMethodType.RightFrameOpen;
         rm.GroupName = "实验中的功能";
-        map.AddRefMethod(rm);
+        map.AddRefMethod(rm);*/
 
 
-        rm = new RefMethod();
+     /*   rm = new RefMethod();
         rm.Title = "抄送人规则";
         rm.GroupName = "实验中的功能";
         rm.Icon = "../../WF/Admin/AttrNode/Img/CC.png";
@@ -734,7 +734,7 @@ public class NodeExt extends Entity
         rm.refMethodType = RefMethodType.RightFrameOpen;
         rm.GroupName = "实验中的功能";
         //rm.Visable = false;
-        map.AddRefMethod(rm);
+        map.AddRefMethod(rm);*/
 
        
 

@@ -36,6 +36,11 @@
 
     <script language="javascript" type="text/javascript">
 
+        function gotoWorkflow(id,name) {
+            var url="/WF/WF/Admin/CCBPMDesigner/Designer.htm?FK_Flow="+id+"&UserNo=admin&SID=&Flow_V=1";
+            window.open(url);
+        }
+
         function GroupBarClick(groupName) {
 
             var alt = document.getElementById('Img' + groupName).alert;
@@ -272,10 +277,10 @@
                     if (sortNo != flowSort)
                         continue;
 
-                    listbox += "<tr><td><a href=\"javascript:WinOpenStartFlow('" + flow.No + "','" + sortName + " - " + flow.Name + "');\" > &sdot; " + flow.Name + "</a></td><td class='chooser'><a class='dropdown-toggle' data-toggle='dropdown' href='#'><i class='icon iconfont icon-gongju1'></i></a><ul class='dropdown-menu dropdown-user'>"
+                    listbox += "<tr><td><a href=\"javascript:gotoWorkflow('" + flow.No + "','" + flow.Name + "');\" > &sdot; " + flow.Name + "</a></td><td class='chooser'><a class='dropdown-toggle' data-toggle='dropdown' href='#'><i class='icon iconfont icon-gongju1'></i></a><ul class='dropdown-menu dropdown-user'>";
 
-                    listbox += "<li><a href=\"javascript:WinOpenList('" + flow.No + "','" + sortName + " - " + flow.Name + "');\" >列表发起</a></li>";
-
+                   /* listbox += "<li><a href=\"javascript:WinOpenList('" + flow.No + "','" + sortName + " - " + flow.Name + "');\" >列表发起</a></li>";*/
+                    listbox += "<li><a href=\"javascript:WinOpenStartFlow('" + flow.No + "','" + sortName + " - " + flow.Name + "');\" >发起流程</a></li>";
                     if (flow.IsBatchStart == "1")
                         listbox += "<li><a href=\"javascript:WinOpenBatch('" + flow.No + "','" + sortName + " - " + flow.Name + "');\" >批量发起</a></li>";
 
