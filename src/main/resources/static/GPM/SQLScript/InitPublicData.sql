@@ -5,15 +5,15 @@ INSERT INTO GPM_AppSort(No,Name,RefMenuNo) VALUES ('02','办公系统','2001');
 
 -- 系统;
 DELETE FROM GPM_App;
-INSERT INTO GPM_App(No,Name,AppModel,Url,MyFileName,MyFilePath,MyFileExt,WebPath,FK_AppSort,RefMenuNo) VALUES ('CCOA','KFlowOA',0,'http://www.chichengoa.org/App/login/login.ashx','ccoa.png','Path','GIF','/DataUser/BP.GPM.STem/CCOA.png','01','2002'); /*此处地址被孙战平改动*/
+INSERT INTO GPM_App(No,Name,AppModel,Url,MyFileName,MyFilePath,MyFileExt,WebPath,FK_AppSort,RefMenuNo) VALUES ('CCOA','驰骋OA',0,'http://www.chichengoa.org/App/login/login.ashx','ccoa.png','Path','GIF','/DataUser/BP.GPM.STem/CCOA.png','01','2002'); /*此处地址被孙战平改动*/
 
 DELETE FROM GPM_Menu;
 
 -- root;
-INSERT INTO GPM_Menu(FK_App,No,ParentNo,Name,MenuType,Url,IsEnable) VALUES ('UnitFullName','1000','0','济南KFlow信息技术有限公司',0,'',1);
+INSERT INTO GPM_Menu(FK_App,No,ParentNo,Name,MenuType,Url,IsEnable) VALUES ('UnitFullName','1000','0','济南驰骋信息技术有限公司',0,'',1);
 INSERT INTO GPM_Menu(FK_App,No,ParentNo,Name,MenuType,Url,IsEnable) VALUES ('AppSort','2000','1000','业务系统',1,'',1);
 INSERT INTO GPM_Menu(FK_App,No,ParentNo,Name,MenuType,Url,IsEnable) VALUES ('AppSort','2001','1000','办公系统',1,'',1);
-INSERT INTO GPM_Menu(FK_App,No,ParentNo,Name,MenuType,Url,IsEnable) VALUES ('CCOA','2002','2000','KFlowOA',2,'',1);
+INSERT INTO GPM_Menu(FK_App,No,ParentNo,Name,MenuType,Url,IsEnable) VALUES ('CCOA','2002','2000','驰骋OA',2,'',1);
 
 
 -- 工作流程.;
