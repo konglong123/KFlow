@@ -38,6 +38,34 @@ public class FeignController {
     @RequestMapping("/getWF")
     @ResponseBody
     public void queryWorkflow(HttpServletRequest request, HttpServletResponse response){
+        esQuery("http://112.125.90.132:8082/es/getWFDsl",request,response);
+    }
+
+    /**
+    *@Description: RestTemplate属性设置
+    *@Param:  
+    *@return:  
+    *@Author: Mr.kong
+    *@Date: 2019/12/26 
+    */
+    private void setTemplate() throws Exception {
+
+    }
+
+    @RequestMapping("/getResources")
+    @ResponseBody
+    public void queryResources(HttpServletRequest request, HttpServletResponse response){
+        esQuery("http://112.125.90.132:8082/es/getResourceDsl",request,response);
+    }
+
+    /**
+    *@Description: 请求url获取es分页返回结果（均通过对abstracts进行相似度计算）
+    *@Param:
+    *@return:
+    *@Author: Mr.kong
+    *@Date: 2020/2/23
+    */
+    private void esQuery(String url,HttpServletRequest request, HttpServletResponse response){
         try {
             response.setCharacterEncoding("utf-8");
             request.setCharacterEncoding("utf-8");
@@ -55,7 +83,7 @@ public class FeignController {
             postBody.put("pageLength", rows);
             postBody.put("abstracts", abstracts);
             HttpEntity<Map> requestEntity = new HttpEntity<>(postBody, null);
-            ResponseEntity<Page> resTemp = FeignTool.template.postForEntity("http://112.125.90.132:8082/es/getWFDsl", requestEntity, Page.class);
+            ResponseEntity<Page> resTemp = FeignTool.template.postForEntity(url, requestEntity, Page.class);
             Page pageResult=resTemp.getBody();
             Map<String, Object> jsonMap = new HashMap<>();//定义map
             jsonMap.put("total", pageResult.getTotalNums());//total键 存放总记录数，必须的
@@ -71,17 +99,6 @@ public class FeignController {
         }catch (Exception e){
             logger.error(e.getMessage());
         }
-
     }
 
-    /**
-    *@Description: RestTemplate属性设置
-    *@Param:  
-    *@return:  
-    *@Author: Mr.kong
-    *@Date: 2019/12/26 
-    */
-    private void setTemplate() throws Exception {
-
-    }
 }

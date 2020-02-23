@@ -295,37 +295,38 @@ public class NodeExt extends Entity
             NodeAttr.CancelRole, "@0=上一步可以撤销@1=不能撤销@2=上一步与开始节点可以撤销@3=指定的节点可以撤销");
        // map.SetHelperUrl(NodeAttr.CancelRole, "http://ccbpm.mydoc.io/?v=5404&t=17919");
 
-        map.AddBoolean(NodeAttr.CancelDisWhenRead, false, "对方已经打开就不能撤销", true, true);
+        //map.AddBoolean(NodeAttr.CancelDisWhenRead, false, "对方已经打开就不能撤销", true, true);
 
 
-        map.AddBoolean(NodeAttr.IsTask, true, "允许分配工作否?", true, true, false);//"http://ccbpm.mydoc.io/?v=5404&t=17904"
-        map.AddBoolean(NodeAttr.IsExpSender, true, "本节点接收人不允许包含上一步发送人", true, true,false);
-        map.AddBoolean(NodeAttr.IsRM, true, "是否启用投递路径自动记忆功能?", true, true, true);//"http://ccbpm.mydoc.io/?v=5404&t=17905"
+        //map.AddBoolean(NodeAttr.IsTask, true, "允许分配工作否?", true, true, false);//"http://ccbpm.mydoc.io/?v=5404&t=17904"
+        //map.AddBoolean(NodeAttr.IsExpSender, true, "本节点接收人不允许包含上一步发送人", true, true,false);
+        //map.AddBoolean(NodeAttr.IsRM, true, "是否启用投递路径自动记忆功能?", true, true, true);//"http://ccbpm.mydoc.io/?v=5404&t=17905"
 
        // map.AddBoolean(NodeAttr.IsToParentNextNode, false, "子流程运行到该节点时，让父流程自动运行到下一步", true, true);
-        map.AddBoolean(NodeAttr.IsYouLiTai, false, "该节点是否是游离态", true, true);
-        map.SetHelperUrl(NodeAttr.IsYouLiTai, "当节点为游离状态的时候，只有连接的节点是固定节点才可以往下运行，否则流程结束");
+        //map.AddBoolean(NodeAttr.IsYouLiTai, false, "该节点是否是游离态", true, true);
+        //map.SetHelperUrl(NodeAttr.IsYouLiTai, "当节点为游离状态的时候，只有连接的节点是固定节点才可以往下运行，否则流程结束");
 
-        map.AddTBDateTime("DTFrom", "生命周期从", true, true);
-        map.AddTBDateTime("DTTo", "生命周期到", true, true);
+        //map.AddTBDateTime("DTFrom", "生命周期从", true, true);
+        //map.AddTBDateTime("DTTo", "生命周期到", true, true);
 
-        map.AddBoolean(NodeAttr.IsBUnit, false, "是否是节点模版（业务单元）?", true, true, true);//, "http://ccbpm.mydoc.io/?v=5404&t=17904"
+        //map.AddBoolean(NodeAttr.IsBUnit, false, "是否是节点模版（业务单元）?", true, true, true);//, "http://ccbpm.mydoc.io/?v=5404&t=17904"
 
-        map.AddTBString(NodeAttr.FocusField, null, "焦点字段", true, false, 0, 50, 10, true);//, "http://ccbpm.mydoc.io/?v=5404&t=17932"
+        //map.AddTBString(NodeAttr.FocusField, null, "焦点字段", true, false, 0, 50, 10, true);//, "http://ccbpm.mydoc.io/?v=5404&t=17932"
 
 
-        map.AddBoolean(NodeAttr.IsGuestNode, false, "是否是外部用户执行的节点(非组织结构人员参与处理工作的节点)?", true, true, true);
+        //map.AddBoolean(NodeAttr.IsGuestNode, false, "是否是外部用户执行的节点(非组织结构人员参与处理工作的节点)?", true, true, true);
 
         //节点业务类型.
-        map.AddTBInt("NodeAppType", 0, "节点业务类型", false, false);
-        map.AddTBInt("FWCSta", 0, "节点状态", false, false);
-        map.AddTBInt("FWCAth", 0, "审核附件是否启用", false, false);
-        map.AddTBString(NodeAttr.SelfParas, null, "自定义参数", true, false, 0, 500, 10, true);
+        //map.AddTBInt("NodeAppType", 0, "节点业务类型", false, false);
+        //map.AddTBInt("FWCSta", 0, "节点状态", false, false);
+       // map.AddTBInt("FWCAth", 0, "审核附件是否启用", false, false);
+        //map.AddTBString(NodeAttr.SelfParas, null, "自定义参数", true, false, 0, 500, 10, true);
+        map.AddTBInt(NodeAttr.Step, 0, "工作量(h)", true, false);
         map.AddTBStringDoc(NodeAttr.Tip, null, "操作提示", true, false);//"http://ccbpm.mydoc.io/?v=5404&t=18084"
 
-      //  #endregion  基础属性
+        //  #endregion  基础属性
 
-       // #region 分合流子线程属性
+        // #region 分合流子线程属性
         map.AddDDLSysEnum(NodeAttr.RunModel, 0, "节点类型",
             true, false, NodeAttr.RunModel, "@0=普通@1=合流@2=分流@3=分合流@4=子线程");
 
@@ -526,6 +527,13 @@ public class NodeExt extends Entity
         rm.Title = "接收人规则";
         rm.Icon = "../../WF/Admin/AttrNode/Img/Sender.png";
         rm.ClassMethodName = this.toString() + ".DoAccepterRoleNew";
+        rm.refMethodType=  RefMethodType.RightFrameOpen ;
+        map.AddRefMethod(rm);
+
+        rm = new RefMethod();
+        rm.Title = "节点资源";
+        rm.Icon = "../../WF/Img/Emps.gif";
+        rm.ClassMethodName = this.toString() + ".DoResources";
         rm.refMethodType=  RefMethodType.RightFrameOpen ;
         map.AddRefMethod(rm);
 
@@ -830,6 +838,14 @@ public class NodeExt extends Entity
 	{
 		return BP.WF.Glo.getCCFlowAppPath() + "WF/Admin/AttrNode/AccepterRole/Default.htm?FK_Node=" + this.getNodeID();
 	}
+
+	/*
+	 节点资源
+	 */
+	public final String DoResources(){
+	    return BP.WF.Glo.getCCFlowAppPath() + "WF/Admin/AttrNode/Resources/Resources.htm?FK_Node=" + this.getNodeID();
+    }
+
 	/** 
 	 发送阻塞规则
 	 @return 

@@ -47,6 +47,9 @@
   <!--<Item No="906" GroupNo="GPM" Name="菜单台帐" For="" Url="../../Comm/SearchBS.htm?EnsName=BP.GPM.Menus"  />-->
   <Item No="907" GroupNo="GPM" Name="菜单树" For="" Url="../../Comm/Tree.htm?EnsName=BP.GPM.Menus"  />
 
+  <Group No="RES" Name="资源管理" />
+  <Item No="1001" GroupNo="RES" Name="资源" For="" Url="../../Comm/Ens.htm?EnsName=BP.WF.Port.Resources"  />
+
   <!--<Group No="Org" Name="组织结构(多级管理员模式)" /> 
   <Item No="501" GroupNo="Org" Name="岗位类型维护" For="admin" Url="../../Comm/SearchBS.htm?EnsName=BP.WF.Port.SubInc.StationTypes"  />
   <Item No="501" GroupNo="Org" Name="岗位维护" For="admin" Url="../../Comm/SearchBS.htm?EnsName=BP.WF.Port.SubInc.Stations"  />

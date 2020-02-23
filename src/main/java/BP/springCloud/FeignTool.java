@@ -22,10 +22,10 @@ public class FeignTool {
     *@Author: Mr.kong
     *@Date: 2019/12/29
     */
-    public static Boolean updateToES(Map<String,Object> postBody){
+    public static Boolean updateToES(String url,Map<String,Object> postBody){
         try{
             HttpEntity<Map> requestEntity = new HttpEntity<>(postBody, null);
-            ResponseEntity<Boolean> resTemp = template.postForEntity("http://112.125.90.132:8082/es/addWorkflow", requestEntity, Boolean.class);
+            ResponseEntity<Boolean> resTemp = template.postForEntity(url, requestEntity, Boolean.class);
             Boolean pageResult=resTemp.getBody();
             return pageResult;
         }catch (Exception e){

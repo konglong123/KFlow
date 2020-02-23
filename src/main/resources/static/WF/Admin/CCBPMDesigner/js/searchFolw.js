@@ -1,6 +1,6 @@
 var rows = [];
 $(function(){
-    $('#dg').datagrid({
+    $('#dgSearchflow').datagrid({
         singleSelect:true,
         autoRowHeight:false,
         pagination:true,

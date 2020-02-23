@@ -289,6 +289,7 @@ public class WF_CommEntity extends WebContralBase {
             dtGroups.Columns.Add(new DataColumn("CtrlType", String.class, true));
             dtGroups.Columns.Add(new DataColumn("CtrlID", String.class, true));
 
+            //增加分组信息
             String[] strs = groupTitle.split("@");
             for (String str : strs) {
                 if (DataType.IsNullOrEmpty(str))
