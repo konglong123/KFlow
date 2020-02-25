@@ -20,4 +20,7 @@ public class ResourceAttr extends BP.En.EntityNoNameAttr {
     public static final String Abstracts = "Abstracts";
 
     public static final String DeptId = "DeptId";
+
+    public static final String SignType = "SignType";
+
 }

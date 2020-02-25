@@ -656,12 +656,16 @@ public class WF_Comm extends WebContralBase {
 		if (enName.equals("BP.WF.Port.Resource")){
 			//未完待续
 			java.util.Map<String, Object> postBody = new HashMap<>();
-			String no=this.GetRequestVal("No");
-			postBody.put("id",no);
-			postBody.put("mysqlId",no);
+			String id=this.GetRequestVal("Id");
+			postBody.put("id",id);
+			postBody.put("mysqlId",id);
 			postBody.put("name",this.GetRequestVal("Name"));
-			postBody.put("abstracts",this.GetRequestVal("Note"));
-			String url="http://112.125.90.132:8082/es/addWorkflow";
+			postBody.put("abstracts",this.GetRequestVal("Abstracts"));
+			postBody.put("no",this.GetRequestVal("No"));
+			postBody.put("kind",this.GetRequestVal("Kind"));
+			postBody.put("deptId",this.GetRequestVal("DeptId"));
+			//String url="http://112.125.90.132:8082/es/addResource";
+			String url="http://127.0.0.1:8082/es/addResource";
 			FeignTool.updateToES(url,postBody);
 			return;
 		}
