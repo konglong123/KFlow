@@ -18,6 +18,10 @@ spring:
       enabled: true
       additional-paths: src/main/java
 
+mybatis:
+  mapperLocations: classpath:static/mapper/*.xml
+  #配置对象别名，mapper中可以不指定包路径
+  typeAliasesPackage: BP.springCloud.entity
 #eureka配置
 eureka:
   client:

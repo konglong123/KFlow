@@ -664,8 +664,7 @@ public class WF_Comm extends WebContralBase {
 			postBody.put("no",this.GetRequestVal("No"));
 			postBody.put("kind",this.GetRequestVal("Kind"));
 			postBody.put("deptId",this.GetRequestVal("DeptId"));
-			//String url="http://112.125.90.132:8082/es/addResource";
-			String url="http://127.0.0.1:8082/es/addResource";
+			String url="http://112.125.90.132:8082/es/addResource";
 			FeignTool.updateToES(url,postBody);
 			return;
 		}
@@ -3683,7 +3682,7 @@ public class WF_Comm extends WebContralBase {
 			}
 
 			try {
-				if (en.getPKVal().toString() == "0") {
+				if (en.getPKVal().toString().equals("0")) {
 				} else {
 					en.Insert();
 				}

@@ -1,4 +1,4 @@
-package BP.WF.Port;
+package BP.Resource;
 
 /**
  * @program: kflow-web
@@ -11,15 +11,15 @@ public class ResourceAttr extends BP.En.EntityNoNameAttr {
 
     public static final String Id = "Id";
 
-    public static final String No = "No";
+    public static final String No = "no";
 
-    public static final String Kind = "Kind";
+    public static final String Kind = "kind";
 
-    public static final String Name = "Name";
+    public static final String Name = "name";
 
-    public static final String Abstracts = "Abstracts";
+    public static final String Abstracts = "abstracts";
 
-    public static final String DeptId = "DeptId";
+    public static final String DeptId = "deptId";
 
     public static final String SignType = "SignType";
 

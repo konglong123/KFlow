@@ -68,7 +68,6 @@
 
         //绑定明细.
         function BindDtls() {
-           
             mapAtrrs = frmData.Sys_MapAttr;
             var dtls = frmData.Ens;
 
@@ -417,7 +416,11 @@
             formData = $("form").serialize();
 
             handler.AddFormData();
+            debugger
             handler.AddPara("InsertFlag", InsertFlag);
+            var ensName = GetQueryString("EnsName");
+            var enName = ensName.substring(0, ensName.length - 1);
+            handler.AddPara("EnName", enName);
             //name = encodeURIComponent(name);
             var data = handler.DoMethodReturnString("Entities_Save");
             if (data.indexOf("err@") == 0) {

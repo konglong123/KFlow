@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="BP.springCloud.dao.ResourceTaskMDao">
+    <resultMap id="baseResultMap" type="ResourceTaskM">
+        <id column="no" jdbcType="BIGINT" property="no" />
+        <result column="resource_no" jdbcType="VARCHAR" property="resourceNo" />
+        <result column="resource_id" jdbcType="BIGINT" property="resourceId" />
+        <result column="node_id" jdbcType="BIGINT" property="nodeId" />
+        <result column="plan_end" jdbcType="TIMESTAMP" property="planEnd" />
+        <result column="plan_start" jdbcType="TIMESTAMP" property="planStart" />
+        <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+        <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+        <result column="book_end" jdbcType="TIMESTAMP" property="bookEnd" />
+        <result column="book_start" jdbcType="TIMESTAMP" property="bookStart" />
+        <result column="is_finish" jdbcType="TINYINT" property="isFinish" />
+        <result column="is_plan" jdbcType="TINYINT" property="isPlan" />
+    </resultMap>
+    <select id="getResourceTaskByPlanTime" resultMap="baseResultMap" parameterType="java.lang.String">
+        select * from k_resource_task where plan_start &gt;= #{startTime} and plan_start &lt;= #{endTime}
+        and resource_no=#{resTask.resourceNo,jdbcType=VARCHAR}
+        <trim>
+            <if test="resTask.isPlan != 0">
+                and is_plan=#{resTask.isPlan,jdbcType=TINYINT}
+            </if>
+            <if test="resTask.isFinish != 0">
+                and is_finish=#{resTask.isFinish,jdbcType=TINYINT}
+            </if>
+        </trim>
+    </select>
+
+    <update id="updateResourceTask" parameterType="ResourceTaskM">
+        update k_resource_task
+        <trim prefix="set" suffixOverrides=",">
+            <if test="resTask.resourceNo!=null AND resTask.resourceNo!=''">resource_no=#{resTask.resourceNo},</if>
+            <if test="resTask.resourceId!=0">resource_id=#{resTask.resourceId},</if>
+            <if test="resTask.nodeId!=0">node_id=#{resTask.nodeId},</if>
+            <if test="resTask.planStart!=null">plan_start=#{resTask.planStart},</if>
+            <if test="resTask.planEnd!=null">plan_end=#{resTask.planEnd},</if>
+            <if test="resTask.startTime!=null">start_time=#{resTask.startTime},</if>
+            <if test="resTask.endTime!=null">end_time=#{resTask.endTime},</if>
+            <if test="resTask.bookEnd!=null">book_end=#{resTask.bookEnd},</if>
+            <if test="resTask.bookStart!=null">book_start=#{resTask.bookStart},</if>
+            <if test="resTask.isFinish!=0">is_finish=#{resTask.isFinish},</if>
+            <if test="resTask.isPlan!=0">is_plan=#{resTask.isPlan},</if>
+        </trim>
+        WHERE no=#{resTask.no}
+    </update>
+    <insert id="addResourceTask" parameterType="ResourceTaskM">
+        insert  into k_resource_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="resTask.resourceNo != null AND resTask.resourceNo!=''">
+                resource_no,
+            </if>
+            <if test="resTask.resourceId != 0">
+                resource_id,
+            </if>
+            <if test="resTask.nodeId != 0">
+                node_id,
+            </if>
+            <if test="resTask.planStart != null">
+                plan_start,
+            </if>
+            <if test="resTask.planEnd != null">
+                plan_end,
+            </if>
+            <if test="resTask.startTime != null">
+                start_time,
+            </if>
+            <if test="resTask.endTime != null">
+                end_time,
+            </if>
+            <if test="resTask.bookEnd != null">
+                book_end,
+            </if>
+            <if test="resTask.bookStart != null">
+                book_start,
+            </if>
+            <if test="resTask.isFinish != 0">
+                is_finish,
+            </if>
+            <if test="resTask.isPlan != 0">
+                is_plan,
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="resTask.resourceNo != null AND resTask.resourceNo!=''">
+                #{resTask.resourceNo,jdbcType=VARCHAR},
+            </if>
+            <if test="resTask.resourceId != 0">
+                #{resTask.resourceId,jdbcType=BIGINT},
+            </if>
+            <if test="resTask.nodeId != 0">
+                #{resTask.nodeId,jdbcType=BIGINT},
+            </if>
+            <if test="resTask.planStart != null">
+                #{resTask.planStart,jdbcType=TIMESTAMP},
+            </if>
+            <if test="resTask.planEnd != null">
+                #{resTask.planEnd,jdbcType=TIMESTAMP},
+            </if>
+            <if test="resTask.startTime != null">
+                #{resTask.startTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="resTask.endTime != null">
+                #{resTask.endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="resTask.bookEnd != null">
+                #{resTask.bookEnd,jdbcType=TIMESTAMP},
+            </if>
+            <if test="resTask.bookStart != null">
+                #{resTask.bookStart,jdbcType=TIMESTAMP},
+            </if>
+            <if test="resTask.isFinish != 0">
+                #{resTask.isFinish,jdbcType=TINYINT},
+            </if>
+            <if test="resTask.isPlan != 0">
+                #{resTask.isPlan,jdbcType=TINYINT},
+            </if>
+        </trim>
+    </insert>
+    <delete id="deleteResourceTask">
+        delete from k_resource_task where
+        no=#{no,jdbcType=BIGINT}
+    </delete>
+</mapper>

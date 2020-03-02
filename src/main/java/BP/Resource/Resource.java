@@ -1,4 +1,4 @@
-package BP.WF.Port;
+package BP.Resource;
 
 import BP.En.EntityNoName;
 import BP.En.Map;
@@ -24,7 +24,7 @@ public class Resource extends EntityNoName {
         map.AddDDLSysEnum(ResourceAttr.Kind, 0, "类型", true, true, ResourceAttr.Kind,
                 "@1=人力@2=设备@3=环境@4=知识");
         map.AddTBString(ResourceAttr.DeptId, null, "所属部门", true, false, 0, 100, 100);
-        map.AddTBStringDoc(ResourceAttr.Abstracts, null, "资源详情", true, false);
+        map.AddTBStringDoc(ResourceAttr.Abstracts, null, "性能参数", true, false);
         map.AddSearchAttr(ResourceAttr.Kind);
         this.set_enMap(map);
         return this.get_enMap();

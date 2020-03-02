@@ -1,6 +1,8 @@
 package BP.springCloud;
 
 
+import BP.Resource.ResourceAttr;
+import BP.Resource.Resources;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -55,7 +58,29 @@ public class FeignController {
     @RequestMapping("/getResources")
     @ResponseBody
     public void queryResources(HttpServletRequest request, HttpServletResponse response){
-        esQuery("http://112.125.90.132:8082/es/getResourceDsl",request,response);
+        //优先编码查询
+        String resourceNo=request.getParameter("resourceNo");
+        if (resourceNo!=null&&!resourceNo.equals("")){
+            Resources resources=new Resources();
+            try {
+                resources.RetrieveByAttr(ResourceAttr.No,resourceNo);
+                List list=resources.ToDataTableField().Rows;
+                Map<String, Object> jsonMap = new HashMap<>();//定义map
+                jsonMap.put("rows",list);
+                jsonMap.put("total",list.size());
+                response.setCharacterEncoding("utf-8");
+                response.setContentType("text/html");
+                PrintWriter out = response.getWriter();
+                String result = JSONObject.fromObject(jsonMap).toString();//格式化result   一定要是JSONObject
+                out.print(result);
+                out.flush();
+                out.close();
+            }catch (Exception e){
+                logger.error(e.getMessage());
+            }
+        }else{
+            esQuery("http://112.125.90.132:8082/es/getResourceDsl",request,response);
+        }
     }
 
     /**
