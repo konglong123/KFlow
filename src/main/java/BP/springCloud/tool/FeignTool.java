@@ -1,4 +1,4 @@
-package BP.springCloud;
+package BP.springCloud.tool;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.JsonObject;
@@ -27,7 +27,8 @@ public class FeignTool {
     *@Date: 2019/12/29
     */
     public static Boolean updateToES(String url,Map<String,Object> postBody){
-        return (Boolean) callFeign(url,postBody);
+        JSONObject jsonObject=(JSONObject)callFeign(url,postBody);
+        return jsonObject.getBoolean("success");
     }
 
     /**
@@ -52,7 +53,7 @@ public class FeignTool {
         try{
             HttpEntity<Map> requestEntity = new HttpEntity<>(postBody, null);
             ResponseEntity<JSONObject> resTemp = template.postForEntity(url, requestEntity, JSONObject.class);
-            return resTemp.getBody().getBoolean("success");
+            return resTemp.getBody();
         }catch (Exception e){
             e.printStackTrace();
         }

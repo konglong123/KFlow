@@ -6,6 +6,7 @@ import java.util.*;
 
 import BP.DA.*;
 import BP.Tools.EntityIdUtil;
+import BP.springCloud.tool.KFlowTool;
 import org.apache.commons.lang.StringUtils;
 
 import BP.Difference.ContextHolderUtils;
@@ -604,6 +605,14 @@ public class Flow extends BP.En.EntityNoName {
 
 			// 启用草稿或空白就创建WorkID
 			if (wk.getOID() == 0) {
+
+				Long workid=DBAccess.GenerOID("WorkID");// ,这是唯一产生WorkID的地方.
+				//启动流程节点任务
+				String flowNo=this.getNo();
+				Flow flow=new Flow(flowNo);
+				KFlowTool.startFlow(workid,-1L,flow);
+
+
 				// 说明没有空白,就创建一个空白..
 				//wk.ResetDefaultVal();
 				wk.setRec(WebUser.getNo());
@@ -615,7 +624,7 @@ public class Flow extends BP.En.EntityNoName {
 				wk.SetValByKey(WorkAttr.CDT, BP.DA.DataType.getCurrentDataTime());
 				wk.SetValByKey(GERptAttr.WFState, WFState.Blank.getValue());
 
-				wk.setOID(DBAccess.GenerOID("WorkID")); // 这里产生WorkID
+				wk.setOID(workid); // 这里产生WorkID
 														// ,这是唯一产生WorkID的地方.
 
 				// 把尽量可能的流程字段放入，否则会出现冲掉流程字段属性.
@@ -1942,12 +1951,12 @@ public class Flow extends BP.En.EntityNoName {
 			}
 			
 			
-			// #region 执行一次保存. @于庆海翻译. 增加了此部分.
-			NodeExts nes = new NodeExts();
+			// #region 执行一次保存.  增加了此部分.
+			/*NodeExts nes = new NodeExts();
 			nes.Retrieve(NodeAttr.FK_Flow, this.getNo());
 			for (NodeExt item : nes.ToJavaList()) {
 				item.Update(); // 调用里面的业务逻辑执行检查.
-			}
+			}*/
 
 			msg += "@流程的基础信息: ------ ";
 			msg += "@编号:  " + this.getNo() + " 名称:" + this.getName() + " , 存储表:" + this.getPTable();
@@ -1957,56 +1966,56 @@ public class Flow extends BP.En.EntityNoName {
 			msg += "@信息:开始检查节点的焦点字段";
 
 			// 获得gerpt字段.
-			GERpt rpt = this.getHisGERpt();
-			for(Attr attr : rpt.getEnMap().getAttrs())
-            {
-                  rpt.SetValByKey(attr.getKey(), "0");
-            }
-			  
-			for (Node nd : nds.ToJavaList()) {
-				if (nd.getFocusField().trim().equals("")) {
-					Work wk = nd.getHisWork();
-					String attrKey = "";
-					for (Attr attr : wk.getEnMap().getAttrs()) {
-						if (attr.getUIVisible() == true && attr.getUIIsDoc() && attr.getUIIsReadonly() == false) {
-							attrKey = attr.getDesc() + ":@" + attr.getKey();
-						}
-					}
-					if (attrKey.equals("")) {
-						msg += "@警告:节点ID:" + nd.getNodeID() + " 名称:" + nd.getName()
-								+ "属性里没有设置焦点字段，会导致信息写入轨迹表空白，为了能够保证流程轨迹是可读的请设置焦点字段.";
-					} else {
-						msg += "@信息:节点ID:" + nd.getNodeID() + " 名称:" + nd.getName()
-								+ "属性里没有设置焦点字段，会导致信息写入轨迹表空白，为了能够保证流程轨迹是可读的系统自动设置了焦点字段为" + attrKey + ".";
-						nd.setFocusField(attrKey);
-						nd.DirectUpdate();
-					}
-					continue;
-				}
-
-				Object tempVar = nd.getFocusField();
-				String strs = (String) ((tempVar instanceof String) ? tempVar : null);
-				strs = BP.WF.Glo.DealExp(strs, rpt, "err");
-				if (strs.contains("@") == true) {
-					//msg += "@错误:焦点字段（" + nd.getFocusField() + "）在节点(step:" + nd.getStep() + " 名称:" + nd.getName()
-					//		+ ")属性里的设置已无效，表单里不存在该字段.";
-					//删除节点属性中的焦点字段
-                    nd.setFocusField("");
-                    nd.Update();
-				} else {
-					msg += "@提示:节点的(" + nd.getNodeID() + "," + nd.getName() + ")焦点字段（" + nd.getFocusField()
-							+ "）设置完整检查通过.";
-				}
-
-				if (this.getIsMD5()) {
-					if (nd.getHisWork().getEnMap().getAttrs().Contains(WorkAttr.MD5) == false) {
-						nd.RepareMap();
-					}
-				}
-			}
-			msg += "@信息:检查节点的焦点字段完成.";
+//			GERpt rpt = this.getHisGERpt();
+//			for(Attr attr : rpt.getEnMap().getAttrs())
+//            {
+//                  rpt.SetValByKey(attr.getKey(), "0");
+//            }
+//
+//			for (Node nd : nds.ToJavaList()) {
+//				if (nd.getFocusField().trim().equals("")) {
+//					Work wk = nd.getHisWork();
+//					String attrKey = "";
+//					for (Attr attr : wk.getEnMap().getAttrs()) {
+//						if (attr.getUIVisible() == true && attr.getUIIsDoc() && attr.getUIIsReadonly() == false) {
+//							attrKey = attr.getDesc() + ":@" + attr.getKey();
+//						}
+//					}
+//					if (attrKey.equals("")) {
+//						msg += "@警告:节点ID:" + nd.getNodeID() + " 名称:" + nd.getName()
+//								+ "属性里没有设置焦点字段，会导致信息写入轨迹表空白，为了能够保证流程轨迹是可读的请设置焦点字段.";
+//					} else {
+//						msg += "@信息:节点ID:" + nd.getNodeID() + " 名称:" + nd.getName()
+//								+ "属性里没有设置焦点字段，会导致信息写入轨迹表空白，为了能够保证流程轨迹是可读的系统自动设置了焦点字段为" + attrKey + ".";
+//						nd.setFocusField(attrKey);
+//						nd.DirectUpdate();
+//					}
+//					continue;
+//				}
+//
+//				Object tempVar = nd.getFocusField();
+//				String strs = (String) ((tempVar instanceof String) ? tempVar : null);
+//				strs = BP.WF.Glo.DealExp(strs, rpt, "err");
+//				if (strs.contains("@") == true) {
+//					//msg += "@错误:焦点字段（" + nd.getFocusField() + "）在节点(step:" + nd.getStep() + " 名称:" + nd.getName()
+//					//		+ ")属性里的设置已无效，表单里不存在该字段.";
+//					//删除节点属性中的焦点字段
+//                    nd.setFocusField("");
+//                    nd.Update();
+//				} else {
+//					msg += "@提示:节点的(" + nd.getNodeID() + "," + nd.getName() + ")焦点字段（" + nd.getFocusField()
+//							+ "）设置完整检查通过.";
+//				}
+//
+//				if (this.getIsMD5()) {
+//					if (nd.getHisWork().getEnMap().getAttrs().Contains(WorkAttr.MD5) == false) {
+//						nd.RepareMap();
+//					}
+//				}
+//			}
+//			msg += "@信息:检查节点的焦点字段完成.";
 			/// #region 检查质量考核点.
-			msg += "@信息:开始检查质量考核点";
+			/*msg += "@信息:开始检查质量考核点";
 			for (Node nd : nds.ToJavaList()) {
 				if (nd.getIsEval()) {
 					// 如果是质量考核点，检查节点表单是否具别质量考核的特别字段？
@@ -2018,7 +2027,7 @@ public class Flow extends BP.En.EntityNoName {
 					}
 				}
 			}
-			msg += "@检查质量考核点完成.";
+			msg += "@检查质量考核点完成.";*/
 
 			/// #endregion
 
@@ -6835,4 +6844,6 @@ public class Flow extends BP.En.EntityNoName {
 	}
 
 	/// #endregion
+
+
 }

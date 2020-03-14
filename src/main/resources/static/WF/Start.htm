@@ -75,7 +75,6 @@
         }
         //发起时打开窗口
         function WinOpenStartFlow(flowNo, title) {
-
             var showList = GetQueryString("ShowList");
             var url = "";
             if (showList == 1)
@@ -215,7 +214,7 @@
             $('#lists').html(window.lang.loading);
 
             var handler = new HttpHandler("BP.WF.HttpHandler.WF");
-            handler.AddUrlData();
+            handler.AddPara("");
             var data = handler.DoMethodReturnString("Start_Init");
             if (data.indexOf('err@') == 0) {
                 alert(data);

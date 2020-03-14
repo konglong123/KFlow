@@ -1,4 +1,4 @@
-package BP.springCloud;
+package BP.springCloud.tool;
 
 import java.io.Serializable;
 import java.util.List;

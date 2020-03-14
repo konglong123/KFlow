@@ -5,8 +5,13 @@ import BP.Sys.*;
 import BP.Tools.StringHelper;
 import BP.En.*;
 import BP.WF.Template.*;
+import BP.WF.Template.FrmSubFlow;
+import BP.WF.Template.FrmSubFlowAttr;
 import BP.WF.Template.FrmWorkCheckAttr;
 import BP.WF.Template.FrmWorkCheckSta;
+import BP.springCloud.tool.KFlowTool;
+
+import java.util.List;
 
 /**
  * 这里存放每个节点的信息.
@@ -2920,4 +2925,6 @@ public class Node extends Entity {
         }
         super.afterInsertUpdateAction();
     }
+
+
 }

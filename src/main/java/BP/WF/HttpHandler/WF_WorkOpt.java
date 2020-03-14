@@ -7,12 +7,16 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import BP.Task.NodeTask;
+import BP.Task.NodeTaskAttr;
+import BP.Task.NodeTasks;
 import BP.Tools.DateUtils;
 import BP.WF.*;
 import BP.WF.Template.*;
 import BP.WF.Template.SelectorModel;
 import BP.WF.TransferCustom;
 import BP.WF.TransferCustoms;
+import BP.springCloud.entity.NodeTaskM;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.protocol.HttpContext;
 import BP.DA.AtPara;
@@ -2463,8 +2467,8 @@ public class WF_WorkOpt extends WebContralBase {
 	/// </summary>
 	/// <returns></returns>
 	public String AccepterOfGener_Send() throws Exception {
-
 		int toNodeID = this.GetRequestValInt("ToNode");
+
 		/* 仅仅设置一个,检查压入的人员个数. */
 		String sql = "SELECT count(WorkID) as Num FROM WF_SelectAccper WHERE FK_Node=" + toNodeID + " AND WorkID="
 				+ this.getWorkID() + " AND AccType=0";

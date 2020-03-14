@@ -35,7 +35,6 @@ import BP.Sys.SysEnumAttr;
 import BP.Sys.SysEnums;
 import BP.Sys.SystemConfig;
 import BP.Web.WebUser;
-import BP.springCloud.FeignTool;
 
 public class WF_CommEntity extends WebContralBase {
 

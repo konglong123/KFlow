@@ -31,9 +31,9 @@ function gotoWorkflow(id,name) {
     window.parent.addTab(id, id+"."+name, url);
 }
 function queryWorkflow() {
-    var queryParams = $('#dg').datagrid('options').queryParams;
+    var queryParams = $('#dgSearchflow').datagrid('options').queryParams;
     queryParams.abstracts = $("#abstractsText").val();
-    $("#dg").datagrid('reload');
+    $("#dgSearchflow").datagrid('reload');
 }
 function resetText() {
     $("#abstractsText").val("");

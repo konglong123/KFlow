@@ -390,7 +390,6 @@ public class FrmSubFlow extends Entity
 		map.AddDDLSysEnum(FrmSubFlowAttr.SFShowModel, FrmWorkShowModel.Free.getValue(), "显示方式", true, true, FrmSubFlowAttr.SFShowModel, "@0=表格方式@1=自由模式"); //此属性暂时没有用.
 
 		map.AddTBString(FrmSubFlowAttr.SFCaption, null, "标题", true, false, 0, 100, 10,true);
-		map.AddTBString(FrmSubFlowAttr.SFDefInfo, null, "可启动的子流程", true, false, 0, 50, 10,true);
 		map.AddTBString(FrmSubFlowAttr.SFActiveFlows, null, "可触发的子流程", true, false, 0, 50, 10, true);
 
 
@@ -415,11 +414,11 @@ public class FrmSubFlow extends Entity
 			//map.AddBoolean(FrmSubFlowAttr.SFIsFullInfo, true, "如果用户未审核是否按照默认意见填充？", true, true, true);
 
 
-		map.AddTBFloat(FrmSubFlowAttr.SF_X, 5, "位置X", true, false);
-		map.AddTBFloat(FrmSubFlowAttr.SF_Y, 5, "位置Y", true, false);
+		//map.AddTBFloat(FrmSubFlowAttr.SF_X, 5, "位置X", true, false);
+		//map.AddTBFloat(FrmSubFlowAttr.SF_Y, 5, "位置Y", true, false);
 
-		map.AddTBFloat(FrmSubFlowAttr.SF_H, 300, "高度", true, false);
-		map.AddTBFloat(FrmSubFlowAttr.SF_W, 400, "宽度", true, false);
+		//map.AddTBFloat(FrmSubFlowAttr.SF_H, 300, "高度", true, false);
+		//map.AddTBFloat(FrmSubFlowAttr.SF_W, 400, "宽度", true, false);
 
 		map.AddTBString(FrmSubFlowAttr.SFFields, null, "审批格式字段", true, false, 0, 50, 10,true);
 		//#endregion 此处变更了 NodeSheet类中的，map 描述该部分也要变更.

@@ -7,11 +7,13 @@ import java.util.Enumeration;
 import java.util.List;
 
 import BP.Sys.*;
+import BP.Task.NodeTask;
 import BP.WF.*;
 import BP.WF.Data.GERptAttr;
 import BP.WF.Template.*;
 import BP.WF.Template.FrmWorkCheck;
 import BP.WF.Template.FrmWorkCheckSta;
+import BP.springCloud.tool.KFlowTool;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.protocol.HttpContext;
 
@@ -635,13 +637,13 @@ public class WF_MyFlow extends WebContralBase {
 		if (isCC != null && isCC == "1")
 			return "url@WFRpt.htm?1=2" + this.getRequestParasOfAll();
 
-		if (this.getWorkID() != 0) {
+		/*if (this.getWorkID() != 0) {
 			// 判断是否有执行该工作的权限.
 			boolean isCanDo = Dev2Interface.Flow_IsCanDoCurrentWork(this.getWorkID(), userNo);
 			if (isCanDo == false) {
 				return "err@您不能执行当前工作.";
 			}
-		}
+		}*/
 
 		// 当前工作.
 		Work currWK = this.getcurrND().getHisWork();
@@ -664,8 +666,11 @@ public class WF_MyFlow extends WebContralBase {
 		}
 
 		if (this.getWorkID() == 0 && this.getcurrND().getIsStartNode() && this.GetRequestVal("IsCheckGuide") == null) {
+			//启动流程前需要检查流程所需资源是否准备充分
+
 			long workid = BP.WF.Dev2Interface.Node_CreateBlankWork(this.getFK_Flow());
-			this.setWorkID(workid);
+
+ 			this.setWorkID(workid);
 
 			switch (this.getcurrFlow().getStartGuideWay()) {
 			case None:
@@ -1777,7 +1782,6 @@ public class WF_MyFlow extends WebContralBase {
 			return _workID;
 		}
 
-		// 杨玉慧
 		String str = this.GetRequestVal("WorkID");
 		if (str == null || str.equals("") || str.equals("null")) {
 			return 0;

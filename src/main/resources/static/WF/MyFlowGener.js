@@ -895,7 +895,7 @@ function GenerCheckIDs() {
 
 //发送
 function Send(isHuiQian) {
-
+    debugger
     //保存前事件
     if (typeof beforeSend != 'undefined' && beforeSend instanceof Function)
         if (beforeSend() == false)
@@ -970,6 +970,7 @@ function Send(isHuiQian) {
         }
     }
     window.hasClickSend = true; //标志用来刷新待办.
+
 
     var toNodeID = 0;
 
@@ -1478,7 +1479,7 @@ function SaveDtlAll() {
     return true;
 }
 
-// 杨玉慧
+//
 function GenerWorkNode() {
 
     var href = window.location.href;

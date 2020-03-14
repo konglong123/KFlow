@@ -12,7 +12,7 @@ import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
-import BP.springCloud.FeignTool;
+import BP.springCloud.tool.FeignTool;
 import org.apache.commons.lang.StringUtils;
 
 import com.sun.star.bridge.oleautomation.Decimal;
@@ -54,7 +54,6 @@ import BP.En.UIContralType;
 import BP.Sys.DTSearchWay;
 import BP.Sys.DefVals;
 import BP.Sys.EnCfg;
-import BP.Sys.EventListOfNode;
 import BP.Sys.GEEntitys;
 import BP.Sys.MapAttr;
 import BP.Sys.MapAttrAttr;

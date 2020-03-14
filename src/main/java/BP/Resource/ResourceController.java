@@ -1,8 +1,6 @@
 package BP.Resource;
 
 import BP.DA.DataTable;
-import BP.springCloud.dao.ResourceTaskMDao;
-import BP.springCloud.service.ResourceService;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

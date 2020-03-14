@@ -103,7 +103,8 @@ public static final String getCondExp = null;
 
     		map.AddTBInt(SubFlowYanXuAttr.FK_Node, 0, "节点", false, true);
 
-    		map.AddDDLSysEnum(SubFlowYanXuAttr.SubFlowType, 2, "子流程类型", true, false, SubFlowYanXuAttr.SubFlowType, "@0=手动启动子流程@1=触发启动子流程@2=延续子流程");
+    		map.AddDDLSysEnum(SubFlowYanXuAttr.SubFlowType, 0, "子流程类型", true, false, SubFlowYanXuAttr.SubFlowType, "@0=手动启动子流程@1=触发启动子流程@2=延续子流程");
+			map.AddDDLSysEnum(SubFlowYanXuAttr.SubFlowType, 0, "子流程类型", true, false, SubFlowYanXuAttr.SubFlowType, "@0=手动启动子流程");
 
     		map.AddTBString(SubFlowYanXuAttr.FK_Flow, null, "子流程编号", true, true, 0, 10, 150, false);
     		map.AddTBString(SubFlowYanXuAttr.FlowName, null, "子流程名称", true, true, 0, 200, 150, false);

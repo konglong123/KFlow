@@ -2538,3 +2538,26 @@ function validate(s) {
     }
     return true;
 }
+function updateNodeTask() {
+    var flowId=GetQueryString("FK_Flow");
+    var fromNodeId=GetQueryString("FK_Node");
+    var toNodeId=GetQueryString("ToNode");
+    var workId=GetQueryString("WorkId");
+    $.ajax({
+        url: "/WF/nodeTask/sendToNextNodes",
+        type: 'POST',
+        data: {
+            flowId:flowId,
+            fromNodeId:fromNodeId,
+            toNodeId:toNodeId,
+            workId:workId
+        },
+        success: function (responseStr) {
+            console.log(responseStr);
+        },
+        error: function (responseStr) {
+            console.log("error:"+responseStr);
+        }
+    });
+
+}

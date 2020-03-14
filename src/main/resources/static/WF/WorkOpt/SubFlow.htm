@@ -44,11 +44,10 @@
             }
 
             //查询出来所有子流程的数据.
-            var sf = new Entity("BP.WF.Template.FrmSubFlow", GetQueryString("FK_Node"));
+            var sf = new Entity("BP.Task.FrmSubFlow", GetQueryString("FK_Node"));
             var node = new Entity("BP.WF.Node", GetQueryString("FK_Node"));
             if (sf.SFDefInfo.trim().Length == 0)
                 return;
-
             var html = "";
 
             html += "<table width='100%'>";
@@ -74,9 +73,9 @@
 
             var gwf = null;
 
-            var subFlows = new Entities("BP.WF.Template.SubFlowHands");
+            var subFlows = new Entities("BP.WF.Template.SubFlowYanXus");
             subFlows.Retrieve("FK_Node", nodeID, "SubFlowType", 0, "Idx");
-
+            debugger
             //要兼容旧版本.
             if (subFlows.length == 0 && sf.SFDefInfo != "") {
 
@@ -85,9 +84,9 @@
                     if (flowNo == null || flowNo == "")
                         continue;
 
-                    var en = new Entity("BP.WF.Template.SubFlowHand");
+                    var en = new Entity("BP.WF.Template.SubFlowYanXu");
                     en.FK_Node = nodeID;
-                    en.SubFlowNo = flowNo;
+                    en.FK_Flow = flowNo;
                      
                     en.SetPKVal(flowNo + "_" + nodeID + "_0");
                     en.Insert();

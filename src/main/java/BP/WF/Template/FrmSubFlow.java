@@ -417,9 +417,9 @@ public class FrmSubFlow extends Entity
 
 		map.AddDDLSysEnum(FrmSubFlowAttr.SFShowModel, FrmWorkShowModel.Free.getValue(), "显示方式", true, true, FrmSubFlowAttr.SFShowModel, "@0=表格方式@1=自由模式"); //此属性暂时没有用.
 
-		map.AddTBString(FrmSubFlowAttr.SFCaption, "启动子流程", "连接标题", true, false, 0, 100, 10, true);
-		map.AddTBString(FrmSubFlowAttr.SFDefInfo, null, "可启动的子流程", true, false, 0, 50, 10,true);
-		map.AddTBString(FrmSubFlowAttr.SFActiveFlows, null, "可触发的子流程", true, false, 0, 50, 10, true);
+		//map.AddTBString(FrmSubFlowAttr.SFCaption, "启动子流程", "连接标题", true, false, 0, 100, 10, true);
+		map.AddTBString(FrmSubFlowAttr.SFDefInfo, null, "可启动的子流程(%分隔)", true, false, 0, 50, 10,true);
+		map.AddTBString(FrmSubFlowAttr.SFActiveFlows, null, "可触发的子流程(%分隔)", true, false, 0, 50, 10, true);
 
 		map.AddTBFloat(FrmSubFlowAttr.SF_X, 5, "位置X", true, false);
 		map.AddTBFloat(FrmSubFlowAttr.SF_Y, 5, "位置Y", true, false);

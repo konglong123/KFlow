@@ -244,12 +244,12 @@ public class GPMEmp extends EntityNoName
 
 	public final String DoEmpDepts()
 	{
-		return "../../GPM/EmpDepts.htm?FK_Emp=" + this.getNo();
+		return "../../../GPM/EmpDepts.htm?FK_Emp=" + this.getNo();
 	}
 
 	public final String DoSinger()
 	{
-		return "../../GPM/Siganture.htm?EmpNo=" + this.getNo();
+		return "../../../GPM/Siganture.htm?EmpNo=" + this.getNo();
 	}
 
 	public static GPMEmp GenerData(GPMEmp en) throws Exception

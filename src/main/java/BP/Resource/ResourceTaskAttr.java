@@ -19,6 +19,9 @@ public class ResourceTaskAttr {
     //节点id（节点编码）
     public static final String NodeId = "node_id";
 
+    //工作id（工作编码）
+    public static final String WorkId = "work_id";
+
     //任务的开始时间（实际）
     public static final String StartTime = "start_time";
 

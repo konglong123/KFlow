@@ -1,8 +1,10 @@
-package BP.springCloud;
+package BP.springCloud.controller;
 
 
 import BP.Resource.ResourceAttr;
 import BP.Resource.Resources;
+import BP.springCloud.tool.FeignTool;
+import BP.springCloud.tool.Page;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

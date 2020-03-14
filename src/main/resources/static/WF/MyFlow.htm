@@ -23,14 +23,13 @@
             var handler = new HttpHandler("BP.WF.HttpHandler.WF_MyFlow");
             handler.AddUrlData();
             var data = handler.DoMethodReturnString("MyFlow_Init");
-
             if (data.indexOf('err@') == 0) {
                 $("#Msg").html("<br>" + data);
                 return;
             }
 
             if (data.indexOf('url@') == 0) {
-
+                debugger
                 data = data.replace('url@', ''); //如果返回url，就直接转向.
                 data = data.replace('?DoType=HttpHandler', '?');
                 data = data.replace('&DoType=HttpHandler', '');
@@ -42,6 +41,8 @@
                 window.location.href = data;
                 return;
             }
+
+            startNodeTask(GetQueryString("NodeTaskNo"));
 
             $("#Msg").html(data);
 

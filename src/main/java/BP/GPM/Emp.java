@@ -288,12 +288,12 @@ public class Emp extends EntityNoName
 	
 	 public String DoEmpDepts()
      {
-         return "../../GPM/EmpDepts.htm?FK_Emp=" + this.getNo();
+         return "../GPM/EmpDepts.htm?FK_Emp=" + this.getNo();
      }
 
      public String DoSinger()
      {
-         return "../../GPM/Siganture.htm?EmpNo=" + this.getNo();
+         return "../GPM/Siganture.htm?EmpNo=" + this.getNo();
      }
 
 

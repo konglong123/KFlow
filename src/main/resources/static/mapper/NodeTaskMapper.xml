@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="BP.springCloud.dao.NodeTaskMDao">
+	<resultMap id="BaseResultMap" type="NodeTaskM">
+		<id column="no" property="no" jdbcType="BIGINT" />
+		<result column="flow_task_id" property="flowTaskId" jdbcType="VARCHAR" />
+		<result column="flow_id" property="flowId" jdbcType="VARCHAR" />
+		<result column="node_id" property="nodeId" jdbcType="VARCHAR" />
+		<result column="is_ready" property="isReady" jdbcType="TINYINT" />
+		<result column="pre_node_task" property="preNodeTask" jdbcType="VARCHAR" />
+		<result column="next_node_task" property="nextNodeTask" jdbcType="VARCHAR" />
+		<result column="parent_node_task" property="parentNodeTask" jdbcType="VARCHAR" />
+		<result column="total_time" property="totalTime" jdbcType="INTEGER" />
+		<result column="use_time" property="useTime" jdbcType="INTEGER" />
+		<result column="plan_start_time" property="planStartTime" jdbcType="TIMESTAMP" />
+		<result column="plan_end_time" property="planEndTime" jdbcType="TIMESTAMP" />
+		<result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+		<result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+		<result column="executor" property="executor" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		<trim prefix="" suffix="" suffixOverrides=",">
+		no,
+		flow_task_id,
+		flow_id,
+		node_id,
+		is_ready,
+		pre_node_task,
+		next_node_task,
+		parent_node_task,
+		total_time,
+		use_time,
+		plan_start_time,
+		plan_end_time,
+		start_time,
+		end_time,
+		executor,
+		</trim>
+	</sql>
+	
+	<!-- 根据Id查询 -->
+	<select id="getNodeTask" resultMap="BaseResultMap" parameterType="Long">
+		select
+		<include refid="Base_Column_List" />
+		from k_node_task
+		where no = #{no,jdbcType=BIGINT}
+	</select>
+	
+	<!-- 根据条件查询列表 -->
+	<select id="findNodeTaskList" resultMap="BaseResultMap" parameterType="NodeTaskM">
+		select
+		<include refid="Base_Column_List" />
+		from k_node_task
+		<where>
+			<trim>
+			1=1
+			<if test="no != null">
+				AND no = #{no,jdbcType=BIGINT}
+			</if>
+			<if test="flowTaskId != null">
+				AND	flow_task_id = #{flowTaskId,jdbcType=VARCHAR}
+			</if>
+			<if test="flowId != null">
+				AND flow_id = #{flowId,jdbcType=VARCHAR}
+			</if>
+			<if test="nodeId != null">
+				AND	node_id = #{nodeId,jdbcType=VARCHAR}
+			</if>
+			<if test="isReady != 0">
+				AND	is_ready = #{isReady,jdbcType=TINYINT}
+			</if>
+			<if test="preNodeTask != null">
+				AND	pre_node_task = #{preNodeTask,jdbcType=VARCHAR}
+			</if>
+			<if test="nextNodeTask != null">
+				AND	next_node_task = #{nextNodeTask,jdbcType=VARCHAR}
+			</if>
+			<if test="parentNodeTask != null">
+				AND	parent_node_task = #{parentNodeTask,jdbcType=VARCHAR}
+			</if>
+			<if test="totalTime != 0">
+				AND	total_time = #{totalTime,jdbcType=INTEGER}
+			</if>
+			<if test="useTime != 0">
+				AND	use_time = #{useTime,jdbcType=INTEGER}
+			</if>
+			<if test="planStartTime != null">
+				AND	plan_start_time = #{planStartTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="planEndTime != null">
+				AND	plan_end_time = #{planEndTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="startTime != null">
+				AND	start_time = #{startTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="endTime != null">
+				AND	end_time = #{endTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="executor != null">
+				AND	executor = #{executor,jdbcType=VARCHAR}
+			</if>
+			</trim>
+		</where>
+	</select>
+	<!-- 插入实体 -->
+	<insert id="insertNodeTask" parameterType="NodeTaskM" useGeneratedKeys="true" keyProperty="no">
+		insert into k_node_task 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		no,
+		flow_task_id,
+		flow_id,
+		node_id,
+		is_ready,
+		pre_node_task,
+		next_node_task,
+		parent_node_task,
+		total_time,
+		use_time,
+		plan_start_time,
+		plan_end_time,
+		start_time,
+		end_time,
+		executor,
+		</trim>
+		values 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		#{no,jdbcType=BIGINT}, 
+		#{flowTaskId,jdbcType=VARCHAR}, 
+		#{flowId,jdbcType=VARCHAR}, 
+		#{nodeId,jdbcType=VARCHAR}, 
+		#{isReady,jdbcType=TINYINT}, 
+		#{preNodeTask,jdbcType=VARCHAR}, 
+		#{nextNodeTask,jdbcType=VARCHAR}, 
+		#{parentNodeTask,jdbcType=VARCHAR}, 
+		#{totalTime,jdbcType=INTEGER}, 
+		#{useTime,jdbcType=INTEGER}, 
+		#{planStartTime,jdbcType=TIMESTAMP}, 
+		#{planEndTime,jdbcType=TIMESTAMP}, 
+		#{startTime,jdbcType=TIMESTAMP}, 
+		#{endTime,jdbcType=TIMESTAMP}, 
+		#{executor,jdbcType=VARCHAR}, 
+		</trim>
+	</insert>
+		<!-- 修改实体 -->
+	<update id="updateNodeTask" parameterType="NodeTaskM">
+		update k_node_task
+		<set>
+			<trim prefix="" suffix="" suffixOverrides=",">
+	        <if test="flowTaskId != null">
+					flow_task_id = #{flowTaskId,jdbcType=VARCHAR},
+	      		</if>
+	        <if test="flowId != null">
+					flow_id = #{flowId,jdbcType=VARCHAR},
+	      		</if>
+	        <if test="nodeId != null">
+					node_id = #{nodeId,jdbcType=VARCHAR},
+	      		</if>
+			<if test="isReady != 0">
+					is_ready = #{isReady,jdbcType=TINYINT},
+	      		</if>
+	        <if test="preNodeTask != null">
+					pre_node_task = #{preNodeTask,jdbcType=VARCHAR},
+	      		</if>
+	        <if test="nextNodeTask != null">
+					next_node_task = #{nextNodeTask,jdbcType=VARCHAR},
+	      		</if>
+	        <if test="parentNodeTask != null">
+					parent_node_task = #{parentNodeTask,jdbcType=VARCHAR},
+	      		</if>
+			<if test="totalTime != 0">
+					total_time = #{totalTime,jdbcType=INTEGER},
+	      		</if>
+			<if test="useTime != 0">
+					use_time = #{useTime,jdbcType=INTEGER},
+	      		</if>
+	        <if test="planStartTime != null">
+					plan_start_time = #{planStartTime,jdbcType=TIMESTAMP},
+	      		</if>
+	        <if test="planEndTime != null">
+					plan_end_time = #{planEndTime,jdbcType=TIMESTAMP},
+	      		</if>
+	        <if test="startTime != null">
+					start_time = #{startTime,jdbcType=TIMESTAMP},
+	      		</if>
+	        <if test="endTime != null">
+					end_time = #{endTime,jdbcType=TIMESTAMP},
+	      		</if>
+	        <if test="executor != null">
+					executor = #{executor,jdbcType=VARCHAR},
+	      		</if>
+			</trim>
+		</set>
+		where no = #{no,jdbcType=BIGINT}
+	</update>
+	<!-- 删除实体 -->
+	<update id="deleteNodeTask" parameterType="Long">
+		update k_node_task
+		<set>
+			is_delete=1
+		</set>
+		where no = #{no,jdbcType=BIGINT}
+	</update>
+</mapper>

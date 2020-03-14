@@ -882,6 +882,7 @@ public class WF extends WebContralBase {
             em.setName(WebUser.getName());
             em.Insert();
         }
+        //该处后面可以加上用户启动流程对权限信息（）
         String json="";
         json = BP.DA.DBAccess.GetBigTextFromDB("WF_Emp", "No", WebUser.getNo(), "StartFlows");
         if (DataType.IsNullOrEmpty(json) == false)

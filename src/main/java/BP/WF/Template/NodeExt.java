@@ -303,7 +303,7 @@ public class NodeExt extends Entity
         //map.AddBoolean(NodeAttr.IsRM, true, "是否启用投递路径自动记忆功能?", true, true, true);//"http://ccbpm.mydoc.io/?v=5404&t=17905"
 
        // map.AddBoolean(NodeAttr.IsToParentNextNode, false, "子流程运行到该节点时，让父流程自动运行到下一步", true, true);
-        //map.AddBoolean(NodeAttr.IsYouLiTai, false, "该节点是否是游离态", true, true);
+        map.AddBoolean(NodeAttr.IsYouLiTai, false, "该节点是否是游离态", false, true);
         //map.SetHelperUrl(NodeAttr.IsYouLiTai, "当节点为游离状态的时候，只有连接的节点是固定节点才可以往下运行，否则流程结束");
 
         //map.AddTBDateTime("DTFrom", "生命周期从", true, true);
@@ -317,11 +317,11 @@ public class NodeExt extends Entity
         //map.AddBoolean(NodeAttr.IsGuestNode, false, "是否是外部用户执行的节点(非组织结构人员参与处理工作的节点)?", true, true, true);
 
         //节点业务类型.
-        //map.AddTBInt("NodeAppType", 0, "节点业务类型", false, false);
-        //map.AddTBInt("FWCSta", 0, "节点状态", false, false);
-       // map.AddTBInt("FWCAth", 0, "审核附件是否启用", false, false);
+        map.AddTBInt("NodeAppType", 0, "节点业务类型", false, false);
+        map.AddTBInt("FWCSta", 0, "节点状态", false, false);
+        map.AddTBInt("FWCAth", 0, "审核附件是否启用", false, false);
         //map.AddTBString(NodeAttr.SelfParas, null, "自定义参数", true, false, 0, 500, 10, true);
-        map.AddTBInt(NodeAttr.Step, 0, "工作量(h)", true, false);
+        map.AddTBInt(NodeAttr.Doc, 0, "工作量(h)", true, false);
         map.AddTBStringDoc(NodeAttr.Tip, null, "操作提示", true, false);//"http://ccbpm.mydoc.io/?v=5404&t=18084"
 
         //  #endregion  基础属性
