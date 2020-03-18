@@ -1,8 +1,6 @@
 package BP.Task;
 
-import BP.En.EntitiesNo;
-import BP.En.EntityNo;
-import BP.En.Map;
+import BP.En.*;
 import BP.WF.Node;
 
 /**
@@ -12,6 +10,14 @@ import BP.WF.Node;
  * @create: 2020-03-04 17:33
  **/
 public class NodeTask extends EntityNo {
+
+    /**
+    *@Description:  NodeTask唯一性由
+    *@Param:
+    *@return:
+    *@Author: Mr.kong
+    *@Date: 2020/3/17
+    */
     @Override
     public Map getEnMap() {
         if (this.get_enMap() != null)
@@ -33,13 +39,28 @@ public class NodeTask extends EntityNo {
         map.AddTBString(NodeTaskAttr.ParentNodeTask, null, "父任务", true, false, 0, 50, 50);
         map.AddTBInt(NodeTaskAttr.TotalTime, 0, "预估总时间", true, true);
         map.AddTBInt(NodeTaskAttr.UseTime, 0, "已用时间", true, false);
-        map.AddTBDateTime(NodeTaskAttr.PlanStartTime,  "预计开始时间", true, false);
-        map.AddTBDateTime(NodeTaskAttr.PlanEndTime, "预计结束时间", true, false);
-        map.AddTBDateTime(NodeTaskAttr.StartTime, "实际开始时间", true, false);
-        map.AddTBDateTime(NodeTaskAttr.EndTime,  "实际结束时间", true, false);
+        map.AddTBDateTime(NodeTaskAttr.PlanStartTime, null, "预计开始时间", true, false);
+        map.AddTBDateTime(NodeTaskAttr.PlanEndTime, null,"预计结束时间", true, false);
+        map.AddTBDateTime(NodeTaskAttr.StartTime, null,"实际开始时间", true, false);
+        map.AddTBDateTime(NodeTaskAttr.EndTime,  null,"实际结束时间", true, false);
         map.AddTBString(NodeTaskAttr.Executor, null, "执行人", true, false, 0, 100, 100);
+        map.AddTBInt(NodeTaskAttr.Yn, 0, "是否删除", false, true);
+
+
+        RefMethod rm = new RefMethod();
+        rm.Title = "节点详细";
+        rm.ClassMethodName = this.toString() + ".NodeDetail";
+        rm.Icon = "../../WF/Img/Event.png";
+        rm.refMethodType= RefMethodType.RightFrameOpen;
+        map.AddRefMethod(rm);
+
         this.set_enMap(map);
         return this.get_enMap();
+    }
+
+    public final String NodeDetail()
+    {
+        return BP.WF.Glo.getCCFlowAppPath() + "/WF/Comm/En.htm?EnName=BP.WF.Template.NodeExt&PKVal="+this.GetValStrByKey(NodeTaskAttr.NodeId);
     }
 
     public NodeTask(String _no) throws Exception{
@@ -61,4 +82,6 @@ public class NodeTask extends EntityNo {
     public NodeTask(){
 
     }
+
+
 }

@@ -1,6 +1,7 @@
 package BP.springCloud.entity;
 
 import java.io.Serializable;
+import java.security.acl.LastOwnerException;
 import java.util.Date;
 
 /**
@@ -85,6 +86,8 @@ public class NodeTaskM implements Serializable {
 	 * 执行人
 	 */
 	private String executor;
+
+	private int yn;
 	
 	/**
 	 * @return the no
@@ -151,6 +154,7 @@ public class NodeTaskM implements Serializable {
 	
 	/**
 	 * @param isReady the isReady to set
+	 *                节点任务状态（0未准备，1前置条件完成，可以开始）2（已经开始），3(已经完成)，4(计划完成)
 	 */
 	public void setIsReady(int isReady) {
 		this.isReady = isReady;
@@ -295,5 +299,12 @@ public class NodeTaskM implements Serializable {
 	public void setExecutor(String executor) {
 		this.executor = executor;
 	}
-	
+
+	public int getYn() {
+		return yn;
+	}
+
+	public void setYn(int yn) {
+		this.yn = yn;
+	}
 }

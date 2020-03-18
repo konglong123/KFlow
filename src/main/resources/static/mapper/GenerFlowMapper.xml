@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="WF.Task.dao.KGenerFlowDao">
+	<resultMap id="BaseResultMap" type="GenerFlow">
+		<id column="no" property="no" jdbcType="BIGINT" />
+		<result column="work_id" property="workId" jdbcType="BIGINT" />
+		<result column="status" property="status" jdbcType="TINYINT" />
+		<result column="flow_id" property="flowId" jdbcType="INTEGER" />
+		<result column="creater" property="creater" jdbcType="VARCHAR" />
+		<result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="finishTime" property="finishTime" jdbcType="TIMESTAMP" />
+		<result column="yn" property="yn" jdbcType="TINYINT" />
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		<trim prefix="" suffix="" suffixOverrides=",">
+		no,
+		work_id,
+		status,
+		flow_id,
+		creater,
+		createTime,
+		finishTime,
+		yn,
+		</trim>
+	</sql>
+	
+	<!-- 根据Id查询 -->
+	<select id="getGenerFlowById" resultMap="BaseResultMap" parameterType="Long">
+		select
+		<include refid="Base_Column_List" />
+		from k_gener_flow
+		where no = #{no,jdbcType=BIGINT}
+	</select>
+	
+	<!-- 根据条件查询列表 -->
+	<select id="findGenerFlowList" resultMap="BaseResultMap" parameterType="GenerFlow">
+		select
+		<include refid="Base_Column_List" />
+		from k_gener_flow
+		<where>   
+		 	1=1
+			<trim prefix="" suffix="" suffixOverrides=",">
+				<if test="no != null">
+					AND no = #{no,jdbcType=BIGINT},
+				</if>
+				<if test="workId != null">
+					AND work_id = #{workId,jdbcType=BIGINT},
+				</if>
+				<if test="status != 0">
+					AND status = #{status,jdbcType=TINYINT},
+				</if>
+				<if test="flowId != 0">
+					AND flow_id = #{flowId,jdbcType=INTEGER},
+				</if>
+				<if test="creater != null">
+					AND creater = #{creater,jdbcType=VARCHAR},
+				</if>
+				<if test="createTime != null">
+					AND createTime = #{createTime,jdbcType=TIMESTAMP},
+				</if>
+				<if test="finishTime != null">
+					AND finishTime = #{finishTime,jdbcType=TIMESTAMP},
+				</if>
+				<if test="yn != 2">
+					AND yn = #{yn,jdbcType=TINYINT},
+				</if>
+			</trim>
+		</where>
+	</select>
+	<!-- 插入实体 -->
+	<insert id="insertGenerFlow" parameterType="GenerFlow" useGeneratedKeys="true" keyProperty="no">
+		insert into k_gener_flow 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		no,
+		work_id,
+		status,
+		flow_id,
+		creater,
+		createTime,
+		finishTime,
+		yn,
+		</trim>
+		values 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		#{no,jdbcType=BIGINT}, 
+		#{workId,jdbcType=BIGINT}, 
+		#{status,jdbcType=TINYINT}, 
+		#{flowId,jdbcType=INTEGER}, 
+		#{creater,jdbcType=VARCHAR}, 
+		#{createTime,jdbcType=TIMESTAMP}, 
+		#{finishTime,jdbcType=TIMESTAMP}, 
+		#{yn,jdbcType=TINYINT}, 
+		</trim>
+	</insert>
+		<!-- 修改实体 -->
+	<update id="updateGenerFlow" parameterType="GenerFlow">
+		update k_gener_flow
+		<set>
+			<trim prefix="" suffix="" suffixOverrides=",">
+	        <if test="no != null">
+					no = #{no,jdbcType=BIGINT},
+	      		</if>
+	        <if test="workId != null">
+					work_id = #{workId,jdbcType=BIGINT},
+	      		</if>
+			<if test="status != 0">
+					status = #{status,jdbcType=TINYINT},
+	      		</if>
+			<if test="flowId != 0">
+					flow_id = #{flowId,jdbcType=INTEGER},
+	      		</if>
+	        <if test="creater != null">
+					creater = #{creater,jdbcType=VARCHAR},
+	      		</if>
+	        <if test="createTime != null">
+					createTime = #{createTime,jdbcType=TIMESTAMP},
+	      		</if>
+	        <if test="finishTime != null">
+					finishTime = #{finishTime,jdbcType=TIMESTAMP},
+	      		</if>
+			<if test="yn != 0">
+					yn = #{yn,jdbcType=TINYINT},
+	      		</if>
+			</trim>
+		</set>
+		where no = #{no,jdbcType=BIGINT}
+	</update>
+	<!-- 删除实体 -->
+	<update id="deleteGenerFlow" parameterType="Long">
+		update k_gener_flow
+		<set>
+			yn=1
+		</set>
+		where no = #{no,jdbcType=BIGINT}
+	</update>
+</mapper>

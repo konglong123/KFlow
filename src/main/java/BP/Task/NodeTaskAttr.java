@@ -24,5 +24,6 @@ public class NodeTaskAttr {
     public static final String EndTime = "end_time";
     public static final String Executor = "executor";
     public static final String Status = "status";
+    public static final String Yn="yn";
 
 }

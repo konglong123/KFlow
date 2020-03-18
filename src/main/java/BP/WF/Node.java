@@ -2926,5 +2926,19 @@ public class Node extends Entity {
         super.afterInsertUpdateAction();
     }
 
+    /**
+    *@Description: 获取当前节点能够激活的节点（后续增加复杂合流触发功能）
+    *@Param:
+    *@return:
+    *@Author: Mr.kong
+    *@Date: 2020/3/16
+    */
+    public List getCanStartNode() throws Exception{
+    	Nodes nextNodes=this.getHisToNodes();
+    	//此处增加复杂逻辑，返回激活节点任务
+		return nextNodes.toList();
+	}
+
+
 
 }

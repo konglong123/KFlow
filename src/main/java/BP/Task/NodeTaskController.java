@@ -154,6 +154,28 @@ public class NodeTaskController {
         }
     }
 
+    /**
+    *@Description: 完成当前节点任务，并激活下一节点任务
+    *@Param:
+    *@return:
+    *@Author: Mr.kong
+    *@Date: 2020/3/18
+    */
+    @RequestMapping("sendNode")
+    @ResponseBody
+    public JSONObject sendNode(NodeTaskM currentNodeTask){
+        try {
+            //完善NodeTask信息
+            NodeTaskM currentTask=nodeTaskService.getNodeTaskById(currentNodeTask.getNo());
+
+            //完成节点任务，并将节点任务进行下发（）
+            nodeTaskService.finishNodeTask(currentNodeTask);
+        }catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+        return null;
+    }
+
 
 
 }

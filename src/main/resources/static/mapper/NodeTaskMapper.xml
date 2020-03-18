@@ -17,6 +17,7 @@
 		<result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
 		<result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
 		<result column="executor" property="executor" jdbcType="VARCHAR" />
+		<result column="yn" property="yn" jdbcType="TINYINT" />
 	</resultMap>
 	
 	<sql id="Base_Column_List">
@@ -36,11 +37,12 @@
 		start_time,
 		end_time,
 		executor,
+		yn,
 		</trim>
 	</sql>
 	
 	<!-- 根据Id查询 -->
-	<select id="getNodeTask" resultMap="BaseResultMap" parameterType="Long">
+	<select id="getNodeTaskById" resultMap="BaseResultMap" parameterType="Long">
 		select
 		<include refid="Base_Column_List" />
 		from k_node_task
@@ -100,6 +102,9 @@
 			<if test="executor != null">
 				AND	executor = #{executor,jdbcType=VARCHAR}
 			</if>
+			<if test="yn != 2">
+			  	AND	yn = #{yn,jdbcType=TINYINT}
+			</if>
 			</trim>
 		</where>
 	</select>
@@ -122,6 +127,7 @@
 		start_time,
 		end_time,
 		executor,
+		yn,
 		</trim>
 		values 
 		<trim prefix="(" suffix=")" suffixOverrides=",">
@@ -139,7 +145,8 @@
 		#{planEndTime,jdbcType=TIMESTAMP}, 
 		#{startTime,jdbcType=TIMESTAMP}, 
 		#{endTime,jdbcType=TIMESTAMP}, 
-		#{executor,jdbcType=VARCHAR}, 
+		#{executor,jdbcType=VARCHAR},
+		#{yn,jdbcType=TINYINT},
 		</trim>
 	</insert>
 		<!-- 修改实体 -->
@@ -197,8 +204,18 @@
 	<update id="deleteNodeTask" parameterType="Long">
 		update k_node_task
 		<set>
-			is_delete=1
+			yn=1
 		</set>
 		where no = #{no,jdbcType=BIGINT}
 	</update>
+
+	<select id="getNodeTaskByNodeIds" resultMap="BaseResultMap" parameterType="java.util.List">
+		select
+		<include refid="Base_Column_List" />
+		from k_node_task
+		where no in
+		<foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+			              #{item}
+		</foreach>
+	</select>
 </mapper>

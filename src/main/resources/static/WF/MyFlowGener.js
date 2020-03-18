@@ -895,7 +895,6 @@ function GenerCheckIDs() {
 
 //发送
 function Send(isHuiQian) {
-    debugger
     //保存前事件
     if (typeof beforeSend != 'undefined' && beforeSend instanceof Function)
         if (beforeSend() == false)
@@ -973,7 +972,6 @@ function Send(isHuiQian) {
 
 
     var toNodeID = 0;
-
     //含有发送节点 且接收
     if ($('#DDL_ToNode').length > 0) {
 
@@ -1011,7 +1009,6 @@ function Send(isHuiQian) {
 }
 
 function execSend(toNodeID) {
-
     //先设置按钮等不可用.
     setToobarDisiable();
 
@@ -1043,9 +1040,10 @@ function execSend(toNodeID) {
         //        }
     });
     //handler.AddUrlData(dataStrs);
-
+    var NodeTaskNo=GetQueryString("NodeTaskNo");
+    handler.AddPara("NodeTaskNo",NodeTaskNo);
     var data = handler.DoMethodReturnString("Send"); //执行保存方法.
-
+    debugger
     if (data.indexOf('err@') == 0) { //发送时发生错误
 
         var reg = new RegExp('err@', "g")
@@ -1569,8 +1567,8 @@ function GenerWorkNode() {
 
     ShowTextBoxNoticeInfo();
 
-    //发送旁边下拉框 edit by zhoupeng 放到这里是为了解决加载不同步的问题.
-    InitToNodeDDL(flowData);
+    //发送旁边下拉框放到这里是为了解决加载不同步的问题.
+    //InitToNodeDDL(flowData);
 
     if (node.FormType == 11) {
         //获得配置信息.

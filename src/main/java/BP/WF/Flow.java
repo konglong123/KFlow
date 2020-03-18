@@ -607,11 +607,12 @@ public class Flow extends BP.En.EntityNoName {
 			if (wk.getOID() == 0) {
 
 				Long workid=DBAccess.GenerOID("WorkID");// ,这是唯一产生WorkID的地方.
+
 				//启动流程节点任务
 				String flowNo=this.getNo();
 				Flow flow=new Flow(flowNo);
-				KFlowTool.startFlow(workid,-1L,flow);
-
+				KFlowTool kFlowTool=new KFlowTool();
+				kFlowTool.startFlow(workid,-1L,flow);
 
 				// 说明没有空白,就创建一个空白..
 				//wk.ResetDefaultVal();

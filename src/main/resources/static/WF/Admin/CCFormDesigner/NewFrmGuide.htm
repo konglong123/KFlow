@@ -69,7 +69,7 @@
             var handler = new HttpHandler("BP.WF.HttpHandler.WF_Admin_CCFormDesigner");
             var data = handler.DoMethodReturnString("NewFrmGuide_Init");
             $("#Msg").html("");
-
+            debugger
             if (data.indexOf('err@') >= 0) {
                 $("#Msg").html("<font color=red>" + data + "</font>");
                 return;
@@ -251,7 +251,7 @@
             <td>
             </td>
             <td colspan="2">
-                <input type="button" value="创建 - Create" onclick="Save()" id="Btn_Save" />
+                <input type="button" value="创建 - Create" onclick="Save()" id="Btn_Save" style="color: red"/>
                 <script type="text/javascript">
 
                     function GenerPinYin() {

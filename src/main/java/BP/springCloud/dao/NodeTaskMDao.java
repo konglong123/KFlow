@@ -17,7 +17,7 @@ public interface NodeTaskMDao {
 	 * @param no
 	 * @return the NodeTask
 	 */
-	public NodeTaskM getNodeTask(Long no);
+	public NodeTaskM getNodeTaskById(Long no);
 
 	/**
 	 * 插入节点任务
@@ -41,4 +41,6 @@ public interface NodeTaskMDao {
 	* @return 
 	*/
 	public List findNodeTaskList(NodeTaskM nodeTaskM);
+
+	public List getNodeTaskByNodeIds(@Param("ids") List<String> nodeIds);
 }

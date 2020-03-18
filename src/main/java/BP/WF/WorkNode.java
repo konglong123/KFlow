@@ -5534,8 +5534,8 @@ public class WorkNode {
 	}
 
 	/**
-	 * 工作流发送业务处理. 升级日期:2012-11-11. 升级原因:代码逻辑性不清晰,有遗漏的处理模式. 修改人:zhoupeng.
-	 * 修改地点:厦门. ----------------------------------- 说明
+	 * 工作流发送业务处理. 升级日期:2012-11-11. 升级原因:代码逻辑性不清晰,有遗漏的处理模式.
+	 * 修改地点:
 	 * ----------------------------- 1，方法体分为三大部分: 发送前检查\5*5算法\发送后的业务处理. 2,
 	 * 详细请参考代码体上的说明. 3, 发送后可以直接获取它的
 	 * 
@@ -5755,17 +5755,7 @@ public class WorkNode {
 			if (dtWL.Rows.size() != 0) {
 				if (this.getHisNode().getThreadKillRole() == ThreadKillRole.None
 						|| this.getHisNode().getThreadKillRole() == ThreadKillRole.ByHand) {
-					infoErr += "@您不能向下发送，有如下子线程没有完成。";
-					for (DataRow dr : dtWL.Rows) {
-						infoErr += "@操作员编号:" + dr.getValue("FK_Emp") + "," + dr.getValue("FK_EmpText") + ",停留节点:"
-								+ dr.getValue("FK_NodeText");
-					}
-
-					if (this.getHisNode().getThreadKillRole() == ThreadKillRole.ByHand) {
-						infoErr += "@请通知它们处理完成,或者强制删除子流程您才能向下发送.";
-					} else {
-						infoErr += "@请通知它们处理完成,您才能向下发送.";
-					}
+					infoErr += "@发送成功，但存在子线程没有完成，不激活下一节点。";
 
 					// 抛出异常阻止它向下运动。
 					throw new RuntimeException(infoErr);
@@ -5914,7 +5904,7 @@ public class WorkNode {
 				InitStartWorkDataV2(); // 初始化开始节点数据, 如果当前节点是开始节点.
 			}
 
-			// 处理发送人，把发送人的信息放入wf_generworkflow 2015-01-14.
+			// 处理发送人，把发送人的信息放入wf_generworkflow
 			// 原来放入WF_GenerWorkerList.
 			oldSender = this.getHisGenerWorkFlow().getSender(); // 旧发送人,在回滚的时候把该发送人赋值给他.
 			this.getHisGenerWorkFlow().setSender(BP.WF.Glo.DealUserInfoShowModel(WebUser.getNo(), WebUser.getName()));
@@ -5993,7 +5983,7 @@ public class WorkNode {
 				this.CheckCompleteCondition();
 			}
 
-			// 处理自由流程. add by stone. 2014-11-23.
+			// 处理自由流程.
 			if (jumpToNode == null && this.getHisGenerWorkFlow().getTransferCustomType() == TransferCustomType.ByWorkerSet) {
 				if(this.getHisNode().GetParaBoolen(NodeAttr.IsYouLiTai) == true){
 					_transferCustom = TransferCustom.GetNextTransferCustom(this.getWorkID(), this.getHisNode().getNodeID());

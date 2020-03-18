@@ -1,19 +1,21 @@
 package BP.springCloud.tool;
 
-import BP.Task.NodeTask;
-import BP.Task.NodeTaskAttr;
-import BP.Task.NodeTaskService;
+import BP.Task.*;
+import BP.Tools.BeanTool;
 import BP.WF.Flow;
 import BP.WF.Node;
 import BP.WF.Nodes;
-import BP.WF.Template.FrmSubFlow;
-import BP.WF.Template.NodeAttr;
+import BP.WF.Template.*;
 import BP.Web.WebUser;
+import BP.springCloud.entity.NodeTaskM;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @program: kflow-web
@@ -32,7 +34,11 @@ public class KFlowTool {
      *@Author: Mr.kong
      *@Date: 2020/3/8
      */
-    public static Boolean startFlow(Long workId,Long parentTaskId,Flow flow) throws Exception{
+    public  Boolean startFlow(Long workId,Long parentTaskId,Flow flow) throws Exception{
+
+        if (!beforeStart(flow))
+            return false;
+
         Nodes nodes=new Nodes();
         nodes.Retrieve(NodeAttr.FK_Flow,flow.getNo());
         List<Node> nodeList=nodes.toList();
@@ -45,13 +51,25 @@ public class KFlowTool {
                 continue;
             }*/
             if (startNodeId==node.getNodeID())
-                flag=flag&startNodeTask(workId,parentTaskId,node,WebUser.getNo());
+                flag=flag&startNodeTask(workId,parentTaskId,node,WebUser.getNo(),1);
             else
-                flag=flag&startNodeTask(workId,parentTaskId,node,"");
+                flag=flag&startNodeTask(workId,parentTaskId,node,"",0);
         }
+
         return flag;
     }
 
+    /**
+    *@Description: 流程发起前判断是否允许启动（流程使用资源是否到位，）
+    *@Param:
+    *@return:
+    *@Author: Mr.kong
+    *@Date: 2020/3/16
+    */
+    public  Boolean beforeStart(Flow flow){
+
+        return true;
+    }
     /**
      *@Description: 创建流程节点任务（如果该节点下包含子流程，则递归创建子流程任务）
      * 没有考虑事务问题（建议后续增加事务）
@@ -60,7 +78,7 @@ public class KFlowTool {
      *@Author: Mr.kong
      *@Date: 2020/3/8
      */
-    public static Boolean startNodeTask(Long workID,Long parentTaskId,Node node,String userNo) throws Exception{
+    public  Boolean startNodeTask(Long workID,Long parentTaskId,Node node,String userNo,int isReady) throws Exception{
         int nodeId=node.getNodeID();
 
         //创建节点任务
@@ -72,7 +90,7 @@ public class KFlowTool {
         nodeTask.SetValByKey(NodeTaskAttr.FlowTaskId,workID);
         nodeTask.SetValByKey(NodeTaskAttr.ParentNodeTask,parentTaskId);
         nodeTask.SetValByKey(NodeTaskAttr.No,nodeTaskId);
-        nodeTask.SetValByKey(NodeTaskAttr.IsReady,0);
+        nodeTask.SetValByKey(NodeTaskAttr.IsReady,isReady);
         nodeTask.SetValByKey(NodeTaskAttr.Executor,userNo);
         nodeTask.Insert();
 
@@ -93,5 +111,6 @@ public class KFlowTool {
 
         return flag;
     }
+
 
 }

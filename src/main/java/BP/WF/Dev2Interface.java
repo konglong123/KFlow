@@ -7308,7 +7308,7 @@ public class Dev2Interface {
 		sw.setOID(workID);
 		sw.RetrieveFromDBSources();
 
-		// @于庆海翻译.
+		// .
 		Node ndOfToNode = null; // 到达节点ID
 		if (toNodeID != 0) {
 			ndOfToNode = new Node(toNodeID);

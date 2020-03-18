@@ -8,6 +8,8 @@ import java.util.List;
 
 import BP.Sys.*;
 import BP.Task.NodeTask;
+import BP.Task.NodeTaskAttr;
+import BP.Task.NodeTasks;
 import BP.WF.*;
 import BP.WF.Data.GERptAttr;
 import BP.WF.Template.*;
@@ -1007,151 +1009,40 @@ public class WF_MyFlow extends WebContralBase {
 	}
 
 	public String InitToolBar() throws Exception {
+		String nodeTaskNo=this.GetRequestVal("NodeTaskNo");
+		NodeTask nodeTask=new NodeTask(nodeTaskNo);
+		String flowId=nodeTask.GetValStrByKey(NodeTaskAttr.FlowId);
+		String nodeId=nodeTask.GetValStrByKey(NodeTaskAttr.NodeId);
+		String workId=nodeTask.GetValStrByKey(NodeTaskAttr.FlowTaskId);
 
-		// #region 处理是否是加签，或者是否是会签模式，.
-		Boolean isAskForOrHuiQian = false;
-		String nodeIDStr = this.GetRequestVal("FK_Node");
-
-		if (nodeIDStr != null && nodeIDStr.endsWith("01") == false) {
-			GenerWorkFlow gwf = new GenerWorkFlow(this.getWorkID());
-			if (gwf.getWFState() == WFState.Askfor) {
-				isAskForOrHuiQian = true;
-			}
-
-			/* 判断是否是加签状态，如果是，就判断是否是主持人，如果不是主持人，就让其 isAskFor=true ,屏蔽退回等按钮. */
-			if (gwf.getHuiQianTaskSta() == HuiQianTaskSta.HuiQianing) {
-				if (gwf.getHuiQianZhuChiRen().equals(WebUser.getNo()) == false)
-					isAskForOrHuiQian = true;
-			}
-		}
-		// #endregion 处理是否是加签，或者是否是会签模式，.
-
-		String tKey = ""; // DateTime.Now.ToString("yyyy-MM-dd - hh:mm:ss");
-		BtnLab btnLab = new BtnLab(this.getFK_Node());
+		BtnLab btnLab = new BtnLab(Integer.parseInt(nodeId));
 		String toolbar = "";
-		try {
-			// #region 是否是会签？.
-			if (isAskForOrHuiQian == true && SystemConfig.getCustomerNo() == "LIMS")
-				return "";
+		String tKey="";
 
-			if (isAskForOrHuiQian == true) {
-				toolbar += "<input name='Send' type=button value='执行会签' enable=true onclick=\" " + btnLab.getSendJS()
-						+ " if(SysCheckFrm()==false) return false;SaveDtlAll();Send(); \" />";
-				if (btnLab.getPrintZipEnable() == true) {
-					String packUrl = "./WorkOpt/Packup.htm?FK_Node=" + this.getFK_Node() + "&WorkID=" + this.getWorkID()
-							+ "&FID=" + this.getFID() + "&FK_Flow=" + this.getFK_Flow();
-					toolbar += "<input type=button name='PackUp'  value='" + btnLab.getPrintZipLab()
-							+ "' enable=true/>";
-				}
+		/* 处理保存按钮. */
+		if (btnLab.getSaveEnable()) {
+			toolbar += "<input name='保存' type=button  value='" + btnLab.getSaveLab()
+					+ "' enable=true onclick=\"   if(SysCheckFrm()==false) return false;Save();\" />";
+		}
 
-				if (btnLab.getTrackEnable())
-					toolbar += "<input type=button name='Track'  value='" + btnLab.getTrackLab()
+		if (btnLab.getTrackEnable()){
+			toolbar += "<input type=button name='流程运行轨迹'  value='" + btnLab.getTrackLab()
 							+ "' enable=true onclick=\"WinOpen('./WorkOpt/OneWork/OneWork.htm?CurrTab=Truck&WorkID="
-							+ this.getWorkID() + "&FK_Flow=" + this.getFK_Flow() + "&FID=" + this.getFID() + "&FK_Node="
+							+ workId + "&FK_Flow=" + this.getFK_Flow() + "&FID=" + this.getFID() + "&FK_Node="
 							+ this.getFK_Node() + "&s=" + tKey + "','ds'); \" />";
 
-				return toolbar;
-			}
-			// #endregion 是否是会签.
+		}
 
-			// #region 是否是抄送.
-			if (this.getIsCC()) {
-				toolbar += "<input type=button  value='流程运行轨迹' enable=true onclick=\"WinOpen('./WorkOpt/OneWork/OneWork.htm?CurrTab=Truck&WorkID="
-						+ this.getWorkID() + "&FK_Flow=" + this.getFK_Flow() + "&FID=" + this.getFID() + "&FK_Node="
-						+ this.getFK_Node() + "&s=" + tKey + "','ds'); \" />";
-				// 判断审核组件在当前的表单中是否启用，如果启用了.
-				FrmWorkCheck fwc = new FrmWorkCheck(this.getFK_Node());
-				if (fwc.getHisFrmWorkCheckSta() != FrmWorkCheckSta.Enable) {
+		FrmWorkCheck fwc = new FrmWorkCheck(this.getFK_Node());
+		if (fwc.getHisFrmWorkCheckSta() != FrmWorkCheckSta.Enable) {
 					/* 如果不等于启用, */
 					toolbar += "<input type=button  value='填写审核意见' enable=true onclick=\"WinOpen('./WorkOpt/CCCheckNote.htm?WorkID="
 							+ this.getWorkID() + "&FK_Flow=" + this.getFK_Flow() + "&FID=" + this.getFID() + "&FK_Node="
 							+ this.getFK_Node() + "&s=" + tKey + "','ds'); \" />";
-				}
-				return toolbar;
-			}
-			// #endregion 是否是抄送.
+		}
 
-			// #region 如果当前节点启用了协作会签.
-			if (btnLab.getHuiQianRole() == HuiQianRole.Teamup) {
-				if (this.getIsMobile() == true)
-					toolbar += "<input name='SendHuiQian' type=button value='会签发送' enable=true onclick=\" "
-							+ btnLab.getSendJS()
-							+ " if(SysCheckFrm()==false) return false;SaveDtlAll();SendIt(true); \" />";
-				else
-					toolbar += "<input name='SendHuiQian' type=button value='会签发送' enable=true onclick=\" "
-							+ btnLab.getSendJS()
-							+ " if(SysCheckFrm()==false) return false;SaveDtlAll();Send(true); \" />";
-			}
-			// #endregion 如果当前节点启用了协作会签
 
-			// #region 加载流程控制器 - 按钮
-			if (this.getcurrND().getHisFormType() == NodeFormType.SelfForm) {
-				/* 如果是嵌入式表单. */
-				if (this.getcurrND().getIsEndNode()) {
-					/* 如果当前节点是结束节点. */
-					if (btnLab.getSendEnable() && this.getcurrND().getHisBatchRole() != BatchRole.Group) {
-						/* 如果启用了发送按钮. */
-						toolbar += "<input name='Send' type=button value='" + btnLab.getSendLab()
-								+ "' enable=true onclick=\"" + btnLab.getSendJS()
-								+ " if (SendSelfFrom()==false) return false; this.disabled=true;\" />";
-					}
-				} else {
-					if (btnLab.getSendEnable() && this.getcurrND().getHisBatchRole() != BatchRole.Group) {
-						toolbar += "<input name='Send' type=button  value='" + btnLab.getSendLab()
-								+ "' enable=true onclick=\"" + btnLab.getSendJS()
-								+ " if ( SendSelfFrom()==false) return false; this.disabled=true;\" />";
-					}
-				}
 
-				/* 处理保存按钮. */
-				if (btnLab.getSaveEnable()) {
-					toolbar += "<input name='Save' type=button value='" + btnLab.getSaveLab()
-							+ "' enable=true onclick=\"SaveSelfFrom();\" />";
-				}
-			}
-
-			if (this.getcurrND().getHisFormType() != NodeFormType.SelfForm) {
-				/* 启用了其他的表单. */
-				if (this.getcurrND().getIsEndNode()) {
-					/* 如果当前节点是结束节点. */
-					if (btnLab.getSendEnable() && this.getcurrND().getHisBatchRole() != BatchRole.Group) {
-						/* 如果启用了选择人窗口的模式是【选择既发送】. */
-						if (this.getIsMobile())
-							toolbar += "<input name='Send' type=button value='" + btnLab.getSendLab()
-									+ "' enable=true onclick=\" " + btnLab.getSendJS()
-									+ " if(SysCheckFrm()==false) return false;SaveDtlAll();SendIt(); \" />";
-						else
-							toolbar += "<input name='Send' type=button value='" + btnLab.getSendLab()
-									+ "' enable=true onclick=\" " + btnLab.getSendJS()
-									+ " if(SysCheckFrm()==false) return false;SaveDtlAll();Send(); \" />";
-
-					}
-				} else {
-					if (btnLab.getSendEnable() && this.getcurrND().getHisBatchRole() != BatchRole.Group) {
-						/*
-						 * 如果启用了发送按钮. 1. 如果是加签的状态，就不让其显示发送按钮，因为在加签的提示。
-						 */
-						if (this.getIsMobile())
-							toolbar += "<input name='Send' type=button  value='" + btnLab.getSendLab()
-									+ "' enable=true onclick=\" " + btnLab.getSendJS()
-									+ " if(SysCheckFrm()==false) return false;SendIt();\" />";
-						else
-							toolbar += "<input name='Send' type=button  value='" + btnLab.getSendLab()
-									+ "' enable=true onclick=\" " + btnLab.getSendJS()
-									+ " if(SysCheckFrm()==false) return false;Send();\" />";
-					}
-				}
-
-				/* 处理保存按钮. */
-				if (btnLab.getSaveEnable()) {
-					if (this.getIsMobile())
-						toolbar += "<input name='Save' type=button  value='" + btnLab.getSaveLab()
-								+ "' enable=true onclick=\"   if(SysCheckFrm()==false) return false; SaveIt();\" />";
-					else
-						toolbar += "<input name='Save' type=button  value='" + btnLab.getSaveLab()
-								+ "' enable=true onclick=\"   if(SysCheckFrm()==false) return false;Save();\" />";
-				}
-			}
 
 			if (btnLab.getWorkCheckEnable()) {
 				toolbar += "<input  name='workcheckBtn' type=button  value='" + btnLab.getWorkCheckLab()
@@ -1207,27 +1098,7 @@ public class WF_MyFlow extends WebContralBase {
 						+ "' enable=true onclick=\"To('" + url12 + "'); \" />";
 			}
 
-			if ((btnLab.getCCRole() == CCRole.HandCC || btnLab.getCCRole() == CCRole.HandAndAuto)) {
-				if (this.getIsMobile()) {
-					String urlrDel = "./WorkOpt/CC.htm?WorkID=" + this.getWorkID() + "&FK_Node=" + this.getFK_Node()
-							+ "&FK_Flow=" + this.getFK_Flow() + "&FID=" + this.getFID() + "&s=" + tKey;
-					toolbar += "<input name='CC' type=button  value='" + btnLab.getCCLab()
-							+ "' enable=true onclick=\"To('" + urlrDel + "'); \" />";
-				} else
-					// 抄送
-					toolbar += "<input name='CC' type=button  value='" + btnLab.getCCLab()
-							+ "' enable=true onclick=\"WinOpen('" + "./WorkOpt/CC.htm?WorkID=" + this.getWorkID()
-							+ "&FK_Node=" + this.getFK_Node() + "&FK_Flow=" + this.getFK_Flow() + "&FID="
-							+ this.getFID() + "&s=" + tKey + "','ds'); \" />";
-			}
 
-			if (btnLab.getDeleteEnable() != 0) {
-				String urlrDel = "MyFlowInfo.htm?DoType=DeleteFlow&FK_Node=" + this.getFK_Node() + "&FID="
-						+ this.getFID() + "&WorkID=" + this.getWorkID() + "&FK_Flow=" + this.getFK_Flow() + "&s="
-						+ tKey;
-				toolbar += "<input name='Delete' type=button  value='" + btnLab.getDeleteLab()
-						+ "' enable=true onclick=\"To('" + urlrDel + "'); \" />";
-			}
 
 			if (btnLab.getEndFlowEnable() && this.getcurrND().getIsStartNode() == false) {
 				toolbar += "<input type=button name='EndFlow'  value='" + btnLab.getEndFlowLab()
@@ -1262,23 +1133,8 @@ public class WF_MyFlow extends WebContralBase {
 						+ "' enable=true onclick=\"To('" + urlr + "'); \" />";
 			}
 
-			if (btnLab.getAskforEnable()) {
-				/* 加签 */
-				String urlr3 = "./WorkOpt/Askfor.htm?FK_Node=" + this.getFK_Node() + "&FID=" + this.getFID()
-						+ "&WorkID=" + this.getWorkID() + "&FK_Flow=" + this.getFK_Flow() + "&s=" + tKey;
-				toolbar += "<input type=button name='Askfor'  value='" + btnLab.getAskforLab()
-						+ "' enable=true onclick=\"To('" + urlr3 + "'); \" />";
-			}
 
-			if (btnLab.getHuiQianRole() == HuiQianRole.TeamupGroupLeader) {
-				/* 会签 */
-				String urlr3 = "./WorkOpt/HuiQian.htm?FK_Node=" + this.getFK_Node() + "&FID=" + this.getFID()
-						+ "&WorkID=" + this.getWorkID() + "&FK_Flow=" + this.getFK_Flow() + "&s=" + tKey;
-				toolbar += "<input type=button name='HuiQian'  value='" + btnLab.getHuiQianLab()
-						+ "' enable=true onclick=\"To('" + urlr3 + "'); \" />";
-			}
 
-			// 需要翻译.
 			if (this.getcurrFlow().getIsResetData() == true && this.getcurrND().getIsStartNode()) {
 				/* 启用了数据重置功能 */
 				String urlr3 = "MyFlow.htm?FK_Node=" + this.getFK_Node() + "&FID=" + this.getFID() + "&WorkID="
@@ -1339,7 +1195,6 @@ public class WF_MyFlow extends WebContralBase {
 							+ "' enable=true onclick=\"ConfirmBtn(this,'" + this.getWorkID() + "'); \" />";
 			}
 
-			// 需要翻译.
 
 			/* 打包下载zip */
 			if (btnLab.getPrintZipEnable() == true) {
@@ -1349,13 +1204,6 @@ public class WF_MyFlow extends WebContralBase {
 						+ "' enable=true/>";
 			}
 
-			/* 打包下载html */
-			if (btnLab.getPrintHtmlEnable() == true) {
-				String packUrl = "./WorkOpt/Packup.htm?FileType=html&FK_Node=" + this.getFK_Node() + "&WorkID="
-						+ this.getWorkID() + "&FID=" + this.getFID() + "&FK_Flow=" + this.getFK_Flow();
-				toolbar += "<input type=button name='PackUp_html'  value='" + btnLab.getPrintHtmlLab()
-						+ "' enable=true/>";
-			}
 
 			/* 打包下载pdf */
 			if (btnLab.getPrintPDFEnable() == true) {
@@ -1365,42 +1213,6 @@ public class WF_MyFlow extends WebContralBase {
 						+ "' enable=true/>";
 			}
 
-			if (this.getcurrND().getIsStartNode() == true) {
-				if (this.getcurrFlow().getIsDBTemplate() == true) {
-					String packUrl = "./WorkOpt/DBTemplate.htm?FileType=pdf&FK_Node=" + this.getFK_Node() + "&WorkID="
-							+ this.getWorkID() + "&FID=" + this.getFID() + "&FK_Flow=" + this.getFK_Flow();
-					toolbar += "<input type=button name='DBTemplate'  value='模版' enable=true/>";
-
-				}
-			}
-
-			// #endregion
-
-			// #region //加载自定义的button.
-			BP.WF.Template.NodeToolbars bars = new NodeToolbars();
-			bars.Retrieve(NodeToolbarAttr.FK_Node, this.getFK_Node());
-			for (NodeToolbar bar : bars.ToJavaList()) {
-				if (bar.getShowWhere() != ShowWhere.Toolbar) {
-					continue;
-				}
-
-				if (bar.GetValIntByKey("ExcType") == 1 || (!DataType.IsNullOrEmpty(bar.getTarget())
-						&& bar.getTarget().toLowerCase() == "javascript")) {
-					toolbar += "<input type=button  value='" + bar.getTitle() + "' enable=true onclick=\""
-							+ bar.getUrl() + "\" />";
-				} else {
-					String urlr3 = bar.getUrl() + "&FK_Node=" + this.getFK_Node() + "&FID=" + this.getFID() + "&WorkID="
-							+ this.getWorkID() + "&FK_Flow=" + this.getFK_Flow() + "&s=" + tKey;
-					toolbar += "<input type=button  value='" + bar.getTitle() + "' enable=true onclick=\"WinOpen('"
-							+ urlr3 + "'); \" />";
-				}
-			}
-			// #endregion //加载自定义的button.
-
-		} catch (Exception ex) {
-			// BP.DA.Log.DefaultLogWriteLineError(ex);
-			toolbar = "err@" + ex.getMessage();
-		}
 		return toolbar;
 
 	}
@@ -1424,8 +1236,25 @@ public class WF_MyFlow extends WebContralBase {
 			if (i == 0)
 				return "该流程的工作已删除,请联系管理员";
 
-			objs = BP.WF.Dev2Interface.Node_SendWork(this.getFK_Flow(), this.getWorkID(), ht, null, this.getToNode(),
+			String nodeTaskNo=this.GetRequestVal("NodeTaskNo");
+			if (nodeTaskNo!=null&&!nodeTaskNo.equals("")) {
+				NodeTask nodeTask = new NodeTask(nodeTaskNo);
+				Node currentNode = new Node(nodeTask.GetValStrByKey(NodeTaskAttr.NodeId));
+				Nodes nextNodes = currentNode.getHisToNodes();
+				if (nextNodes==null){
+					objs = BP.WF.Dev2Interface.Node_SendWork(this.getFK_Flow(), this.getWorkID(), ht, null, 0,
+							null);
+				}else {
+					List<Node> nodeTaskList=nextNodes.toList();
+					for (Node temp : nodeTaskList) {
+						objs = BP.WF.Dev2Interface.Node_SendWork(this.getFK_Flow(), this.getWorkID(), ht, null, temp.getNodeID(),
+								null);
+					}
+				}
+			}else {
+				objs = BP.WF.Dev2Interface.Node_SendWork(this.getFK_Flow(), this.getWorkID(), ht, null, this.getToNode(),
 					null);
+			}
 			msg = objs.ToMsgOfHtml();
 
 			// 当前节点.
@@ -1715,6 +1544,9 @@ public class WF_MyFlow extends WebContralBase {
 		if (urlExt.contains("&UserNo") == false) {
 			urlExt += "&UserNo=" + WebUser.getNo();
 		}
+
+		String str = this.GetRequestVal("NodeTaskNo");
+		urlExt=urlExt+"&NodeTaskNo="+str;
 
 		if (urlExt.contains("&SID") == false) {
 			urlExt += "&SID=" + WebUser.getSID();
