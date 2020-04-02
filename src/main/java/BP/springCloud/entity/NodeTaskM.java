@@ -87,6 +87,8 @@ public class NodeTaskM implements Serializable {
 	 */
 	private String executor;
 
+	private int status;
+
 	private int yn;
 	
 	/**
@@ -306,5 +308,13 @@ public class NodeTaskM implements Serializable {
 
 	public void setYn(int yn) {
 		this.yn = yn;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
 	}
 }

@@ -35,8 +35,12 @@ public class NodeTaskManage {
         return nodeTaskMDao.updateNodeTask(nodeTask);
     }
 
-    public List getNodeTaskByNodeIds(List<String> nodeIds){
-        return nodeTaskMDao.getNodeTaskByNodeIds(nodeIds);
+    public List getNodeTaskByNodeIds(String workId,List<String> nodeIds){
+        return nodeTaskMDao.getNodeTaskByNodeIds(workId,nodeIds);
+    }
+
+    public Long insertNodeTask(NodeTaskM nodeTaskM){
+        return nodeTaskMDao.insertNodeTask(nodeTaskM);
     }
 
 

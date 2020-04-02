@@ -42,5 +42,5 @@ public interface NodeTaskMDao {
 	*/
 	public List findNodeTaskList(NodeTaskM nodeTaskM);
 
-	public List getNodeTaskByNodeIds(@Param("ids") List<String> nodeIds);
+	public List getNodeTaskByNodeIds(@Param("flowTaskId") String flowTaskId,@Param("ids") List<String> nodeIds);
 }

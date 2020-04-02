@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>节点任务详情</title>
-    <!-- 引入解析表单的三个重要js文件. -->
-    <script src="..MyFlowFree2017.js?ver=1" type="text/javascript"></script>
-    <script src="..MyFlowFool2017.js?ver=1" type="text/javascript"></script>
+    <script src="../Scripts/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="../Scripts/easyUI/jquery.easyui.min.js" type="text/javascript"></script>
+    <script src="../Scripts/QueryString.js" type="text/javascript"></script>
+
     <script src="NodeTask.js" type="text/javascript"></script>
 </head>
 <body>
@@ -13,7 +14,7 @@
     $(function(){
         var nodeTaskNo=GetQueryString("NodeTaskNo");
         startNodeTask(nodeTaskNo);
-        doNodeTaskDetail();
+        doNodeTaskDetail(nodeTaskNo);
     });
 </script>
 <div id="divCurrentForm" style="position: relative;">

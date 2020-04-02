@@ -52,33 +52,7 @@ public class NodeTaskController {
                 nodeTasks.Retrieve(NodeTaskAttr.Executor, executor);
             //更新任务状态
             List<NodeTask> nodeTaskList=nodeTasks.toList();
-            for (NodeTask nt:nodeTaskList){
-                int isReadyNt=nt.GetValIntByKey(NodeTaskAttr.IsReady);
-                nt.SetValByKey(NodeTaskAttr.Status,isReadyNt);
-                if (isReadyNt==1) {//可以开始状态下检查(计划完成后，)
-                    //判断是否逾期
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-                    Date planStart = sdf.parse(nt.GetValStringByKey(NodeTaskAttr.PlanStartTime));
-                    Date planEnd = sdf.parse(nt.GetValStringByKey(NodeTaskAttr.PlanEndTime));
-                    Date current = new Date();
-                    Calendar calendar = Calendar.getInstance();
-                    int rat = 1000 * 60 * 60 * 24;
-                    int dayNumS = (int) ((planStart.getTime() - current.getTime()) / rat);
-                    if (dayNumS < 0)
-                        nt.SetValByKey(NodeTaskAttr.Status, 4);//逾期开始
-                    else if (dayNumS < 3)
-                        nt.SetValByKey(NodeTaskAttr.Status, 5);//三天内警告
-                    else {
-                        int dayNumE = (int) ((planEnd.getTime() - current.getTime()) / rat);
-                        if (dayNumE < 0)
-                            nt.SetValByKey(NodeTaskAttr.Status, 7);//逾期结束
-                        else if (dayNumE < 3)
-                            nt.SetValByKey(NodeTaskAttr.Status, 8);//警告结束
-                        else
-                            nt.SetValByKey(NodeTaskAttr.Status, 6);//正常
-                    }
-                }
-            }
+
             PageTool.TransToResult(nodeTasks,request,response);
         }catch (Exception e){
             logger.error(e.getMessage());
@@ -145,10 +119,12 @@ public class NodeTaskController {
     @RequestMapping("/startNodeTask")
     public void startNodeTask(Long no){
         try {
-            NodeTaskM nodeTaskM=new NodeTaskM();
-            nodeTaskM.setNo(no);
-            nodeTaskM.setIsReady(2);//已经开始
-            nodeTaskService.updateNodeTask(nodeTaskM);
+            NodeTaskM nodeTaskM=nodeTaskService.getNodeTaskById(no);
+            if (nodeTaskM.getIsReady()==1){
+                nodeTaskM.setStartTime(new Date());
+                nodeTaskM.setIsReady(2);
+                nodeTaskService.updateNodeTask(nodeTaskM);
+            }
         }catch (Exception e){
             logger.error(e.getMessage());
         }
@@ -163,15 +139,37 @@ public class NodeTaskController {
     */
     @RequestMapping("sendNode")
     @ResponseBody
-    public JSONObject sendNode(NodeTaskM currentNodeTask){
+    public JSONObject sendNode(Long nodeTaskNo){
+        JSONObject result=new JSONObject();
         try {
             //完善NodeTask信息
-            NodeTaskM currentTask=nodeTaskService.getNodeTaskById(currentNodeTask.getNo());
+            NodeTaskM currentTask=nodeTaskService.getNodeTaskById(nodeTaskNo);
 
             //完成节点任务，并将节点任务进行下发（）
-            nodeTaskService.finishNodeTask(currentNodeTask);
+            String meg=nodeTaskService.finishNodeTask(currentTask);
+            result.put("message",meg);
         }catch (Exception e) {
             logger.error(e.getMessage());
+        }
+        return result;
+    }
+
+    /**
+    *@Description: 人为更新流程引擎中所有节点任务状态
+    *@Param:
+    *@return:
+    *@Author: Mr.kong
+    *@Date: 2020/4/2
+    */
+    @RequestMapping("updateTasksStatus")
+    @ResponseBody
+    public JSONObject updateTasksStatus(){
+        NodeTaskM con=new NodeTaskM();
+        List<NodeTaskM> nodeTaskMList=nodeTaskService.findNodeTaskList(con);
+        for (NodeTaskM temp:nodeTaskMList){
+            int status=nodeTaskService.getTaskStatus(temp);
+            temp.setStatus(status);
+            nodeTaskService.updateNodeTask(temp);
         }
         return null;
     }

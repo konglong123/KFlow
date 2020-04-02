@@ -89,10 +89,6 @@ public class CCFlowAPI {
 		if (fk_node == 0)
 			fk_node = Integer.parseInt(fk_flow + "01");
 
-		if (workID == 0)
-			workID = BP.WF.Dev2Interface.Node_CreateBlankWork(fk_flow, null, null, userNo, null, 0, 0, null, 0, null, 0,
-					null);
-
 		Node nd = new Node(fk_node);
 		nd.WorkID = workID; // 为获得表单id，设置的参数.
 		try {
@@ -220,7 +216,7 @@ public class CCFlowAPI {
 				fnc.SetValByKey(FTCAttr.FTC_X, refFnc.GetValFloatByKey(FTCAttr.FTC_X));
 				fnc.SetValByKey(FTCAttr.FTC_Y, refFnc.GetValFloatByKey(FTCAttr.FTC_Y));
 
-				// #region 没有审核组件分组就增加上审核组件分组. @杜需要翻译&测试.
+				// #region 没有审核组件分组就增加上审核组件分组.
 				if (md.getHisFrmType() == FrmType.FoolForm) {
 					// 判断是否是傻瓜表单，如果是，就要判断该傻瓜表单是否有审核组件groupfield ,没有的话就增加上.
 					DataTable gf = null;

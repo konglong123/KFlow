@@ -336,9 +336,9 @@ public class Json
 					}
 				}
 				
-
-				if (column.DataType == Integer.class
-						|| column.DataType == Long.class
+				//column.DataType == Integer.class
+				//	此处转换会出现前端json转换错误（int型，以0开头会出错）					||
+				if ( column.DataType == Long.class
 					    || column.DataType == long.class
 					    || column.DataType == Float.class
 					    || column.DataType == java.lang.Float.class

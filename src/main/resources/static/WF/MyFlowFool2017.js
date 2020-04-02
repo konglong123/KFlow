@@ -2,7 +2,6 @@
 var flowData = null;
 
 function GenerFoolFrm(wn) {
-
     flowData = wn;
 
     //初始化Sys_MapData

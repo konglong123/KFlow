@@ -75,23 +75,24 @@
         }
         //发起时打开窗口
         function WinOpenStartFlow(flowNo, title) {
-            var showList = GetQueryString("ShowList");
-            var url = "";
-            if (showList == 1)
-                url = "List.htm?FK_Flow=" + flowNo;
-            else
-                url = "MyFlow.htm?FK_Flow=" + flowNo;
+            $.ajax({
+                url:"/WF/flow/startFlow",
+                data:{
+                    flowNo:flowNo
+                },
+                success: function(data){
+                    if (data.success==true){
+                       alert("成功发起流程！");
+                    }else {
+                        alert("启动失败！"+data.message);
+                    }
+                    return;
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            })
 
-            window.open(url);
-            return;
-
-            layer.open({
-                skin: 'layer-class',
-                type: 2,
-                title: title + ' : 发起申请',
-                area: ['96%', '90%'],
-                content: url
-            });
         }
 
         //查询

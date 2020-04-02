@@ -86,6 +86,18 @@ public class FeignController {
     }
 
     /**
+    *@Description: nlp模型训练
+    *@Param:
+    *@return:
+    *@Author: Mr.kong
+    *@Date: 2020/3/29
+    */
+    @RequestMapping("trainNlp")
+    public JSONObject trainNlpModel(HttpServletRequest request, HttpServletResponse response){
+        return null;
+    }
+
+    /**
     *@Description: 请求url获取es分页返回结果（均通过对abstracts进行相似度计算）
     *@Param:
     *@return:

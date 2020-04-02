@@ -1,5 +1,6 @@
 package BP.Task;
 
+import BP.Web.WebUser;
 import BP.springCloud.dao.GenerFlowDao;
 import BP.springCloud.entity.GenerFlow;
 import org.apache.log4j.Logger;

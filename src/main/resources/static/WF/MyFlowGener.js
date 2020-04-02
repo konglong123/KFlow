@@ -526,25 +526,6 @@ function Save(saveType) {
     if (iframe)
         iframe.contentWindow.SaveWorkCheck();
 
-    //树形表单保存
-    if (flowData) {
-        var node = flowData.WF_Node[0];
-        //   alert(node.FormType);
-        if (node && node.FormType == 5) {
-            if (OnTabChange("btnsave") == true) {
-                //判断内容是否保存到待办
-                var handler = new HttpHandler("BP.WF.HttpHandler.WF_MyFlow");
-                handler.AddPara("FK_Flow", pageData.FK_Flow);
-                handler.AddPara("FK_Node", pageData.FK_Node);
-                handler.AddPara("WorkID", pageData.WorkID);
-                handler.AddPara("SaveType", saveType);
-                handler.DoMethodReturnString("SaveFlow_ToDraftRole");
-            }
-            setToobarEnable();
-            return;
-        }
-    }
-
     var params = getFormData(true, true);
 
     var handler = new HttpHandler("BP.WF.HttpHandler.WF_MyFlow");
@@ -894,11 +875,7 @@ function GenerCheckIDs() {
 }
 
 //发送
-function Send(isHuiQian) {
-    //保存前事件
-    if (typeof beforeSend != 'undefined' && beforeSend instanceof Function)
-        if (beforeSend() == false)
-            return false;
+function Send() {
 
     if (CheckFWC() == false)
         return false;
@@ -923,86 +900,7 @@ function Send(isHuiQian) {
         return false;
     }
 
-    //如果启用了流程流转自定义，必须设置选择的游离态节点
-    if ($('[name=TransferCustom]').length > 0) {
-        var ens = new Entities("BP.WF.TransferCustoms");
-        ens.Retrieve("WorkID", pageData.WorkID, "IsEnable", 1);
-        if (ens.length == 0) {
-            alert("该节点启用了流程流转自定义，但是没有设置流程流转的方向，请点击流转自定义按钮进行设置");
-            return false;
-        }
-    }
-
-    //树形表单保存
-    if (flowData) {
-        var node = flowData.WF_Node[0];
-        if (node && node.FormType == 5) {
-            OnTabChange("btnsave");
-            var p = $(document.getElementById("tabs")).find("li");
-
-            //查看附件上传的最新数量
-            var isSend = true;
-            var msg = "";
-            $.each(p, function (i, val) {
-                selectSpan = $(val).find("span")[0];
-                var currTab = $("#tabs").tabs("getTab", i);
-                tabText = $(selectSpan).text();
-                var lastChar = tabText.substring(tabText.length - 1, tabText.length);
-                if (lastChar == "*") 
-                    tabText = tabText.substring(0, tabText.length - 1);
-                var currScope = currTab.find('iframe')[0];
-
-                var contentWidow = currScope.contentWindow;
-                // 不支持火狐浏览器。
-                var frms = contentWidow.document.getElementsByName("Attach");
-                for (var i = 0; i < frms.length; i++) {
-                    if (frms[i].contentWindow.numOfUpload > frms[i].contentWindow.numOfAths) {
-                        msg += "["+tabText+"]表单至少需要上传" + frms[i].contentWindow.numOfUpload + "附件";
-                        isSend = false;
-                    }
-                }
-            });
-            if (isSend == false) {
-                alert(msg);
-                return;
-            }
-        }
-    }
     window.hasClickSend = true; //标志用来刷新待办.
-
-
-    var toNodeID = 0;
-    //含有发送节点 且接收
-    if ($('#DDL_ToNode').length > 0) {
-
-        var selectToNode = $('#DDL_ToNode  option:selected').data();
-        toNodeID = selectToNode.No;
-
-        if (selectToNode.IsSelectEmps == "1") { //跳到选择接收人窗口
-
-            Save(1); //执行保存.
-
-            if (isHuiQian == true) {
-                initModal("HuiQian", toNodeID);
-                $('#returnWorkModal').modal().show();
-
-            } else {
-                initModal("sendAccepter", toNodeID);
-                $('#returnWorkModal').modal().show();
-            }
-            return false;
-
-        } else {
-
-            if (isHuiQian == true) {
-
-                Save(1); //执行保存.
-                initModal("HuiQian", toNodeID);
-                $('#returnWorkModal').modal().show();
-                return false;
-            }
-        }
-    }
 
     //执行发送.
     execSend(toNodeID);
@@ -1040,10 +938,7 @@ function execSend(toNodeID) {
         //        }
     });
     //handler.AddUrlData(dataStrs);
-    var NodeTaskNo=GetQueryString("NodeTaskNo");
-    handler.AddPara("NodeTaskNo",NodeTaskNo);
     var data = handler.DoMethodReturnString("Send"); //执行保存方法.
-    debugger
     if (data.indexOf('err@') == 0) { //发送时发生错误
 
         var reg = new RegExp('err@', "g")
@@ -1495,11 +1390,10 @@ function GenerWorkNode() {
     }
 
     try {
-
         flowData = JSON.parse(data);
 
     } catch (err) {
-        //console.log(data);
+        console.log(err);
         alert(" GenerWorkNode转换JSON失败,请查看控制台日志,或者联系管理员.");
         return;
     }
@@ -1535,10 +1429,9 @@ function GenerWorkNode() {
 
     var node = flowData.WF_Node[0];
     var gfs = flowData.Sys_MapAttr;
-    //console.log(gfs);
 
     //设置标题.
-    document.title = node.FlowName + ',' + node.Name; // "业务流程管理（BPM）平台";
+    document.title = node.FlowName + ',' + node.Name; // "业务流程管理平台";
 
     //循环之前的提示信息.
     var info = "";
@@ -2238,7 +2131,7 @@ function DoStop(msg, flowNo, workid) {
         return;
 
     if (window.parent != null) {
-        //@袁丽娜 如何刷新父窗口.
+
         //window.parent.ref
     }
     window.close();
@@ -2458,4 +2351,24 @@ function AskForRe(fk_flow, fk_node, workID, fid) {
     var dlgHeight = "400";
     var showCloseBtn = true;
     OpenBootStrapModal(url, iframeId, dlgTitle, dlgWidth, dlgHeight, showCloseBtn);
+}
+
+//发送任务到下一节点（新改）
+function SendK() {
+    //发送前保存表单
+    Save(1);
+
+    $.ajax({
+        url: "/WF/nodeTask/sendNode",
+        type: 'GET',
+        data: {
+            nodeTaskNo:GetQueryString("NodeTaskNo")
+        },
+        success:function (data) {
+                OptSuc(data.message);
+        },
+        error:function (data) {
+            alert("发送失败！"+data);
+        }
+    });
 }

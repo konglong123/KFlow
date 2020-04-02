@@ -17,6 +17,7 @@
 		<result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
 		<result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
 		<result column="executor" property="executor" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="TINYINT" />
 		<result column="yn" property="yn" jdbcType="TINYINT" />
 	</resultMap>
 	
@@ -37,6 +38,7 @@
 		start_time,
 		end_time,
 		executor,
+		status,
 		yn,
 		</trim>
 	</sql>
@@ -102,6 +104,9 @@
 			<if test="executor != null">
 				AND	executor = #{executor,jdbcType=VARCHAR}
 			</if>
+				<if test="status != 0">
+					AND	status = #{status,jdbcType=TINYINT}
+				</if>
 			<if test="yn != 2">
 			  	AND	yn = #{yn,jdbcType=TINYINT}
 			</if>
@@ -127,6 +132,7 @@
 		start_time,
 		end_time,
 		executor,
+		status,
 		yn,
 		</trim>
 		values 
@@ -146,6 +152,7 @@
 		#{startTime,jdbcType=TIMESTAMP}, 
 		#{endTime,jdbcType=TIMESTAMP}, 
 		#{executor,jdbcType=VARCHAR},
+		#{status,jdbcType=TINYINT},
 		#{yn,jdbcType=TINYINT},
 		</trim>
 	</insert>
@@ -196,6 +203,12 @@
 	        <if test="executor != null">
 					executor = #{executor,jdbcType=VARCHAR},
 	      		</if>
+				<if test="status != 0">
+					status = #{status,jdbcType=TINYINT},
+				</if>
+			<if test="yn != 0">
+					yn = #{yn,jdbcType=TINYINT},
+				</if>
 			</trim>
 		</set>
 		where no = #{no,jdbcType=BIGINT}
@@ -209,11 +222,13 @@
 		where no = #{no,jdbcType=BIGINT}
 	</update>
 
-	<select id="getNodeTaskByNodeIds" resultMap="BaseResultMap" parameterType="java.util.List">
+	<select id="getNodeTaskByNodeIds" resultMap="BaseResultMap" >
 		select
 		<include refid="Base_Column_List" />
 		from k_node_task
-		where no in
+		where
+		flow_task_id = #{flowTaskId,jdbcType=VARCHAR}
+		AND node_id in
 		<foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
 			              #{item}
 		</foreach>

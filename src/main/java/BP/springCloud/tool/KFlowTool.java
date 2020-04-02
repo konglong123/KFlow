@@ -12,10 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @program: kflow-web
@@ -92,6 +89,11 @@ public class KFlowTool {
         nodeTask.SetValByKey(NodeTaskAttr.No,nodeTaskId);
         nodeTask.SetValByKey(NodeTaskAttr.IsReady,isReady);
         nodeTask.SetValByKey(NodeTaskAttr.Executor,userNo);
+        Date now=new Date();
+        nodeTask.SetValByKey(NodeTaskAttr.PlanEndTime,now);
+        nodeTask.SetValByKey(NodeTaskAttr.PlanStartTime,now);
+        nodeTask.SetValByKey(NodeTaskAttr.EndTime,now);
+        nodeTask.SetValByKey(NodeTaskAttr.StartTime,now);
         nodeTask.Insert();
 
 

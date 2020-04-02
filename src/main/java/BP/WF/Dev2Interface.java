@@ -8314,9 +8314,9 @@ public class Dev2Interface {
 	/**
 	 * 保存
 	 * 
-	 * @param fk_node节点ID
+	 * @param
 	 * @param workID 工作ID
-	 * @param htWork 工作数据
+	 * @param htWork 工作数据(包含前台自定义字段数据)
 	 * @param dsDtls
 	 * @return 返回执行信息
 	 * @throws Exception

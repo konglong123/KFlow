@@ -639,13 +639,6 @@ public class WF_MyFlow extends WebContralBase {
 		if (isCC != null && isCC == "1")
 			return "url@WFRpt.htm?1=2" + this.getRequestParasOfAll();
 
-		/*if (this.getWorkID() != 0) {
-			// 判断是否有执行该工作的权限.
-			boolean isCanDo = Dev2Interface.Flow_IsCanDoCurrentWork(this.getWorkID(), userNo);
-			if (isCanDo == false) {
-				return "err@您不能执行当前工作.";
-			}
-		}*/
 
 		// 当前工作.
 		Work currWK = this.getcurrND().getHisWork();
@@ -1023,6 +1016,11 @@ public class WF_MyFlow extends WebContralBase {
 		if (btnLab.getSaveEnable()) {
 			toolbar += "<input name='保存' type=button  value='" + btnLab.getSaveLab()
 					+ "' enable=true onclick=\"   if(SysCheckFrm()==false) return false;Save();\" />";
+		}
+		if (btnLab.getSendEnable()) {
+			toolbar += "<input name='Send' type=button  value='" + btnLab.getSendLab()
+					+ "' enable=true onclick=\"" + btnLab.getSendJS()
+					+ " SendK();\" />";
 		}
 
 		if (btnLab.getTrackEnable()){
@@ -1405,30 +1403,9 @@ public class WF_MyFlow extends WebContralBase {
 		try {
 			DataSet ds = new DataSet();
 
-			if (this.getDoType1() != null && this.getDoType1().toUpperCase().equals("VIEW")) {
-				DataTable trackDt = BP.WF.Dev2Interface.DB_GenerTrack(this.getFK_Flow(), this.getWorkID(),
-						this.getFID()).Tables.get(0);
-				ds.Tables.add(trackDt);
-				return BP.Tools.Json.ToJson(ds);
-			}
 
 			ds = BP.WF.CCFlowAPI.GenerWorkNode(this.getFK_Flow(), this.getFK_Node(), this.getWorkID(), this.getFID(),
 					BP.Web.WebUser.getNo(), "0");
-
-			/// #region 如果是移动应用就考虑多表单的问题.
-			if (getcurrND().getHisFormType() == NodeFormType.SheetTree && this.getIsMobile() == true) {
-				// 如果是表单树并且是，移动模式.
-				FrmNodes fns = new FrmNodes();
-				QueryObject qo = new QueryObject(fns);
-				qo.AddWhere(FrmNodeAttr.FK_Node, getcurrND().getNodeID());
-				qo.addAnd();
-				qo.AddWhere(FrmNodeAttr.FrmEnableRole, "!=", FrmEnableRole.Disable.getValue());
-				qo.addOrderBy("Idx");
-				qo.DoQuery();
-				// 把节点与表单的关联管理放入到系统.
-				ds.Tables.add(fns.ToDataTableField("FrmNodes"));
-			}
-			/// #endregion 如果是移动应用就考虑多表单的问题.
 
 			String str = BP.Tools.Json.ToJson(ds);
 
@@ -1765,13 +1742,12 @@ public class WF_MyFlow extends WebContralBase {
 
 	public boolean isAskFor = false;
 
-	// 杨玉慧
 	public final String getDoType1() {
 		return this.GetRequestVal("DoType1");
 	}
 
 	/**
-	 * 获取主表的方法.
+	 * 获取主表的方法.()
 	 * 
 	 * @return
 	 * @throws UnsupportedEncodingException

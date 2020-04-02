@@ -34,16 +34,16 @@ public class NodeTask extends EntityNo {
                 "@0=未准备@1=可以开始@2=已经开始@3=已经完成@4=逾期@5=警告");
         map.AddDDLSysEnum(NodeTaskAttr.Status, 0, "提示信息", true, false, NodeTaskAttr.Status,
                 "@0=未准备@1=可以开始@2=已经开始@3=已经完成@4=逾期开始@5=警告开始@6=正常@7=逾期结束@8=警告结束");
-        map.AddTBString(NodeTaskAttr.PreNodeTask, null, "前置任务", true, false, 0, 50, 50);
-        map.AddTBString(NodeTaskAttr.NextNodeTask, null, "后置任务", true, false, 0, 50, 50);
-        map.AddTBString(NodeTaskAttr.ParentNodeTask, null, "父任务", true, false, 0, 50, 50);
+        map.AddTBString(NodeTaskAttr.PreNodeTask, null, "前置任务", true, true, 0, 50, 50);
+        map.AddTBString(NodeTaskAttr.NextNodeTask, null, "后置任务", true, true, 0, 50, 50);
+        map.AddTBString(NodeTaskAttr.ParentNodeTask, null, "父任务", true, true, 0, 50, 50);
         map.AddTBInt(NodeTaskAttr.TotalTime, 0, "预估总时间", true, true);
         map.AddTBInt(NodeTaskAttr.UseTime, 0, "已用时间", true, false);
-        map.AddTBDateTime(NodeTaskAttr.PlanStartTime, null, "预计开始时间", true, false);
-        map.AddTBDateTime(NodeTaskAttr.PlanEndTime, null,"预计结束时间", true, false);
-        map.AddTBDateTime(NodeTaskAttr.StartTime, null,"实际开始时间", true, false);
-        map.AddTBDateTime(NodeTaskAttr.EndTime,  null,"实际结束时间", true, false);
-        map.AddTBString(NodeTaskAttr.Executor, null, "执行人", true, false, 0, 100, 100);
+        map.AddTBDateTime(NodeTaskAttr.PlanStartTime, null, "预计开始时间", true, true);
+        map.AddTBDateTime(NodeTaskAttr.PlanEndTime, null,"预计结束时间", true, true);
+        map.AddTBDateTime(NodeTaskAttr.StartTime, null,"实际开始时间", true, true);
+        map.AddTBDateTime(NodeTaskAttr.EndTime,  null,"实际结束时间", true, true);
+        map.AddTBString(NodeTaskAttr.Executor, null, "执行人", true, true, 0, 100, 100);
         map.AddTBInt(NodeTaskAttr.Yn, 0, "是否删除", false, true);
 
 
