@@ -9,7 +9,6 @@ function InitThreeColMapAttr(Sys_MapAttr, tableCol) {
     var textColSpan = 1;
     var textWidth = "33%";
     var colWidth = "33%";
-
     //记录一行已占用的列输
     var UseColSpan = 0;
     var IsMiddle = false;
@@ -93,7 +92,7 @@ function InitThreeColMapAttr(Sys_MapAttr, tableCol) {
             html += "<tr >";
             UseColSpan = 0;
 
-            UseColSpan += colSpan;
+            UseColSpan = UseColSpan+ colSpan;
             html += "<td  id='Td_" + attr.KeyOfEn + "' class='LabelFDesc' style='width:" + textWidth + ";' rowSpan=" + rowSpan + " ColSpan=" + colSpan + " class='tdSpan'>" + GenerLabel(attr) + "<br/>";
             html += InitMapAttrOfCtrlFool(attr);
             html += "</td>";
@@ -108,8 +107,7 @@ function InitThreeColMapAttr(Sys_MapAttr, tableCol) {
         }
 
         if (isDropTR == false) {
-
-            UseColSpan += colSpan;
+            UseColSpan = UseColSpan+ colSpan;
             html += "<td  id='Td_" + attr.KeyOfEn + "' class='LabelFDesc' style='width:" + textWidth + ";' rowSpan=" + rowSpan + " ColSpan=" + colSpan + " class='tdSpan'>" + GenerLabel(attr) + "<br/>";
             html += InitMapAttrOfCtrlFool(attr);
             html += "</td>";
@@ -155,7 +153,7 @@ function InitMapAttr(Sys_MapAttr, tableCol) {
     var textWidth = "15%";
     var colWidth = "15%";
 
-    //记录一行已占用的列输
+    //记录一行已占用的列数
     var UseColSpan = 0;
     var IsMiddle = false;
 

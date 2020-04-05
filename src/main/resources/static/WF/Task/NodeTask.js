@@ -13,11 +13,11 @@ function initDgNodeTasks() {
         },
         columns:[[
             {field:'no',title: '任务编码',align: 'center',width:10},
-            {field:'flow_task_id',title: '流程实例编码',align: 'center',width:10},
+            {field:'work_id',title: '流程实例编码',align: 'center',width:10},
             {field:'flow_id',title: '流程编码',align: 'center',width:10},
             {field:'node_id',title: '当前节点',align: 'center',width:10},
             {field:'total_time',title: '总工作量',align: 'center',width:10},
-            {field:'use_time',title: '已完成',align: 'center',width:10},
+            {field:'use_time',title: '已完成工作量',align: 'center',width:10},
             {field:'status',title: '状态',align: 'center',width:10,
                 formatter:function (val,rec) {
                     return getNodeTaskStatus(val);
@@ -82,7 +82,6 @@ function doNodeTask(no) {
 
 //执行节点任务
 function doNodeTaskDetail(no) {
-    debugger
     var dataUrl="/WF/WF/MyFlowGener.htm?NodeTaskNo="+no;
     $.ajax({
         url: "/WF/nodeTask/getNodeTaskByNo",
@@ -93,10 +92,9 @@ function doNodeTaskDetail(no) {
         success:function (data) {
             var nodeTask=JSON.parse(data);
             dataUrl+="&FK_Flow="+nodeTask.flow_id;
-            dataUrl+="&WorkID="+nodeTask.flow_task_id;
+            dataUrl+="&WorkID="+nodeTask.work_id;
             dataUrl+="&FK_Node="+nodeTask.node_id;
             dataUrl+="&FID="+nodeTask.flow_id;
-            debugger
             window.location.href = dataUrl;
         }
     });

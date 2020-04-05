@@ -9,7 +9,6 @@ import BP.WF.Template.FrmSubFlow;
 import BP.WF.Template.FrmSubFlowAttr;
 import BP.WF.Template.FrmWorkCheckAttr;
 import BP.WF.Template.FrmWorkCheckSta;
-import BP.springCloud.tool.KFlowTool;
 
 import java.util.List;
 
@@ -2938,6 +2937,19 @@ public class Node extends Entity {
     	//此处增加复杂逻辑，返回激活节点任务
 		return nextNodes.toList();
 	}
+
+	public String[] getSubFlowNos() throws Exception{
+		//启动子流程
+		FrmSubFlow subFlow=new FrmSubFlow(this.getNodeID());
+		//String childFlow=subFlow.getSFActiveFlows();
+		String childFlow=subFlow.getSFDefInfo();
+		if (childFlow==null||childFlow.equals(""))
+			return null;
+		String[] childFlows=childFlow.split("%");
+		return childFlows;
+
+	}
+
 
 
 

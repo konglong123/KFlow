@@ -20,7 +20,12 @@ public class GenerFlow implements Serializable {
 	 * 流程实例编码
 	 */
 	private Long workId;
-	
+
+
+	private Long parentWorkId;
+
+	private Long workGroupId;
+
 	/**
 	 * 状态（1开始，2完成）
 	 */
@@ -71,7 +76,23 @@ public class GenerFlow implements Serializable {
 	public Long getWorkId() {
 		return workId;
 	}
-	
+
+	public Long getParentWorkId() {
+		return parentWorkId;
+	}
+
+	public void setParentWorkId(Long parentWorkId) {
+		this.parentWorkId = parentWorkId;
+	}
+
+	public Long getWorkGroupId() {
+		return workGroupId;
+	}
+
+	public void setWorkGroupId(Long workGroupId) {
+		this.workGroupId = workGroupId;
+	}
+
 	/**
 	 * @param workId the workId to set
 	 */

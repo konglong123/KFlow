@@ -144,7 +144,6 @@
             var tbody = $('<tbody></tbody>');
 
             var frmName = data.Sys_MapData[0].Name;
-            //alert(frmName);
 
             var tableCol = data.Sys_MapData[0].TableCol;
             if (tableCol == 0)
@@ -171,7 +170,6 @@
 
                 //生成内容.
                 html += GenerGroupContext(groupObj, data, tableCol);
-
                 //过滤attrs
                 var mapAttrs = $.grep(data.Sys_MapAttr, function (val) { return val.GroupID == groupObj.OID; });
                 if (tableCol == 4 || tableCol == 6)
@@ -747,7 +745,7 @@
             if (prix == null || prix == undefined)
                 return;
 
-            //秦 18.11.16
+            //
             if (!CheckID(prix)) {
                 alert("编号不符合规则");
                 return;
@@ -808,7 +806,7 @@
         }
 
         function Edit(mypk, ftype, gf, fk_mapdtl, uiContralType) {
-
+            debugger
             var url = 'EditF.htm?DoType=Edit&MyPK=' + mypk + '&FType=' + ftype + '&FK_MapData=' + pageParam.fk_mapdata + '&GroupField=' + gf;
             var title = '';
             if (ftype == 1) {
@@ -836,7 +834,6 @@
 
                 if (uiContralType == 11) {
 
-                    debugger;
                     var imgEn = new Entity("BP.Sys.FrmUI.ExtImg");
                     imgEn.SetPKVal(mypk);
 

@@ -66,7 +66,7 @@ public class NodeTaskController {
     *@Author: Mr.kong
     *@Date: 2020/3/9 
     */
-    @RequestMapping("sendToNextNodes")
+   /* @RequestMapping("sendToNextNodes")
     public void setToNextNodes(HttpServletRequest request, HttpServletResponse response) throws Exception{
         String  toNodeID = request.getParameter("toNodeId");
         String fromNodeId=request.getParameter("fromNodeId");
@@ -74,7 +74,7 @@ public class NodeTaskController {
         String workId=request.getParameter("workId");
         NodeTaskM nodeTaskM=new NodeTaskM();
         nodeTaskM.setFlowId(flowId);
-        nodeTaskM.setFlowTaskId(workId);
+        nodeTaskM.setWorkId(workId);
         Date date=new Date();
 
         //更新节点任务为已完成节点
@@ -101,7 +101,7 @@ public class NodeTaskController {
             nodeTaskService.updateNodeTask(temp);
         }
 
-    }
+    }*/
 
     @RequestMapping("/getNodeTaskByNo")
     @ResponseBody
@@ -123,6 +123,7 @@ public class NodeTaskController {
             if (nodeTaskM.getIsReady()==1){
                 nodeTaskM.setStartTime(new Date());
                 nodeTaskM.setIsReady(2);
+                nodeTaskM.setStatus(2);
                 nodeTaskService.updateNodeTask(nodeTaskM);
             }
         }catch (Exception e){

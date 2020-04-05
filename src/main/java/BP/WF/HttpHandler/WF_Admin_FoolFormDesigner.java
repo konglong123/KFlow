@@ -363,30 +363,6 @@ public class WF_Admin_FoolFormDesigner extends WebContralBase
 	public final String Designer_Init() throws Exception
 	{
 		DataSet ds = new DataSet();
-		//如果是第一次进入，就执行旧版本的升级检查.
-		if (this.getIsFirst() == true)
-		{
-            if (this.getFK_MapData().contains("BP.") == true)
-            {
-                /*如果是类的实体.*/
-                Entities ens = ClassFactory.GetEns(this.getFK_MapData());
-                Entity en = ens.getGetNewEntity();
-
-                MapData mymd = new MapData();
-                mymd.setNo(this.getFK_MapData());
-                int i = mymd.RetrieveFromDBSources();
-                if (i == 0)
-                    en.DTSMapToSys_MapData(this.getFK_MapData()); //调度数据到
-
-                mymd.RetrieveFromDBSources();
-                mymd.setHisFrmType(FrmType.FoolForm);
-                mymd.Update();
-            }
-
-			MapFrmFool cols = new MapFrmFool(this.getFK_MapData());
-			cols.DoCheckFixFrmForUpdateVer();
-			return "url@Designer.htm?FK_MapData=" + this.getFK_MapData() + "&FK_Flow=" + this.getFK_Flow() + "&FK_Node=" + this.getFK_Node();
-		}
 
 		 //把表单属性放入里面去.
         MapData md = new MapData(this.getFK_MapData());
@@ -396,8 +372,7 @@ public class WF_Admin_FoolFormDesigner extends WebContralBase
 
 		// 字段属性.
 		MapAttrs attrs = new MapAttrs(this.getFK_MapData());
-		for (MapAttr item : attrs.ToJavaList())
-		{
+		for (MapAttr item : attrs.ToJavaList()) {
 			item.setDefVal(item.getDefValReal());
 		}
 

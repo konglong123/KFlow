@@ -117,14 +117,14 @@ public class NodeTaskService {
     */
 
     public  boolean finishWork(NodeTaskM currentTask){
+        String workId=currentTask.getWorkId();
 
         NodeTaskM con=new NodeTaskM();
-        con.setFlowTaskId(currentTask.getFlowTaskId());
+        con.setWorkId(workId);
         List list=nodeTaskManage.findNodeTaskList(con);
 
         if (list==null||list.size()==0){
-            //该work下没有未完成任务，结束该work,否则说明是子流程结束
-            String workId=currentTask.getFlowTaskId();
+            //该work下没有未完成任务，结束该流程,
             GenerFlow currentWork=generFlowManager.getGenerFlowById(Long.parseLong(workId));
             currentWork.setYn(1);
             currentWork.setStatus(2);
@@ -170,6 +170,13 @@ public class NodeTaskService {
         return true;
     }
 
+    /**
+    *@Description: 获取所有子流程的开始节点任务
+    *@Param:
+    *@return:
+    *@Author: Mr.kong
+    *@Date: 2020/4/3
+    */
     public List<NodeTaskM> getSubFlowStartNodeTask(NodeTaskM nodeTaskM){
 
         try {
@@ -185,7 +192,7 @@ public class NodeTaskService {
                 int startNodeID=flow.getStartNodeID();
                 childs.add(startNodeID+"");
             }
-            return nodeTaskManage.getNodeTaskByNodeIds(nodeTaskM.getFlowTaskId(),childs);
+            return nodeTaskManage.getNodeTaskByNodeIdsAndParentTaskId(nodeTaskM.getNo()+"",childs);
         }catch (Exception e){
             logger.error(e.getMessage());
         }
@@ -229,7 +236,7 @@ public class NodeTaskService {
             for (Direction dir:directionList){
                 nodeIds.add(dir.getToNode()+"");
             }
-            return nodeTaskManage.getNodeTaskByNodeIds(nodeTaskM.getFlowTaskId(),nodeIds);
+            return nodeTaskManage.getNodeTaskByNodeIdsAndParentTaskId(nodeTaskM.getParentNodeTask(),nodeIds);
         }catch (Exception e){
             logger.error(e.getMessage());
         }
@@ -254,7 +261,7 @@ public class NodeTaskService {
             for (Direction dir:directionList){
                 nodeIds.add(dir.getNode()+"");
             }
-            return nodeTaskManage.getNodeTaskByNodeIds(nodeTaskM.getFlowTaskId(),nodeIds);
+            return nodeTaskManage.getNodeTaskByNodeIdsAndParentTaskId(nodeTaskM.getParentNodeTask(),nodeIds);
         }catch (Exception e){
             logger.error(e.getMessage());
         }

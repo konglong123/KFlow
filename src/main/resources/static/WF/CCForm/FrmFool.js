@@ -1667,7 +1667,7 @@ function Ath_Init(mypk, FK_MapData) {
 //弹出附件
 function OpenAth(url, title, keyOfEn, athMyPK, atPara, FK_MapData) {
     var H = document.body.clientHeight - 240;
-
+    debugger
     OpenBootStrapModal(url, "eudlgframe", title, frmData.Sys_MapData[0].FrmW, H, "icon-property", null, null, null, function () {
 
 

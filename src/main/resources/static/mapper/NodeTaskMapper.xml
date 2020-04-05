@@ -3,7 +3,8 @@
 <mapper namespace="BP.springCloud.dao.NodeTaskMDao">
 	<resultMap id="BaseResultMap" type="NodeTaskM">
 		<id column="no" property="no" jdbcType="BIGINT" />
-		<result column="flow_task_id" property="flowTaskId" jdbcType="VARCHAR" />
+		<result column="work_id" property="workId" jdbcType="VARCHAR" />
+		<result column="work_group_id" property="workGroupId" jdbcType="VARCHAR" />
 		<result column="flow_id" property="flowId" jdbcType="VARCHAR" />
 		<result column="node_id" property="nodeId" jdbcType="VARCHAR" />
 		<result column="is_ready" property="isReady" jdbcType="TINYINT" />
@@ -24,7 +25,8 @@
 	<sql id="Base_Column_List">
 		<trim prefix="" suffix="" suffixOverrides=",">
 		no,
-		flow_task_id,
+		work_id,
+		work_group_id,
 		flow_id,
 		node_id,
 		is_ready,
@@ -62,8 +64,11 @@
 			<if test="no != null">
 				AND no = #{no,jdbcType=BIGINT}
 			</if>
-			<if test="flowTaskId != null">
-				AND	flow_task_id = #{flowTaskId,jdbcType=VARCHAR}
+			<if test="workId != null">
+				AND	work_id = #{workId,jdbcType=VARCHAR}
+			</if>
+			<if test="workGroupId != null">
+			  	AND	work_group_id = #{workGroupId,jdbcType=VARCHAR}
 			</if>
 			<if test="flowId != null">
 				AND flow_id = #{flowId,jdbcType=VARCHAR}
@@ -104,9 +109,9 @@
 			<if test="executor != null">
 				AND	executor = #{executor,jdbcType=VARCHAR}
 			</if>
-				<if test="status != 0">
-					AND	status = #{status,jdbcType=TINYINT}
-				</if>
+			<if test="status != 0">
+			  	AND	status = #{status,jdbcType=TINYINT}
+			</if>
 			<if test="yn != 2">
 			  	AND	yn = #{yn,jdbcType=TINYINT}
 			</if>
@@ -118,7 +123,8 @@
 		insert into k_node_task 
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 		no,
-		flow_task_id,
+		work_id,
+		work_group_id,
 		flow_id,
 		node_id,
 		is_ready,
@@ -138,8 +144,9 @@
 		values 
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 		#{no,jdbcType=BIGINT}, 
-		#{flowTaskId,jdbcType=VARCHAR}, 
-		#{flowId,jdbcType=VARCHAR}, 
+		#{workId,jdbcType=VARCHAR},
+		#{workGroupId,jdbcType=VARCHAR},
+		#{flowId,jdbcType=VARCHAR},
 		#{nodeId,jdbcType=VARCHAR}, 
 		#{isReady,jdbcType=TINYINT}, 
 		#{preNodeTask,jdbcType=VARCHAR}, 
@@ -161,9 +168,12 @@
 		update k_node_task
 		<set>
 			<trim prefix="" suffix="" suffixOverrides=",">
-	        <if test="flowTaskId != null">
-					flow_task_id = #{flowTaskId,jdbcType=VARCHAR},
+	        <if test="workId != null">
+					work_id = #{workId,jdbcType=VARCHAR},
 	      		</if>
+			<if test="workGroupId != null">
+			  	work_group_id = #{workGroupId,jdbcType=VARCHAR},
+			</if>
 	        <if test="flowId != null">
 					flow_id = #{flowId,jdbcType=VARCHAR},
 	      		</if>
@@ -222,12 +232,14 @@
 		where no = #{no,jdbcType=BIGINT}
 	</update>
 
-	<select id="getNodeTaskByNodeIds" resultMap="BaseResultMap" >
+	<!--查询该节点任务下面的子节点任务-->
+
+	<select id="getNodeTaskByNodeIdsAndParentTaskId" resultMap="BaseResultMap" >
 		select
 		<include refid="Base_Column_List" />
 		from k_node_task
 		where
-		flow_task_id = #{flowTaskId,jdbcType=VARCHAR}
+		parent_node_task = #{parentTaskId,jdbcType=VARCHAR}
 		AND node_id in
 		<foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
 			              #{item}

@@ -1,7 +1,4 @@
 ﻿
-
-//从MyFlowFree2017.htm 中拿过过的.
-
 var pageData = {};
 var globalVarList = {};
 var flowData = {};
@@ -545,10 +542,10 @@ function Save(saveType) {
     $.each(dtls, function (i, dtl) {
         $(dtl).attr('src', $(dtl).attr('src'));
     });
-
     if (data.indexOf('保存成功') != 0 || data.indexOf('err@') == 0) {
-        $('#Message').html(data.substring(4, data.length));
-        $('#MessageDiv').modal().show();
+        messageShow(data.substring(4, data.length));
+    }else {
+        messageShow("保存成功！");
     }
 
 

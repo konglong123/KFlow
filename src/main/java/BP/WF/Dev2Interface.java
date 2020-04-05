@@ -8400,26 +8400,7 @@ public class Dev2Interface {
 					}
 				}
 			}
-			/// #region 更新发送参数.
-			if (htWork != null) {
-				String paras = "";
-				for (Object key : htWork.keySet()) {
-					paras += "@" + key + "=" + htWork.get(key).toString();
-				}
 
-				if (StringHelper.isNullOrEmpty(paras) == false && Glo.getIsEnableTrackRec() == true) {
-					String dbstr = SystemConfig.getAppCenterDBVarStr();
-					Paras ps = new Paras();
-					ps.SQL = "UPDATE WF_GenerWorkerlist SET AtPara=" + dbstr + "Paras WHERE WorkID=" + dbstr
-							+ "WorkID AND FK_Node=" + dbstr + "FK_Node";
-					ps.Add(GenerWorkerListAttr.Paras, paras);
-					ps.Add(GenerWorkerListAttr.WorkID, workID);
-					ps.Add(GenerWorkerListAttr.FK_Node, nd.getNodeID());
-					DBAccess.RunSQL(ps);
-				}
-			}
-
-			/// #endregion 更新发送参数.
 
 			if (nd.getSaveModel() == SaveModel.NDAndRpt) {
 				// 如果保存模式是节点表与Node与Rpt表.
@@ -8462,49 +8443,8 @@ public class Dev2Interface {
 				wk.Update();
 			}
 
-			// 获取该节点是是否是绑定表单方案, 如果流程节点中的字段与绑定表单的字段相同时赋值
-			/*if (nd.getFormType() == NodeFormType.SheetTree || nd.getFormType() == NodeFormType.RefOneFrmTree) {
-				FrmNodes nds = new FrmNodes(fk_flow, fk_node);
-				for (FrmNode item : nds.ToJavaList()) {
-					GEEntity en = null;
-					try {
-						en = new GEEntity(item.getFK_Frm());
-						en.setPKVal(workID);
-						if (en.RetrieveFromDBSources() == 0)
-							continue;
-					} catch (Exception ex) {
-						continue;
-					}
 
-					Attrs frmAttrs = en.getEnMap().getAttrs();
-					Attrs wkAttrs = wk.getEnMap().getAttrs();
-					for (Attr wkattr : wkAttrs) {
-						String wkattrKey = wkattr.getKey();
-						if (wkattrKey.equals(StartWorkAttr.OID) || wkattrKey.equals(StartWorkAttr.FID)
-								|| wkattrKey.equals(StartWorkAttr.CDT) || wkattrKey.equals(StartWorkAttr.RDT)
-								|| wkattrKey.equals(StartWorkAttr.MD5) || wkattrKey.equals(StartWorkAttr.Emps)
-								|| wkattrKey.equals(StartWorkAttr.FK_Dept) || wkattrKey.equals(StartWorkAttr.PRI)
-								|| wkattrKey.equals(StartWorkAttr.Rec) || wkattrKey.equals(StartWorkAttr.Title)
-								|| wkattrKey.equals(GERptAttr.FK_NY) || wkattrKey.equals(GERptAttr.FlowEmps)
-								|| wkattrKey.equals(GERptAttr.FlowStarter) || wkattrKey.equals(GERptAttr.FlowStartRDT)
-								|| wkattrKey.equals(GERptAttr.WFState))
-							continue;
-						for (Attr attr : frmAttrs) {
-							if (wkattrKey.equals(attr.getKey())) {
-								wk.SetValByKey(wkattrKey, en.GetValStrByKey(attr.getKey()));
-								break;
-							}
-
-						}
-
-					}
-
-				}
-				wk.Update();
-			}
-*/
 			/// #region 处理保存后事件
-			boolean isHaveSaveAfter = false;
 			try {
 				// 处理表单保存后.
 				String s = nd.getMapData().DoEvent(FrmEventList.SaveAfter, wk, null);
@@ -8515,78 +8455,10 @@ public class Dev2Interface {
 				if (s != null) {
 					/* 如果不等于null,说明已经执行过数据保存，就让其从数据库里查询一次。 */
 					wk.RetrieveFromDBSources();
-					isHaveSaveAfter = true;
 				}
 			} catch (Exception ex) {
 				return "err@在执行保存后的事件期间出现错误:" + ex.getMessage();
 			}
-
-			/// #region 为开始工作创建待办.
-			if (nd.getIsStartNode() == true) {
-				GenerWorkFlow gwf = new GenerWorkFlow();
-				Flow fl = new Flow(fk_flow);
-				if (fl.getDraftRole() == DraftRole.None) {
-					return "保存成功";
-				}
-
-				// 规则设置为写入待办，将状态置为运行中，其他设置为草稿.
-				WFState wfState = WFState.Blank;
-				if (fl.getDraftRole() == DraftRole.SaveToDraftList) {
-					wfState = WFState.Draft;
-				}
-				if (fl.getDraftRole() == DraftRole.SaveToTodolist) {
-					wfState = WFState.Runing;
-				}
-
-				gwf.setWorkID(workID);
-				int i = gwf.RetrieveFromDBSources();
-				if (i == 0) {
-					gwf.setFlowName(fl.getName());
-					gwf.setFK_Flow(fk_flow);
-					gwf.setFK_FlowSort(fl.getFK_FlowSort());
-					gwf.setSysType(fl.getSysType());
-
-					gwf.setFK_Node(fk_node);
-					gwf.setNodeName(nd.getName());
-					gwf.setWFState(wfState);
-
-					gwf.setFK_Dept(WebUser.getFK_Dept());
-					gwf.setDeptName(WebUser.getFK_DeptName());
-					gwf.setTitle(BP.WF.WorkFlowBuessRole.GenerTitle(fl, wk));
-					gwf.setStarter(WebUser.getNo());
-					gwf.setStarterName(WebUser.getName());
-					gwf.setRDT(DataType.getCurrentDataTimess());
-					gwf.Insert();
-					// 产生工作列表.
-					GenerWorkerList gwl = new GenerWorkerList();
-					gwl.setWorkID(workID);
-					gwl.setFK_Emp(WebUser.getNo());
-					gwl.setFK_EmpText(WebUser.getName());
-
-					gwl.setFK_Node(fk_node);
-					gwl.setFK_NodeText(nd.getName());
-					gwl.setFID(0);
-
-					gwl.setFK_Flow(fk_flow);
-					gwl.setFK_Dept(WebUser.getFK_Dept());
-					gwl.setSDT(DataType.getCurrentDataTimess());
-					gwl.setDTOfWarning(DataType.getCurrentDataTime());
-					gwl.setRDT(DataType.getCurrentDataTimess());
-					gwl.setIsEnable(true);
-
-					gwl.setIsPass(false);
-					// gwl.Sender = WebUser.getNo();
-					gwl.setPRI(gwf.getPRI());
-					gwl.Insert();
-				} else {
-					if (gwf.getWFState() != WFState.ReturnSta) {
-						gwf.setWFState(wfState);
-						gwf.DirectUpdate();
-					}
-				}
-			}
-
-			/// #endregion 为开始工作创建待办
 
 			/// #endregion
 			return "保存成功.";

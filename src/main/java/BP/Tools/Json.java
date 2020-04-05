@@ -338,7 +338,8 @@ public class Json
 				
 				//column.DataType == Integer.class
 				//	此处转换会出现前端json转换错误（int型，以0开头会出错）					||
-				if ( column.DataType == Long.class
+				if ( column.DataType == Integer.class
+						|| column.DataType == Long.class
 					    || column.DataType == long.class
 					    || column.DataType == Float.class
 					    || column.DataType == java.lang.Float.class
@@ -605,7 +606,7 @@ public class Json
 	/**  
 	 Datatable转换为Json 
 	  
-	 @param table Datatable对象 
+	 @param Datatable对象
 	 @return Json字符串 
 */
 //ORIGINAL LINE: public static string DataTableToJson(DataTable dt, bool isUpperColumn = true)
@@ -778,7 +779,7 @@ public class Json
 	/** 
 		 把一个json转化一个datatable 杨玉慧
 		 
-		 @param json 一个json字符串
+		 @param  一个json字符串
 		 @return 序列化的datatable
 */
 		public static DataTable ToDataTableOneRow(String strJson)
@@ -796,7 +797,7 @@ public class Json
 		/**  
 		 Datatable转换为Json 
 		  
-		 @param table Datatable对象 
+		 @param
 		 @return Json字符串 
 	*/
 		public static String DataTableToJson(DataTable dt, boolean isUpperColumn, boolean isRowUper)

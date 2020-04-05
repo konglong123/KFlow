@@ -627,7 +627,9 @@ public class WF_Admin_CCBPMDesigner2018 extends WebContralBase
 				iY = (int)Double.parseDouble(y);
 			}
 
-			List<Node> nodes= BP.WF.Template.TemplateGlo.CopyNodes(FK_Flow,nodeIds, iX, iY);
+
+			Flow f=new Flow(FK_Flow);
+			List<Node> nodes=f.copyNodes(nodeIds,iX,iY);
 
 			//将list转换成Json对象
 			StringBuilder sb=new StringBuilder();

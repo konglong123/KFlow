@@ -15,7 +15,6 @@ import BP.WF.Data.GERptAttr;
 import BP.WF.Template.*;
 import BP.WF.Template.FrmWorkCheck;
 import BP.WF.Template.FrmWorkCheckSta;
-import BP.springCloud.tool.KFlowTool;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.protocol.HttpContext;
 
@@ -1006,7 +1005,7 @@ public class WF_MyFlow extends WebContralBase {
 		NodeTask nodeTask=new NodeTask(nodeTaskNo);
 		String flowId=nodeTask.GetValStrByKey(NodeTaskAttr.FlowId);
 		String nodeId=nodeTask.GetValStrByKey(NodeTaskAttr.NodeId);
-		String workId=nodeTask.GetValStrByKey(NodeTaskAttr.FlowTaskId);
+		String workId=nodeTask.GetValStrByKey(NodeTaskAttr.WorkId);
 
 		BtnLab btnLab = new BtnLab(Integer.parseInt(nodeId));
 		String toolbar = "";
@@ -1032,7 +1031,7 @@ public class WF_MyFlow extends WebContralBase {
 		}
 
 		FrmWorkCheck fwc = new FrmWorkCheck(this.getFK_Node());
-		if (fwc.getHisFrmWorkCheckSta() != FrmWorkCheckSta.Enable) {
+		if (fwc.getHisFrmWorkCheckSta() == FrmWorkCheckSta.Enable) {
 					/* 如果不等于启用, */
 					toolbar += "<input type=button  value='填写审核意见' enable=true onclick=\"WinOpen('./WorkOpt/CCCheckNote.htm?WorkID="
 							+ this.getWorkID() + "&FK_Flow=" + this.getFK_Flow() + "&FID=" + this.getFID() + "&FK_Node="

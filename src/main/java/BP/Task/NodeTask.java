@@ -27,7 +27,8 @@ public class NodeTask extends EntityNo {
 
         Map map = new Map("k_node_task", "节点任务");
         map.AddTBString(NodeTaskAttr.No, null, "ID", false, true, 1, 20, 100);
-        map.AddTBString(NodeTaskAttr.FlowTaskId, null, "流程任务编码", true, true, 0, 50, 50);
+        map.AddTBString(NodeTaskAttr.WorkId, null, "流程实例编码", true, true, 0, 50, 50);
+        map.AddTBString(NodeTaskAttr.WorkGroupId, null, "实例组编码", true, true, 0, 50, 50);
         map.AddTBString(NodeTaskAttr.FlowId, null, "流程编码", true, true, 1, 50, 50);
         map.AddTBString(NodeTaskAttr.NodeId, null, "节点编码", true, true, 0, 50, 50);
         map.AddDDLSysEnum(NodeTaskAttr.IsReady, 0, "任务状态", true, false, NodeTaskAttr.IsReady,

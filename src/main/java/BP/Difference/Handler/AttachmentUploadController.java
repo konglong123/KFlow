@@ -46,8 +46,7 @@ import BP.Web.WebUser;
 
 
 @Controller
-@RequestMapping("/WF/Ath")
-@Scope("request")
+@RequestMapping("Ath")
 public class AttachmentUploadController extends BaseController {
 
 	public String getFK_FrmAttachment() {
@@ -113,7 +112,7 @@ public class AttachmentUploadController extends BaseController {
  
 	}
 
-	@RequestMapping(value = "/AttachmentUploadS.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/AttachmentUploadS", method = RequestMethod.POST)
 	public void AttachmentUploadS(HttpServletRequest request, HttpServletResponse response, BindException errors)
 			throws Exception {
 		String error = "";

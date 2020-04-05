@@ -4,6 +4,8 @@
 	<resultMap id="BaseResultMap" type="GenerFlow">
 		<id column="no" property="no" jdbcType="BIGINT" />
 		<result column="work_id" property="workId" jdbcType="BIGINT" />
+		<result column="work_group_id" property="workGroupId" jdbcType="BIGINT" />
+		<result column="parent_work_id" property="parentWorkId" jdbcType="BIGINT" />
 		<result column="status" property="status" jdbcType="TINYINT" />
 		<result column="flow_id" property="flowId" jdbcType="INTEGER" />
 		<result column="creater" property="creater" jdbcType="VARCHAR" />
@@ -16,6 +18,8 @@
 		<trim prefix="" suffix="" suffixOverrides=",">
 		no,
 		work_id,
+		work_group_id,
+		parent_work_id,
 		status,
 		flow_id,
 		creater,
@@ -44,8 +48,14 @@
 				<if test="no != null">
 					AND no = #{no,jdbcType=BIGINT},
 				</if>
-				<if test="workId != null">
+				<if test="workId != 0">
 					AND work_id = #{workId,jdbcType=BIGINT},
+				</if>
+				<if test="workGroupId != 0">
+					AND work_group_id = #{workGroupId,jdbcType=BIGINT},
+				</if>
+				<if test="parentWorkId != 0">
+					AND parent_work_id = #{parentWorkId,jdbcType=BIGINT},
 				</if>
 				<if test="status != 0">
 					AND status = #{status,jdbcType=TINYINT},
@@ -74,6 +84,8 @@
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 		no,
 		work_id,
+		work_group_id,
+		parent_work_id,
 		status,
 		flow_id,
 		creater,
@@ -84,8 +96,10 @@
 		values 
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 		#{no,jdbcType=BIGINT}, 
-		#{workId,jdbcType=BIGINT}, 
-		#{status,jdbcType=TINYINT}, 
+		#{workId,jdbcType=BIGINT},
+		#{workGroupId,jdbcType=BIGINT},
+		#{parentWorkId,jdbcType=BIGINT},
+		#{status,jdbcType=TINYINT},
 		#{flowId,jdbcType=INTEGER}, 
 		#{creater,jdbcType=VARCHAR}, 
 		#{createTime,jdbcType=TIMESTAMP}, 
@@ -98,12 +112,15 @@
 		update k_gener_flow
 		<set>
 			<trim prefix="" suffix="" suffixOverrides=",">
-	        <if test="no != null">
-					no = #{no,jdbcType=BIGINT},
-	      		</if>
-	        <if test="workId != null">
+	        <if test="workId != 0">
 					work_id = #{workId,jdbcType=BIGINT},
 	      		</if>
+			<if test="workGroupId != 0">
+				work_group_id = #{workGroupId,jdbcType=BIGINT},
+			</if>
+			<if test="parentWorkId != 0">
+				parent_work_id = #{parentWorkId,jdbcType=BIGINT},
+			</if>
 			<if test="status != 0">
 					status = #{status,jdbcType=TINYINT},
 	      		</if>

@@ -18,9 +18,15 @@ public class NodeTaskM implements Serializable {
 	private Long no;
 	
 	/**
-	 * 工作id
+	 * 私有工作id
 	 */
-	private String flowTaskId;
+	private String workId;
+
+	/**
+	 * 工作组id
+	 */
+
+	private String workGroupId;
 	
 	/**
 	 * 流程id
@@ -104,21 +110,23 @@ public class NodeTaskM implements Serializable {
 	public void setNo(Long no) {
 		this.no = no;
 	}
-	
-	/**
-	 * @return the flowTaskId
-	 */
-	public String getFlowTaskId() {
-		return flowTaskId;
+
+	public String getWorkId() {
+		return workId;
 	}
-	
-	/**
-	 * @param flowTaskId the flowTaskId to set
-	 */
-	public void setFlowTaskId(String flowTaskId) {
-		this.flowTaskId = flowTaskId;
+
+	public void setWorkId(String workId) {
+		this.workId = workId;
 	}
-	
+
+	public String getWorkGroupId() {
+		return workGroupId;
+	}
+
+	public void setWorkGroupId(String workGroupId) {
+		this.workGroupId = workGroupId;
+	}
+
 	/**
 	 * @return the flowId
 	 */

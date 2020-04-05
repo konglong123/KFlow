@@ -1,8 +1,11 @@
 package BP.WF.Template;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import BP.Sys.*;
 import BP.WF.CCBPM_DType;
 import BP.WF.Flow;
 import BP.WF.Node;
@@ -63,19 +66,67 @@ public class TemplateGlo
 		BP.WF.Node nd = fl.DoNewNode(x, y);
 		return nd.getNodeID();
 	}
+
+
+
 	/**
-	 创建多个节点,复制节点（流程重组时使用）
-	 @param flowNo
-	 @param x
-	 @param y
-	 @return
-	  * @throws Exception
-	 */
-	public static List<Node> CopyNodes(String flowNo, String[] nodeIds, int x, int y) throws Exception
-	{
-		BP.WF.Flow fl = new Flow(flowNo);
-		return fl.DoNewNodes(nodeIds,x, y);
+	*@Description: 复制一个节点（复制节点所有基本属性，节点对应表单）
+	*@Param:
+	*@return:
+	*@Author: Mr.kong
+	*@Date: 2020/4/5
+	*/
+	public static Node CopyNode(Node node,String oldNodeId) throws Exception{
+		Node nodeNew=new Node();
+		//复制基本属性
+		nodeNew.setRow(node.getRow());
+		nodeNew.Insert();
+
+		String mapDataKeyOld="ND"+oldNodeId;
+		String mapDateKeyNew="ND"+node.getNodeID();
+
+		//复制表单信息
+		MapData mapData=new MapData();
+		mapData.Retrieve(MapDataAttr.No,mapDataKeyOld);
+		mapData.setNo(mapDateKeyNew);
+		mapData.Insert();
+
+		//复制表单中分组信息，
+		Map<String,Long> groupFieldMap=new HashMap<>();
+		GroupFields groupFields=new GroupFields();
+		groupFields.Retrieve(GroupFieldAttr.FrmID,mapDataKeyOld);
+		List<GroupField> groupFieldList=groupFields.toList();
+		for (GroupField groupField:groupFieldList){
+			groupField.setFrmID(mapDateKeyNew);
+			Long oldOid=groupField.getOID();
+			groupField.setOID(0);//系统重新产生OID
+			groupField.Insert();
+			groupFieldMap.put(oldOid+"",groupField.getOID());
+		}
+
+		try {
+			//复制表单中自定义字段信息
+			MapAttrs mapAttrs=new MapAttrs();
+			mapAttrs.Retrieve(MapAttrAttr.FK_MapData,mapDataKeyOld);
+			List<MapAttr> mapAttrList=mapAttrs.toList();
+			for (MapAttr mapAttr:mapAttrList){
+				mapAttr.setFK_MapData(mapDateKeyNew);
+				Long groupId=groupFieldMap.get(mapAttr.getGroupID()+"");
+				if (groupId!=null&&groupId!=0){
+					mapAttr.setGroupID(groupId);
+				}
+				String mapAttrKey=mapAttr.getMyPK();
+				mapAttr.setMyPK(mapDateKeyNew+mapAttrKey.substring(mapDataKeyOld.length()));
+				mapAttr.Insert();
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+
+		return nodeNew;
 	}
+
+
 	/** 
 	 删除节点.
 	 
