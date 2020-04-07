@@ -340,7 +340,7 @@ public class NodeTaskService {
 
         for (NodeTaskM nodeTaskM:children){
             JSONObject point=new JSONObject();
-            String id="node"+nodeTaskM.getNo();
+            String id="nt"+nodeTaskM.getNo();
             point.put("name",id);
             point.put("id",id);
 
@@ -349,7 +349,7 @@ public class NodeTaskService {
             if (preNodeTasks!=null){
                 List<String> dependencyList=new ArrayList<>(preNodeTasks.size());
                 for (NodeTaskM pre:preNodeTasks){
-                    dependencyList.add("node"+pre.getNo());
+                    dependencyList.add("nt"+pre.getNo());
                 }
                 point.put("dependency",dependencyList);
             }

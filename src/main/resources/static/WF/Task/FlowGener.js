@@ -53,6 +53,11 @@ function initGantt(generFlowNo) {
         success: function (data) {
             gantData=data;
 
+            dateFormat = Highcharts.dateFormat,
+                defined = Highcharts.defined,
+                isObject = Highcharts.isObject,
+                reduce = Highcharts.reduce;
+
             Highcharts.ganttChart('container', {
                 title: {
                     text: '流程实例甘特图'
@@ -81,7 +86,47 @@ function initGantt(generFlowNo) {
                     enabled: true,
                     selected: 0
                 },
-                series: gantData.series
+                series: gantData.series,
+                tooltip: {
+                    pointFormatter: function () {
+                        var point = this,
+                            format = '%Y-%m-%d %H',
+                            options = point.options,
+                            completed = options.completed,
+                            amount = isObject(completed) ? completed.amount : completed,
+                            status = ((amount || 0) * 100) + '%',
+                            lines;
+                        lines = [{
+                            value: point.name,
+                            style: 'font-weight: bold;'
+                        }, {
+                            title: 'Start',
+                            value: dateFormat(format, point.start)
+                        }, {
+                            visible: !options.milestone,
+                            title: 'End',
+                            value: dateFormat(format, point.end)
+                        }, {
+                            title: 'Owner',
+                            value: options.owner || 'unassigned'
+                        }];
+                        return reduce(lines, function (str, line) {
+                            var s = '',
+                                style = (
+                                    defined(line.style) ? line.style : 'font-size: 0.8em;'
+                                );
+                            if (line.visible !== false) {
+                                s = (
+                                    '<span style="' + style + '">' +
+                                    (defined(line.title) ? line.title + ': ' : '') +
+                                    (defined(line.value) ? line.value : '') +
+                                    '</span><br/>'
+                                );
+                            }
+                            return str + s;
+                        }, '');
+                    }
+                },
             });
         }
     });
