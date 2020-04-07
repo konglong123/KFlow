@@ -59,4 +59,39 @@ public class PageTool {
         out.flush();
         out.close();
     }
+
+    public static void TransToResultList(List<Object> objectList, HttpServletRequest request, HttpServletResponse response) throws Exception{
+        response.setCharacterEncoding("utf-8");
+        request.setCharacterEncoding("utf-8");
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+        //请求页码、每页显示行数、偏移、总数
+        int page, rows;
+        String input_page = request.getParameter("page");
+        page = (input_page == null) ? 1 : Integer.parseInt(input_page);
+        String input_rows = request.getParameter("rows");
+        rows = (input_rows == null) ? 10 : Integer.parseInt(input_rows);
+
+        Map<String, Object> jsonMap = new HashMap<>();//定义map
+        int allNum = objectList.size();
+        jsonMap.put("total", allNum);//total键 存放总记录数，必须的
+        if (allNum == 0) {
+            jsonMap.put("rows", new ArrayList<>(1));//消除查询结果为空时，前端报错
+        } else {
+            List rList = new ArrayList(rows);
+            int endPos = page * rows;
+            endPos = endPos < allNum ? endPos : allNum;
+            for (int i = (page - 1) * rows; i < endPos; i++) {
+                Map<String, Object> temp = JSONObject.fromObject(objectList.get(i));
+                rList.add(temp);
+            }
+            jsonMap.put("rows", rList);//rows键 存放每页记录 list
+        }
+        JSONObject json = new JSONObject();
+        json.putAll(jsonMap);
+        String result = json.toString();
+        out.print(result);
+        out.flush();
+        out.close();
+    }
 }

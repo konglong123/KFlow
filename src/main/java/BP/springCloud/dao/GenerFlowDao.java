@@ -21,19 +21,19 @@ public interface GenerFlowDao {
 
 	/**
 	 * 插入流程实例
-	 * @param kGenerFlow
+	 * @param generFlow
 	 */
-	public Long insertGenerFlow(GenerFlow kGenerFlow);
+	public Long insertGenerFlow(GenerFlow generFlow);
 	/**
 	 * 更新流程实例
-	 * @param kGenerFlow
+	 * @param generFlow
 	 */
-	public Long updateGenerFlow(GenerFlow kGenerFlow);
+	public Long updateGenerFlow(GenerFlow generFlow);
 	/**
 	 * 删除流程实例
 	 * @param no
 	 */
 	public Long deleteGenerFlow(Long no);
 
-	public List findGenerFlowList( @Param("po") GenerFlow generFlow);
+	public List findGenerFlowList(GenerFlow generFlow);
 }

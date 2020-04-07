@@ -2,33 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>节点任务</title>
+    <title>流程实例列表</title>
     <link href="../Scripts/easyUI/themes/default/easyui.css" rel="stylesheet" type="text/css" />
     <script src="../Scripts/jquery-1.7.2.min.js" type="text/javascript"></script>
     <script src="../Scripts/easyUI/jquery.easyui.min.js" type="text/javascript"></script>
     <script src="../Scripts/QueryString.js" type="text/javascript"></script>
     <script type="text/javascript" src="../Comm/JS/echarts.js"></script>
     <script src="../Scripts/EasyUIUtility.js" type="text/javascript"></script>
-    <script src="NodeTask.js" type="text/javascript"></script>
+    <script src="FlowGener.js" type="text/javascript"></script>
 </head>
 <body>
-<div>
-    <table cellpadding="5">
-        <tr>
-        </tr>
-        <tr>
-            <td><button class="easyui-linkbutton"  >查询</button></td>
-            <td><button class="easyui-linkbutton"  onclick="updateNodeTaskStatus()">更新任务状态</button></td>
-        </tr>
-    </table>
-</div>
-<div id="nodeTasks">
-    <table id="dgNodeTasks" title="节点任务">
+<div id="generFlows">
+    <table id="dgGenerFlows" title="流程实例">
     </table>
 </div>
 <script type="text/javascript">
     $(function(){
-        initDgNodeTasks();
+        initDgGenerFlows();
     });
 </script>
 </body>

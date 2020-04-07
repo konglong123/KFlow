@@ -1,8 +1,10 @@
 package BP.Task;
 
 import BP.Web.WebUser;
+import BP.springCloud.entity.GenerFlow;
 import BP.springCloud.entity.NodeTaskM;
 import BP.springCloud.tool.PageTool;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +17,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -33,6 +36,9 @@ public class NodeTaskController {
 
     @Resource
     private NodeTaskService nodeTaskService;
+
+    @Resource
+    private GenerFlowService generFlowService;
     /**
     *@Description: 查询节点任务列表（条件查询）
     *@Param:
@@ -50,8 +56,6 @@ public class NodeTaskController {
                 nodeTasks.Retrieve(NodeTaskAttr.Executor, executor,NodeTaskAttr.IsReady,isReady);
             else
                 nodeTasks.Retrieve(NodeTaskAttr.Executor, executor);
-            //更新任务状态
-            List<NodeTask> nodeTaskList=nodeTasks.toList();
 
             PageTool.TransToResult(nodeTasks,request,response);
         }catch (Exception e){
@@ -176,5 +180,59 @@ public class NodeTaskController {
     }
 
 
+    /**
+    *@Description: 查询该WorkId下面所有任务进展信息(单个实例层级)
+    *@Param:
+    *@return:
+    *@Author: Mr.kong
+    *@Date: 2020/4/5
+    */
+    public JSONObject getNodeTasksByWorkId(Long generFlowNo){
+        return null;
+    }
 
+    /**
+     *@Description: 查询该WorkId下面所有任务进展信息(多粒度实例层级)
+     *@Param:
+     *@return:
+     *@Author: Mr.kong
+     *@Date: 2020/4/5
+     */
+    public JSONObject getNodeTasksByGroupWorkId(String groupWorkId){
+        return null;
+    }
+
+
+    @RequestMapping("getNodeTaskGantData")
+    @ResponseBody
+    public JSONObject getNodeTaskGantData(Long generFlowNo,int depth){
+        List<JSONObject> seriesList=new ArrayList<>();
+
+        JSONObject seriesN=new JSONObject();
+        seriesN.put("name","实例"+generFlowNo);
+        GenerFlow generFlow=generFlowService.getGenerFlow(generFlowNo);
+        List<JSONObject> data= nodeTaskService.getGantData(generFlow,depth);
+        seriesN.put("data",JSONArray.fromObject(data));
+        seriesList.add(seriesN);
+
+        JSONObject xAxis=new JSONObject();
+        xAxis.put("currentDateIndicator",true);
+
+        int shiCha=(8+8) * 60 * 60 * 1000;//时差，
+        xAxis.put("min",generFlow.getCreateTime().getTime()+shiCha);
+        if (generFlow.getStatus()!=2) {
+            Date cur=new Date();
+            xAxis.put("max", cur.getTime() + shiCha);
+        }else
+            xAxis.put("max",generFlow.getFinishTime().getTime()+shiCha);
+
+        JSONObject result=new JSONObject();
+        try {
+            result.put("series", JSONArray.fromObject(seriesList));
+            result.put("xAxis",xAxis);
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+        return result;
+    }
 }

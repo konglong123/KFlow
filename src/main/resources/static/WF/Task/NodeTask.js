@@ -13,7 +13,7 @@ function initDgNodeTasks() {
         },
         columns:[[
             {field:'no',title: '任务编码',align: 'center',width:10},
-            {field:'work_id',title: '流程实例编码',align: 'center',width:10},
+            {field:'work_id',title: '工作编码',align: 'center',width:10},
             {field:'flow_id',title: '流程编码',align: 'center',width:10},
             {field:'node_id',title: '当前节点',align: 'center',width:10},
             {field:'total_time',title: '总工作量',align: 'center',width:10},
@@ -99,4 +99,20 @@ function doNodeTaskDetail(no) {
         }
     });
 
+}
+
+function updateNodeTaskStatus() {
+    $.ajax({
+        url: "/WF/nodeTask/updateTasksStatus",
+        type: 'GET',
+        data:{
+        },
+        success:function (data) {
+            alert("更新成功！")
+            $('#dgNodeTasks').datagrid('reload');
+        },
+        error:function (date) {
+            alert("更新失败！"+date);
+        }
+    });
 }

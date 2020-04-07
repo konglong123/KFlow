@@ -35,11 +35,18 @@ public class GenerFlow implements Serializable {
 	 * 流程编码
 	 */
 	private int flowId;
-	
+
+	private int totalTime;
+
+	private int useTime;
+
+	/*处于激活状态的节点*/
+	private String activatedNodes;
+
 	/**
 	 * 创建者
 	 */
-	private String creater;
+	private String creator;
 	
 	/**
 	 * 创建时间
@@ -129,17 +136,17 @@ public class GenerFlow implements Serializable {
 	}
 	
 	/**
-	 * @return the creater
+	 * @return the creator
 	 */
-	public String getCreater() {
-		return creater;
+	public String getCreator() {
+		return creator;
 	}
 	
 	/**
-	 * @param creater the creater to set
+	 * @param creator the creator to set
 	 */
-	public void setCreater(String creater) {
-		this.creater = creater;
+	public void setCreator(String creator) {
+		this.creator = creator;
 	}
 	
 	/**
@@ -183,5 +190,28 @@ public class GenerFlow implements Serializable {
 	public void setYn(int yn) {
 		this.yn = yn;
 	}
-	
+
+	public int getTotalTime() {
+		return totalTime;
+	}
+
+	public void setTotalTime(int totalTime) {
+		this.totalTime = totalTime;
+	}
+
+	public int getUseTime() {
+		return useTime;
+	}
+
+	public void setUseTime(int useTime) {
+		this.useTime = useTime;
+	}
+
+	public String getActivatedNodes() {
+		return activatedNodes;
+	}
+
+	public void setActivatedNodes(String activatedNodes) {
+		this.activatedNodes = activatedNodes;
+	}
 }

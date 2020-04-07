@@ -41,8 +41,8 @@ public class GenerFlowManager  {
 	 */
 	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
 	public GenerFlow getGenerFlowById(Long no) {
-		GenerFlow kGenerFlow = generFlowDao.getGenerFlowById(no);
-		return kGenerFlow;
+		GenerFlow generFlow = generFlowDao.getGenerFlowById(no);
+		return generFlow;
 	}
 	/**
 	 * 插入流程实例

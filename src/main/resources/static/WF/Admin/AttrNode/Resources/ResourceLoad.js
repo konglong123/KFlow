@@ -52,7 +52,6 @@ $(function(){
             }]
     });
     $('#btnQueryLoad').click(function () {
-        debugger
         var startTime=$('#startTime').datebox('getValue');
         var endTime=$('#endTime').datebox('getValue');
         if (startTime==null||startTime==""||endTime==null||endTime==""){

@@ -3,6 +3,8 @@
     "chichengwfsystem": "KFlow工作流程管理系统",
     "fqr": "发起人",
     "jcgn": "基础功能",
+    "lcjg": "流程监管",
+    "lcsl":"流程实例",
     "lcfq": "流程发起",
     "daiban": "待办",
     "zaitu": "在途",

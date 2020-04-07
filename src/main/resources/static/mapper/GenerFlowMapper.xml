@@ -8,7 +8,10 @@
 		<result column="parent_work_id" property="parentWorkId" jdbcType="BIGINT" />
 		<result column="status" property="status" jdbcType="TINYINT" />
 		<result column="flow_id" property="flowId" jdbcType="INTEGER" />
-		<result column="creater" property="creater" jdbcType="VARCHAR" />
+		<result column="use_time" property="useTime" jdbcType="INTEGER" />
+		<result column="total_time" property="totalTime" jdbcType="INTEGER" />
+		<result column="activated_nodes" property="activatedNodes" jdbcType="VARCHAR" />
+		<result column="creator" property="creator" jdbcType="VARCHAR" />
 		<result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
 		<result column="finishTime" property="finishTime" jdbcType="TIMESTAMP" />
 		<result column="yn" property="yn" jdbcType="TINYINT" />
@@ -22,7 +25,10 @@
 		parent_work_id,
 		status,
 		flow_id,
-		creater,
+		use_time,
+		total_time,
+		activated_nodes,
+		creator,
 		createTime,
 		finishTime,
 		yn,
@@ -45,16 +51,13 @@
 		<where>   
 		 	1=1
 			<trim prefix="" suffix="" suffixOverrides=",">
-				<if test="no != null">
-					AND no = #{no,jdbcType=BIGINT},
-				</if>
-				<if test="workId != 0">
+				<if test="workId != null">
 					AND work_id = #{workId,jdbcType=BIGINT},
 				</if>
-				<if test="workGroupId != 0">
+				<if test="workGroupId != null">
 					AND work_group_id = #{workGroupId,jdbcType=BIGINT},
 				</if>
-				<if test="parentWorkId != 0">
+				<if test="parentWorkId != null">
 					AND parent_work_id = #{parentWorkId,jdbcType=BIGINT},
 				</if>
 				<if test="status != 0">
@@ -63,8 +66,17 @@
 				<if test="flowId != 0">
 					AND flow_id = #{flowId,jdbcType=INTEGER},
 				</if>
-				<if test="creater != null">
-					AND creater = #{creater,jdbcType=VARCHAR},
+				<if test="useTime != 0">
+					AND use_time = #{useTime,jdbcType=INTEGER},
+				</if>
+				<if test="totalTime != 0">
+					AND total_time = #{totalTime,jdbcType=INTEGER},
+				</if>
+				<if test="activatedNodes != null">
+					AND activated_nodes = #{activatedNodes,jdbcType=VARCHAR},
+				</if>
+				<if test="creator != null">
+					AND creator = #{creator,jdbcType=VARCHAR},
 				</if>
 				<if test="createTime != null">
 					AND createTime = #{createTime,jdbcType=TIMESTAMP},
@@ -88,7 +100,10 @@
 		parent_work_id,
 		status,
 		flow_id,
-		creater,
+		use_time,
+		total_time,
+		activated_nodes,
+		creator,
 		createTime,
 		finishTime,
 		yn,
@@ -100,8 +115,11 @@
 		#{workGroupId,jdbcType=BIGINT},
 		#{parentWorkId,jdbcType=BIGINT},
 		#{status,jdbcType=TINYINT},
-		#{flowId,jdbcType=INTEGER}, 
-		#{creater,jdbcType=VARCHAR}, 
+		#{flowId,jdbcType=INTEGER},
+		#{useTime,jdbcType=INTEGER},
+		#{totalTime,jdbcType=INTEGER},
+		#{activatedNodes,jdbcType=VARCHAR},
+		#{creator,jdbcType=VARCHAR},
 		#{createTime,jdbcType=TIMESTAMP}, 
 		#{finishTime,jdbcType=TIMESTAMP}, 
 		#{yn,jdbcType=TINYINT}, 
@@ -112,13 +130,13 @@
 		update k_gener_flow
 		<set>
 			<trim prefix="" suffix="" suffixOverrides=",">
-	        <if test="workId != 0">
+	        <if test="workId != null">
 					work_id = #{workId,jdbcType=BIGINT},
 	      		</if>
-			<if test="workGroupId != 0">
+			<if test="workGroupId != null">
 				work_group_id = #{workGroupId,jdbcType=BIGINT},
 			</if>
-			<if test="parentWorkId != 0">
+			<if test="parentWorkId != null">
 				parent_work_id = #{parentWorkId,jdbcType=BIGINT},
 			</if>
 			<if test="status != 0">
@@ -127,8 +145,17 @@
 			<if test="flowId != 0">
 					flow_id = #{flowId,jdbcType=INTEGER},
 	      		</if>
-	        <if test="creater != null">
-					creater = #{creater,jdbcType=VARCHAR},
+			<if test="useTime != 0">
+					use_time = #{useTime,jdbcType=INTEGER},
+				</if>
+			<if test="totalTime != 0">
+					total_time = #{totalTime,jdbcType=INTEGER},
+				</if>
+			<if test="activatedNodes != null">
+					activated_nodes = #{activatedNodes,jdbcType=VARCHAR},
+				</if>
+	        <if test="creator != null">
+					creator = #{creator,jdbcType=VARCHAR},
 	      		</if>
 	        <if test="createTime != null">
 					createTime = #{createTime,jdbcType=TIMESTAMP},

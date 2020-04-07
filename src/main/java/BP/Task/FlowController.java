@@ -82,7 +82,7 @@ public class FlowController {
         generFlow.setParentWorkId(parentWorkId);
         generFlow.setFlowId(Integer.valueOf(flow.getNo()));
         generFlow.setStatus(1);
-        generFlow.setCreater(WebUser.getNo());
+        generFlow.setCreator(WebUser.getNo());
         generFlowService.insertGenerFlow(generFlow);
 
         Nodes nodes=new Nodes();

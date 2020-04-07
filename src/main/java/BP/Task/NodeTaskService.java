@@ -2,23 +2,21 @@ package BP.Task;
 
 import BP.Tools.StringUtils;
 import BP.WF.Flow;
-import BP.WF.Node;
 import BP.WF.Template.Direction;
 import BP.WF.Template.DirectionAttr;
 import BP.WF.Template.Directions;
 import BP.WF.Template.FrmSubFlow;
 import BP.springCloud.entity.GenerFlow;
 import BP.springCloud.entity.NodeTaskM;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * @program: kflow-web
@@ -285,20 +283,21 @@ public class NodeTaskService {
             Date current = new Date();
             Calendar calendar = Calendar.getInstance();
             int rat = 1000 * 60 * 60 * 24;
-            int dayNumS = (int) ((planStart.getTime() - current.getTime()) / rat);
-            if (dayNumS < 0)
-                return 4;//逾期开始
-            else if (dayNumS < 3)
-                return 5;//三天内警告
-            else {
+
+            if (isReadyNt==1) {//未开始，
+                int dayNumS = (int) ((planStart.getTime() - current.getTime()) / rat);
+                if (dayNumS < 0)
+                    return 4;//逾期开始
+                else if (dayNumS < 3)
+                    return 5;//三天内警告
+            } else {//已经开始
                 int dayNumE = (int) ((planEnd.getTime() - current.getTime()) / rat);
                 if (dayNumE < 0)
                     return 7;//逾期结束
                 else if (dayNumE < 3)
                     return 8;//警告结束
-                else
-                    return 6;//正常
             }
+            return 6;//正常
         }
         return nt.getIsReady();
     }
@@ -307,4 +306,87 @@ public class NodeTaskService {
     public Long insertNodeTask(NodeTaskM nodeTaskM){
         return nodeTaskManage.insertNodeTask(nodeTaskM);
     }
+
+    /**
+    *@Description: 获取GenerFlow下层次不超过depth深度的所有节点任务进度
+    *@Param:
+    *@return:
+    *@Author: Mr.kong
+    *@Date: 2020/4/6
+    */
+    public List<JSONObject> getGantData(GenerFlow generFlow, int depth){
+        List<JSONObject> data=new LinkedList<>();
+
+        JSONObject temp=new JSONObject();
+        temp.put("name","实例"+generFlow.getNo());
+        temp.put("id",generFlow.getNo()+"");
+        temp.put("owner",generFlow.getCreator());
+        data.add(temp);
+
+        NodeTaskM con=new NodeTaskM();
+        con.setWorkId(generFlow.getWorkId()+"");
+        List<NodeTaskM> list=nodeTaskManage.findNodeTaskAllList(con);
+        transToGant(list,generFlow.getNo()+"",data,depth,0);
+
+        return data;
+    }
+
+    public void transToGant(List<NodeTaskM> children,String parentId,List<JSONObject> data,int depth,int curDepth){
+
+        if (children==null)
+            return;
+
+        NodeTaskM con=new NodeTaskM();
+
+        for (NodeTaskM nodeTaskM:children){
+            JSONObject point=new JSONObject();
+            String id="node"+nodeTaskM.getNo();
+            point.put("name",id);
+            point.put("id",id);
+
+            //获取前置节点任务
+            List<NodeTaskM> preNodeTasks=getPreNodeTask(nodeTaskM);
+            if (preNodeTasks!=null){
+                List<String> dependencyList=new ArrayList<>(preNodeTasks.size());
+                for (NodeTaskM pre:preNodeTasks){
+                    dependencyList.add("node"+pre.getNo());
+                }
+                point.put("dependency",dependencyList);
+            }
+
+            int shiCha=8 * 60 * 60 * 1000;//时间戳会存在时差问题
+
+            if (nodeTaskM.getIsReady()>1)//已经开始
+                point.put("start",nodeTaskM.getStartTime().getTime()+shiCha);
+            else
+                point.put("start",nodeTaskM.getPlanStartTime().getTime()+shiCha);
+
+            if (nodeTaskM.getIsReady()>2)//已经结束
+                point.put("end",nodeTaskM.getEndTime().getTime()+shiCha);
+            else
+                point.put("end",nodeTaskM.getPlanEndTime().getTime()+shiCha);
+
+            JSONObject completed=new JSONObject();
+
+            Double amount = (nodeTaskM.getUseTime()+0.0)/nodeTaskM.getTotalTime();
+            BigDecimal bd = new BigDecimal(amount);
+            amount = bd.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            completed.put("amount",amount);
+            point.put("completed",completed);
+            point.put("parent",parentId);
+            point.put("owner",nodeTaskM.getExecutor());
+
+            data.add(point);
+
+            //深度满足，添加子流程信息
+            if (curDepth<depth){
+                //添加子流程任务信息
+                con.setParentNodeTask(nodeTaskM.getNo()+"");
+                List<NodeTaskM> nextChildren=nodeTaskManage.findNodeTaskAllList(con);
+                transToGant(nextChildren,id,data,depth,curDepth+1);
+            }
+
+        }
+    }
+
 }
