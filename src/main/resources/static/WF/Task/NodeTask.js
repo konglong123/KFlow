@@ -1,3 +1,4 @@
+
 function initDgNodeTasks() {
     $('#dgNodeTasks').datagrid({
         singleSelect:true,
@@ -9,15 +10,18 @@ function initDgNodeTasks() {
         fitColumns:true,//表头与数据对齐
         url:"/WF/nodeTask/getNodeTasks",
         queryParams: {
-            isReady:""
+            nodeTaskNo:"",
+            workId:"",
+            flowNo:"",
+            status:""
         },
         columns:[[
             {field:'no',title: '任务编码',align: 'center',width:10},
-            {field:'work_id',title: '工作编码',align: 'center',width:10},
-            {field:'flow_id',title: '流程编码',align: 'center',width:10},
-            {field:'node_id',title: '当前节点',align: 'center',width:10},
-            {field:'total_time',title: '总工作量',align: 'center',width:10},
-            {field:'use_time',title: '已完成工作量',align: 'center',width:10},
+            {field:'workId',title: '工作编码',align: 'center',width:10},
+            {field:'flowId',title: '流程编码',align: 'center',width:10},
+            {field:'nodeId',title: '当前节点',align: 'center',width:10},
+            {field:'totalTime',title: '总工作量',align: 'center',width:10},
+            {field:'useTime',title: '已完成工作量',align: 'center',width:10},
             {field:'status',title: '状态',align: 'center',width:10,
                 formatter:function (val,rec) {
                     return getNodeTaskStatus(val);
@@ -25,7 +29,7 @@ function initDgNodeTasks() {
             {field:'action',title: '操作',align: 'center',width:50,
                 formatter:function(val,rec){
                     var str="<input type='button' value='详细' id='btnToDetail' onclick='gotoNodeTaskDetail(\""+rec.no+"\")'/>";
-                    if (rec.is_ready==1||rec.is_ready==2)
+                    if (rec.isReady==1||rec.isReady==2)
                         str+="<input type='button' value='执行' id='btnDo' onclick='doNodeTask(\""+rec.no+"\")'/>";
                     return str;
                 }},
@@ -37,7 +41,7 @@ function initDgNodeTasks() {
 }
 function getNodeTaskStatus(val) {
     switch (val) {
-        case 0:
+        case 9:
             return "未准备";
         case 1:
             return '可以开始';
@@ -115,4 +119,17 @@ function updateNodeTaskStatus() {
             alert("更新失败！"+date);
         }
     });
+}
+
+function queryNodeTaskByCondition() {
+    var nodeTaskNo=$("#nodeTaskNoQuery").val().trim();
+    var workId=$("#workIdQuery").val().trim();
+    var flowNo=$("#flowNoQuery").val().trim();
+    var status=$("#statusQuery").val().trim();
+    var queryParams = $('#dgNodeTasks').datagrid('options').queryParams;
+    queryParams.nodeTaskNo = nodeTaskNo;
+    queryParams.workId = workId;
+    queryParams.flowNo = flowNo;
+    queryParams.status = status;
+    $("#dgNodeTasks").datagrid('reload');
 }

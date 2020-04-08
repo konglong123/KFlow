@@ -1,5 +1,6 @@
 package BP.Task;
 
+import BP.Tools.StringUtils;
 import BP.Web.WebUser;
 import BP.springCloud.entity.GenerFlow;
 import BP.springCloud.entity.NodeTaskM;
@@ -48,64 +49,32 @@ public class NodeTaskController {
     */
     @RequestMapping("/getNodeTasks")
     public void getNodeTaskList(HttpServletRequest request, HttpServletResponse response){
-        String isReady=request.getParameter("isReady");
-        NodeTasks nodeTasks=new NodeTasks();
         try {
-            String executor= WebUser.getNo();
-            if (isReady!=null&&!isReady.equals(""))
-                nodeTasks.Retrieve(NodeTaskAttr.Executor, executor,NodeTaskAttr.IsReady,isReady);
-            else
-                nodeTasks.Retrieve(NodeTaskAttr.Executor, executor);
+            NodeTaskM con=new NodeTaskM();
+            con.setExecutor(WebUser.getNo());
+            String nodeTaskNo=request.getParameter("nodeTaskNo");
+            if (!StringUtils.isEmpty(nodeTaskNo))
+                con.setNo(Long.parseLong(nodeTaskNo));
 
-            PageTool.TransToResult(nodeTasks,request,response);
+            String workId=request.getParameter("workId");
+            if (!StringUtils.isEmpty(workId))
+                con.setWorkId(workId);
+
+            String flowNo=request.getParameter("flowNo");
+            if (!StringUtils.isEmpty(flowNo))
+                con.setFlowId(flowNo);
+
+            String status=request.getParameter("status");
+            if (!StringUtils.isEmpty(status))
+                con.setStatus(Integer.parseInt(status));
+
+            List nodeTaskMList=nodeTaskService.findNodeTaskAllList(con);
+            PageTool.TransToResultList(nodeTaskMList,request,response);
         }catch (Exception e){
             logger.error(e.getMessage());
         }
     }
 
-    /**
-    *@Description: 节点任务状态变更时，更新节点状态（此时只支持普通节点间的状态流转） 
-    *@Param:  
-    *@return:  
-    *@Author: Mr.kong
-    *@Date: 2020/3/9 
-    */
-   /* @RequestMapping("sendToNextNodes")
-    public void setToNextNodes(HttpServletRequest request, HttpServletResponse response) throws Exception{
-        String  toNodeID = request.getParameter("toNodeId");
-        String fromNodeId=request.getParameter("fromNodeId");
-        String flowId=request.getParameter("flowId");
-        String workId=request.getParameter("workId");
-        NodeTaskM nodeTaskM=new NodeTaskM();
-        nodeTaskM.setFlowId(flowId);
-        nodeTaskM.setWorkId(workId);
-        Date date=new Date();
-
-        //更新节点任务为已完成节点
-        nodeTaskM.setNodeId(fromNodeId);
-        List<NodeTaskM> nodeTaskList=nodeTaskService.findNodeTaskList(nodeTaskM);
-        if (nodeTaskList==null||nodeTaskList.size()!=1){
-            throw new Exception("modeTask:唯一性有问题");
-        }else {
-            NodeTaskM temp=nodeTaskList.get(0);
-            temp.setIsReady(3);//已完成
-            temp.setEndTime(date);
-            nodeTaskService.updateNodeTask(temp);
-        }
-        
-        //更新下一节点任务为已经开始
-        nodeTaskM.setNodeId(toNodeID);
-        nodeTaskList=nodeTaskService.findNodeTaskList(nodeTaskM);
-        if (nodeTaskList==null||nodeTaskList.size()!=1){
-            throw new Exception("modeTask:唯一性有问题");
-        }else {
-            NodeTaskM temp=nodeTaskList.get(0);
-            temp.setIsReady(1);//可以开始
-            temp.setStartTime(date);
-            nodeTaskService.updateNodeTask(temp);
-        }
-
-    }*/
 
     @RequestMapping("/getNodeTaskByNo")
     @ResponseBody
@@ -170,11 +139,16 @@ public class NodeTaskController {
     @ResponseBody
     public JSONObject updateTasksStatus(){
         NodeTaskM con=new NodeTaskM();
-        List<NodeTaskM> nodeTaskMList=nodeTaskService.findNodeTaskList(con);
-        for (NodeTaskM temp:nodeTaskMList){
-            int status=nodeTaskService.getTaskStatus(temp);
-            temp.setStatus(status);
-            nodeTaskService.updateNodeTask(temp);
+        try {
+            con.setExecutor(WebUser.getNo());//更新所执行任务
+            List<NodeTaskM> nodeTaskMList=nodeTaskService.findNodeTaskList(con);
+            for (NodeTaskM temp:nodeTaskMList){
+                int status=nodeTaskService.getTaskStatus(temp);
+                temp.setStatus(status);
+                nodeTaskService.updateNodeTask(temp);
+            }
+        }catch (Exception e){
+            logger.error(e.getMessage());
         }
         return null;
     }

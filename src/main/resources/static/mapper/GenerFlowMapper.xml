@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="BP.springCloud.dao.GenerFlowDao">
 	<resultMap id="BaseResultMap" type="GenerFlow">
-		<id column="no" property="no" jdbcType="BIGINT" />
+		<id column="No" property="no" jdbcType="BIGINT" />
 		<result column="work_id" property="workId" jdbcType="BIGINT" />
 		<result column="work_group_id" property="workGroupId" jdbcType="BIGINT" />
 		<result column="parent_work_id" property="parentWorkId" jdbcType="BIGINT" />
@@ -19,7 +19,7 @@
 	
 	<sql id="Base_Column_List">
 		<trim prefix="" suffix="" suffixOverrides=",">
-		no,
+		No,
 		work_id,
 		work_group_id,
 		parent_work_id,
@@ -40,7 +40,7 @@
 		select
 		<include refid="Base_Column_List" />
 		from k_gener_flow
-		where no = #{no,jdbcType=BIGINT}
+		where No = #{no,jdbcType=BIGINT}
 	</select>
 	
 	<!-- 根据条件查询列表 -->
@@ -50,42 +50,45 @@
 		from k_gener_flow
 		<where>   
 		 	1=1
-			<trim prefix="" suffix="" suffixOverrides=",">
+			<trim >
+				<if test="no != null">
+					AND No = #{no,jdbcType=BIGINT}
+				</if>
 				<if test="workId != null">
-					AND work_id = #{workId,jdbcType=BIGINT},
+					AND work_id = #{workId,jdbcType=BIGINT}
 				</if>
 				<if test="workGroupId != null">
-					AND work_group_id = #{workGroupId,jdbcType=BIGINT},
+					AND work_group_id = #{workGroupId,jdbcType=BIGINT}
 				</if>
 				<if test="parentWorkId != null">
-					AND parent_work_id = #{parentWorkId,jdbcType=BIGINT},
+					AND parent_work_id = #{parentWorkId,jdbcType=BIGINT}
 				</if>
 				<if test="status != 0">
-					AND status = #{status,jdbcType=TINYINT},
+					AND status = #{status,jdbcType=TINYINT}
 				</if>
 				<if test="flowId != 0">
-					AND flow_id = #{flowId,jdbcType=INTEGER},
+					AND flow_id = #{flowId,jdbcType=INTEGER}
 				</if>
 				<if test="useTime != 0">
-					AND use_time = #{useTime,jdbcType=INTEGER},
+					AND use_time = #{useTime,jdbcType=INTEGER}
 				</if>
 				<if test="totalTime != 0">
-					AND total_time = #{totalTime,jdbcType=INTEGER},
+					AND total_time = #{totalTime,jdbcType=INTEGER}
 				</if>
 				<if test="activatedNodes != null">
-					AND activated_nodes = #{activatedNodes,jdbcType=VARCHAR},
+					AND activated_nodes = #{activatedNodes,jdbcType=VARCHAR}
 				</if>
 				<if test="creator != null">
-					AND creator = #{creator,jdbcType=VARCHAR},
+					AND creator = #{creator,jdbcType=VARCHAR}
 				</if>
 				<if test="createTime != null">
-					AND createTime = #{createTime,jdbcType=TIMESTAMP},
+					AND createTime = #{createTime,jdbcType=TIMESTAMP}
 				</if>
 				<if test="finishTime != null">
-					AND finishTime = #{finishTime,jdbcType=TIMESTAMP},
+					AND finishTime = #{finishTime,jdbcType=TIMESTAMP}
 				</if>
 				<if test="yn != 2">
-					AND yn = #{yn,jdbcType=TINYINT},
+					AND yn = #{yn,jdbcType=TINYINT}
 				</if>
 			</trim>
 		</where>
@@ -94,7 +97,7 @@
 	<insert id="insertGenerFlow" parameterType="GenerFlow" useGeneratedKeys="true" keyProperty="no">
 		insert into k_gener_flow 
 		<trim prefix="(" suffix=")" suffixOverrides=",">
-		no,
+		No,
 		work_id,
 		work_group_id,
 		parent_work_id,
@@ -168,7 +171,7 @@
 	      		</if>
 			</trim>
 		</set>
-		where no = #{no,jdbcType=BIGINT}
+		where No = #{no,jdbcType=BIGINT}
 	</update>
 	<!-- 删除实体 -->
 	<update id="deleteGenerFlow" parameterType="Long">
@@ -176,6 +179,6 @@
 		<set>
 			yn=1
 		</set>
-		where no = #{no,jdbcType=BIGINT}
+		where No = #{no,jdbcType=BIGINT}
 	</update>
 </mapper>

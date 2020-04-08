@@ -9,7 +9,13 @@ function initDgGenerFlows() {
         fitColumns:true,//表头与数据对齐
         url:"/WF/generFlow/getGenerFlowList",
         queryParams: {
-            flowNo:""
+            generFlowNo:"",
+            workId:"",
+            flowNo:"",
+            workGroupId:"",
+            parentWorkId:"",
+            creator:"",
+            yn:""
         },
         columns:[[
             {field:'no',title: '实例编码',align: 'center',width:10},
@@ -17,7 +23,6 @@ function initDgGenerFlows() {
             {field:'flowId',title: '流程编码',align: 'center',width:10},
             {field:'workGroupId',title: '工作组',align: 'center',width:10},
             {field:'parentWorkId',title: '父工作',align: 'center',width:10},
-            {field:'activatedNodes',title: '运行节点',align: 'center',width:10},
             {field:'useTime',title: '已完成工作量',align: 'center',width:10},
             {field:'totalTime',title: '总工作量',align: 'center',width:10},
             {field:'creator',title: '发起人',align: 'center',width:10},
@@ -30,7 +35,8 @@ function initDgGenerFlows() {
                 }},
             {field:'action',title: '操作',align: 'center',width:50,
                 formatter:function(val,rec){
-                    var str="<input type='button' value='实时进展' id='btnShowProgress' onclick='showProgress(\""+rec.no+"\")'/>";
+                    var str="<input type='button' value='详细' id='btnToDetail' onclick='gotoGenerFlowDetail(\""+rec.no+"\")'/>";
+                    str+="<input type='button' value='实时进展' id='btnShowProgress' onclick='showProgress(\""+rec.no+"\")'/>";
                     return str;
                 }},
 
@@ -141,4 +147,29 @@ function showProgress(no) {
 
 function getGenerFlowGantData(generFlowNo,depth) {
 
+}
+
+function queryGenerFlowByCondition() {
+    var generFlowNo=$("#generFlowNoQuery").val().trim();
+    var workId=$("#workIdQuery").val().trim();
+    var flowNo=$("#flowNoQuery").val().trim();
+    var workGroupId=$("#workGroupIdQuery").val().trim();
+    var parentWorkId=$("#parentWorkIdQuery").val().trim();
+    var creator=$("#creatorQuery").val().trim();
+    var yn=$("#ynQuery").val().trim();
+    var queryParams = $('#dgGenerFlows').datagrid('options').queryParams;
+    queryParams.generFlowNo = generFlowNo;
+    queryParams.workId = workId;
+    queryParams.flowNo = flowNo;
+    queryParams.workGroupId = workGroupId;
+    queryParams.parentWorkId = parentWorkId;
+    queryParams.creator = creator;
+    queryParams.yn = yn;
+    $("#dgGenerFlows").datagrid('reload');
+}
+
+function gotoGenerFlowDetail(no) {
+    var enName = "BP.Task.FlowGener";
+    var url = "/WF/WF/Comm/En.htm?EnName=" + enName + "&PKVal=" + no;
+    OpenEasyUiDialogExt(url,"流程实例", 800, 450, true);
 }

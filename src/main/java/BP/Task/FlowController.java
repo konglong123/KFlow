@@ -83,6 +83,7 @@ public class FlowController {
         generFlow.setFlowId(Integer.valueOf(flow.getNo()));
         generFlow.setStatus(1);
         generFlow.setCreator(WebUser.getNo());
+        generFlow.setActivatedNodes("");
         generFlowService.insertGenerFlow(generFlow);
 
         Nodes nodes=new Nodes();
@@ -129,8 +130,9 @@ public class FlowController {
         nodeTask.setWorkId(workId+"");
         nodeTask.setParentNodeTask(parentTaskId+"");
         nodeTask.setNo(nodeTaskId);
-        /*nodeTask.setIsReady(isReady);
-        nodeTask.setExecutor(userNo);*/
+        nodeTask.setIsReady(9);//未准备
+        nodeTask.setStatus(9);
+        //nodeTask.setExecutor(userNo);
         Date now=new Date();
         nodeTask.setPlanEndTime(now);
         nodeTask.setPlanStartTime(now);

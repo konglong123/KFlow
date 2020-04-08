@@ -15,12 +15,32 @@
 <div>
     <table cellpadding="5">
         <tr>
+            <td>任务编码：</td>
+            <td><input class="easyui-textbox" type="text" id="nodeTaskNoQuery"></td>
+            <td>工作编码：</td>
+            <td><input class="easyui-textbox" type="text" id="workIdQuery"></td>
+            <td>流程编码：</td>
+            <td><input class="easyui-textbox" type="text" id="flowNoQuery"></td>
+            <td>状态：</td>
+            <td><select class="easyui-select" id="statusQuery">
+                <option value="">所有</option>
+                <option value="1">可以开始</option>
+                <option value="2">已经开始</option>
+                <option value="3">已经完成</option>
+                <option value="4">逾期开始</option>
+                <option value="5">警告开始</option>
+                <option value="6">正常</option>
+                <option value="7">逾期结束</option>
+                <option value="8">警告结束</option>
+                <option value="9">未准备</option>
+            </select></td>
         </tr>
-        <tr>
-            <td><button class="easyui-linkbutton"  >查询</button></td>
-            <td><button class="easyui-linkbutton"  onclick="updateNodeTaskStatus()">更新任务状态</button></td>
-        </tr>
+
     </table>
+    <div style="text-align:right;padding:5px">
+        <button class="easyui-linkbutton" onclick="queryNodeTaskByCondition()" >查询</button>
+        <button class="easyui-linkbutton"  onclick="updateNodeTaskStatus()">更新任务状态</button>
+    </div>
 </div>
 <div id="nodeTasks">
     <table id="dgNodeTasks" title="节点任务">

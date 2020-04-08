@@ -58,6 +58,10 @@ public class GenerFlowService {
 	public List findGenerFlowList(GenerFlow generFlowCondition) {
 		return generFlowManager.findGenerFlowList(generFlowCondition);
 	}
+
+	public List findGenerFlowAllList(GenerFlow generFlowCondition) {
+		return generFlowManager.findGenerFlowListAll(generFlowCondition);
+	}
 	
 	/**
 	*@Description: 查找子流程实例 

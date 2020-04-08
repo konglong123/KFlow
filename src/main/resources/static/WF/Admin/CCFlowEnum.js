@@ -83,6 +83,9 @@ if (typeof DeliveryWay == "undefined") {
         // 按照ccflow的BPM模式处理
         DeliveryWay.ByCCFlowBPM = 100
 
+        //不启用人员选择器
+        DeliveryWay.NoSelect = 40
+
 }
 
 

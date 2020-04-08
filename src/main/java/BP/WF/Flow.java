@@ -1761,122 +1761,124 @@ public class Flow extends BP.En.EntityNoName {
                 msg.append("@信息:开始对节点的访问规则进行检查.");
 
 				switch (nd.getHisDeliveryWay()) {
-				case ByStation:
-					if (nd.getNodeStations().size() == 0) {
-                        msg.append("@错误:您设置了该节点的访问规则是按岗位，但是您没有为节点绑定岗位。");
-					}
-					break;
-				case ByDept:
-					if (nd.getNodeDepts().size() == 0) {
-                        msg.append("@错误:您设置了该节点的访问规则是按部门，但是您没有为节点绑定部门。");
-					}
-					break;
-				case ByBindEmp:
-					if (nd.getNodeEmps().size() == 0) {
-                        msg.append("@错误:您设置了该节点的访问规则是按人员，但是您没有为节点绑定人员。");
-					}
-					break;
-				case BySpecNodeEmp: // 按指定的岗位计算.
-				case BySpecNodeEmpStation: // 按指定的岗位计算.
-					if (nd.getDeliveryParas().trim().length() == 0) {
-                        msg.append("@错误:您设置了该节点的访问规则是按指定的岗位计算，但是您没有设置节点编号.</font>");
-					} else {
-						String[] deliveryParas = nd.getDeliveryParas().split(",");
-						for(String str : deliveryParas){
-							if (DataType.IsNumStr(str) == false) {
-                                msg.append("@错误:您设置指定岗位的节点编号格式不正确，目前设置的为{" + nd.getDeliveryParas() + "}");
-							}
+					case NoSelect:
+						break;
+					case ByStation:
+						if (nd.getNodeStations().size() == 0) {
+							msg.append("@错误:您设置了该节点的访问规则是按岗位，但是您没有为节点绑定岗位。");
 						}
-					}
-					break;
-				case ByDeptAndStation: // 按部门与岗位的交集计算.
-					String mysql = "";
-					// added by liuxc,2015.6.30.
-					// 区别集成与BPM模式
-					if (BP.WF.Glo.getOSModel() == BP.Sys.OSModel.OneOne) {
-						mysql = "SELECT No FROM Port_Emp WHERE No IN (SELECT No FK_Emp FROM Port_Emp WHERE FK_Dept IN ( SELECT FK_Dept FROM WF_NodeDept WHERE FK_Node="
-								+ nd.getNodeID() + "))AND No IN (SELECT FK_Emp FROM " + BP.WF.Glo.getEmpStation()
-								+ " WHERE FK_Station IN ( SELECT FK_Station FROM WF_NodeStation WHERE FK_Node="
-								+ nd.getNodeID() + " )) ORDER BY No ";
-					} else {
-						mysql = "SELECT pdes.FK_Emp AS No" + " FROM   Port_DeptEmpStation pdes"
-								+ "        INNER JOIN WF_NodeDept wnd" + "             ON  wnd.FK_Dept = pdes.FK_Dept"
-								+ "             AND wnd.FK_Node = " + nd.getNodeID()
-								+ "        INNER JOIN WF_NodeStation wns"
-								+ "             ON  wns.FK_Station = pdes.FK_Station" + "             AND wnd.FK_Node ="
-								+ nd.getNodeID() + " ORDER BY" + "        pdes.FK_Emp";
-					}
-
-					DataTable mydt = DBAccess.RunSQLReturnTable(mysql);
-					if (mydt.Rows.size() == 0) {
-                        msg.append("@错误:按照岗位与部门的交集计算错误，没有人员集合{" + mysql + "}");
-					}
-					break;
-				case BySQL:
-				case BySQLAsSubThreadEmpsAndData:
-					if (nd.getDeliveryParas().trim().length() == 0) {
-                        msg.append("@错误:您设置了该节点的访问规则是按SQL查询，但是您没有在节点属性里设置查询sql，此sql的要求是查询必须包含No,Name两个列，sql表达式里支持@+字段变量，详细参考开发手册.");
-					} else {
-						try {
-							String sql = nd.getDeliveryParas();
-							for (MapAttr item : mattrs.ToJavaList()) {
-								if (item.getIsNum()) {
-									sql = sql.replace("@" + item.getKeyOfEn(), "0");
-								} else {
-									sql = sql.replace("@" + item.getKeyOfEn(), "'0'");
+						break;
+					case ByDept:
+						if (nd.getNodeDepts().size() == 0) {
+							msg.append("@错误:您设置了该节点的访问规则是按部门，但是您没有为节点绑定部门。");
+						}
+						break;
+					case ByBindEmp:
+						if (nd.getNodeEmps().size() == 0) {
+							msg.append("@错误:您设置了该节点的访问规则是按人员，但是您没有为节点绑定人员。");
+						}
+						break;
+					case BySpecNodeEmp: // 按指定的岗位计算.
+					case BySpecNodeEmpStation: // 按指定的岗位计算.
+						if (nd.getDeliveryParas().trim().length() == 0) {
+							msg.append("@错误:您设置了该节点的访问规则是按指定的岗位计算，但是您没有设置节点编号.</font>");
+						} else {
+							String[] deliveryParas = nd.getDeliveryParas().split(",");
+							for (String str : deliveryParas) {
+								if (DataType.IsNumStr(str) == false) {
+									msg.append("@错误:您设置指定岗位的节点编号格式不正确，目前设置的为{" + nd.getDeliveryParas() + "}");
 								}
 							}
-
-							sql = sql.replace("WebUser.No", "'ss'");
-							sql = sql.replace("@WebUser.Name", "'ss'");
-							sql = sql.replace("@WebUser.FK_DeptName", "'ss'");
-							sql = sql.replace("@WebUser.FK_Dept", "'ss'");
-							
-
-							sql = sql.replace("''''", "''"); // 出现双引号的问题.
-
-							if (sql.contains("@")) {
-								throw new RuntimeException("您编写的sql变量填写不正确，实际执行中，没有被完全替换下来" + sql);
-							}
-
-							DataTable testDB = null;
-							try {
-								testDB = DBAccess.RunSQLReturnTable(sql);
-							} catch (RuntimeException ex) {
-                                msg.append("@错误:您设置了该节点的访问规则是按SQL查询,执行此语句错误." + ex.getMessage());
-							}
-
-							if (testDB.Columns.contains("no") == false || testDB.Columns.contains("name") == false) {
-                                msg.append("@错误:您设置了该节点的访问规则是按SQL查询，设置的sql不符合规则，此sql的要求是查询必须包含No,Name两个列，sql表达式里支持@+字段变量，详细参考开发手册.");
-							}
-						} catch (RuntimeException ex) {
-                            msg.append(ex.getMessage());
 						}
-					}
-					break;
-				case ByPreviousNodeFormEmpsField:
-					// 去rpt表中，查询是否有这个字段
-					String str = (nd.getNodeID() + "").substring(0, (nd.getNodeID() + "").length() - 2);
-					MapAttrs rptAttrs = new BP.Sys.MapAttrs();
-					rptAttrs.Retrieve(MapAttrAttr.FK_MapData, "ND" + str + "Rpt", MapAttrAttr.KeyOfEn);
-					if (rptAttrs.Contains(BP.Sys.MapAttrAttr.KeyOfEn, nd.getDeliveryParas()) == false) {
-						// 检查节点字段是否有FK_Emp字段
-                        msg.append("@错误:您设置了该节点的访问规则是[06.按上一节点表单指定的字段值作为本步骤的接受人]，但是您没有在节点属性的[访问规则设置内容]里设置指定的表单字段，详细参考开发手册.");
-					}
-					break;
-				case BySelected: // 由上一步发送人员选择
-					if (nd.getIsStartNode()) {
 						break;
-					}
-					break;
-				case ByPreviousNodeEmp: // 由上一步发送人员选择
-					if (nd.getIsStartNode()) {
-                        msg.append("@错误:节点访问规则设置错误:开始节点，不允许设置与上一节点的工作人员相同.");
+					case ByDeptAndStation: // 按部门与岗位的交集计算.
+						String mysql = "";
+						// added by liuxc,2015.6.30.
+						// 区别集成与BPM模式
+						if (BP.WF.Glo.getOSModel() == BP.Sys.OSModel.OneOne) {
+							mysql = "SELECT No FROM Port_Emp WHERE No IN (SELECT No FK_Emp FROM Port_Emp WHERE FK_Dept IN ( SELECT FK_Dept FROM WF_NodeDept WHERE FK_Node="
+									+ nd.getNodeID() + "))AND No IN (SELECT FK_Emp FROM " + BP.WF.Glo.getEmpStation()
+									+ " WHERE FK_Station IN ( SELECT FK_Station FROM WF_NodeStation WHERE FK_Node="
+									+ nd.getNodeID() + " )) ORDER BY No ";
+						} else {
+							mysql = "SELECT pdes.FK_Emp AS No" + " FROM   Port_DeptEmpStation pdes"
+									+ "        INNER JOIN WF_NodeDept wnd" + "             ON  wnd.FK_Dept = pdes.FK_Dept"
+									+ "             AND wnd.FK_Node = " + nd.getNodeID()
+									+ "        INNER JOIN WF_NodeStation wns"
+									+ "             ON  wns.FK_Station = pdes.FK_Station" + "             AND wnd.FK_Node ="
+									+ nd.getNodeID() + " ORDER BY" + "        pdes.FK_Emp";
+						}
+
+						DataTable mydt = DBAccess.RunSQLReturnTable(mysql);
+						if (mydt.Rows.size() == 0) {
+							msg.append("@错误:按照岗位与部门的交集计算错误，没有人员集合{" + mysql + "}");
+						}
 						break;
-					}
-					break;
-				default:
-					break;
+					case BySQL:
+					case BySQLAsSubThreadEmpsAndData:
+						if (nd.getDeliveryParas().trim().length() == 0) {
+							msg.append("@错误:您设置了该节点的访问规则是按SQL查询，但是您没有在节点属性里设置查询sql，此sql的要求是查询必须包含No,Name两个列，sql表达式里支持@+字段变量，详细参考开发手册.");
+						} else {
+							try {
+								String sql = nd.getDeliveryParas();
+								for (MapAttr item : mattrs.ToJavaList()) {
+									if (item.getIsNum()) {
+										sql = sql.replace("@" + item.getKeyOfEn(), "0");
+									} else {
+										sql = sql.replace("@" + item.getKeyOfEn(), "'0'");
+									}
+								}
+
+								sql = sql.replace("WebUser.No", "'ss'");
+								sql = sql.replace("@WebUser.Name", "'ss'");
+								sql = sql.replace("@WebUser.FK_DeptName", "'ss'");
+								sql = sql.replace("@WebUser.FK_Dept", "'ss'");
+
+
+								sql = sql.replace("''''", "''"); // 出现双引号的问题.
+
+								if (sql.contains("@")) {
+									throw new RuntimeException("您编写的sql变量填写不正确，实际执行中，没有被完全替换下来" + sql);
+								}
+
+								DataTable testDB = null;
+								try {
+									testDB = DBAccess.RunSQLReturnTable(sql);
+								} catch (RuntimeException ex) {
+									msg.append("@错误:您设置了该节点的访问规则是按SQL查询,执行此语句错误." + ex.getMessage());
+								}
+
+								if (testDB.Columns.contains("no") == false || testDB.Columns.contains("name") == false) {
+									msg.append("@错误:您设置了该节点的访问规则是按SQL查询，设置的sql不符合规则，此sql的要求是查询必须包含No,Name两个列，sql表达式里支持@+字段变量，详细参考开发手册.");
+								}
+							} catch (RuntimeException ex) {
+								msg.append(ex.getMessage());
+							}
+						}
+						break;
+					case ByPreviousNodeFormEmpsField:
+						// 去rpt表中，查询是否有这个字段
+						String str = (nd.getNodeID() + "").substring(0, (nd.getNodeID() + "").length() - 2);
+						MapAttrs rptAttrs = new BP.Sys.MapAttrs();
+						rptAttrs.Retrieve(MapAttrAttr.FK_MapData, "ND" + str + "Rpt", MapAttrAttr.KeyOfEn);
+						if (rptAttrs.Contains(BP.Sys.MapAttrAttr.KeyOfEn, nd.getDeliveryParas()) == false) {
+							// 检查节点字段是否有FK_Emp字段
+							msg.append("@错误:您设置了该节点的访问规则是[06.按上一节点表单指定的字段值作为本步骤的接受人]，但是您没有在节点属性的[访问规则设置内容]里设置指定的表单字段，详细参考开发手册.");
+						}
+						break;
+					case BySelected: // 由上一步发送人员选择
+						if (nd.getIsStartNode()) {
+							break;
+						}
+						break;
+					case ByPreviousNodeEmp: // 由上一步发送人员选择
+						if (nd.getIsStartNode()) {
+							msg.append("@错误:节点访问规则设置错误:开始节点，不允许设置与上一节点的工作人员相同.");
+							break;
+						}
+						break;
+					default:
+						break;
 				}
                 msg.append("@对节点的访问规则进行检查完成....");
 				/// #region 检查节点完成条件，方向条件的定义.

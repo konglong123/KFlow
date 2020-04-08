@@ -1,11 +1,20 @@
 package BP.Task;
 
+import BP.DA.DBAccess;
+import BP.DA.DataRow;
+import BP.DA.DataTable;
+import BP.DA.Paras;
+import BP.Port.Dept;
+import BP.Port.Emp;
+import BP.Port.EmpAttr;
+import BP.Port.Emps;
+import BP.Sys.OSModel;
 import BP.Tools.StringUtils;
 import BP.WF.Flow;
-import BP.WF.Template.Direction;
-import BP.WF.Template.DirectionAttr;
-import BP.WF.Template.Directions;
-import BP.WF.Template.FrmSubFlow;
+import BP.WF.FlowAppType;
+import BP.WF.Node;
+import BP.WF.Template.*;
+import BP.Web.WebUser;
 import BP.springCloud.entity.GenerFlow;
 import BP.springCloud.entity.NodeTaskM;
 import net.sf.json.JSONArray;
@@ -41,6 +50,15 @@ public class NodeTaskService {
     public List findNodeTaskList(NodeTaskM nodeTaskM){
         try {
             return nodeTaskManage.findNodeTaskList(nodeTaskM);
+        }catch (Exception e){
+            logger.error(e.getMessage());
+            return null;
+        }
+    }
+
+    public List findNodeTaskAllList(NodeTaskM nodeTaskM){
+        try {
+            return nodeTaskManage.findNodeTaskAllList(nodeTaskM);
         }catch (Exception e){
             logger.error(e.getMessage());
             return null;
@@ -96,9 +114,16 @@ public class NodeTaskService {
             //该部分流程已经没有后续节点，结束流程（结束子流程、父流程）
             finishWork(currentTask);
         }else {
+            //更新GenerFlow状态
+            GenerFlow generFlow=generFlowManager.getGenerFlowById(Long.parseLong(currentTask.getWorkId()));
+            String activatedNodes=generFlow.getActivatedNodes();
+            activatedNodes.replace(currentTask.getNo()+",","");
             for (NodeTaskM next:nextTasks){
                 flag=flag&startNodeTask(next);
+                activatedNodes+=next.getNo()+",";
             }
+            generFlow.setActivatedNodes(activatedNodes);
+            generFlowManager.updateGenerFlow(generFlow);
         }
         if (flag)
             return "发送成功，后续节点任务已经启动！";
@@ -127,6 +152,7 @@ public class NodeTaskService {
             currentWork.setYn(1);
             currentWork.setStatus(2);
             currentWork.setFinishTime(new Date());
+            currentWork.setActivatedNodes("");
             generFlowManager.updateGenerFlow(currentWork);
         }
         return true;
@@ -153,8 +179,9 @@ public class NodeTaskService {
         nodeTaskM.setIsReady(1);//可以开始
         nodeTaskM.setStatus(getTaskStatus(nodeTaskM));
         if (StringUtils.isEmpty(nodeTaskM.getExecutor())){
-            //通过人员选择器进行选择执行人。此时人为指定
-            nodeTaskM.setExecutor("admin");
+
+            // 计划时，如果没有指定负责人，则通过人员选择器进行选择执行人。
+            nodeTaskM.setExecutor(getExecutor(nodeTaskM));
         }
         nodeTaskManage.updateNodeTask(nodeTaskM);
 
@@ -167,6 +194,7 @@ public class NodeTaskService {
         }
         return true;
     }
+
 
     /**
     *@Description: 获取所有子流程的开始节点任务
@@ -276,7 +304,7 @@ public class NodeTaskService {
     */
     public int getTaskStatus(NodeTaskM nt){
         int isReadyNt=nt.getIsReady();
-        if (isReadyNt!=0&&isReadyNt!=3) {//可以开始并且未完成状态下检查(计划完成后，)
+        if (isReadyNt!=9&&isReadyNt!=3) {//可以开始并且未完成状态下检查(计划完成后，)
                     //判断是否逾期
             Date planStart = nt.getPlanStartTime();
             Date planEnd = nt.getPlanEndTime();
@@ -387,6 +415,60 @@ public class NodeTaskService {
             }
 
         }
+    }
+
+    public String getExecutor(NodeTaskM nodeTaskM){
+        String nodeId=nodeTaskM.getNodeId();
+        String executor=null;
+
+        List<String> employeeNos=new ArrayList<>();//所有可选人员
+        try {
+            executor= WebUser.getNo();//默认自身
+            Node node = new Node(nodeId);
+            DataTable dt;
+            switch (node.getHisDeliveryWay()) {
+                case NoSelect:
+                    break;
+                case ByStation:
+                    String sql = "SELECT No, Name FROM Port_Emp WHERE No IN (SELECT A.FK_Emp FROM " + BP.WF.Glo.getEmpStation() + " A, WF_NodeStation B WHERE A.FK_Station=B.FK_Station AND B.FK_Node=" + nodeId + ")";
+                    dt = BP.DA.DBAccess.RunSQLReturnTable(sql);
+                    if (dt.Rows.size()!=0) {
+                        for (DataRow dr : dt.Rows) {
+                            employeeNos.add(dr.getValue(0).toString());
+                        }
+                    }
+                    break;
+                case ByDept:
+                    NodeDepts nds=new NodeDepts();
+                    nds.Retrieve(NodeEmpAttr.FK_Node, nodeId);
+                    for (NodeDept nodeDept:nds.ToJavaList()){
+                        Emps emps=new Emps();
+                        emps.Retrieve(EmpAttr.FK_Dept,nodeDept.getFK_Dept());
+                        for (Emp emp:emps.ToJavaList()){
+                            employeeNos.add(emp.getNo());
+                        }
+                    }
+                    break;
+                case ByBindEmp:
+                    NodeEmps nes = new NodeEmps();
+                    nes.Retrieve(NodeEmpAttr.FK_Node, nodeId);
+                    for (NodeEmp ne : nes.ToJavaList())
+                        employeeNos.add(ne.getFK_Emp());
+                    break;
+                default:
+                    break;
+            }
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+
+        //此处后续可以增加调度算法进行人员选择（）此时返回一个随机人员
+        Random random=new Random();
+        if (employeeNos.size()>0) {
+            int pos = random.nextInt(employeeNos.size());
+            executor=employeeNos.get(pos);
+        }
+        return executor;
     }
 
 }

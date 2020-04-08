@@ -53,6 +53,7 @@ public class GenerFlowManager  {
 	    Date date = new Date();
         generFlow.setYn(0);
         generFlow.setCreateTime(date);
+        generFlow.setFinishTime(date);
         generFlowDao.insertGenerFlow(generFlow);
 		Long id=generFlow.getNo();
 		return  id;

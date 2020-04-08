@@ -25,16 +25,18 @@ public class NodeTask extends EntityNo {
             return this.get_enMap();
         }
 
+        //主键一定要采用AddTBStringPk,并且列为No（注意大小写）
+
         Map map = new Map("k_node_task", "节点任务");
-        map.AddTBString(NodeTaskAttr.No, null, "ID", false, true, 1, 20, 100);
+        map.AddTBStringPK(NodeTaskAttr.No, null, "ID", true, true, 1, 10, 3);
         map.AddTBString(NodeTaskAttr.WorkId, null, "流程实例编码", true, true, 0, 50, 50);
         map.AddTBString(NodeTaskAttr.WorkGroupId, null, "实例组编码", true, true, 0, 50, 50);
         map.AddTBString(NodeTaskAttr.FlowId, null, "流程编码", true, true, 1, 50, 50);
         map.AddTBString(NodeTaskAttr.NodeId, null, "节点编码", true, true, 0, 50, 50);
         map.AddDDLSysEnum(NodeTaskAttr.IsReady, 0, "任务状态", true, false, NodeTaskAttr.IsReady,
-                "@0=未准备@1=可以开始@2=已经开始@3=已经完成@4=逾期@5=警告");
+                "@9=未准备@1=可以开始@2=已经开始@3=已经完成@4=逾期@5=警告");
         map.AddDDLSysEnum(NodeTaskAttr.Status, 0, "提示信息", true, false, NodeTaskAttr.Status,
-                "@0=未准备@1=可以开始@2=已经开始@3=已经完成@4=逾期开始@5=警告开始@6=正常@7=逾期结束@8=警告结束");
+                "@9=未准备@1=可以开始@2=已经开始@3=已经完成@4=逾期开始@5=警告开始@6=正常@7=逾期结束@8=警告结束");
         map.AddTBString(NodeTaskAttr.PreNodeTask, null, "前置任务", true, true, 0, 50, 50);
         map.AddTBString(NodeTaskAttr.NextNodeTask, null, "后置任务", true, true, 0, 50, 50);
         map.AddTBString(NodeTaskAttr.ParentNodeTask, null, "父任务", true, true, 0, 50, 50);
@@ -45,8 +47,8 @@ public class NodeTask extends EntityNo {
         map.AddTBDateTime(NodeTaskAttr.StartTime, null,"实际开始时间", true, true);
         map.AddTBDateTime(NodeTaskAttr.EndTime,  null,"实际结束时间", true, true);
         map.AddTBString(NodeTaskAttr.Executor, null, "执行人", true, true, 0, 100, 100);
-        map.AddTBInt(NodeTaskAttr.Yn, 0, "是否删除", false, true);
-
+        map.AddDDLSysEnum(NodeTaskAttr.Yn, 0, "删除标志", true, false, NodeTaskAttr.Yn,
+                "@0=未删除@1=删除");
 
         RefMethod rm = new RefMethod();
         rm.Title = "节点详细";
@@ -84,5 +86,57 @@ public class NodeTask extends EntityNo {
 
     }
 
+    @Override
+    public int Update() throws Exception {
 
+       /* 更新节点任务中udsTime属性时，需要同步更新所属GenerFlow的useTime,
+     * 并且更新parentNodeTask中useTime属性*/
+        String no=this.getNo();
+        NodeTask oldNodeTask=new NodeTask(no);
+        int addTime=this.GetValIntByKey(NodeTaskAttr.UseTime)-oldNodeTask.GetValIntByKey(NodeTaskAttr.UseTime);
+        try {
+            reCountGenerFlowUseTime(addTime);
+            reCountParentNodeTaskUseTime(addTime);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return super.Update();
+    }
+
+    /**
+    *@Description: 重算所属GenerFlow的useTime
+    *@Param:
+    *@return:
+    *@Author: Mr.kong
+    *@Date: 2020/4/7
+    */
+    public void reCountGenerFlowUseTime(int addTime) throws Exception{
+
+        FlowGener flowGener=new FlowGener(this.GetValStrByKey(FlowGenerAttr.WorkId));
+        flowGener.SetValByKey(FlowGenerAttr.UseTime,flowGener.GetValIntByKey(FlowGenerAttr.UseTime)+addTime);
+        flowGener.Update();
+    }
+
+    //重算父nodetask的useTime
+    public void reCountParentNodeTaskUseTime(int addTime) throws Exception{
+        String parentNo=this.GetValStrByKey(NodeTaskAttr.ParentNodeTask);
+        if (parentNo.equals("-1"))
+            return;
+        NodeTask parent=new NodeTask(parentNo);
+        parent.SetValByKey(NodeTaskAttr.UseTime,parent.GetValIntByKey(NodeTaskAttr.UseTime)+addTime);
+        parent.Update();
+
+    }
+
+    @Override
+    public UAC getHisUAC() throws Exception {
+        if (_HisUAC == null) {
+
+            _HisUAC = new UAC();
+            _HisUAC.IsUpdate = true;
+            _HisUAC.IsView = true;
+        }
+        return _HisUAC;
+    }
 }

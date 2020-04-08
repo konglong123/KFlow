@@ -8,7 +8,7 @@ package BP.Task;
  **/
 public class NodeTaskAttr {
 
-    public static final String No = "no";
+    public static final String No = "No";
     public static final String WorkId = "work_id";
     public static final String WorkGroupId = "work_group_id";
     public static final String FlowId = "flow_id";

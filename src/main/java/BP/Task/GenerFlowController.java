@@ -1,5 +1,6 @@
 package BP.Task;
 
+import BP.Tools.StringUtils;
 import BP.springCloud.entity.GenerFlow;
 import BP.springCloud.tool.PageTool;
 import com.alibaba.fastjson.JSON;
@@ -40,10 +41,35 @@ public class GenerFlowController {
     @RequestMapping("getGenerFlowList")
     public void getGenerFlowList(HttpServletRequest request, HttpServletResponse response){
         try {
-            String flowNo=request.getParameter("flowNo");
             GenerFlow con=new GenerFlow();
-            if (flowNo!=null&&!flowNo.equals(""))
+            String generFlowNo=request.getParameter("generFlowNo");
+            if (!StringUtils.isEmpty(generFlowNo))
+                con.setNo(Long.parseLong(generFlowNo));
+
+            String flowNo=request.getParameter("flowNo");
+            if (!StringUtils.isEmpty(flowNo))
                 con.setFlowId(Integer.parseInt(flowNo));
+
+            String workId=request.getParameter("workId");
+            if (!StringUtils.isEmpty(workId))
+                con.setWorkId(Long.parseLong(workId));
+
+            String workGroupId=request.getParameter("workGroupId");
+            if (!StringUtils.isEmpty(workGroupId))
+                con.setWorkGroupId(Long.parseLong(workGroupId));
+
+            String parentWorkId=request.getParameter("parentWorkId");
+            if (!StringUtils.isEmpty(parentWorkId))
+                con.setParentWorkId(Long.parseLong(parentWorkId));
+
+            String creator=request.getParameter("creator");
+            if (!StringUtils.isEmpty(creator))
+                con.setCreator(creator);
+
+            String yn=request.getParameter("yn");
+            if (!StringUtils.isEmpty(yn))
+                con.setYn(Integer.parseInt(yn));
+
             List generFlowList=generFlowService.findGenerFlowList(con);
             PageTool.TransToResultList(generFlowList,request,response);
         }catch (Exception e){

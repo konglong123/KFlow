@@ -12,6 +12,36 @@
     <script src="FlowGener.js" type="text/javascript"></script>
 </head>
 <body>
+<div>
+    <table cellpadding="5">
+        <tr>
+            <td>实例编码：</td>
+            <td><input class="easyui-textbox" type="text" id="generFlowNoQuery"></td>
+            <td>工作编码：</td>
+            <td><input class="easyui-textbox" type="text" id="workIdQuery"></td>
+            <td>流程编码：</td>
+            <td><input class="easyui-textbox" type="text" id="flowNoQuery"></td>
+            <td>状态：</td>
+            <td><select id="ynQuery">
+                <option value="0">未完成</option>
+                <option value="1">已完成</option>
+                <option value="">所有</option>
+            </select></td>
+        </tr>
+        <tr>
+            <td>工作组：</td>
+            <td><input class="easyui-textbox" type="text" id="workGroupIdQuery"></td>
+            <td>父工作：</td>
+            <td><input class="easyui-textbox" type="text" id="parentWorkIdQuery"></td>
+            <td>发起人：</td>
+            <td><input class="easyui-textbox" type="text" id="creatorQuery"></td>
+        </tr>
+
+    </table>
+    <div style="text-align:right;padding:5px">
+        <button class="easyui-linkbutton" onclick="queryGenerFlowByCondition()" >查询</button>
+    </div>
+</div>
 <div id="generFlows">
     <table id="dgGenerFlows" title="流程实例">
     </table>

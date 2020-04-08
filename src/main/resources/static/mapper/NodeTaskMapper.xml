@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="BP.springCloud.dao.NodeTaskMDao">
 	<resultMap id="BaseResultMap" type="NodeTaskM">
-		<id column="no" property="no" jdbcType="BIGINT" />
+		<id column="No" property="no" jdbcType="BIGINT" />
 		<result column="work_id" property="workId" jdbcType="VARCHAR" />
 		<result column="work_group_id" property="workGroupId" jdbcType="VARCHAR" />
 		<result column="flow_id" property="flowId" jdbcType="VARCHAR" />
@@ -24,7 +24,7 @@
 	
 	<sql id="Base_Column_List">
 		<trim prefix="" suffix="" suffixOverrides=",">
-		no,
+		No,
 		work_id,
 		work_group_id,
 		flow_id,
@@ -50,7 +50,7 @@
 		select
 		<include refid="Base_Column_List" />
 		from k_node_task
-		where no = #{no,jdbcType=BIGINT}
+		where No = #{no,jdbcType=BIGINT}
 	</select>
 	
 	<!-- 根据条件查询列表 -->
@@ -122,7 +122,7 @@
 	<insert id="insertNodeTask" parameterType="NodeTaskM" useGeneratedKeys="true" keyProperty="no">
 		insert into k_node_task 
 		<trim prefix="(" suffix=")" suffixOverrides=",">
-		no,
+		No,
 		work_id,
 		work_group_id,
 		flow_id,
@@ -221,7 +221,7 @@
 				</if>
 			</trim>
 		</set>
-		where no = #{no,jdbcType=BIGINT}
+		where No = #{no,jdbcType=BIGINT}
 	</update>
 	<!-- 删除实体 -->
 	<update id="deleteNodeTask" parameterType="Long">
@@ -229,7 +229,7 @@
 		<set>
 			yn=1
 		</set>
-		where no = #{no,jdbcType=BIGINT}
+		where No = #{no,jdbcType=BIGINT}
 	</update>
 
 	<!--查询该节点任务下面的子节点任务-->

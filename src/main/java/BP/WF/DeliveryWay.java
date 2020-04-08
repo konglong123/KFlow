@@ -107,7 +107,9 @@ public enum DeliveryWay
 	/** 
 	 按照ccflow的BPM模式处理
 	*/
-	ByCCFlowBPM(100);
+	ByCCFlowBPM(100),
+
+	NoSelect(100);
 
 	private int intValue;
 	private static java.util.HashMap<Integer, DeliveryWay> mappings;
