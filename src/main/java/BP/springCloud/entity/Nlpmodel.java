@@ -105,7 +105,7 @@ public class Nlpmodel implements Serializable {
 	/**
 	 * 输出层是否归一化
 	 */
-	private Long hierarchicalSoftmax;
+	private int hierarchicalSoftmax;
 	
 	/**
 	 * 负采样数量
@@ -407,14 +407,14 @@ public class Nlpmodel implements Serializable {
 	/**
 	 * @return the hierarchicalSoftmax
 	 */
-	public Long getHierarchicalSoftmax() {
+	public int getHierarchicalSoftmax() {
 		return hierarchicalSoftmax;
 	}
 	
 	/**
 	 * @param hierarchicalSoftmax the hierarchicalSoftmax to set
 	 */
-	public void setHierarchicalSoftmax(Long hierarchicalSoftmax) {
+	public void setHierarchicalSoftmax(int hierarchicalSoftmax) {
 		this.hierarchicalSoftmax = hierarchicalSoftmax;
 	}
 	

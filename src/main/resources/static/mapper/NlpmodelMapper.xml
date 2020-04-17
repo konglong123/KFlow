@@ -20,7 +20,7 @@
 		<result column="is_delete" property="isDelete" jdbcType="TINYINT" />
 		<result column="layer_size" property="layerSize" jdbcType="INTEGER" />
 		<result column="neural_network_type" property="neuralNetworkType" jdbcType="TINYINT" />
-		<result column="hierarchical_softmax" property="hierarchicalSoftmax" jdbcType="BIGINT" />
+		<result column="hierarchical_softmax" property="hierarchicalSoftmax" jdbcType="TINYINT" />
 		<result column="negative_samples" property="negativeSamples" jdbcType="INTEGER" />
 		<result column="num_threads" property="numThreads" jdbcType="INTEGER" />
 		<result column="learning_rate" property="learningRate" jdbcType="DOUBLE" />
@@ -181,7 +181,7 @@
 		#{isDelete,jdbcType=TINYINT}, 
 		#{layerSize,jdbcType=INTEGER}, 
 		#{neuralNetworkType,jdbcType=TINYINT}, 
-		#{hierarchicalSoftmax,jdbcType=BIGINT}, 
+		#{hierarchicalSoftmax,jdbcType=TINYINT},
 		#{negativeSamples,jdbcType=INTEGER}, 
 		#{numThreads,jdbcType=INTEGER}, 
 		#{learningRate,jdbcType=DOUBLE}, 
@@ -249,8 +249,8 @@
 			<if test="neuralNetworkType != 0">
 					neural_network_type = #{neuralNetworkType,jdbcType=TINYINT},
 	      		</if>
-	        <if test="hierarchicalSoftmax != null">
-					hierarchical_softmax = #{hierarchicalSoftmax,jdbcType=BIGINT},
+	        <if test="hierarchicalSoftmax != 0">
+					hierarchical_softmax = #{hierarchicalSoftmax,jdbcType=TINYINT},
 	      		</if>
 			<if test="negativeSamples != 0">
 					negative_samples = #{negativeSamples,jdbcType=INTEGER},

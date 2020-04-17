@@ -130,8 +130,8 @@ public class FlowController {
         nodeTask.setWorkId(workId+"");
         nodeTask.setParentNodeTask(parentTaskId+"");
         nodeTask.setNo(nodeTaskId);
-        nodeTask.setIsReady(9);//未准备
-        nodeTask.setStatus(9);
+        nodeTask.setIsReady(-1);//未准备
+        nodeTask.setStatus(-1);
         //nodeTask.setExecutor(userNo);
         Date now=new Date();
         nodeTask.setPlanEndTime(now);

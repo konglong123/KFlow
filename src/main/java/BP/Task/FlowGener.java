@@ -1,9 +1,6 @@
 package BP.Task;
 
-import BP.En.EntityNo;
-import BP.En.Map;
-import BP.En.RefMethod;
-import BP.En.RefMethodType;
+import BP.En.*;
 
 /**
  * @program: kflow-web
@@ -66,6 +63,18 @@ public class FlowGener extends EntityNo {
         this.set_enMap(map);
         return this.get_enMap();
     }
+
+    @Override
+    public UAC getHisUAC() throws Exception {
+        if (_HisUAC == null) {
+
+            _HisUAC = new UAC();
+            _HisUAC.IsUpdate = true;
+            _HisUAC.IsView = true;
+        }
+        return _HisUAC;
+    }
+
     public final String FlowDetail()
     {
         return BP.WF.Glo.getCCFlowAppPath() + "/WF/Comm/En.htm?EnName=BP.WF.Flow&PKVal="+this.GetValStrByKey(FlowGenerAttr.FlowId);

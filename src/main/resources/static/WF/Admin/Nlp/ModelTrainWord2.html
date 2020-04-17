@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Word2vec</title>
+    <link href="../../Scripts/easyUI/themes/default/easyui.css" rel="stylesheet" type="text/css" />
+    <script src="../../Scripts/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="../../Scripts/easyUI/jquery.easyui.min.js" type="text/javascript"></script>
+    <script src="../../Scripts/highcharts/highcharts.js"></script>
+    <script src="../../Scripts/highcharts/exporting.js"></script>
+    <script src="../../Scripts/QueryString.js" type="text/javascript"></script>
+    <script src="../../Scripts/EasyUIUtility.js" type="text/javascript"></script>
+    <script src="Nlp.js" type="text/javascript"></script>
+</head>
+<body>
+<div>
+    <input id="testFileTemp1" type="text" style="display: none">
+    <input id="trainFileTemp1" type="text" style="display: none">
+    <fieldset>
+        <table cellpadding="1">
+            <tr>
+                <td>
+                    训练数据：
+                </td>
+                <td>
+                    <input id="fileTrain1" type="file" name="file" />
+                </td>
+                <td>
+                    测试数据：
+                </td>
+                <td>
+                    <input id="fileTest1" type="file" name="file" placeholder="默认为训练数据"/>
+                </td>
+                <td>
+                    <button onclick="fileUpload(1)">上传</button>
+                </td>
+            </tr>
+            <tr>
+                <td>神经网络类型：</td>
+                <td><select id="neuralNetworkType">
+                    <option value="1">CBOW</option>
+                    <option value="2">Skip-gram</option>
+                </select></td>
+                <td>
+                    学习率：
+                </td>
+                <td>
+                    <input id="learningRate" type="text" placeholder="默认C(0.05)S(0.025)"/>
+                </td>
+                <td>
+                    训练线程数：
+                </td>
+                <td>
+                    <input id="numThread1" type="text" placeholder="默认为机器核数"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    模型文件名：
+                </td>
+                <td>
+                    <input id="modelFileTrain1" type="text" placeholder="必填"/>
+                </td>
+                <td>
+                    模型名：
+                </td>
+                <td>
+                    <input id="nameTrain1" type="text" />
+                </td>
+
+                <td>
+                    迭代次数：
+                </td>
+                <td>
+                    <input id="iterations1" type="text" placeholder="默认15"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    隐藏层神经元数量：
+                </td>
+                <td>
+                    <input id="layerSize" type="text" placeholder="默认200"/>
+                </td>
+                <td>
+                    负采样数：
+                </td>
+                <td>
+                    <input id="negativeSamples" type="text" placeholder="默认25"/>
+                </td>
+
+                <td>采样窗口：</td>
+                <td><input id="dimensions" type="text" placeholder="默认5"/></td>
+            </tr>
+            <tr>
+                <td>分层SoftMax：</td>
+                <td><input type="checkbox" id="isSoftmax"></td>
+            </tr>
+        </table>
+        <div style="text-align:right;padding:5px">
+            <button id="upload" type="button" onclick="startTrain(1)">开始</button>
+        </div>
+    </fieldset>
+</div>
+<div>
+    <div id="container"></div>
+</div>
+</body>
+</html>

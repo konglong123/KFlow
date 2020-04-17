@@ -14,8 +14,8 @@
 </head>
 <body>
 <div>
-    <input id="testFileTemp" type="text" style="display: none">
-    <input id="trainFileTemp" type="text" style="display: none">
+    <input id="testFileTemp2" type="text" style="display: none">
+    <input id="trainFileTemp2" type="text" style="display: none">
     <fieldset>
         <table cellpadding="5">
             <tr>
@@ -23,16 +23,16 @@
                     训练数据：
                 </td>
                 <td>
-                    <input id="fileTrain" type="file" name="file" />
+                    <input id="fileTrain2" type="file" name="file" />
                 </td>
                 <td>
                     测试数据：
                 </td>
                 <td>
-                    <input id="fileTest" type="file" name="file" placeholder="默认为训练数据"/>
+                    <input id="fileTest2" type="file" name="file" placeholder="默认为训练数据"/>
                 </td>
                 <td>
-                    <button onclick="fileUpload()">上传</button>
+                    <button onclick="fileUpload(2)">上传</button>
                 </td>
             </tr>
             <tr>
@@ -40,19 +40,19 @@
                     迭代次数：
                 </td>
                 <td>
-                    <input id="iterations" type="text" placeholder="默认50"/>
+                    <input id="iterations2" type="text" placeholder="默认50"/>
                 </td>
                 <td>
                     特征压缩比：
                 </td>
                 <td>
-                    <input id="compressRate" type="text" placeholder="默认0.1"/>
+                    <input id="compressRate2" type="text" placeholder="默认0.1"/>
                 </td>
                 <td>
                     训练线程数：
                 </td>
                 <td>
-                    <input id="numThread" type="text" placeholder="默认为机器核数"/>
+                    <input id="numThread2" type="text" placeholder="默认为机器核数"/>
                 </td>
             </tr>
             <tr>
@@ -60,23 +60,22 @@
                     模型名：
                 </td>
                 <td>
-                    <input id="nameTrain" type="text" />
+                    <input id="nameTrain2" type="text" />
                 </td>
                 <td>
                     模型文件名：
                 </td>
                 <td>
-                    <input id="modelFileTrain" type="text" placeholder="必填"/>
+                    <input id="modelFileTrain2" type="text" placeholder="必填"/>
                 </td>
                 <td>类型：</td>
                 <td><select id="typeTrain">
                     <option value="2">分词器</option>
-                    <option value="1">word2vec</option>
                 </select></td>
             </tr>
         </table>
         <div style="text-align:right;padding:5px">
-            <button id="upload" type="button" onclick="startTrain()">开始</button>
+            <button id="upload" type="button" onclick="startTrain(2)">开始</button>
         </div>
     </fieldset>
 </div>

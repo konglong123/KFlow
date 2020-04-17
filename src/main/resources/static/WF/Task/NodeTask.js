@@ -41,7 +41,7 @@ function initDgNodeTasks() {
 }
 function getNodeTaskStatus(val) {
     switch (val) {
-        case 9:
+        case -1:
             return "未准备";
         case 1:
             return '可以开始';

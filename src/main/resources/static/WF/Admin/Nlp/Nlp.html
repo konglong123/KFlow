@@ -12,8 +12,11 @@
 </head>
 <body>
 <div>
+    <fieldset>
     <table cellpadding="5">
         <tr>
+            <td>当前分词：</td>
+            <td><input id="systemSegment" disabled="true"></td>
             <td>模型编码：</td>
             <td><input class="easyui-textbox" type="text" id="nlpModelIdQuery"></td>
             <td>模型名：</td>
@@ -26,16 +29,20 @@
             </select></td>
         </tr>
         <tr>
+            <td>当前word2vec：</td>
+            <td><input id="systemWord2vec" disabled="true"></td>
             <td>数据文件：</td>
             <td><input class="easyui-textbox" type="text" id="trainFileQuery"></td>
             <td>模型文件：</td>
             <td><input class="easyui-textbox" type="text" id="modelFileQuery"></td>
         </tr>
     </table>
+    </fieldset>
     <div style="text-align:right;padding:5px">
         <button class="easyui-linkbutton" onclick="queryNlpModels()" >查询</button>
-        <button class="easyui-linkbutton" onclick="trainModel()" >新增模型</button>
-        <button class="easyui-linkbutton" onclick="learnOnLine()" >在线学习</button>
+        <button class="easyui-linkbutton" onclick="trainSegmentModel()" >新增分词模型</button>
+        <button class="easyui-linkbutton" onclick="learnOnLine()" >分词在线学习</button>
+        <button class="easyui-linkbutton" onclick="trainWord2vecModel()" >新增word2vec模型</button>
     </div>
 </div>
 <div id="nlpModel">
@@ -44,6 +51,7 @@
 </div>
 <script type="text/javascript">
     $(function(){
+        initSystemModels();
         initNlpModels();
     });
 </script>

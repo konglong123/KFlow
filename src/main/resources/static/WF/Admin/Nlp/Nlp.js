@@ -32,7 +32,8 @@ function initNlpModels() {
             {field:'action',title: '操作',align: 'center',width:20,
                 formatter:function(val,rec){
                     var str="<input type='button' value='启用'  onclick='loadModel(\""+rec.id+"\")'/>";
-                    str+="<input type='button' value='详情'  onclick='gotoModelDetail(\""+rec.id+"\")'/>";
+                    if (rec.modelType==2)
+                        str+="<input type='button' value='详情'  onclick='gotoModelDetail(\""+rec.id+"\")'/>";
                     return str;
                 }},
 
@@ -49,48 +50,61 @@ function queryNlpModels() {
     $("#dgNlpModels").datagrid('reload');
 }
 
-function trainModel() {
+function trainSegmentModel() {
     var url="/WF/WF/Admin/Nlp/ModelTrain.html?"
     window.parent.addTab("模型训练", url);
 }
 
+function trainWord2vecModel() {
+    var url="/WF/WF/Admin/Nlp/ModelTrainWord2.html?"
+    window.parent.addTab("模型训练", url);
+}
+
 function learnOnLine() {
-    var url="/WF/WF/Admin/Nlp/SystemModelInfo.html?"
+    var url="/WF/WF/Admin/Nlp/SegmentModelLearn.html?"
     OpenEasyUiDialogExt(url,"在线学习", 800, 450, true);
 }
 function gotoModelDetail(id) {
     var url="/WF/WF/Comm/HighChart.html?modelId="+id;
-    OpenEasyUiDialogExt(url,"在线学习", 800, 450, true);;
+    OpenEasyUiDialogExt(url,"准确度曲线", 800, 450, true);
 }
 
-function startTrain() {
-    var trainFile=$("#trainFileTemp").val().trim();
+function startTrain(type) {
+    var trainFile=$("#trainFileTemp"+type).val().trim();
     if (trainFile==""){
         alert("请上传训练数据！");
         return;
     }
-    if ($("#modelFileTrain").val().trim()==""){
+    if ($("#modelFileTrain"+type).val().trim()==""){
         alert("请指定模型文件名！");
         return;
     }
 
     var tempUrl="/WF/NLPModel";
-    var type=$("#typeTrain").val();
     if (type==2)
         tempUrl+="/trainSegmentModel";
     else
         tempUrl+="/trainWord2vec";
 
     var nlpModel={
-        name:$("#nameTrain").val().trim(),
-        numThreads:$("#numThread").val().trim(),
-        compressRate:$("#compressRate").val().trim(),
-        iterations:$("#iterations").val().trim(),
+        name:$("#nameTrain"+type).val().trim(),
+        numThreads:$("#numThread"+type).val().trim(),
+        iterations:$("#iterations"+type).val().trim(),
         modelType:type,
-        modelFile:$("#modelFileTrain").val().trim(),
-        testFile:$("#testFileTemp").val().trim(),
-        trainFile:$("#trainFileTemp").val().trim(),
+        modelFile:$("#modelFileTrain"+type).val().trim(),
+        testFile:$("#testFileTemp"+type).val().trim(),
+        trainFile:$("#trainFileTemp"+type).val().trim(),
     };
+    if (type==2){
+        nlpModel.compressRate=$("#compressRate"+type).val().trim();
+    }else if (type==1){
+        nlpModel.neuralNetworkType=$("#neuralNetworkType").val().trim();
+        nlpModel.learningRate=$("#learningRate").val().trim();
+        nlpModel.dimensions=$("#dimensions").val().trim();
+        nlpModel.negativeSamples=$("#negativeSamples").val().trim();
+        nlpModel.layerSize=$("#layerSize").val().trim();
+        nlpModel.isSoftmax=$("#isSoftmax").val().trim();
+    }
     $.ajax({
         url: tempUrl,
         type: 'POST',
@@ -98,7 +112,10 @@ function startTrain() {
         contentType:'application/json',
         data: JSON.stringify(nlpModel),
         success: function (data) {
-            showTrainProgress(data.progress);
+            if (type==2)
+                showTrainProgress(data.progress);
+            else
+                messageShow("训练成功！");
         },
         error:function (data) {
             alert("训练失败");
@@ -110,13 +127,14 @@ function resetText() {
     $("#learnSentence").val("");
     $("#segmentSentence").val("");
 }
-function fileUpload() {
-    if ($("#fileTrain").val().trim()==""){
+function fileUpload(type) {
+    if ($("#fileTrain"+type).val().trim()==""){
         alert("缺乏训练数据！");
         return;
     }
+
     var formData = new FormData();
-    formData.append('file', $('#fileTrain')[0].files[0]);
+    formData.append('file', $('#fileTrain'+type)[0].files[0]);
     $.ajax({
         url: '/WF/file/upload',
         type: 'POST',
@@ -125,14 +143,14 @@ function fileUpload() {
         processData: false,
         contentType: false
     }).done(function(res) {
-        $("#trainFileTemp").val(res);
+        $("#trainFileTemp"+type).val(res);
     }).fail(function(res) {
         messageShow("上传失败！");
     });
 
-    if ($("#fileTest").val().trim()!="") {
+    if ($("#fileTest"+type).val().trim()!="") {
         var formData = new FormData();
-        formData.append('file', $('#fileTest')[0].files[0]);
+        formData.append('file', $('#fileTest'+type)[0].files[0]);
         $.ajax({
             url: '/WF/file/upload',
             type: 'POST',
@@ -141,7 +159,7 @@ function fileUpload() {
             processData: false,
             contentType: false
         }).done(function(res) {
-            $("#testFileTemp").val(res);
+            $("#testFileTemp"+type).val(res);
         }).fail(function(res) {
             messageShow("上传失败！");
         });
@@ -238,6 +256,9 @@ function loadModel(id) {
             alert("启用失败！");
         }
     });
+    //启用后需要，更新
+    initSystemModels();
+    location.reload();
 }
 function segmentSentence() {
     var sentence=$("#segmentSentence").val().trim();

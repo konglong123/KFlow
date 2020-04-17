@@ -71,8 +71,11 @@ public class NLPModelController {
     @ResponseBody
     @RequestMapping("trainWord2vec")
     public JSONObject trainWord2vec(@RequestBody Nlpmodel nlpmodel){
+        nlpmodel.setModelFile(userFileDir+"/"+nlpmodel.getModelFile()+".txt");
         Word2VecTrainer trainerBuilder = new Word2VecTrainer();
         WordVectorModel wordVectorModel = trainerBuilder.train(nlpmodel.getTrainFile(), nlpmodel.getModelFile());
+        nlpmodelService.insertNlpmodel(nlpmodel);
+        wordVectorModel.nearest("中国");
         return null;
     }
 

@@ -13,25 +13,6 @@
 <body>
 <div>
     <fieldset>
-    <table cellpadding="5">
-        <tr>
-            <td>
-                分词模型编码：
-            </td>
-            <td>
-                <input id="systemSegment">
-            </td>
-            <td>
-                word2vec模型编码：
-            </td>
-            <td>
-                <input id="systemWord2vec">
-            </td>
-        </tr>
-
-    </table>
-    </fieldset>
-    <fieldset>
         <textarea id="segmentSentence" rows="5" cols="120" placeholder="请输入需要分词的句子"></textarea>
         <div style="width:95%;border-top: 0px solid #C0C0C0;">
             <input type="button" value="重置" onclick="resetText()" />
@@ -49,7 +30,7 @@
 </div>
 <script type="text/javascript">
     $(function(){
-        initSystemModels();
+
     });
 </script>
 </body>
