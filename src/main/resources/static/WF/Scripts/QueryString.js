@@ -66,7 +66,7 @@ function messageShow(message) {
     $.messager.show({
         title:'提示',
         msg:message,
-        timeout:150,
+        timeout:250,
         showType:'fade'
     });
 }

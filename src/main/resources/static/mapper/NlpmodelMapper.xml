@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="BP.springCloud.dao.NlpmodelDao">
+	<resultMap id="BaseResultMap" type="Nlpmodel">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="model_file" property="modelFile" jdbcType="VARCHAR" />
+		<result column="test_file" property="testFile" jdbcType="VARCHAR" />
+		<result column="train_file" property="trainFile" jdbcType="VARCHAR" />
+		<result column="language" property="language" jdbcType="VARCHAR" />
+		<result column="term_size" property="termSize" jdbcType="INTEGER" />
+		<result column="dimensions" property="dimensions" jdbcType="INTEGER" />
+		<result column="memory_size" property="memorySize" jdbcType="INTEGER" />
+		<result column="use_time" property="useTime" jdbcType="VARCHAR" />
+		<result column="train_term_size" property="trainTermSize" jdbcType="INTEGER" />
+		<result column="test_term_size" property="testTermSize" jdbcType="INTEGER" />
+		<result column="correct_rate" property="correctRate" jdbcType="DOUBLE" />
+		<result column="compress_rate" property="compressRate" jdbcType="FLOAT" />
+		<result column="model_type" property="modelType" jdbcType="TINYINT" />
+		<result column="is_delete" property="isDelete" jdbcType="TINYINT" />
+		<result column="layer_size" property="layerSize" jdbcType="INTEGER" />
+		<result column="neural_network_type" property="neuralNetworkType" jdbcType="TINYINT" />
+		<result column="hierarchical_softmax" property="hierarchicalSoftmax" jdbcType="BIGINT" />
+		<result column="negative_samples" property="negativeSamples" jdbcType="INTEGER" />
+		<result column="num_threads" property="numThreads" jdbcType="INTEGER" />
+		<result column="learning_rate" property="learningRate" jdbcType="DOUBLE" />
+		<result column="down_sample_rate" property="downSampleRate" jdbcType="DOUBLE" />
+		<result column="iterations" property="iterations" jdbcType="INTEGER" />
+		<result column="min_frequency" property="minFrequency" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="context" property="context" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		<trim prefix="" suffix="" suffixOverrides=",">
+		id,
+		name,
+		model_file,
+		test_file,
+		train_file,
+		language,
+		term_size,
+		dimensions,
+		memory_size,
+		use_time,
+		train_term_size,
+		test_term_size,
+		correct_rate,
+		compress_rate,
+		model_type,
+		is_delete,
+		layer_size,
+		neural_network_type,
+		hierarchical_softmax,
+		negative_samples,
+		num_threads,
+		learning_rate,
+		down_sample_rate,
+		iterations,
+		min_frequency,
+		create_time,
+		update_time,
+		context,
+		</trim>
+	</sql>
+	
+	<!-- 根据Id查询 -->
+	<select id="getNlpmodel" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from nlpmodel
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+	
+	<!-- 根据条件查询列表 -->
+	<select id="findNlpmodelList" resultMap="BaseResultMap" parameterType="Nlpmodel">
+		select
+		<include refid="Base_Column_List" />
+		from nlpmodel
+		<where>
+		 	1=1
+			<trim prefix="" suffix="" suffixOverrides=",">
+				<if test="id != null">
+					AND id = #{id,jdbcType=BIGINT}
+				</if>
+				<if test="name != null">
+					AND name = #{name,jdbcType=VARCHAR}
+				</if>
+				<if test="modelFile != null">
+					AND model_file = #{modelFile,jdbcType=VARCHAR}
+				</if>
+				<if test="testFile != null">
+					AND test_file = #{testFile,jdbcType=VARCHAR}
+				</if>
+				<if test="trainFile != null">
+					AND train_file = #{trainFile,jdbcType=VARCHAR}
+				</if>
+				<if test="compressRate != null">
+					AND compress_rate = #{compressRate,jdbcType=FLOAT}
+				</if>
+				<if test="modelType != 0">
+					AND model_type = #{modelType,jdbcType=TINYINT}
+				</if>
+				<if test="layerSize != 0">
+					AND layer_size = #{layerSize,jdbcType=INTEGER}
+				</if>
+				<if test="neuralNetworkType != 0">
+					AND neural_network_type = #{neuralNetworkType,jdbcType=TINYINT}
+				</if>
+				<if test="numThreads != 0">
+					AND num_threads = #{numThreads,jdbcType=INTEGER}
+				</if>
+				<if test="learningRate != null">
+					AND learning_rate = #{learningRate,jdbcType=DOUBLE}
+				</if>
+				<if test="downSampleRate != null">
+					AND down_sample_rate = #{downSampleRate,jdbcType=DOUBLE}
+				</if>
+				<if test="iterations != 0">
+					AND iterations = #{iterations,jdbcType=INTEGER}
+				</if>
+				<if test="context != null">
+					AND context = #{context,jdbcType=VARCHAR}
+				</if>
+					AND is_delete=0
+			</trim>
+
+		</where>
+	</select>
+	<!-- 插入实体 -->
+	<insert id="insertNlpmodel" parameterType="Nlpmodel" useGeneratedKeys="true" keyProperty="id">
+		insert into nlpmodel 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		id,
+		name,
+		model_file,
+		test_file,
+		train_file,
+		language,
+		term_size,
+		dimensions,
+		memory_size,
+		use_time,
+		train_term_size,
+		test_term_size,
+		correct_rate,
+		compress_rate,
+		model_type,
+		is_delete,
+		layer_size,
+		neural_network_type,
+		hierarchical_softmax,
+		negative_samples,
+		num_threads,
+		learning_rate,
+		down_sample_rate,
+		iterations,
+		min_frequency,
+		create_time,
+		update_time,
+		context,
+		</trim>
+		values 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		#{id,jdbcType=BIGINT},
+		#{name,jdbcType=VARCHAR},
+		#{modelFile,jdbcType=VARCHAR}, 
+		#{testFile,jdbcType=VARCHAR}, 
+		#{trainFile,jdbcType=VARCHAR}, 
+		#{language,jdbcType=VARCHAR}, 
+		#{termSize,jdbcType=INTEGER}, 
+		#{dimensions,jdbcType=INTEGER}, 
+		#{memorySize,jdbcType=INTEGER}, 
+		#{useTime,jdbcType=VARCHAR}, 
+		#{trainTermSize,jdbcType=INTEGER}, 
+		#{testTermSize,jdbcType=INTEGER}, 
+		#{correctRate,jdbcType=DOUBLE},
+		#{compressRate,jdbcType=FLOAT}, 
+		#{modelType,jdbcType=TINYINT}, 
+		#{isDelete,jdbcType=TINYINT}, 
+		#{layerSize,jdbcType=INTEGER}, 
+		#{neuralNetworkType,jdbcType=TINYINT}, 
+		#{hierarchicalSoftmax,jdbcType=BIGINT}, 
+		#{negativeSamples,jdbcType=INTEGER}, 
+		#{numThreads,jdbcType=INTEGER}, 
+		#{learningRate,jdbcType=DOUBLE}, 
+		#{downSampleRate,jdbcType=DOUBLE}, 
+		#{iterations,jdbcType=INTEGER}, 
+		#{minFrequency,jdbcType=INTEGER}, 
+		#{createTime,jdbcType=TIMESTAMP}, 
+		#{updateTime,jdbcType=TIMESTAMP}, 
+		#{context,jdbcType=VARCHAR}, 
+		</trim>
+	</insert>
+		<!-- 修改实体 -->
+	<update id="updateNlpmodel" parameterType="Nlpmodel">
+		update nlpmodel
+		<set>
+			<trim prefix="" suffix="" suffixOverrides=",">
+	        <if test="name != null">
+					name = #{name,jdbcType=VARCHAR},
+	      		</if>
+	        <if test="modelFile != null">
+					model_file = #{modelFile,jdbcType=VARCHAR},
+	      		</if>
+	        <if test="testFile != null">
+					test_file = #{testFile,jdbcType=VARCHAR},
+	      		</if>
+	        <if test="trainFile != null">
+					train_file = #{trainFile,jdbcType=VARCHAR},
+	      		</if>
+	        <if test="language != null">
+					language = #{language,jdbcType=VARCHAR},
+	      		</if>
+			<if test="termSize != 0">
+					term_size = #{termSize,jdbcType=INTEGER},
+	      		</if>
+			<if test="dimensions != 0">
+					dimensions = #{dimensions,jdbcType=INTEGER},
+	      		</if>
+			<if test="memorySize != 0">
+					memory_size = #{memorySize,jdbcType=INTEGER},
+	      		</if>
+	        <if test="useTime != null">
+					use_time = #{useTime,jdbcType=VARCHAR},
+	      		</if>
+			<if test="trainTermSize != 0">
+					train_term_size = #{trainTermSize,jdbcType=INTEGER},
+	      		</if>
+			<if test="testTermSize != 0">
+					test_term_size = #{testTermSize,jdbcType=INTEGER},
+	      		</if>
+	        <if test="correctRate != null">
+					correct_rate = #{correctRate,jdbcType=DOUBLE},
+	      		</if>
+	        <if test="compressRate != null">
+					compress_rate = #{compressRate,jdbcType=FLOAT},
+	      		</if>
+			<if test="modelType != 0">
+					model_type = #{modelType,jdbcType=TINYINT},
+	      		</if>
+			<if test="isDelete != 0">
+					is_delete = #{isDelete,jdbcType=TINYINT},
+	      		</if>
+			<if test="layerSize != 0">
+					layer_size = #{layerSize,jdbcType=INTEGER},
+	      		</if>
+			<if test="neuralNetworkType != 0">
+					neural_network_type = #{neuralNetworkType,jdbcType=TINYINT},
+	      		</if>
+	        <if test="hierarchicalSoftmax != null">
+					hierarchical_softmax = #{hierarchicalSoftmax,jdbcType=BIGINT},
+	      		</if>
+			<if test="negativeSamples != 0">
+					negative_samples = #{negativeSamples,jdbcType=INTEGER},
+	      		</if>
+			<if test="numThreads != 0">
+					num_threads = #{numThreads,jdbcType=INTEGER},
+	      		</if>
+	        <if test="learningRate != null">
+					learning_rate = #{learningRate,jdbcType=DOUBLE},
+	      		</if>
+	        <if test="downSampleRate != null">
+					down_sample_rate = #{downSampleRate,jdbcType=DOUBLE},
+	      		</if>
+			<if test="iterations != 0">
+					iterations = #{iterations,jdbcType=INTEGER},
+	      		</if>
+			<if test="minFrequency != 0">
+					min_frequency = #{minFrequency,jdbcType=INTEGER},
+	      		</if>
+	        <if test="createTime != null">
+					create_time = #{createTime,jdbcType=TIMESTAMP},
+	      		</if>
+	        <if test="updateTime != null">
+					update_time = #{updateTime,jdbcType=TIMESTAMP},
+	      		</if>
+	        <if test="context != null">
+					context = #{context,jdbcType=VARCHAR},
+	      		</if>
+			</trim>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	<!-- 删除实体 -->
+	<update id="deleteNlpmodel" parameterType="java.lang.Long">
+		update nlpmodel
+		<set>
+			is_delete=1
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+
+</mapper>

@@ -28,3 +28,17 @@ eureka:
     serviceUrl:
       defaultZone: http://112.125.90.132:80/eureka/
       #defaultZone: http://127.0.0.1:80/eureka/
+
+
+hanlp:
+  termFile: /opt/es/elasticsearch-6.4.0/plugins/analysis-hanlp/data/dictionary/custom/my.txt
+  #trainingFile: /opt/nlp/training/pku98/199801-train.txt
+  #modelFile: /opt/nlp/model/cws.bin
+  #testFile: /opt/nlp/training/pku98/199801-test.txt
+  segmentTrainingFile: /199801-test.txt
+  segmentModelFile: D:/Springboot/nlp/cws.bin
+  word2vecModelFile: /opt/nlp/model/word2vecDefaultModel.bin
+  word2vecDataFile: /opt/nlp/model/word2vecDefaultData.txt
+  dir: D:/Springboot/nlp
+
+
