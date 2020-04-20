@@ -303,7 +303,7 @@ public class NodeExt extends Entity
         //map.AddBoolean(NodeAttr.IsRM, true, "是否启用投递路径自动记忆功能?", true, true, true);//"http://ccbpm.mydoc.io/?v=5404&t=17905"
 
        // map.AddBoolean(NodeAttr.IsToParentNextNode, false, "子流程运行到该节点时，让父流程自动运行到下一步", true, true);
-        map.AddBoolean(NodeAttr.IsYouLiTai, false, "该节点是否是游离态", false, true);
+        //map.AddBoolean(NodeAttr.IsYouLiTai, false, "该节点是否是游离态", false, true);
         //map.SetHelperUrl(NodeAttr.IsYouLiTai, "当节点为游离状态的时候，只有连接的节点是固定节点才可以往下运行，否则流程结束");
 
         //map.AddTBDateTime("DTFrom", "生命周期从", true, true);
@@ -321,6 +321,9 @@ public class NodeExt extends Entity
         map.AddTBInt("FWCSta", 0, "节点状态", false, false);
         map.AddTBInt("FWCAth", 0, "审核附件是否启用", false, false);
         //map.AddTBString(NodeAttr.SelfParas, null, "自定义参数", true, false, 0, 500, 10, true);
+        map.AddTBDateTime(NodeAttr.EarlyStart, null, "最早开始时间", true, false);
+        map.AddTBDateTime(NodeAttr.LaterFinish, null, "最晚完成时间", true, false);
+
         map.AddTBInt(NodeAttr.Doc, 0, "工作量(h)", true, false);
         map.AddTBStringDoc(NodeAttr.Tip, null, "操作提示", true, false);//"http://ccbpm.mydoc.io/?v=5404&t=18084"
 
@@ -1135,27 +1138,11 @@ public class NodeExt extends Entity
 	  @Override
 	  protected   void afterInsertUpdateAction() throws Exception
       {
-          Node fl = new Node();
-          fl.setNodeID( this.getNodeID());
-          fl.RetrieveFromDBSources();
-          if (this.getIsYouLiTai() == true)
-              fl.SetPara("IsYouLiTai", 1);
-          else
-              fl.SetPara("IsYouLiTai", 0);
-          fl.Update();
-
           //修改按钮权限的缓存
           BtnLab btnLab = new BtnLab(this.getNodeID());
           btnLab.RetrieveFromDBSources();
           Cash2019.PutRow(btnLab.toString(),String.valueOf(this.getNodeID()), btnLab.getRow());
-          //如果是组长会签模式，通用选择器只能单项选择
-          if(this.GetValIntByKey(BtnAttr.HuiQianRole) == HuiQianRole.TeamupGroupLeader.getValue())
-          {
-              Selector selector = new Selector(this.getNodeID());
-              selector.setIsSimpleSelector(true);
-              selector.Update();
 
-          }
       }
 
 

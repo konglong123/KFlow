@@ -1,7 +1,6 @@
 package BP.springCloud.entity;
 
 import java.io.Serializable;
-import java.security.acl.LastOwnerException;
 import java.util.Date;
 
 /**
@@ -15,18 +14,17 @@ public class NodeTaskM implements Serializable {
 	/**
 	 * 主键
 	 */
-	private Long no;
+	private Long No;
 	
 	/**
-	 * 私有工作id
+	 * 工作组
+	 */
+	private String workGroupId;
+	
+	/**
+	 * 工作id
 	 */
 	private String workId;
-
-	/**
-	 * 工作组id
-	 */
-
-	private String workGroupId;
 	
 	/**
 	 * 流程id
@@ -39,7 +37,7 @@ public class NodeTaskM implements Serializable {
 	private String nodeId;
 	
 	/**
-	 * 节点任务状态（0未准备，1准备好，可以开始）2（已经开始），3(已经完成)
+	 * 节点任务状态（-1未准备，1前置条件完成，可以开始）2（已经开始），3(已经完成)，4(计划完成)
 	 */
 	private int isReady;
 	
@@ -69,6 +67,16 @@ public class NodeTaskM implements Serializable {
 	private int useTime;
 	
 	/**
+	 * 最晚完成时间
+	 */
+	private Date oldestFinishTime;
+	
+	/**
+	 * 最早开始时间
+	 */
+	private Date earlyStartTime;
+	
+	/**
 	 * 计划开始时间（调度产生）
 	 */
 	private Date planStartTime;
@@ -92,41 +100,59 @@ public class NodeTaskM implements Serializable {
 	 * 执行人
 	 */
 	private String executor;
-
+	
+	/**
+	 * 节点任务状态（-1未准备，9，已经计划，1准备好，可以开始）2（已经开始），3(已经完成)，4（逾期），5（逾期前三天警告）
+	 */
 	private int status;
-
+	
+	/**
+	 * 是否删除，0存在，1删除
+	 */
 	private int yn;
 	
 	/**
-	 * @return the no
+	 * @return the No
 	 */
 	public Long getNo() {
-		return no;
+		return No;
 	}
 	
 	/**
-	 * @param no the no to set
+	 * @param No the No to set
 	 */
-	public void setNo(Long no) {
-		this.no = no;
+	public void setNo(Long No) {
+		this.No = No;
 	}
-
-	public String getWorkId() {
-		return workId;
-	}
-
-	public void setWorkId(String workId) {
-		this.workId = workId;
-	}
-
+	
+	/**
+	 * @return the workGroupId
+	 */
 	public String getWorkGroupId() {
 		return workGroupId;
 	}
-
+	
+	/**
+	 * @param workGroupId the workGroupId to set
+	 */
 	public void setWorkGroupId(String workGroupId) {
 		this.workGroupId = workGroupId;
 	}
-
+	
+	/**
+	 * @return the workId
+	 */
+	public String getWorkId() {
+		return workId;
+	}
+	
+	/**
+	 * @param workId the workId to set
+	 */
+	public void setWorkId(String workId) {
+		this.workId = workId;
+	}
+	
 	/**
 	 * @return the flowId
 	 */
@@ -164,7 +190,6 @@ public class NodeTaskM implements Serializable {
 	
 	/**
 	 * @param isReady the isReady to set
-	 *                节点任务状态（0未准备，1前置条件完成，可以开始）2（已经开始），3(已经完成)，4(计划完成)
 	 */
 	public void setIsReady(int isReady) {
 		this.isReady = isReady;
@@ -241,6 +266,34 @@ public class NodeTaskM implements Serializable {
 	}
 	
 	/**
+	 * @return the oldestFinishTime
+	 */
+	public Date getOldestFinishTime() {
+		return oldestFinishTime;
+	}
+	
+	/**
+	 * @param oldestFinishTime the oldestFinishTime to set
+	 */
+	public void setOldestFinishTime(Date oldestFinishTime) {
+		this.oldestFinishTime = oldestFinishTime;
+	}
+	
+	/**
+	 * @return the earlyestStartTime
+	 */
+	public Date getEarlyStartTime() {
+		return earlyStartTime;
+	}
+	
+	/**
+	 * @param earlyStartTime the earlyestStartTime to set
+	 */
+	public void setEarlyStartTime(Date earlyStartTime) {
+		this.earlyStartTime = earlyStartTime;
+	}
+	
+	/**
 	 * @return the planStartTime
 	 */
 	public Date getPlanStartTime() {
@@ -309,20 +362,33 @@ public class NodeTaskM implements Serializable {
 	public void setExecutor(String executor) {
 		this.executor = executor;
 	}
-
-	public int getYn() {
-		return yn;
-	}
-
-	public void setYn(int yn) {
-		this.yn = yn;
-	}
-
+	
+	/**
+	 * @return the status
+	 */
 	public int getStatus() {
 		return status;
 	}
-
+	
+	/**
+	 * @param status the status to set
+	 */
 	public void setStatus(int status) {
 		this.status = status;
 	}
+	
+	/**
+	 * @return the yn
+	 */
+	public int getYn() {
+		return yn;
+	}
+	
+	/**
+	 * @param yn the yn to set
+	 */
+	public void setYn(int yn) {
+		this.yn = yn;
+	}
+	
 }

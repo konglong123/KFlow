@@ -1,13 +1,10 @@
 package BP.Task;
 
-import BP.DA.DBAccess;
 import BP.WF.Flow;
 import BP.WF.Node;
 import BP.WF.Nodes;
-import BP.WF.Template.FrmSubFlow;
 import BP.WF.Template.NodeAttr;
 import BP.Web.WebUser;
-import BP.springCloud.dao.NodeTaskMDao;
 import BP.springCloud.entity.GenerFlow;
 import BP.springCloud.entity.NodeTaskM;
 import BP.springCloud.tool.FeignTool;
@@ -48,6 +45,17 @@ public class FlowController {
 
             Flow flow=new Flow(flowNo);
             if (startFlow(workGroupId,-1L,-1L,flow)){
+                //起始节点任务状态更新为可开始
+                NodeTaskM con=new NodeTaskM();
+                con.setWorkGroupId(workGroupId+"");
+                con.setNodeId(flow.getStartNodeID()+"");
+                List<NodeTaskM> list=nodeTaskService.findNodeTaskList(con);
+                if (list!=null&&list.size()==1){
+                    NodeTaskM startTask=list.get(0);
+                    startTask.setIsReady(1);
+                    startTask.setStatus(1);
+                    nodeTaskService.updateNodeTask(startTask);
+                }
                 result.put("success",true);
             }else {
                 result.put("message","");
@@ -94,6 +102,8 @@ public class FlowController {
                 flag=flag&createNodeTask(workGroupId,workId,parentTaskId,node);
         }
 
+        //更新节点任务间关系
+        nodeTaskService.updateNodeTaskPreAfter(flow.getStartNodeID()+"",workId);
         return flag;
     }
 
@@ -132,12 +142,15 @@ public class FlowController {
         nodeTask.setNo(nodeTaskId);
         nodeTask.setIsReady(-1);//未准备
         nodeTask.setStatus(-1);
-        //nodeTask.setExecutor(userNo);
+        //因为执行人需要汉卿的计划，所以现在直接指定
+        nodeTask.setExecutor(WebUser.getNo());
         Date now=new Date();
         nodeTask.setPlanEndTime(now);
         nodeTask.setPlanStartTime(now);
         nodeTask.setEndTime(now);
         nodeTask.setStartTime(now);
+        nodeTask.setEarlyStartTime(node.GetValDateTime(NodeAttr.EarlyStart));
+        nodeTask.setOldestFinishTime(node.GetValDateTime(NodeAttr.LaterFinish));
         nodeTaskService.insertNodeTask(nodeTask);
 
         String[] childFlows=node.getSubFlowNos();
@@ -151,5 +164,7 @@ public class FlowController {
 
         return flag;
     }
+
+
 
 }

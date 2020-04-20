@@ -304,7 +304,7 @@ public class NodeTaskService {
     */
     public int getTaskStatus(NodeTaskM nt){
         int isReadyNt=nt.getIsReady();
-        if (isReadyNt!=9&&isReadyNt!=3) {//可以开始并且未完成状态下检查(计划完成后，)
+        if (isReadyNt!=-1&&isReadyNt!=3) {//可以开始并且未完成状态下检查(计划完成后，)
                     //判断是否逾期
             Date planStart = nt.getPlanStartTime();
             Date planEnd = nt.getPlanEndTime();
@@ -469,6 +469,48 @@ public class NodeTaskService {
             executor=employeeNos.get(pos);
         }
         return executor;
+    }
+
+    /**
+    *@Description: 构建节点任务之间的拓扑关系
+    *@Param:
+    *@return:
+    *@Author: Mr.kong
+    *@Date: 2020/4/20
+    */
+    public boolean updateNodeTaskPreAfter(String startNodeId,Long workId){
+        NodeTaskM con=new NodeTaskM();
+        con.setWorkId(workId+"");
+        //获取当前流程的所有节点任务
+        List<NodeTaskM> nodeTaskMAllTask=findNodeTaskList(con);
+        Map<String,NodeTaskM> map=new HashMap<>();
+        for (NodeTaskM temp:nodeTaskMAllTask)
+            map.put(temp.getNodeId(),temp);
+
+        //遍历更新所有节点任务
+        for (String nodeId:map.keySet()){
+            NodeTaskM nodeTaskM=map.get(nodeId);
+            String pre="";
+            List<NodeTaskM> befores=getPreNodeTask(nodeTaskM);
+            if (befores!=null){
+                for (NodeTaskM before:befores){
+                    pre=pre+before.getNo()+",";
+                }
+            }
+            nodeTaskM.setPreNodeTask(pre);
+
+            String after="";
+            List<NodeTaskM> nexts=getAfterNodeTask(nodeTaskM);
+            if (nexts!=null){
+                for (NodeTaskM next:nexts)
+                    after=after+next.getNo()+",";
+            }
+            nodeTaskM.setNextNodeTask(after);
+
+            nodeTaskManage.updateNodeTask(nodeTaskM);
+        }
+
+        return true;
     }
 
 }

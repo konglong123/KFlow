@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="BP.springCloud.dao.NodeTaskMDao">
 	<resultMap id="BaseResultMap" type="NodeTaskM">
-		<id column="No" property="no" jdbcType="BIGINT" />
-		<result column="work_id" property="workId" jdbcType="VARCHAR" />
+		<id column="No" property="No" jdbcType="BIGINT" />
 		<result column="work_group_id" property="workGroupId" jdbcType="VARCHAR" />
+		<result column="work_id" property="workId" jdbcType="VARCHAR" />
 		<result column="flow_id" property="flowId" jdbcType="VARCHAR" />
 		<result column="node_id" property="nodeId" jdbcType="VARCHAR" />
 		<result column="is_ready" property="isReady" jdbcType="TINYINT" />
@@ -13,6 +13,8 @@
 		<result column="parent_node_task" property="parentNodeTask" jdbcType="VARCHAR" />
 		<result column="total_time" property="totalTime" jdbcType="INTEGER" />
 		<result column="use_time" property="useTime" jdbcType="INTEGER" />
+		<result column="oldest_finish_time" property="oldestFinishTime" jdbcType="TIMESTAMP" />
+		<result column="early_start_time" property="earlyStartTime" jdbcType="TIMESTAMP" />
 		<result column="plan_start_time" property="planStartTime" jdbcType="TIMESTAMP" />
 		<result column="plan_end_time" property="planEndTime" jdbcType="TIMESTAMP" />
 		<result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
@@ -24,24 +26,26 @@
 	
 	<sql id="Base_Column_List">
 		<trim prefix="" suffix="" suffixOverrides=",">
-		No,
-		work_id,
-		work_group_id,
-		flow_id,
-		node_id,
-		is_ready,
-		pre_node_task,
-		next_node_task,
-		parent_node_task,
-		total_time,
-		use_time,
-		plan_start_time,
-		plan_end_time,
-		start_time,
-		end_time,
-		executor,
-		status,
-		yn,
+			No,
+			work_group_id,
+			work_id,
+			flow_id,
+			node_id,
+			is_ready,
+			pre_node_task,
+			next_node_task,
+			parent_node_task,
+			total_time,
+			use_time,
+			oldest_finish_time,
+			early_start_time,
+			plan_start_time,
+			plan_end_time,
+			start_time,
+			end_time,
+			executor,
+			status,
+			yn,
 		</trim>
 	</sql>
 	
@@ -94,18 +98,6 @@
 			<if test="useTime != 0">
 				AND	use_time = #{useTime,jdbcType=INTEGER}
 			</if>
-			<if test="planStartTime != null">
-				AND	plan_start_time = #{planStartTime,jdbcType=TIMESTAMP}
-			</if>
-			<if test="planEndTime != null">
-				AND	plan_end_time = #{planEndTime,jdbcType=TIMESTAMP}
-			</if>
-			<if test="startTime != null">
-				AND	start_time = #{startTime,jdbcType=TIMESTAMP}
-			</if>
-			<if test="endTime != null">
-				AND	end_time = #{endTime,jdbcType=TIMESTAMP}
-			</if>
 			<if test="executor != null">
 				AND	executor = #{executor,jdbcType=VARCHAR}
 			</if>
@@ -133,6 +125,8 @@
 		parent_node_task,
 		total_time,
 		use_time,
+		oldest_finish_time,
+		early_start_time,
 		plan_start_time,
 		plan_end_time,
 		start_time,
@@ -153,8 +147,10 @@
 		#{nextNodeTask,jdbcType=VARCHAR}, 
 		#{parentNodeTask,jdbcType=VARCHAR}, 
 		#{totalTime,jdbcType=INTEGER}, 
-		#{useTime,jdbcType=INTEGER}, 
-		#{planStartTime,jdbcType=TIMESTAMP}, 
+		#{useTime,jdbcType=INTEGER},
+		#{oldestFinishTime,jdbcType=TIMESTAMP},
+		#{earlyStartTime,jdbcType=TIMESTAMP},
+		#{planStartTime,jdbcType=TIMESTAMP},
 		#{planEndTime,jdbcType=TIMESTAMP}, 
 		#{startTime,jdbcType=TIMESTAMP}, 
 		#{endTime,jdbcType=TIMESTAMP}, 
@@ -198,6 +194,12 @@
 			<if test="useTime != 0">
 					use_time = #{useTime,jdbcType=INTEGER},
 	      		</if>
+			<if test="oldestFinishTime != null">
+					oldest_finish_time = #{oldestFinishTime,jdbcType=TIMESTAMP},
+				</if>
+			<if test="earlyStartTime != null">
+					early_start_time = #{earlyStartTime,jdbcType=TIMESTAMP},
+				</if>
 	        <if test="planStartTime != null">
 					plan_start_time = #{planStartTime,jdbcType=TIMESTAMP},
 	      		</if>

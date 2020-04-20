@@ -528,4 +528,10 @@ public class NodeAttr
 
 		///#endregion 未来处理人.
 
+	public static final String EarlyStart="EarlyStart";
+	public static final String EarlyFinish="EarlyFinish";
+	public static final String LaterStart="LaterStart";
+	public static final String LaterFinish="LaterFinish";
+
+
 }

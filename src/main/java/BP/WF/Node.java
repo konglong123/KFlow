@@ -2235,10 +2235,13 @@ public class Node extends Entity {
 		map.AddTBInt(NodeAttr.SubFlowStartWay, 0, "子线程启动方式", true, false);
 		map.AddTBString(NodeAttr.SubFlowStartParas, null, "启动参数", true, false, 0, 100, 10);
 
-		// 启动自动运行. 2013-01-04
+		// 启动自动运行.
 		map.AddTBInt(NodeAttr.AutoRunEnable, 0, "是否启动自动运行？", true, false);
 		map.AddTBString(NodeAttr.AutoRunParas, null, "自动运行参数", true, false, 0, 100, 10);
 		map.AddTBString(NodeAttr.SelfParas, null, "启动参数", true, false, 0, 500, 10);
+
+		map.AddTBDateTime(NodeAttr.EarlyStart, null, "最早开始时间", true, false);
+		map.AddTBDateTime(NodeAttr.LaterFinish, null, "最晚完成时间", true, false);
 
 		this.set_enMap(map);
 		return this.get_enMap();

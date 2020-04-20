@@ -1442,6 +1442,10 @@ public class DataType {
 		// }
 		// }
 		try {
+			//字符串转换，精确到秒
+			if (sysDateformat.length()>19){
+				sysDateformat=sysDateformat.substring(0,19);
+			}
 			return org.apache.commons.lang.time.DateUtils.parseDate(sysDateformat,
 					new String[] { "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm", "yyyy-MM", "yyyy/MM/dd",
 							"yyyy/MM/dd HH:mm:ss", "yyyy/MM/dd HH:mm", "yyyy/MM", "yyyy.MM.dd", "yyyy.MM.dd HH:mm:ss",
