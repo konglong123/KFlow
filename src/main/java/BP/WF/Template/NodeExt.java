@@ -321,8 +321,8 @@ public class NodeExt extends Entity
         map.AddTBInt("FWCSta", 0, "节点状态", false, false);
         map.AddTBInt("FWCAth", 0, "审核附件是否启用", false, false);
         //map.AddTBString(NodeAttr.SelfParas, null, "自定义参数", true, false, 0, 500, 10, true);
-        map.AddTBDateTime(NodeAttr.EarlyStart, null, "最早开始时间", true, false);
-        map.AddTBDateTime(NodeAttr.LaterFinish, null, "最晚完成时间", true, false);
+        map.AddTBDateTime(NodeAttr.EarlyStart, "2000-01-01 00:00:00", "最早开始时间", true, false);
+        map.AddTBDateTime(NodeAttr.LaterFinish,  "2000-01-01 00:00:00","最晚完成时间", true, false);
 
         map.AddTBInt(NodeAttr.Doc, 0, "工作量(h)", true, false);
         map.AddTBStringDoc(NodeAttr.Tip, null, "操作提示", true, false);//"http://ccbpm.mydoc.io/?v=5404&t=18084"

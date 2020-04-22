@@ -368,7 +368,7 @@ public class NodeTaskService {
 
         for (NodeTaskM nodeTaskM:children){
             JSONObject point=new JSONObject();
-            String id="nt"+nodeTaskM.getNo();
+            String id=nodeTaskM.getNo()+"-"+nodeTaskM.getNodeName();
             point.put("name",id);
             point.put("id",id);
 
@@ -377,19 +377,20 @@ public class NodeTaskService {
             if (preNodeTasks!=null){
                 List<String> dependencyList=new ArrayList<>(preNodeTasks.size());
                 for (NodeTaskM pre:preNodeTasks){
-                    dependencyList.add("nt"+pre.getNo());
+                    dependencyList.add(pre.getNo()+"-"+pre.getNodeName());
                 }
                 point.put("dependency",dependencyList);
             }
 
             int shiCha=8 * 60 * 60 * 1000;//时间戳会存在时差问题
 
-            if (nodeTaskM.getIsReady()>1)//已经开始
+            int isReady=nodeTaskM.getIsReady();
+            if (isReady==1||isReady==2)//已经开始
                 point.put("start",nodeTaskM.getStartTime().getTime()+shiCha);
             else
                 point.put("start",nodeTaskM.getPlanStartTime().getTime()+shiCha);
 
-            if (nodeTaskM.getIsReady()>2)//已经结束
+            if (nodeTaskM.getIsReady()==3)//已经结束
                 point.put("end",nodeTaskM.getEndTime().getTime()+shiCha);
             else
                 point.put("end",nodeTaskM.getPlanEndTime().getTime()+shiCha);

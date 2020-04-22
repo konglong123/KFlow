@@ -34,9 +34,9 @@ public class NodeTask extends EntityNo {
         map.AddTBString(NodeTaskAttr.FlowId, null, "流程编码", true, true, 1, 50, 50);
         map.AddTBString(NodeTaskAttr.NodeId, null, "节点编码", true, true, 0, 50, 50);
         map.AddDDLSysEnum(NodeTaskAttr.IsReady, 0, "任务状态", true, false, NodeTaskAttr.IsReady,
-                "@9=未准备@1=可以开始@2=已经开始@3=已经完成@4=逾期@5=警告");
+                "@20=未准备@1=可以开始@2=已经开始@3=已经完成@9=计划完成");
         map.AddDDLSysEnum(NodeTaskAttr.Status, 0, "提示信息", true, false, NodeTaskAttr.Status,
-                "@9=未准备@1=可以开始@2=已经开始@3=已经完成@4=逾期开始@5=警告开始@6=正常@7=逾期结束@8=警告结束");
+                "@20=未准备@1=可以开始@2=已经开始@3=已经完成@4=逾期开始@5=警告开始@6=正常@7=逾期结束@8=警告结束");
         map.AddTBString(NodeTaskAttr.PreNodeTask, null, "前置任务", true, true, 0, 50, 50);
         map.AddTBString(NodeTaskAttr.NextNodeTask, null, "后置任务", true, true, 0, 50, 50);
         map.AddTBString(NodeTaskAttr.ParentNodeTask, null, "父任务", true, true, 0, 50, 50);

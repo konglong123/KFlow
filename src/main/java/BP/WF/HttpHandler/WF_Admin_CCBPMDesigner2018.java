@@ -591,7 +591,6 @@ public class WF_Admin_CCBPMDesigner2018 extends WebContralBase
   			int nodeId = BP.WF.Template.TemplateGlo.NewNode(FK_Flow, iX, iY);
 
   			BP.WF.Node node = new BP.WF.Node(nodeId);
-  			node.Update();
 
   			java.util.Hashtable ht = new java.util.Hashtable();
   			ht.put("NodeID", node.getNodeID());

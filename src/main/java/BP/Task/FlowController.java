@@ -135,13 +135,14 @@ public class FlowController {
         NodeTaskM nodeTask=new NodeTaskM();
         nodeTask.setTotalTime(Integer.valueOf(node.GetValStringByKey(NodeAttr.Doc)));
         nodeTask.setNodeId(nodeId+"");
+        nodeTask.setNodeName(node.getName());
         nodeTask.setFlowId(node.GetValStringByKey(NodeAttr.FK_Flow));
         nodeTask.setWorkGroupId(workGroupID+"");
         nodeTask.setWorkId(workId+"");
         nodeTask.setParentNodeTask(parentTaskId+"");
         nodeTask.setNo(nodeTaskId);
-        nodeTask.setIsReady(-1);//未准备
-        nodeTask.setStatus(-1);
+        nodeTask.setIsReady(20);//未准备
+        nodeTask.setStatus(20);
         //因为执行人需要汉卿的计划，所以现在直接指定
         nodeTask.setExecutor(WebUser.getNo());
         Date now=new Date();

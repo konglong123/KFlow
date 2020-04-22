@@ -2240,8 +2240,8 @@ public class Node extends Entity {
 		map.AddTBString(NodeAttr.AutoRunParas, null, "自动运行参数", true, false, 0, 100, 10);
 		map.AddTBString(NodeAttr.SelfParas, null, "启动参数", true, false, 0, 500, 10);
 
-		map.AddTBDateTime(NodeAttr.EarlyStart, null, "最早开始时间", true, false);
-		map.AddTBDateTime(NodeAttr.LaterFinish, null, "最晚完成时间", true, false);
+		map.AddTBDateTime(NodeAttr.EarlyStart,  "2000-01-01 00:00:00","最早开始时间", true, false);
+		map.AddTBDateTime(NodeAttr.LaterFinish, "2000-01-01 00:00:00","最晚完成时间", true, false);
 
 		this.set_enMap(map);
 		return this.get_enMap();

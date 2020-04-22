@@ -19,9 +19,11 @@ function initDgNodeTasks() {
             {field:'no',title: '任务编码',align: 'center',width:10},
             {field:'workId',title: '工作编码',align: 'center',width:10},
             {field:'flowId',title: '流程编码',align: 'center',width:10},
-            {field:'nodeId',title: '当前节点',align: 'center',width:10},
+            {field:'nodeId',title: '节点编码',align: 'center',width:10},
             {field:'totalTime',title: '总工作量',align: 'center',width:10},
             {field:'useTime',title: '已完成工作量',align: 'center',width:10},
+            {field:'preNodeTask',title: '前置任务',align: 'center',width:10},
+            {field:'nextNodeTask',title: '后置任务',align: 'center',width:10},
             {field:'status',title: '状态',align: 'center',width:10,
                 formatter:function (val,rec) {
                     return getNodeTaskStatus(val);
@@ -41,7 +43,7 @@ function initDgNodeTasks() {
 }
 function getNodeTaskStatus(val) {
     switch (val) {
-        case -1:
+        case 20:
             return "未准备";
         case 1:
             return '可以开始';
@@ -59,6 +61,8 @@ function getNodeTaskStatus(val) {
             return "<font color=red>逾期结束</font>"
         case 8:
             return "<font color=#cd853f>警告结束</font>"
+        case 9:
+            return "计划完成"
     }
 }
 function gotoNodeTaskDetail(pkVal) {

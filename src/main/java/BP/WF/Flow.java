@@ -1735,7 +1735,7 @@ public class Flow extends BP.En.EntityNoName {
 					msg.append("@错误:最晚结束没有指定");
 
 
-				// 从表检查。
+				/*// 从表检查。
 				MapDtls dtls = new BP.Sys.MapDtls("ND" + nd.getNodeID());
 				for (MapDtl dtl : dtls.ToJavaList()) {
                     msg.append("@检查明细表:" + dtl.getName());
@@ -1744,7 +1744,7 @@ public class Flow extends BP.En.EntityNoName {
 					} catch (RuntimeException ex) {
                         msg.append("@检查明细表时间出现错误" + ex.getMessage());
 					}
-				}
+				}*/
 
 				MapAttrs mattrs = new MapAttrs("ND" + nd.getNodeID());
 
@@ -1832,7 +1832,7 @@ public class Flow extends BP.En.EntityNoName {
 				}
 				
 				//#region 如果是引用的表单库的表单，就要检查该表单是否有FID字段，没有就自动增加.
-                if (nd.getHisFormType() == NodeFormType.RefOneFrmTree)
+               /* if (nd.getHisFormType() == NodeFormType.RefOneFrmTree)
                 {
                     MapAttr mattr = new MapAttr();
                     mattr.setMyPK(nd.getNodeFrmID() + "_FID");
@@ -1848,7 +1848,7 @@ public class Flow extends BP.En.EntityNoName {
                         GEEntity en = new GEEntity(nd.getNodeFrmID());
                         en.CheckPhysicsTable();
                     }
-                }
+                }*/
                 //#endregion 如果是引用的表单库的表单，就要检查该表单是否有FID字段，没有就自动增加.
 			}
 
@@ -6186,7 +6186,7 @@ public class Flow extends BP.En.EntityNoName {
 
 		// 设置审核组件的高度
 		DBAccess.RunSQL("UPDATE WF_Node SET FWC_H=300,FTC_H=300 WHERE NodeID='" + nd.getNodeID() + "'");
-		CreatePushMsg(nd);
+		//CreatePushMsg(nd);
 		return nd;
 	}
 
