@@ -167,11 +167,15 @@
                 if (row.icon) {
                     icon = row.icon;
                 }
+                var classN="process-step btn btn-small";
+                if (row.active){
+                    classN="process-step  btn-small activeNode"
+                }
                 $(nodeDiv).attr("id", nodeId)
 					.attr("style", row.style)
 					.attr("process_to", row.process_to)
 					.attr("process_id", row.id)
-					.addClass("process-step btn btn-small")//给节点名称添加一个span元素(该处未来可以更改节点形状)
+					.addClass(classN)//给节点名称添加一个span元素(该处未来可以更改节点形状)
 					.html('<span class="process-flag badge ' + badge + '"  alt=' + nodeId + ' ><i class="' + icon + ' icon-white"></i></span>&nbsp;<span id="span_' + row.id + '"  >' + row.process_name + '</span>')
 					.mousedown(function (e) {
 					    if (e.which == 3) { //右键绑定
@@ -188,9 +192,6 @@
 					        }
 					        else if (node.RunModel == 2) {
 					            $('#pmfun span').text("分流:" + nodeID.value);
-					        }
-					        else if (node.RunModel == 3) {
-					            $('#pmfun span').text("分合流:" + nodeID.value);
 					        }
 					        else if (node.RunModel == 4) {
 					            $('#pmfun span').text("子线程:" + nodeID.value);

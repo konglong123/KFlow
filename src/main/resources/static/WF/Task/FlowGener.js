@@ -26,6 +26,7 @@ function initDgGenerFlows() {
             {field:'useTime',title: '已完成工作量',align: 'center',width:10},
             {field:'totalTime',title: '总工作量',align: 'center',width:10},
             {field:'creator',title: '发起人',align: 'center',width:10},
+            {field:'activatedNodes',title: '激活节点',align: 'center',width:20},
             {field:'status',title: '状态',align: 'center',width:10,
                 formatter:function (val,rec) {
                     if(val==1)
@@ -36,7 +37,8 @@ function initDgGenerFlows() {
             {field:'action',title: '操作',align: 'center',width:50,
                 formatter:function(val,rec){
                     var str="<input type='button' value='详细' id='btnToDetail' onclick='gotoGenerFlowDetail(\""+rec.no+"\")'/>";
-                    str+="<input type='button' value='实时进展' id='btnShowProgress' onclick='showProgress(\""+rec.no+"\")'/>";
+                    str+="<input type='button' value='甘特图' id='btnShowProgress' onclick='showProgress(\""+rec.no+"\")'/>";
+                    str+="<input type='button' value='流程图' id='btnShowProgressFlow' onclick='showProgressFlow(\""+rec.no+"\")'/>";
                     return str;
                 }},
 
@@ -142,6 +144,11 @@ function initGantt(generFlowNo) {
 
 function showProgress(no) {
     var url="/WF/WF/Task/FlowGenerDetail.html?GenerFlowNo="+no;
+    var self = window.open(url);
+}
+
+function showProgressFlow(no) {
+    var url="/WF/WF/Admin/CCBPMDesigner/Designer.htm?NodetaskNo="+no+"&type=2";
     var self = window.open(url);
 }
 

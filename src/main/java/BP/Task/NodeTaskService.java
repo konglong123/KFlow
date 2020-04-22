@@ -117,10 +117,10 @@ public class NodeTaskService {
             //更新GenerFlow状态
             GenerFlow generFlow=generFlowManager.getGenerFlowById(Long.parseLong(currentTask.getWorkId()));
             String activatedNodes=generFlow.getActivatedNodes();
-            activatedNodes.replace(currentTask.getNo()+",","");
+            activatedNodes=activatedNodes.replace(currentTask.getNodeId()+",","");
             for (NodeTaskM next:nextTasks){
                 flag=flag&startNodeTask(next);
-                activatedNodes+=next.getNo()+",";
+                activatedNodes+=next.getNodeId()+",";
             }
             generFlow.setActivatedNodes(activatedNodes);
             generFlowManager.updateGenerFlow(generFlow);

@@ -91,7 +91,7 @@ public class FlowController {
         generFlow.setFlowId(Integer.valueOf(flow.getNo()));
         generFlow.setStatus(1);
         generFlow.setCreator(WebUser.getNo());
-        generFlow.setActivatedNodes("");
+        generFlow.setActivatedNodes(flow.getStartNodeID()+",");
         generFlowService.insertGenerFlow(generFlow);
 
         Nodes nodes=new Nodes();

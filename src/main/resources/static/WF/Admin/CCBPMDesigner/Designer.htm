@@ -318,17 +318,6 @@
             var nodeID = document.getElementById("leipi_active_id");
             SetNodeRunModel(nodeID.value, 3);
         });
-        //节点类型--同表单的子线程
-        $('#Node_SubThread0').on('click', function () {
-            var nodeID = document.getElementById("leipi_active_id");
-            SetNodeRunModel(nodeID.value, 4, 0);
-        });
-
-        //节点类型--异表单子线程
-        $('#Node_SubThread1').on('click', function () {
-            var nodeID = document.getElementById("leipi_active_id");
-            SetNodeRunModel(nodeID.value, 4, 1);
-        });
 
         //设置节点类型。
         function SetNodeRunModel(nodeID, runModel, subThreadType) {
@@ -401,9 +390,21 @@
         var flowNo = null;
         $(function () {
             //页面初始化
-            flowNo = GetQueryString("FK_Flow");
-            if (flowNo == undefined || flowNo == null)
-                flowNo = "002";
+            //判断是设计流程，还是查看流程实例进度
+            var activeNodes=null;
+            var type=GetQueryString("type");
+            if (type==2){///查看流程实例进度
+                var generFlow=new Entity("BP.Task.FlowGener");
+                var no=GetQueryString("NodetaskNo");
+                generFlow.No=no;
+                generFlow.RetrieveFromDBSources();
+                flowNo=generFlow.flow_id;
+                var activeNodeStr=generFlow.activated_nodes;
+                activeNodes=activeNodeStr.split(",");
+            }else {
+                flowNo = GetQueryString("FK_Flow");
+            }
+
 
             var alertModal = $('#alertModal');
             var alertModal1 = $('#alertModal1');
@@ -461,9 +462,9 @@
             }
 
             /*步骤数据*/
-            var processData = GenerDrowFlowData();
+            var processData = GenerDrowFlowData(activeNodes);
             //标签数据
-            var labNoteData = GetLabNoteData();
+            var labNoteData = GetLabNoteData(flowNo);
             //console.log(processData);
             /*创建流程设计器*/
             var _canvas = $("#flowdesign_canvas").Flowdesign({
@@ -934,10 +935,7 @@
             $("#lab_span_" + activeId).text(text);
         }
         //获得流程数据并转化为指定格式的json.
-        function GenerDrowFlowData() {
-            flowNo = GetQueryString("FK_Flow");
-            if (flowNo == null || flowNo == undefined)
-                flowNo = "002";
+        function GenerDrowFlowData(activeNodes) {
             //节点. 取出来显示
             var nodes = new Entities("BP.WF.Nodes");
             nodes.Retrieve("FK_Flow", flowNo);
@@ -965,9 +963,18 @@
 
                 strs += "{'id':'" + node.NodeID + "',";
                 strs += "'flow_id':'" + flowNo + "',";
+                strs += "'run_model':'" + node.RunModel + "',";
+
                 strs += "'process_name':'" + node.Name.replace(/(^\s*)|(\s*$)/g, "") + "',";
                 strs += "'process_to':'" + toNodes + "',";
 
+                //查看是否是激活节点
+                if (activeNodes!=null) {
+                    for (var index=0;index<activeNodes.length;index++){
+                        if (activeNodes[index]==node.NodeID)
+                            strs+="'active':true,";
+                    }
+                }
                 //判断是否是开始节点?(此处限制一个流程中节点数目不超过99，否则此处代码有bug)
                 var nodeID = "" + node.NodeID;
                 var str = nodeID.substring(nodeID.length - 2);
