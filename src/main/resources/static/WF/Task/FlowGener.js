@@ -26,7 +26,8 @@ function initDgGenerFlows() {
             {field:'useTime',title: '已完成工作量',align: 'center',width:10},
             {field:'totalTime',title: '总工作量',align: 'center',width:10},
             {field:'creator',title: '发起人',align: 'center',width:10},
-            {field:'activatedNodes',title: '激活节点',align: 'center',width:20},
+            {field:'activatedNodes',title: '激活节点',align: 'center',width:20,
+            formatter:function (val) { return "<span title='" + val + "'>" + val + "</span>" }},
             {field:'status',title: '状态',align: 'center',width:10,
                 formatter:function (val,rec) {
                     if(val==1)

@@ -16,13 +16,16 @@
     <table cellpadding="5">
         <tr>
             <td>任务编码：</td>
-            <td><input class="easyui-textbox" type="text" id="nodeTaskNoQuery"></td>
+            <td><input class="easyui-textbox" type="text" id="nodeTaskNoQueryAll"></td>
             <td>工作编码：</td>
-            <td><input class="easyui-textbox" type="text" id="workIdQuery"></td>
+            <td><input class="easyui-textbox" type="text" id="workIdQueryAll"></td>
             <td>流程编码：</td>
-            <td><input class="easyui-textbox" type="text" id="flowNoQuery"></td>
+            <td><input class="easyui-textbox" type="text" id="flowNoQueryAll"></td>
+
+        </tr>
+        <tr>
             <td>状态：</td>
-            <td><select class="easyui-select" id="statusQuery">
+            <td><select class="easyui-select" id="statusQueryAll">
                 <option value="">所有</option>
                 <option value="1">可以开始</option>
                 <option value="2">已经开始</option>
@@ -34,21 +37,23 @@
                 <option value="8">警告结束</option>
                 <option value="9">未准备</option>
             </select></td>
+            <td>执行人：</td>
+            <td><input class="easyui-textbox" type="text" id="executorQueryAll" ></td>
         </tr>
 
     </table>
     <div style="text-align:right;padding:5px">
-        <button class="easyui-linkbutton" onclick="queryNodeTaskByCondition()" >查询</button>
-        <button class="easyui-linkbutton"  onclick="updateNodeTaskStatus(1)">更新任务状态</button>
+        <button class="easyui-linkbutton" onclick="queryNodeTaskAllByCondition()" >查询</button>
+        <button class="easyui-linkbutton"  onclick="updateNodeTaskStatus(2)">更新任务状态</button>
     </div>
 </div>
 <div id="nodeTasks">
-    <table id="dgNodeTasks" title="节点任务">
+    <table id="dgNodeTasksAll" title="节点任务">
     </table>
 </div>
 <script type="text/javascript">
     $(function(){
-        initDgNodeTasks();
+        initDgNodeTasksAll();
     });
 </script>
 </body>

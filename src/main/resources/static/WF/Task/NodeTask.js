@@ -21,7 +21,7 @@ function initDgNodeTasks() {
             {field:'flowId',title: '流程编码',align: 'center',width:10},
             {field:'nodeId',title: '节点编码',align: 'center',width:10},
             {field:'totalTime',title: '总工作量',align: 'center',width:10},
-            {field:'useTime',title: '已完成工作量',align: 'center',width:10},
+            {field:'useTime',title: '已完成工作量',align: 'center',width:15},
             {field:'preNodeTask',title: '前置任务',align: 'center',width:10},
             {field:'nextNodeTask',title: '后置任务',align: 'center',width:10},
             {field:'status',title: '状态',align: 'center',width:10,
@@ -108,16 +108,20 @@ function doNodeTaskDetail(no) {
     });
 
 }
-
-function updateNodeTaskStatus() {
+//type=1更新自己的任务状态，type=2更新所有任务状态（）
+function updateNodeTaskStatus(type) {
     $.ajax({
         url: "/WF/nodeTask/updateTasksStatus",
-        type: 'GET',
-        data:{
-        },
+        type: 'POST',
+        dataType: 'json',
+        contentType:'application/json',
+        data:JSON.stringify(type),
         success:function (data) {
             alert("更新成功！")
-            $('#dgNodeTasks').datagrid('reload');
+            if (type==1)
+                $('#dgNodeTasks').datagrid('reload');
+            else if (type==2)
+                $('#dgNodeTasksAll').datagrid('reload');
         },
         error:function (date) {
             alert("更新失败！"+date);
@@ -126,14 +130,62 @@ function updateNodeTaskStatus() {
 }
 
 function queryNodeTaskByCondition() {
-    var nodeTaskNo=$("#nodeTaskNoQuery").val().trim();
-    var workId=$("#workIdQuery").val().trim();
-    var flowNo=$("#flowNoQuery").val().trim();
-    var status=$("#statusQuery").val().trim();
     var queryParams = $('#dgNodeTasks').datagrid('options').queryParams;
-    queryParams.nodeTaskNo = nodeTaskNo;
-    queryParams.workId = workId;
-    queryParams.flowNo = flowNo;
-    queryParams.status = status;
+    queryParams.nodeTaskNo = $("#nodeTaskNoQuery").val().trim();
+    queryParams.workId = $("#workIdQuery").val().trim();
+    queryParams.flowNo = $("#flowNoQuery").val().trim();
+    queryParams.status = $("#statusQuery").val().trim();
     $("#dgNodeTasks").datagrid('reload');
+}
+
+function queryNodeTaskAllByCondition() {
+    var queryParams = $('#dgNodeTasksAll').datagrid('options').queryParams;
+    queryParams.nodeTaskNo = $("#nodeTaskNoQueryAll").val().trim();
+    queryParams.workId = $("#workIdQueryAll").val().trim();
+    queryParams.flowNo = $("#flowNoQueryAll").val().trim();
+    queryParams.status = $("#statusQueryAll").val().trim();
+    queryParams.executor=$("#executorQueryAll").val().trim();
+    $("#dgNodeTasksAll").datagrid('reload');
+}
+
+function initDgNodeTasksAll() {
+    $('#dgNodeTasksAll').datagrid({
+        singleSelect:true,
+        autoRowHeight:false,
+        pagination:true,
+        pageSize: 10,
+        pageList:[10,25,50,100],
+        nowrap:false,//数据多行显示
+        fitColumns:true,//表头与数据对齐
+        url:"/WF/nodeTask/getNodeTasks",
+        queryParams: {
+            nodeTaskNo:"",
+            workId:"",
+            flowNo:"",
+            status:"",
+            executor:""
+        },
+        columns:[[
+            {field:'no',title: '任务编码',align: 'center',width:10},
+            {field:'workId',title: '工作编码',align: 'center',width:10},
+            {field:'flowId',title: '流程编码',align: 'center',width:10},
+            {field:'nodeId',title: '节点编码',align: 'center',width:10},
+            {field:'totalTime',title: '总工作量',align: 'center',width:10},
+            {field:'useTime',title: '已完成工作量',align: 'center',width:15},
+            {field:'preNodeTask',title: '前置任务',align: 'center',width:10},
+            {field:'nextNodeTask',title: '后置任务',align: 'center',width:10},
+            {field:'executor',title: '执行人',align: 'center',width:10},
+            {field:'status',title: '状态',align: 'center',width:10,
+                formatter:function (val,rec) {
+                    return getNodeTaskStatus(val);
+                }},
+            {field:'action',title: '操作',align: 'center',width:50,
+                formatter:function(val,rec){
+                    var str="<input type='button' value='详细' id='btnToDetail' onclick='gotoNodeTaskDetail(\""+rec.no+"\")'/>";
+                    return str;
+                }},
+
+
+        ]]
+    });
 }

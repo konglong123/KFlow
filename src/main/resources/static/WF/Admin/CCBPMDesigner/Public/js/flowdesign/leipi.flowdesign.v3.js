@@ -169,7 +169,7 @@
                 }
                 var classN="process-step btn btn-small";
                 if (row.active){
-                    classN="process-step  btn-small activeNode"
+                    classN="process-step  btn-small activeNode";
                 }
                 $(nodeDiv).attr("id", nodeId)
 					.attr("style", row.style)

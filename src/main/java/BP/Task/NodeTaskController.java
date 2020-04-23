@@ -51,7 +51,11 @@ public class NodeTaskController {
     public void getNodeTaskList(HttpServletRequest request, HttpServletResponse response){
         try {
             NodeTaskM con=new NodeTaskM();
-            con.setExecutor(WebUser.getNo());
+            String executor=request.getParameter("executor");
+            if (executor!=null&&!executor.equals(""))
+                con.setExecutor(executor);
+            else
+                con.setExecutor(WebUser.getNo());
             String nodeTaskNo=request.getParameter("nodeTaskNo");
             if (!StringUtils.isEmpty(nodeTaskNo))
                 con.setNo(Long.parseLong(nodeTaskNo));
@@ -137,10 +141,11 @@ public class NodeTaskController {
     */
     @RequestMapping("updateTasksStatus")
     @ResponseBody
-    public JSONObject updateTasksStatus(){
+    public JSONObject updateTasksStatus(@RequestBody int type){
         NodeTaskM con=new NodeTaskM();
         try {
-            con.setExecutor(WebUser.getNo());//更新所执行任务
+            if (type==1)
+                con.setExecutor(WebUser.getNo());//更新所执行任务
             List<NodeTaskM> nodeTaskMList=nodeTaskService.findNodeTaskList(con);
             for (NodeTaskM temp:nodeTaskMList){
                 int status=nodeTaskService.getTaskStatus(temp);
