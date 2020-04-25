@@ -528,7 +528,7 @@ public class Node extends Entity {
 
 	@Override
 	protected boolean beforeUpdate() throws Exception {
-		if (this.getIsStartNode()) {
+		/*if (this.getIsStartNode()) {
 			this.SetValByKey(BtnAttr.ReturnRole, ReturnRole.CanNotReturn.getValue());
 			this.SetValByKey(BtnAttr.ShiftEnable, 0);
 			// this.SetValByKey(BtnAttr.CCRole, 0);
@@ -617,7 +617,7 @@ public class Node extends Entity {
 			workCheckAth.SetValByKey("AtPara",
 					"@IsWoEnablePageset=1@IsWoEnablePrint=1@IsWoEnableViewModel=1@IsWoEnableReadonly=0@IsWoEnableSave=1@IsWoEnableWF=1@IsWoEnableProperty=1@IsWoEnableRevise=1@IsWoEnableIntoKeepMarkModel=1@FastKeyIsEnable=0@IsWoEnableViewKeepMark=1@FastKeyGenerRole=");
 			workCheckAth.Insert();
-		}
+		}*/
 		return super.beforeUpdate();
 	}
 

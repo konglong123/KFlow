@@ -153,17 +153,11 @@
 
 
         //初始化原步骤
-        var lastProcessId = 0;
         var processData = defaults.processData;
         if (processData.list) {
             $.each(processData.list, function (i, row) {
                 var nodeDiv = document.createElement('div');
                 var nodeId = "window" + row.id, badge = 'badge-inverse', icon = 'icon-star';
-                if (lastProcessId == 0)//第一步
-                {
-                    badge = 'badge-info';
-                    icon = 'icon-play';
-                }
                 if (row.icon) {
                     icon = row.icon;
                 }
@@ -171,6 +165,7 @@
                 if (row.active){
                     classN="process-step  btn-small activeNode";
                 }
+
                 $(nodeDiv).attr("id", nodeId)
 					.attr("style", row.style)
 					.attr("process_to", row.process_to)
@@ -194,8 +189,10 @@
 					            $('#pmfun span').text("分流:" + nodeID.value);
 					        }
 					        else if (node.RunModel == 4) {
-					            $('#pmfun span').text("子线程:" + nodeID.value);
-					        }
+					            $('#pmfun span').text("子流程:" + nodeID.value);
+					        }else if (node.RunModel == 9) {
+                                $('#pmfun span').text("决策:" + nodeID.value);
+                            }
 					        $(this).contextMenu('processMenu', contextmenu);
 					        ////$(this).contextMenu('processMenu3', contextmenu);
 					        //$(this).mouseenter(function () {
@@ -204,8 +201,6 @@
 					    }
 					});
                 _canvas.append(nodeDiv);
-                //索引变量
-                lastProcessId = row.id;
             }); //each
         }
         //显示标签

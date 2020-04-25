@@ -30,7 +30,9 @@ public enum RunModel
 	 子线程
 	 
 	*/
-	SubThread(4);
+	SubThread(4),
+	//决策
+	Judge(9);
 
 	private int intValue;
 	private static java.util.HashMap<Integer, RunModel> mappings;

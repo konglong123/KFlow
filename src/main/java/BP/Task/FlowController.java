@@ -42,9 +42,9 @@ public class FlowController {
         JSONObject result=new JSONObject();
         try {
             Long workGroupId= FeignTool.getSerialNumber("BP.WF.Work");
-
+            Long parentWorkId=0-FeignTool.getSerialNumber("BP.WF.ParentWork");
             Flow flow=new Flow(flowNo);
-            if (startFlow(workGroupId,-1L,-1L,flow)){
+            if (startFlow(workGroupId,parentWorkId,-1L,flow)){
                 //起始节点任务状态更新为可开始
                 NodeTaskM con=new NodeTaskM();
                 con.setWorkGroupId(workGroupId+"");

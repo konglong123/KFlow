@@ -4,6 +4,7 @@ import BP.DA.DBAccess;
 import BP.DA.DataRow;
 import BP.DA.DataTable;
 import BP.DA.Paras;
+import BP.Judge.JudgeTool;
 import BP.Port.Dept;
 import BP.Port.Emp;
 import BP.Port.EmpAttr;
@@ -158,7 +159,25 @@ public class NodeTaskService {
         return true;
     }
 
+    /**
+    *@Description: 决策节点根据条件选择下传任务
+    *@Param:
+    *@return:
+    *@Author: Mr.kong
+    *@Date: 2020/4/25
+    */
     public List getCanStartNodeTask(NodeTaskM nodeTaskM){
+        try{
+            Node node=new Node(nodeTaskM.getNodeId());
+            int runModel=node.GetValIntByKey(NodeAttr.RunModel);
+            switch (runModel){
+                case 9:
+                    List<String> nextNodes=JudgeTool.judge(nodeTaskM);
+                    return nodeTaskManage.getNodeTaskByNodeIdsAndParentTaskId(nodeTaskM.getParentNodeTask(),nextNodes);
+            }
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
 
         return getAfterNodeTask(nodeTaskM);
     }

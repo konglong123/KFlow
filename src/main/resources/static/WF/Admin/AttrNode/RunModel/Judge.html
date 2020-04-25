@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>决策规则</title>
+    <link href="../../../Scripts/easyUI/themes/default/easyui.css" rel="stylesheet" type="text/css" />
+    <script src="../../../Scripts/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="../../../Scripts/easyUI/jquery.easyui.min.js" type="text/javascript"></script>
+    <script src="../../../Scripts/QueryString.js" type="text/javascript"></script>
+    <script src="../../../Scripts/EasyUIUtility.js" type="text/javascript"></script>
+    <script src="RunModel.js" type="text/javascript"></script>
+</head>
+<body>
+<fieldset>
+    <input type="radio" name="judgeType" value="1">决策表达式：
+    <br>
+    <textarea id="expression" rows="5" cols="120" placeholder="请输入表达式"></textarea>
+    <br>
+
+    <input type="radio" name="judgeType" value="2">实现类Bean：
+    <br>
+    <input id="beanId" type="text" style="width: 80%" placeholder="实现BP.Judge.JudgeCondition类">
+    <br>
+
+</fieldset>
+    <fieldset>
+        <legend>欢迎使用KFLow</legend>
+        <ul>
+            <li>在决策节点允许通过两个方式来决策下一步该如何流转。</li>
+            <li>（1）决策表达式</li>
+            <li>    要求表达式的计算结果必须是一个字符串，</li>
+            <li>    比如"dayCount>10? 1501:1502}",这个表达式就表示在流程实例运行到当前节点后，</li>
+            <li>    如果dayCount大于10， 那么将选择往节点编码为"1501"方向流转，否则就选择"1502"方向流转</li>
+            <li>（2）实现类Bean</li>
+            <li>    通过指定一个实现了BP.Judge.JudgeCondition接口的类，</li>
+            <li>    接口提供了handle方法，该方法将返回下一步的流转节点id</li>
+            <li>    对于这个bean的id除了可以手工输入外，还可以通过右边的“选择”按钮连接远程实现点击选择</li>
+        </ul>
+    </fieldset>
+</body>
+</html>

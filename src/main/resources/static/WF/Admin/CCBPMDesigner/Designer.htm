@@ -186,20 +186,9 @@
         </div>
     </div>
     <!--contextmenu div-->
-    <style type="text/css">
-        /*#mainul {
-            padding: 1px 0px !important;
-        }
-            #mainul li {
-                padding: 1px 2px !important;
-            }*/
-        icon-wrench
-        {
 
-            }
-        </style>
         <div id="processMenu" style="display: none;">
-            <ul id="mainul">
+            <ul id="mainul" style="white-space: nowrap">
                 <li id="pmAttribute"><i class="icon-cog"></i>&nbsp;<span class="_label">节点属性</span></li>
                 <li id="pmFrmSln"><i class="icon-th"></i>&nbsp;<span class="_label">表单方案</span></li>
                 <li id="pmFrmD"><i class="icon-comment"></i>&nbsp;<span class="_label">设计节点表单</span></li>
@@ -211,16 +200,19 @@
                 <li id="Li1"><i class="icon-plus"></i>&nbsp;<span class="_label" onclick="alert('用鼠标按住节点icon,然后拖拉会出现连接线，然后指向要连接到的节点.');">增加连接线</span></li>
             </ul>
         </div>
-        <div id="processMenu3" style="padding: 0px; position: absolute; background: #fff;
+        <div id="processMenu3" style="padding: 2px; position: absolute; background: #fff;
             display: none; font-family: verdana, helvetica, arial, sans-serif; font-size: 12px;
             z-index: 501;">
-            <ul style="margin: 0px 0px;">
+            <ul style="margin: 0px 0px;" style="white-space: nowrap">
                 <li id="Node_Ordinary"><i class="icon-tag"></i>&nbsp;<span class="_label">普通</span></li>
                 <li id="Node_FL"><i class="icon-tags"></i>&nbsp;<span class="_label">分流</span></li>
                 <li id="Node_HL"><i class="icon-tags"></i>&nbsp;<span class="_label">合流</span></li>
-                <li id="Node_FHL"><i class="icon-tags"></i>&nbsp;<span class="_label">分合流</span></li>
+               <!-- <li id="Node_FHL"><i class="icon-tags"></i>&nbsp;<span class="_label">分合流</span></li>
                 <li id="Node_SubThread0"><i class="icon-tag"></i>&nbsp;<span class="_label">同表单子线程</span></li>
                 <li id="Node_SubThread1"><i class="icon-tag"></i>&nbsp;<span class="_label">异表单子线程</span></li>
+            -->
+                <li id="Node_ZLC"><i class="icon-tags"></i>&nbsp;<span class="_label">子流程</span></li>
+                <li id="Node_JC"><i class="icon-tags"></i>&nbsp;<span class="_label">决策</span></li>
             </ul>
         </div>
         <div id="canvasMenu" style="display: none;">
@@ -249,21 +241,6 @@
             <!--div class="process-step btn" style="left: 189px; top: 340px;"><span class="process-num badge badge-inverse"><i class="icon-star icon-white"></i>3</span> 步骤3</div-->
         </div>
 
-<!--    <script type="text/javascript" src="../CCBPMDesigner/js/script.min.js"></script>-->
-<!--    <script>-->
-<!--        //自适应-->
-<!--        // var myCanvas = document.createElement("canvas");-->
-<!--        // myCanvas.setAttribute("width", screen.availWidth);-->
-<!--        // myCanvas.setAttribute("height", screen.availHeight);-->
-<!--        // myCanvas.setAttribute("id", "myCanvas");-->
-<!--        // document.body.appendChild(myCanvas);-->
-<!--        // $(function() {-->
-<!--        //     //添加窗口尺寸改变响应监听-->
-<!--        //     $(window).resize(resizeCanvas);-->
-<!--        //     //页面加载后先设置一下canvas大小-->
-<!--        //     resizeCanvas();-->
-<!--        // });-->
-
         <script src="../../Scripts/jquery-1.7.2.min.js" type="text/javascript"></script>
         <script type="text/javascript" src="Public/js/jquery-1.7.2.min.js?2025"></script>
         <script type="text/javascript" src="Public/css/bootstrap/js/bootstrap.min.js?2025"></script>
@@ -282,7 +259,7 @@
             }
 
         #processMenu3 li {
-            padding: 0px 0px 1px 5px;
+            padding: 1px 1px 1px 5px;
         }
 
             #processMenu3 li:hover {
@@ -334,10 +311,15 @@
             var nodeID = document.getElementById("leipi_active_id");
             SetNodeRunModel(nodeID.value, 1);
         });
-        //节点类型--分合流
-        $('#Node_FHL').on('click', function () {
+        //节点类型--决策
+        $('#Node_JC').on('click', function () {
             var nodeID = document.getElementById("leipi_active_id");
-            SetNodeRunModel(nodeID.value, 3);
+            SetNodeRunModel(nodeID.value, 9);
+        });
+        //节点类型--子流程
+        $('#Node_ZLC').on('click', function () {
+            var nodeID = document.getElementById("leipi_active_id");
+            SetNodeRunModel(nodeID.value, 4);
         });
 
         //设置节点类型。
@@ -1000,12 +982,30 @@
                 var nodeID = "" + node.NodeID;
                 var str = nodeID.substring(nodeID.length - 2);
 
+                //不同节点类型，采用不同icon
                 if (str == "01") {
-                    // strs += "'icon':'icon-ok',";
+                    strs += "'icon':'icon-play',";
                 } else if (toNodes == "") {
                     strs += "'icon':'icon-ok',";
                 } else {
                     /* 如果是其他的情况,就要考虑分合流 */
+                    switch (node.RunModel) {
+                        case 0:
+                            strs+="'icon':'icon-star',";
+                            break;
+                        case 1:
+                            strs+="'icon':'icon-heliu',";
+                            break;
+                        case 2:
+                            strs+="'icon':'icon-fenliu',";
+                            break;
+                        case 4:
+                            strs+="'icon':'icon-subflow',";
+                            break;
+                        case 9:
+                            strs+="'icon':'icon-judge',";
+                            break;
+                    }
                 }
 
                 strs += "'style':'width:auto;minWidth:121px;height:41px;line-height:41px;color:#0e76a8;left:" + node.X + "px" + ";top:" + node.Y + "px;'";

@@ -540,6 +540,12 @@ public class NodeExt extends Entity
         rm.refMethodType=  RefMethodType.RightFrameOpen ;
         map.AddRefMethod(rm);
 
+        rm = new RefMethod();
+        rm.Title = "节点流转规则";
+        rm.Icon = "../../WF/Img/Guide.png";
+        rm.ClassMethodName = this.toString() + ".RunModel";
+        rm.refMethodType=  RefMethodType.RightFrameOpen ;
+        map.AddRefMethod(rm);
 
         rm = new RefMethod();
         rm.Title = "节点事件"; // "调用事件接口";
@@ -847,6 +853,24 @@ public class NodeExt extends Entity
 	 */
 	public final String DoResources(){
 	    return BP.WF.Glo.getCCFlowAppPath() + "WF/Admin/AttrNode/Resources/Resources.htm?FK_Node=" + this.getNodeID();
+    }
+
+    public final String RunModel(){
+	    String runModel=this.GetValStrByKey(NodeAttr.RunModel);
+	    String url;
+	    int judgeRuleId=0;
+	    switch (runModel){
+            case "9":
+                url="WF/Comm/En.htm?EnName=BP.Judge.JudgeRule&PKVal=" + judgeRuleId;
+                break;
+            case "4":
+                url="Subflow.html";
+                break;
+                default:
+                    url="RunModel.html";
+
+        }
+        return BP.WF.Glo.getCCFlowAppPath() +url;
     }
 
 	/** 

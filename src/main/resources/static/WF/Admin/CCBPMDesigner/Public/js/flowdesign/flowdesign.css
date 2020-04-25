@@ -139,3 +139,18 @@ html,body{height:100%;}
   border-bottom: 5px solid transparent;
   border-left: 5px solid transparent;
 }
+
+.icon-judge{
+  background:url('../../../Img/judge.svg') no-repeat center center;
+}
+
+.icon-heliu{
+  background:url('../../../Img/huihe.svg') no-repeat center center;
+}
+.icon-fenliu{
+  background:url('../../../Img/fenzhi.svg') no-repeat center center;
+}
+
+.icon-subflow{
+  background:url('../../../Img/subflow.svg') no-repeat center center;
+}
