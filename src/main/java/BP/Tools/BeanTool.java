@@ -1,6 +1,7 @@
 package BP.Tools;
-
 import org.springframework.context.ConfigurableApplicationContext;
+
+import java.util.Map;
 
 /**
  * @program: kflow-web
@@ -13,5 +14,14 @@ public class BeanTool {
 
     public static <T> T getBean(Class<T> c){
         return applicationContext.getBean(c);
+    }
+
+    public static <T> T getBean(Class<T> c,String beanId){
+        Map<String, T> beans=applicationContext.getBeansOfType(c);
+        return beans.get(beanId);
+    }
+
+    public static  <T> Map<String,T> getBeans(Class<T> c){
+        return applicationContext.getBeansOfType(c);
     }
 }

@@ -39,6 +39,7 @@ public class JudgeRule extends EntityNo {
         Map map = new Map("k_judge_rule", "决策规则");
         map.AddTBStringPK(JudgeRuleAttr.No, null, "ID", true, true, 1, 10, 3);
         map.AddTBString(JudgeRuleAttr.NodeId, null, "节点编码", true, true, 0, 50, 50);
+        map.AddTBString(JudgeRuleAttr.NextNodeId, null, "流向节点编码", true, true, 0, 50, 50);
         map.AddDDLSysEnum(JudgeRuleAttr.Type, 0, "决策规则方案", true, false, JudgeRuleAttr.Type,
                 "@1=决策表达式@2=决策Bean");
         map.AddTBStringDoc(JudgeRuleAttr.Expression, null, "表达式", true, true);
@@ -48,4 +49,5 @@ public class JudgeRule extends EntityNo {
         this.set_enMap(map);
         return this.get_enMap();
     }
+
 }

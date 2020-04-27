@@ -1,8 +1,10 @@
 package BP.Judge;
 
 import BP.Sys.MapData;
+import BP.Tools.BeanTool;
 import BP.WF.Node;
 import BP.springCloud.entity.NodeTaskM;
+import org.springframework.context.ApplicationContext;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -24,7 +26,7 @@ public class JudgeTool {
     *@Author: Mr.kong
     *@Date: 2020/4/25
     */
-    public static String judge(MapData data,String expression) throws Exception{
+    public static boolean judge(MapData data,String expression) throws Exception{
         //从expression中顺序抽取参数
         List<String> params=new ArrayList<>();
         for (String temp:expression.split("\\{")){
@@ -45,30 +47,41 @@ public class JudgeTool {
         engine.put("st", st);
         Object result2 = engine.eval(str2);
         System.out.println("结果类型:" + result2.getClass().getName() + ",结果:" + result2);
-        return null;
+        return true;
     }
 
     /**
-    *@Description: 调用决策bean，判断
-    *@Param:
-    *@return:  返回流向下一节点id
-    *@Author: Mr.kong
-    *@Date: 2020/4/25
-    */
-    public static String judge(NodeTaskM nodeTaskM,JudgeCondition judgeCondition){
-        return null;
-    }
-
-    /**
-    *@Description: 决策下发节点id
+    *@Description: 决策下发节点id列表
     *@Param:
     *@return:
     *@Author: Mr.kong
     *@Date: 2020/4/25
     */
     public static List<String> judge(NodeTaskM nodeTaskM) throws Exception{
-        Node node=new Node(nodeTaskM.getNodeId());
-        return null;
+        JudgeRules rules=new JudgeRules();
+        String nodeId=nodeTaskM.getNodeId();
+        rules.Retrieve(JudgeRuleAttr.NodeId,nodeId);
+        List<String> nextNodeIds=new ArrayList<>();
+        List<JudgeRule> ruleList=rules.toList();
+        MapData mapData=new MapData("ND"+nodeId);
+        for (JudgeRule rule:ruleList){
+            int type=rule.GetValIntByKey(JudgeRuleAttr.Type);
+            switch (type){
+                case 1:
+                    if (judge(mapData,rule.GetValStrByKey(JudgeRuleAttr.Expression)))
+                        nextNodeIds.add(rule.GetValStrByKey(JudgeRuleAttr.NextNodeId));
+                    break;
+                case 2:
+                    JudgeCondition condition= BeanTool.getBean(JudgeCondition.class,rule.GetValStrByKey(JudgeRuleAttr.BeanId));
+                    if (condition.judge(nodeTaskM))
+                        nextNodeIds.add(rule.GetValStrByKey(JudgeRuleAttr.NextNodeId));
+                    break;
+            }
+        }
+
+        return nextNodeIds;
     }
+
+
 
 }

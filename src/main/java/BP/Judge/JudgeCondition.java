@@ -17,5 +17,5 @@ public interface JudgeCondition {
     *@Author: Mr.kong
     *@Date: 2020/4/25
     */
-    String judge(NodeTaskM taskM);
+    boolean judge(NodeTaskM taskM);
 }
