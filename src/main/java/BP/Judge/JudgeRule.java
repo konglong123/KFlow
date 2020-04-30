@@ -2,7 +2,10 @@ package BP.Judge;
 
 import BP.En.EntityNo;
 import BP.En.Map;
-import BP.Task.FlowGenerAttr;
+import BP.Web.WebUser;
+import BP.springCloud.tool.FeignTool;
+
+import java.util.Date;
 
 /**
  * @program: kflow-web
@@ -37,17 +40,24 @@ public class JudgeRule extends EntityNo {
         }
 
         Map map = new Map("k_judge_rule", "决策规则");
-        map.AddTBStringPK(JudgeRuleAttr.No, null, "ID", true, true, 1, 10, 3);
-        map.AddTBString(JudgeRuleAttr.NodeId, null, "节点编码", true, true, 0, 50, 50);
-        map.AddTBString(JudgeRuleAttr.NextNodeId, null, "流向节点编码", true, true, 0, 50, 50);
-        map.AddDDLSysEnum(JudgeRuleAttr.Type, 0, "决策规则方案", true, false, JudgeRuleAttr.Type,
-                "@1=决策表达式@2=决策Bean");
-        map.AddTBStringDoc(JudgeRuleAttr.Expression, null, "表达式", true, true);
-        map.AddTBStringDoc(JudgeRuleAttr.BeanId, null, "BeanId", true, true);
-        map.AddTBStringDoc(JudgeRuleAttr.Context, null, "备注", true, true);
+        map.AddTBStringPK(JudgeRuleAttr.No, null, "ID", true, true, 30, 50, 100);
+        map.AddTBString(JudgeRuleAttr.Alias, null, "别名", true, false, 30, 50, 100);
+        map.AddDDLSysEnum(JudgeRuleAttr.Type, 0, "决策规则方案", true, true, JudgeRuleAttr.Type,
+                "@1=表达式@2=Bean");
+        map.AddTBStringDoc(JudgeRuleAttr.Expression, null, "表达式", true, false);
+        map.AddTBStringDoc(JudgeRuleAttr.BeanId, null, "BeanId", true, false);
+        map.AddTBStringDoc(JudgeRuleAttr.Context, null, "备注", true, false);
+        map.AddTBString(JudgeRuleAttr.Creator, null, "创建者", true, true, 30, 50, 100);
 
         this.set_enMap(map);
         return this.get_enMap();
     }
 
+    @Override
+    protected boolean beforeInsert() throws Exception {
+        long id= FeignTool.getSerialNumber("BP.Judge.JudgeRule");
+        this.SetValByKey(JudgeRuleAttr.No,id);
+        this.SetValByKey(JudgeRuleAttr.Creator, WebUser.getNo());
+        return super.beforeInsert();
+    }
 }

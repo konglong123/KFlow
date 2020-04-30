@@ -1707,19 +1707,6 @@ public class Flow extends BP.En.EntityNoName {
 
                 msg.append("@信息: -------- 开始检查节点ID:(" + nd.getNodeID() + ")名称:(" + nd.getName() + ")信息 -------------");
 
-				//检查子流程是否存在
-                msg.append("@信息:检查子流程");
-                String[] subFlowNos=nd.getSubFlowNos();
-                if (subFlowNos!=null){
-                    Flows flows=new Flows();
-                    for (String subFlowNo:subFlowNos){
-                        flows.Retrieve(FlowAttr.No,subFlowNo);
-                        if (flows.size()<1){
-                            msg.append("@错误:子流程"+subFlowNo+"不存在");
-                        }
-                    }
-                }
-
                 //检查节点关键字段（预计总工作量、）
                 msg.append("@信息:检查节点关键信息");
                 String totalTime=nd.GetValStrByKey(NodeAttr.Doc);
@@ -1733,18 +1720,6 @@ public class Flow extends BP.En.EntityNoName {
 				Date laterFinish=nd.GetValDateTime(NodeAttr.LaterFinish);
 				if (laterFinish==null)
 					msg.append("@错误:最晚结束没有指定");
-
-
-				/*// 从表检查。
-				MapDtls dtls = new BP.Sys.MapDtls("ND" + nd.getNodeID());
-				for (MapDtl dtl : dtls.ToJavaList()) {
-                    msg.append("@检查明细表:" + dtl.getName());
-					try {
-						dtl.getHisGEDtl().CheckPhysicsTable();
-					} catch (RuntimeException ex) {
-                        msg.append("@检查明细表时间出现错误" + ex.getMessage());
-					}
-				}*/
 
 				MapAttrs mattrs = new MapAttrs("ND" + nd.getNodeID());
 
@@ -1830,26 +1805,7 @@ public class Flow extends BP.En.EntityNoName {
 					}
                     msg.append("@(" + nd.getName() + ")方向条件检查完成.....");
 				}
-				
-				//#region 如果是引用的表单库的表单，就要检查该表单是否有FID字段，没有就自动增加.
-               /* if (nd.getHisFormType() == NodeFormType.RefOneFrmTree)
-                {
-                    MapAttr mattr = new MapAttr();
-                    mattr.setMyPK(nd.getNodeFrmID() + "_FID");
-                    if (mattr.RetrieveFromDBSources() == 0)
-                    {
-                        mattr.setKeyOfEn("FID");
-                        mattr.setFK_MapData(nd.getNodeFrmID());
-                        mattr.setMyDataType(DataType.AppInt);
-                        mattr.setUIVisible(false);
-                        mattr.setName("FID(自动增加)");
-                        mattr.Insert();
 
-                        GEEntity en = new GEEntity(nd.getNodeFrmID());
-                        en.CheckPhysicsTable();
-                    }
-                }*/
-                //#endregion 如果是引用的表单库的表单，就要检查该表单是否有FID字段，没有就自动增加.
 			}
 
 
@@ -1861,28 +1817,30 @@ public class Flow extends BP.En.EntityNoName {
 
             msg.append("@流程报表检查完成...");
 
-			// #region 检查如果是合流节点必须不能是由上一个节点指定接受人员。 需要翻译.
 			for (Node nd : nds.ToJavaList()) {
 				// 如果是合流节点.
-				if (nd.getHisNodeWorkType() == NodeWorkType.WorkHL || nd.getHisNodeWorkType() == NodeWorkType.WorkFHL) {
+				/*if (nd.getHisRunModel()==RunModel.HL) {
 					if (nd.getHisDeliveryWay() == DeliveryWay.BySelected)
                         msg.append("@错误:节点ID:" + nd.getNodeID() + " 名称:" + nd.getName()
 								+ "是合流或者分合流节点，但是该节点设置的接收人规则为由上一步指定，这是错误的，应该为自动计算而非每个子线程人为的选择.");
-				}
+				}*/
 
 				// 子线程节点
-				if (nd.getHisNodeWorkType() == NodeWorkType.SubThreadWork) {
-					if (nd.getCondModel() == CondModel.ByUserSelected) {
-						Nodes toNodes = nd.getHisToNodes();
-						if (toNodes.size() == 1) {
+				if (nd.getHisRunModel() == RunModel.SubThread) {
+					//检查子流程是否存在
+					msg.append("@信息:检查子流程");
+					String[] subFlowNos=nd.getSubFlowNos();
+					if (subFlowNos!=null){
+						Flows flows=new Flows();
+						for (String subFlowNo:subFlowNos){
+							flows.Retrieve(FlowAttr.No,subFlowNo);
+							if (flows.size()<1){
+								msg.append("@错误:子流程"+subFlowNo+"不存在");
+							}
 						}
 					}
 				}
 			}
-			// #endregion 检查如果是合流节点必须不能是由上一个节点指定接受人员。
-
-			// 检查流程.
-			/*Node.CheckFlow(this);*/
 
 			return msg.toString();
 		} catch (RuntimeException ex) {

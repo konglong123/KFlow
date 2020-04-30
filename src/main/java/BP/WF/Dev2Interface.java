@@ -5902,7 +5902,6 @@ public class Dev2Interface {
 		gwl.setIsPass(false);
 		gwl.setIsEnable(true);
 		gwl.setIsRead(false);
-		gwl.setWhoExeIt(nd.getWhoExeIt());
 		// gwl.Sender = BP.Web.WebUser.getNo();
 		gwl.setHungUpTimes(0);
 		gwl.setFID(gwf.getFID());

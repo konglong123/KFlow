@@ -11,7 +11,7 @@ public class ResourceAttr extends BP.En.EntityNoNameAttr {
 
     public static final String Id = "Id";
 
-    public static final String No = "no";
+    public static final String No = "No";
 
     public static final String Kind = "kind";
 

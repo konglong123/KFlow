@@ -224,7 +224,6 @@ function learnModel() {
     });
 }
 function saveModel(type) {
-    debugger
     $.ajax({
         url: "/WF/NLPModel/saveNLPModel",
         type: 'POST',

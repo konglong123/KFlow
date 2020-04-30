@@ -292,10 +292,10 @@ public class NodeAttr
 	*/
 	public static final String RunModel = "RunModel";
 	/** 
-	 谁执行它？
+	 决策节点，匹配节点编号
 	 
 	*/
-	public static final String WhoExeIt = "WhoExeIt";
+	public static final String JudgeNodeId = "JudgeNodeId";
 	/** 
 	 IsSubFlow
 	 

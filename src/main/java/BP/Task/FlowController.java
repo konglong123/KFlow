@@ -8,14 +8,18 @@ import BP.Web.WebUser;
 import BP.springCloud.entity.GenerFlow;
 import BP.springCloud.entity.NodeTaskM;
 import BP.springCloud.tool.FeignTool;
+import BP.springCloud.tool.PageTool;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
 
@@ -166,6 +170,16 @@ public class FlowController {
         return flag;
     }
 
-
+    @RequestMapping("getAfterNodes")
+    public JSONObject getAfterNodes(HttpServletRequest request, HttpServletResponse response,@RequestParam String nodeId){
+        try {
+            Node node=new Node(nodeId);
+            Nodes nodes=node.getCanStartNode();
+            PageTool.TransToResult(nodes,request,response);
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+        return null;
+    }
 
 }

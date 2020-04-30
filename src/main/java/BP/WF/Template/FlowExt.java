@@ -1324,7 +1324,6 @@ public class FlowExt extends EntityNoName
 				gwl.setDTOfWarning(gwf.getSDTOfNode());
 				//gwl.setWarningHour(nd.getWarningHour());
 				gwl.setIsEnable(true);
-				gwl.setWhoExeIt(nd.getWhoExeIt());
 				gwl.Insert();
 			}
 

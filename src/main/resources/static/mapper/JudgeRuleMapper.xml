@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="BP.springCloud.dao.JudgeRuleDao">
+	<resultMap id="BaseResultMap" type="JudgeRuleM">
+		<id column="No" property="No" jdbcType="INTEGER" />
+		<result column="alias" property="alias" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="TINYINT" />
+		<result column="expression" property="expression" jdbcType="VARCHAR" />
+		<result column="bean_id" property="beanId" jdbcType="VARCHAR" />
+		<result column="context" property="context" jdbcType="VARCHAR" />
+		<result column="creator" property="creator" jdbcType="VARCHAR" />
+		<result column="is_test" property="isTest" jdbcType="TINYINT" />
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		<trim prefix="" suffix="" suffixOverrides=",">
+		No,
+		alias,
+		type,
+		expression,
+		bean_id,
+		context,
+		creator,
+		is_test,
+		</trim>
+	</sql>
+	
+	<!-- 根据Id查询 -->
+	<select id="getJudgeRuleM" resultMap="BaseResultMap" parameterType="int">
+		select
+		<include refid="Base_Column_List" />
+		from k_judge_rule
+		where No = #{No,jdbcType=INTEGER}
+	</select>
+	
+	<!-- 根据条件查询列表 -->
+	<select id="findJudgeRuleMList" resultMap="BaseResultMap" parameterType="JudgeRuleM">
+		select
+		<include refid="Base_Column_List" />
+		from k_judge_rule
+		<where>   
+		 1=1
+			<trim>
+				<if test="No != 0">
+					AND No = #{No,jdbcType=INTEGER}
+				</if>
+				<if test="alias != null and alias !=''">
+					AND alias = #{alias,jdbcType=VARCHAR}
+				</if>
+				<if test="type != 0">
+					AND type = #{type,jdbcType=TINYINT}
+				</if>
+				<if test="expression != null and expression !=''">
+					AND expression = #{expression,jdbcType=VARCHAR}
+				</if>
+				<if test="beanId != null and beanId !=''">
+					AND bean_id = #{beanId,jdbcType=VARCHAR}
+				</if>
+				<if test="context != null and context !=''">
+					AND context = #{context,jdbcType=VARCHAR}
+				</if>
+				<if test="creator != null and creator !=''">
+					AND creator = #{creator,jdbcType=VARCHAR}
+				</if>
+				<if test="isTest != 0">
+					AND is_test = #{isTest,jdbcType=TINYINT}
+				</if>
+			</trim>
+		</where>
+	</select>
+	<!-- 插入实体 -->
+	<insert id="insertJudgeRuleM" parameterType="JudgeRuleM" useGeneratedKeys="true" keyProperty="No">
+		insert into k_judge_rule 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		No,
+		alias,
+		type,
+		expression,
+		bean_id,
+		context,
+		creator,
+		is_test,
+		</trim>
+		values 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		#{No,jdbcType=INTEGER}, 
+		#{alias,jdbcType=VARCHAR}, 
+		#{type,jdbcType=TINYINT}, 
+		#{expression,jdbcType=VARCHAR}, 
+		#{beanId,jdbcType=VARCHAR}, 
+		#{context,jdbcType=VARCHAR}, 
+		#{creator,jdbcType=VARCHAR}, 
+		#{isTest,jdbcType=TINYINT},
+		</trim>
+	</insert>
+		<!-- 修改实体 -->
+	<update id="updateJudgeRuleM" parameterType="JudgeRuleM">
+		update k_judge_rule
+		<set>
+			<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="No != 0">
+					No = #{No,jdbcType=INTEGER},
+	      		</if>
+	        <if test="alias != null">
+					alias = #{alias,jdbcType=VARCHAR},
+	      		</if>
+			<if test="type != 0">
+					type = #{type,jdbcType=TINYINT},
+	      		</if>
+	        <if test="expression != null">
+					expression = #{expression,jdbcType=VARCHAR},
+	      		</if>
+	        <if test="beanId != null">
+					bean_id = #{beanId,jdbcType=VARCHAR},
+	      		</if>
+	        <if test="context != null">
+					context = #{context,jdbcType=VARCHAR},
+	      		</if>
+	        <if test="creator != null">
+					creator = #{creator,jdbcType=VARCHAR},
+	      		</if>
+
+			<if test="isTest != 0">
+					is_test = #{isTest,jdbcType=TINYINT},
+	      		</if>
+			</trim>
+		</set>
+		where No = #{No,jdbcType=INTEGER}
+	</update>
+	<!-- 删除实体 -->
+	<update id="deleteJudgeRuleM" parameterType="int">
+		update k_judge_rule
+		<set>
+			is_delete=1
+		</set>
+		where No = #{No,jdbcType=INTEGER}
+	</update>
+</mapper>

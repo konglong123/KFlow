@@ -8,12 +8,13 @@ package BP.Judge;
  **/
 public class JudgeRuleAttr {
     public static final String No = "No";
-    //决策节点id
-    public static final String NodeId = "node_id";
-    //决策后，流向节点id
-    public static final String NextNodeId = "next_node_id";
-    public static final String Type = "type";
-    public static final String Expression = "Expression";
+    public static final String Alias = "alias";
+    public static final String Expression = "expression";
     public static final String BeanId = "bean_id";
+    public static final String Type = "type";
+    public static final String Creator = "creator";
+    public static final String CreatTime = "creat_time";
     public static final String Context = "context";
+    public static final String UpdateTime = "update_time";
+    public static final String IsTest = "isTest";
 }

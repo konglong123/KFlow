@@ -20,6 +20,7 @@ function initDgNodeTasks() {
             {field:'workId',title: '工作编码',align: 'center',width:10},
             {field:'flowId',title: '流程编码',align: 'center',width:10},
             {field:'nodeId',title: '节点编码',align: 'center',width:10},
+            {field:'nodeName',title: '节点名',align: 'center',width:10},
             {field:'totalTime',title: '总工作量',align: 'center',width:10},
             {field:'useTime',title: '已完成工作量',align: 'center',width:15},
             {field:'preNodeTask',title: '前置任务',align: 'center',width:10},

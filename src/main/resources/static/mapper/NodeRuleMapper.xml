@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="BP.springCloud.dao.NodeRuleDao">
+	<resultMap id="BaseResultMap" type="NodeRule">
+		<id column="No" property="No" jdbcType="INTEGER" />
+		<result column="node_id" property="nodeId" jdbcType="VARCHAR" />
+		<result column="next_node_id" property="nextNodeId" jdbcType="VARCHAR" />
+		<result column="rule_no" property="ruleNo" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		<trim prefix="" suffix="" suffixOverrides=",">
+		No,
+		node_id,
+		next_node_id,
+		rule_no,
+		</trim>
+	</sql>
+	
+	<!-- 根据Id查询 -->
+	<select id="getNodeRule" resultMap="BaseResultMap" parameterType="int">
+		select
+		<include refid="Base_Column_List" />
+		from k_node_rule
+		where No = #{No,jdbcType=INTEGER}
+	</select>
+	
+	<!-- 根据条件查询列表 -->
+	<select id="findNodeRuleList" resultMap="BaseResultMap" parameterType="NodeRule">
+		select
+		<include refid="Base_Column_List" />
+		from k_node_rule
+		<where>   
+		 1=1
+			<trim>
+				<if test="No != 0">
+					AND No = #{No,jdbcType=INTEGER}
+				</if>
+				<if test="nodeId != null and nodeId!=''">
+					AND node_id = #{nodeId,jdbcType=VARCHAR}
+				</if>
+				<if test="nextNodeId != null and nextNodeId!=''">
+					AND next_node_id = #{nextNodeId,jdbcType=VARCHAR}
+				</if>
+				<if test="ruleNo != null and ruleNo!=''">
+					AND rule_no = #{ruleNo,jdbcType=VARCHAR}
+				</if>
+			</trim>
+		</where>
+	</select>
+	<!-- 插入实体 -->
+	<insert id="insertNodeRule" parameterType="NodeRule" useGeneratedKeys="true" keyProperty="No">
+		insert into k_node_rule 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		No,
+		node_id,
+		next_node_id,
+		rule_no,
+		</trim>
+		values 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		#{No,jdbcType=INTEGER}, 
+		#{nodeId,jdbcType=VARCHAR}, 
+		#{nextNodeId,jdbcType=VARCHAR}, 
+		#{ruleNo,jdbcType=VARCHAR}, 
+		</trim>
+	</insert>
+		<!-- 修改实体 -->
+	<update id="updateNodeRule" parameterType="NodeRule">
+		update k_node_rule
+		<set>
+			<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="No != 0">
+					No = #{No,jdbcType=INTEGER},
+	      		</if>
+	        <if test="nodeId != null">
+					node_id = #{nodeId,jdbcType=VARCHAR},
+	      		</if>
+	        <if test="nextNodeId != null">
+					next_node_id = #{nextNodeId,jdbcType=VARCHAR},
+	      		</if>
+	        <if test="ruleNo != null">
+					rule_no = #{ruleNo,jdbcType=VARCHAR},
+	      		</if>
+			</trim>
+		</set>
+		where No = #{No,jdbcType=INTEGER}
+	</update>
+	<!-- 删除实体 -->
+	<delete id="deleteNodeRule" parameterType="int">
+		delete from k_node_rule
+		where No = #{No,jdbcType=INTEGER}
+	</delete>
+</mapper>

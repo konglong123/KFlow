@@ -718,7 +718,6 @@ public class WorkNode {
 				wl.setFK_Node(toNodeId);
 				wl.setFK_NodeText(town.getHisNode().getName());
 				wl.setFK_Emp(dr.getValue(0).toString());
-				wl.setWhoExeIt(town.getHisNode().getWhoExeIt()); // 设置谁执行它.
 
 				try {
 					emp = new Emp(wl.getFK_Emp());

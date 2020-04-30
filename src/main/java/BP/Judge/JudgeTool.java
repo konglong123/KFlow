@@ -1,15 +1,20 @@
 package BP.Judge;
 
+import BP.En.Row;
+import BP.Sys.MapAttr;
+import BP.Sys.MapAttrAttr;
+import BP.Sys.MapAttrs;
 import BP.Sys.MapData;
 import BP.Tools.BeanTool;
+import BP.WF.GEWork;
 import BP.WF.Node;
+import BP.WF.Work;
 import BP.springCloud.entity.NodeTaskM;
 import org.springframework.context.ApplicationContext;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @program: kflow-web
@@ -26,27 +31,80 @@ public class JudgeTool {
     *@Author: Mr.kong
     *@Date: 2020/4/25
     */
-    public static boolean judge(MapData data,String expression) throws Exception{
-        //从expression中顺序抽取参数
-        List<String> params=new ArrayList<>();
-        for (String temp:expression.split("\\{")){
+    public static boolean judge(Row row,String expression) throws Exception{
 
-        }
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine engine = manager.getEngineByName("js");
+        Map map=testExpression(expression);
+        if ((boolean)map.get("success")){
+            List<String> params=(List<String>) map.get("params");
+            for (String param:params){
+                engine.put(param,row.get(param));
+            }
+            Object result=engine.eval((String) map.get("expression"));
+            return (boolean)result;
+        }else {
+            throw  new Exception("决策表达式不符合规范！");
+        }
+    }
 
+    /**
+    *@Description: 检测表达式，格式是否正确,
+    *@Param:
+    *@return:
+    *@Author: Mr.kong
+    *@Date: 2020/4/28
+    */
+    public static Map testExpression(String expression){
+        Map result=new HashMap();
+        if (!checkExpression(expression)){
+            result.put("success",false);
+            return result;
+        }
 
-        int value = 7;
-        String state = "正常";
-        boolean flag = true;
-        String st = "test";
-        String str2 = "{value} > 5 && {st} == \"test\"  && {flag} == true";
-        engine.put("value", value);
-        engine.put("state", state);
-        engine.put("flag", flag);
-        engine.put("st", st);
-        Object result2 = engine.eval(str2);
-        System.out.println("结果类型:" + result2.getClass().getName() + ",结果:" + result2);
+        try {
+            //从expression中顺序抽取参数
+            List<String> params = new ArrayList<>();
+            //将参数的左右｛｝删除，形成新的表达式（js引擎运行新表达式）
+            StringBuilder sb = new StringBuilder();
+            String[] strArr=expression.split("\\{");
+            for (String temp : strArr) {
+                if (temp.equals(""))
+                    continue;
+                String[] strArrTemp = temp.split("\\}");
+                params.add(strArrTemp[0]);
+                for (String str:strArrTemp){
+                    sb.append(str);
+                }
+            }
+            result.put("expression",sb.toString());
+            result.put("params",params);
+            result.put("success",true);
+            return result;
+
+        }catch (Exception e){
+            result.put("success",false);
+            return result;
+        }
+    }
+
+    //检查表达式，括号是否匹配
+    private static boolean checkExpression(String expression){
+        boolean flag=false;
+        char[] cs=expression.toCharArray();
+        for (char c:cs){
+            if (c=='{'&&!flag) {
+                flag=true;
+                continue;
+            }
+            if (c=='}'&&flag){
+                flag=false;
+                continue;
+            }
+            if (c!='{'&&c!='}')
+                continue;
+            return false;
+        }
         return true;
     }
 
@@ -58,25 +116,42 @@ public class JudgeTool {
     *@Date: 2020/4/25
     */
     public static List<String> judge(NodeTaskM nodeTaskM) throws Exception{
-        JudgeRules rules=new JudgeRules();
+        NodeRules nodeRules=new NodeRules();
         String nodeId=nodeTaskM.getNodeId();
-        rules.Retrieve(JudgeRuleAttr.NodeId,nodeId);
+        nodeRules.Retrieve(NodeRuleAttr.NodeId,nodeId);
         List<String> nextNodeIds=new ArrayList<>();
-        List<JudgeRule> ruleList=rules.toList();
-        MapData mapData=new MapData("ND"+nodeId);
+        List<NodeRule> nodeRuleList=nodeRules.toList();
+
+        //规则列表
+        List<JudgeRule> ruleList=new ArrayList<>(nodeRuleList.size());
+        for (NodeRule nodeRule:nodeRuleList){
+            JudgeRule judgeRule=new JudgeRule(nodeRule.GetValStrByKey(NodeRuleAttr.RuleNo));
+            ruleList.add(judgeRule);
+        }
+
+        int index=0;
+        //获取节点表单数据
+        Node node=new Node(nodeTaskM.getNodeId());
+        Work wk = node.getHisWork();
+        wk.setOID(Integer.parseInt(nodeTaskM.getWorkId()));
+        wk.RetrieveFromDBSources();
+        wk.ResetDefaultVal();
+        Row row=wk.getRow();
+
         for (JudgeRule rule:ruleList){
             int type=rule.GetValIntByKey(JudgeRuleAttr.Type);
             switch (type){
                 case 1:
-                    if (judge(mapData,rule.GetValStrByKey(JudgeRuleAttr.Expression)))
-                        nextNodeIds.add(rule.GetValStrByKey(JudgeRuleAttr.NextNodeId));
+                    if (judge(row,rule.GetValStrByKey(JudgeRuleAttr.Expression)))
+                        nextNodeIds.add(nodeRuleList.get(index).GetValStrByKey(NodeRuleAttr.NextNodeId));
                     break;
                 case 2:
                     JudgeCondition condition= BeanTool.getBean(JudgeCondition.class,rule.GetValStrByKey(JudgeRuleAttr.BeanId));
                     if (condition.judge(nodeTaskM))
-                        nextNodeIds.add(rule.GetValStrByKey(JudgeRuleAttr.NextNodeId));
+                        nextNodeIds.add(nodeRuleList.get(index).GetValStrByKey(NodeRuleAttr.NextNodeId));
                     break;
             }
+            index++;
         }
 
         return nextNodeIds;

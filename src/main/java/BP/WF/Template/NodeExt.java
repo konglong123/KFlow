@@ -279,42 +279,17 @@ public class NodeExt extends Entity
 
         map.AddTBString(NodeAttr.Name, null, "名称", true, false, 0, 100, 10, false);//"http://ccbpm.mydoc.io/?v=5404&t=17903"
 
-        map.AddDDLSysEnum(NodeAttr.WhoExeIt, 0, "谁执行它", true, true, NodeAttr.WhoExeIt,
-            "@0=操作员执行@1=机器执行@2=混合执行");
+        map.AddTBString(NodeAttr.JudgeNodeId, null, "匹配决策节点", true, false, 0, 100, 10, false);//"http://ccbpm.mydoc.io/?v=5404&t=17903"
+
         //map.SetHelperUrl(NodeAttr.WhoExeIt, "http://ccbpm.mydoc.io/?v=5404&t=17913");
 
         map.AddDDLSysEnum(NodeAttr.ReadReceipts, 0, "已读回执", true, true, NodeAttr.ReadReceipts,
         "@0=不回执@1=自动回执@2=由上一节点表单字段决定@3=由SDK开发者参数决定");
        // map.SetHelperUrl(NodeAttr.ReadReceipts, "http://ccbpm.mydoc.io/?v=5404&t=17915");
 
-        map.AddDDLSysEnum(NodeAttr.CondModel, 0, "方向条件控制规则", true, true, NodeAttr.CondModel, "@0=由连接线条件控制@1=按照用户选择计算@2=发送按钮旁下拉框选择");
-       // map.SetHelperUrl(NodeAttr.CondModel, "http://ccbpm.mydoc.io/?v=5404&t=17917"); //增加帮助
-
         // 撤销规则.
         map.AddDDLSysEnum(NodeAttr.CancelRole,0, "撤销规则", true, true,
             NodeAttr.CancelRole, "@0=上一步可以撤销@1=不能撤销@2=上一步与开始节点可以撤销@3=指定的节点可以撤销");
-       // map.SetHelperUrl(NodeAttr.CancelRole, "http://ccbpm.mydoc.io/?v=5404&t=17919");
-
-        //map.AddBoolean(NodeAttr.CancelDisWhenRead, false, "对方已经打开就不能撤销", true, true);
-
-
-        //map.AddBoolean(NodeAttr.IsTask, true, "允许分配工作否?", true, true, false);//"http://ccbpm.mydoc.io/?v=5404&t=17904"
-        //map.AddBoolean(NodeAttr.IsExpSender, true, "本节点接收人不允许包含上一步发送人", true, true,false);
-        //map.AddBoolean(NodeAttr.IsRM, true, "是否启用投递路径自动记忆功能?", true, true, true);//"http://ccbpm.mydoc.io/?v=5404&t=17905"
-
-       // map.AddBoolean(NodeAttr.IsToParentNextNode, false, "子流程运行到该节点时，让父流程自动运行到下一步", true, true);
-        //map.AddBoolean(NodeAttr.IsYouLiTai, false, "该节点是否是游离态", false, true);
-        //map.SetHelperUrl(NodeAttr.IsYouLiTai, "当节点为游离状态的时候，只有连接的节点是固定节点才可以往下运行，否则流程结束");
-
-        //map.AddTBDateTime("DTFrom", "生命周期从", true, true);
-        //map.AddTBDateTime("DTTo", "生命周期到", true, true);
-
-        //map.AddBoolean(NodeAttr.IsBUnit, false, "是否是节点模版（业务单元）?", true, true, true);//, "http://ccbpm.mydoc.io/?v=5404&t=17904"
-
-        //map.AddTBString(NodeAttr.FocusField, null, "焦点字段", true, false, 0, 50, 10, true);//, "http://ccbpm.mydoc.io/?v=5404&t=17932"
-
-
-        //map.AddBoolean(NodeAttr.IsGuestNode, false, "是否是外部用户执行的节点(非组织结构人员参与处理工作的节点)?", true, true, true);
 
         //节点业务类型.
         map.AddTBInt("NodeAppType", 0, "节点业务类型", false, false);
@@ -858,10 +833,9 @@ public class NodeExt extends Entity
     public final String RunModel(){
 	    String runModel=this.GetValStrByKey(NodeAttr.RunModel);
 	    String url;
-	    int judgeRuleId=0;
 	    switch (runModel){
             case "9":
-                url="WF/Comm/En.htm?EnName=BP.Judge.JudgeRule&PKVal=" + judgeRuleId;
+                url="WF/Admin/AttrNode/RunModel/Judge.html?nodeId=" + this.getNodeID();
                 break;
             case "4":
                 url="Subflow.html";

@@ -323,7 +323,7 @@ public class NodeTaskService {
     */
     public int getTaskStatus(NodeTaskM nt){
         int isReadyNt=nt.getIsReady();
-        if (isReadyNt!=-1&&isReadyNt!=3) {//可以开始并且未完成状态下检查(计划完成后，)
+        if (isReadyNt!=20&&isReadyNt!=3) {//可以开始并且未完成状态下检查(计划完成后，)
                     //判断是否逾期
             Date planStart = nt.getPlanStartTime();
             Date planEnd = nt.getPlanEndTime();

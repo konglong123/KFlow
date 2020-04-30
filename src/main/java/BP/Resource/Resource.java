@@ -2,6 +2,7 @@ package BP.Resource;
 
 import BP.En.EntityNoName;
 import BP.En.Map;
+import BP.springCloud.tool.FeignTool;
 
 /**
  * @program: kflow-web
@@ -18,8 +19,8 @@ public class Resource extends EntityNoName {
         }
 
         Map map = new Map("k_resource", "资源");
-        map.AddTBString(ResourceAttr.Id, null, "ID", false, true, 1, 20, 100);
-        map.AddTBString(ResourceAttr.No, null, "编号", true, false, 1, 20, 100);
+        map.AddTBStringPK(ResourceAttr.Id, null, "ID", false, true, 1, 20, 100);
+        map.AddTBString(ResourceAttr.No, null, "编号", true, false, 1, 40, 100);
         map.AddTBString(ResourceAttr.Name, null, "名称", true, false, 0, 100, 100);
         map.AddDDLSysEnum(ResourceAttr.Kind, 0, "类型", true, true, ResourceAttr.Kind,
                 "@1=人力@2=设备@3=环境@4=知识");
@@ -28,5 +29,12 @@ public class Resource extends EntityNoName {
         map.AddSearchAttr(ResourceAttr.Kind);
         this.set_enMap(map);
         return this.get_enMap();
+    }
+
+    @Override
+    protected boolean beforeInsert() throws Exception {
+        Long id=FeignTool.getSerialNumber("BP.Resource.Resource");
+        this.SetValByKey(ResourceAttr.Id,id);
+        return super.beforeInsert();
     }
 }

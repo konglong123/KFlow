@@ -195,7 +195,7 @@ public class NLPModelController {
     public JSONObject trainCWS(@RequestBody Nlpmodel nlpmodel){
         try {
             PerceptronTrainer trainer = new CWSTrainer();
-            initSegmenterNlpModel(nlpmodel);
+            initSegmentNlpModel(nlpmodel);
             PerceptronTrainer.Result modelResult=trainer.train(nlpmodel.getTrainFile(), nlpmodel.getTestFile(),nlpmodel.getModelFile(),nlpmodel.getCompressRate(),nlpmodel.getIterations(),nlpmodel.getNumThreads());
             nlpmodel.setCorrectRate(modelResult.getAccuracy());
 
@@ -254,7 +254,7 @@ public class NLPModelController {
 
 
     //初始化nlp分词训练模型入参
-    private  void initSegmenterNlpModel(Nlpmodel nlpmodel){
+    private  void initSegmentNlpModel(Nlpmodel nlpmodel){
         if (StringUtils.isEmpty(nlpmodel.getTrainFile()))
             nlpmodel.setTrainFile(segmentTrainingFile);
 

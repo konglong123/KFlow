@@ -10,6 +10,7 @@ import BP.WF.Template.FrmSubFlowAttr;
 import BP.WF.Template.FrmWorkCheckAttr;
 import BP.WF.Template.FrmWorkCheckSta;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -111,14 +112,16 @@ public class Node extends Entity {
 	 * @throws Exception
 	 */
 	public final Nodes getHisToNodes() throws Exception {
-		Object tempVar = this.GetRefObject("HisToNodes");
-		Nodes obj = (Nodes) ((tempVar instanceof Nodes) ? tempVar : null);
-		if (obj == null) {
-			obj = new Nodes();
-			obj.AddEntities(this.getHisToNDs());
-			this.SetRefObject("HisToNodes", obj);
+		Directions directions=new Directions();
+		directions.Retrieve(DirectionAttr.Node,this.getNodeID());
+
+		List<Direction> directionList=directions.toList();
+		Nodes nodes=new Nodes();
+		for (Direction dir:directionList){
+			Node node=new Node(dir.getToNode());
+			nodes.add(node);
 		}
-		return obj;
+		return nodes;
 	}
 
 	/**
@@ -996,17 +999,6 @@ public class Node extends Entity {
 		this.SetValByKey(NodeAttr.Y, value);
 	}
 
-	/**
-	 * 水执行它？
-	 * 
-	 */
-	public final int getWhoExeIt() {
-		return this.GetValIntByKey(NodeAttr.WhoExeIt);
-	}
-
-	public final void setWhoExeIt(int value) {
-		this.SetValByKey(NodeAttr.WhoExeIt, value);
-	}
 
 	/**
 	 * 位置
@@ -1162,19 +1154,7 @@ public class Node extends Entity {
 					+ ActionType.Start.getValue() + ")  ";
 			sql += "  AND (FormType=0 OR FormType=1) ";
 
-			/*
-			 * if (SystemConfig.getAppCenterDBType() == DBType.MSSQL) sql +=
-			 * "  AND (B.NodeFrmID='' OR B.NodeFrmID IS NULL OR B.NodeFrmID='ND'+CONVERT(varchar(10),B.NodeID) ) "
-			 * ;
-			 * 
-			 * if (SystemConfig.getAppCenterDBType() == DBType.MySQL) sql +=
-			 * "  AND (B.NodeFrmID='' OR B.NodeFrmID IS NULL OR B.NodeFrmID=CONCAT( 'ND',cast(B.NodeID as varchar(10)) ) ) "
-			 * ;
-			 * 
-			 * if (SystemConfig.getAppCenterDBType() == DBType.Oracle) sql +=
-			 * "  AND (B.NodeFrmID='' OR B.NodeFrmID IS NULL OR B.NodeFrmID='ND'||to_char(B.NodeID) ) "
-			 * ;
-			 */
+
 
 			sql += "  AND (A.WorkID=" + this.WorkID + ") ";
 
@@ -2171,7 +2151,8 @@ public class Node extends Entity {
 		map.AddTBString(NodeAttr.BlockExp, null, "阻塞表达式", true, false, 0, 200, 10);
 		map.AddTBString(NodeAttr.BlockAlert, null, "被阻塞提示信息", true, false, 0, 100, 10);
 
-		map.AddTBInt(NodeAttr.WhoExeIt, 0, "谁执行它", true, true);
+		map.AddTBString(NodeAttr.JudgeNodeId, null, "匹配决策节点", true, false, 0, 100, 10, false);//"http://ccbpm.mydoc.io/?v=5404&t=17903"
+
 		map.AddTBInt(NodeAttr.ReadReceipts, 0, "已读回执", true, true);
 		map.AddTBInt(NodeAttr.CondModel, 0, "方向条件控制规则", true, true);
 
@@ -2935,10 +2916,10 @@ public class Node extends Entity {
     *@Author: Mr.kong
     *@Date: 2020/3/16
     */
-    public List getCanStartNode() throws Exception{
+    public Nodes getCanStartNode() throws Exception{
     	Nodes nextNodes=this.getHisToNodes();
     	//此处增加复杂逻辑，返回激活节点任务
-		return nextNodes.toList();
+		return nextNodes;
 	}
 
 	public String[] getSubFlowNos() throws Exception{
