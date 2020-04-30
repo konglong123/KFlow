@@ -239,14 +239,7 @@ public class NodeExt extends Entity
 		this.setNodeID(nodeid);
 		this.Retrieve();
 	}
-	
-	public final CondModel getCondModel() {
-		return CondModel.forValue(this.GetValIntByKey(NodeAttr.CondModel));
-	}
 
-	public final void setCondModel(CondModel value) {
-		this.SetValByKey(NodeAttr.CondModel, value.getValue());
-	}
     public final FWCAth getFWCAth() {
         return FWCAth.forValue(this.GetValIntByKey(FrmWorkCheckAttr.FWCAth));
     }
@@ -1181,48 +1174,7 @@ public class NodeExt extends Entity
                 sql="UPDATE WF_Node SET TodolistModel=" + TodolistModel.TeamupGroupLeader.getValue() + ", TeamLeaderConfirmRole=" + TeamLeaderConfirmRole.HuiQianLeader.getValue() + " WHERE NodeID=" + this.getNodeID();
             
             DBAccess.RunSQL(sql);
-                
-			
-            // @杜. 翻译&测试.
-            if (this.getCondModel() == CondModel.ByLineCond)
-            {
-                /* 如果当前节点方向条件控制规则是按照连接线决定的, 
-                 * 那就判断到达的节点的接受人规则，是否是按照上一步来选择，如果是就抛出异常.*/
 
-                //获得到达的节点.
-                List<Node> nds = nd.getHisToNodes().ToJavaList();
-                if(nds.size()>1) {
-                    for (Node mynd : nds) {
-                        if (mynd.getHisDeliveryWay() == DeliveryWay.BySelected) {
-                            String errInfo = "设置矛盾:";
-                            errInfo += "@当前节点您设置的访问规则是按照方向条件控制的";
-                            errInfo += "但是到达的节点[" + mynd.getName() + "]的接收人规则是按照上一步选择的,设置矛盾.";
-
-                            throw new Exception(errInfo);
-
-                        }
-                    }
-                }
-            }
-            
-			//如果启用了在发送前打开, 当前节点的方向条件控制模式，是否是在下拉框边选择.?
-			if (1==2 && nd.getCondModel() != CondModel.SendButtonSileSelect)
-			{
-				//如果是启用了按钮，就检查当前节点到达的节点是否有【按照选择接受人】的方式确定接收人的范围. 
-				Nodes nds = nd.getHisToNodes();
-				boolean isHaveBySeleced = false;
-				for (Node mynd : nds.ToJavaList())
-				{
-					if (mynd.getHisDeliveryWay() == DeliveryWay.BySelected)
-					{
-						 //强制设置安装人员选择器来选择.
-                        this.SetValByKey(NodeAttr.CondModel, CondModel.SendButtonSileSelect.getValue());
-                        break;
-					}
-				}
-
-			}
-			
 			//创建审核组件附件
             if(this.getFWCAth() == FWCAth.MinAth) {
                 FrmAttachment workCheckAth = new FrmAttachment();

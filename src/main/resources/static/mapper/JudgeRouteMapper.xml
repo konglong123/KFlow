@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="BP.springCloud.dao.JudgeRouteDao">
+	<resultMap id="BaseResultMap" type="JudgeRoute">
+		<id column="No" property="No" jdbcType="BIGINT" />
+		<result column="work_id" property="workId" jdbcType="VARCHAR" />
+		<result column="num" property="num" jdbcType="INTEGER" />
+		<result column="judge_node_id" property="judgeNodeId" jdbcType="VARCHAR" />
+		<result column="arrive_num" property="arriveNum" jdbcType="INTEGER" />
+		<result column="routes" property="routes" jdbcType="VARCHAR" />
+		<result column="arrives" property="arrives" jdbcType="VARCHAR" />
+		<result column="is_delete" property="isDelete" jdbcType="TINYINT" />
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		<trim prefix="" suffix="" suffixOverrides=",">
+		No,
+		work_id,
+		num,
+		judge_node_id,
+		arrive_num,
+		routes,
+		arrives,
+		is_delete,
+		</trim>
+	</sql>
+	
+	<!-- 根据Id查询 -->
+	<select id="getJudgeRoute" resultMap="BaseResultMap" parameterType="Long">
+		select
+		<include refid="Base_Column_List" />
+		from k_judge_route
+		where No = #{No,jdbcType=BIGINT}
+	</select>
+	
+	<!-- 根据条件查询列表 -->
+	<select id="findJudgeRouteList" resultMap="BaseResultMap" parameterType="JudgeRoute">
+		select
+		<include refid="Base_Column_List" />
+		from k_judge_route
+		<where>
+			is_delete=0
+			<trim>
+				<if test="No != null">
+					AND No = #{No,jdbcType=BIGINT}
+				</if>
+				<if test="workId != null and workId!=''">
+					AND work_id = #{workId,jdbcType=VARCHAR}
+				</if>
+				<if test="num != 0">
+					AND num = #{num,jdbcType=INTEGER}
+				</if>
+				<if test="judgeNodeId != null and judgeNodeId!=''">
+					AND judge_node_id = #{judgeNodeId,jdbcType=VARCHAR}
+				</if>
+				<if test="arriveNum != 0">
+					AND arrive_num = #{arriveNum,jdbcType=INTEGER}
+				</if>
+				<if test="routes != null and routes!=''">
+					AND routes = #{routes,jdbcType=VARCHAR}
+				</if>
+				<if test="arrives != null and arrives!=''">
+					AND arrives = #{arrives,jdbcType=VARCHAR}
+				</if>
+			</trim>
+		</where>
+	</select>
+	<!-- 插入实体 -->
+	<insert id="insertJudgeRoute" parameterType="JudgeRoute" useGeneratedKeys="true" keyProperty="No">
+		insert into k_judge_route 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		No,
+		work_id,
+		num,
+		judge_node_id,
+		arrive_num,
+		routes,
+		arrives,
+		</trim>
+		values 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		#{No,jdbcType=BIGINT}, 
+		#{workId,jdbcType=VARCHAR}, 
+		#{num,jdbcType=INTEGER}, 
+		#{judgeNodeId,jdbcType=VARCHAR}, 
+		#{arriveNum,jdbcType=INTEGER},
+		#{routes,jdbcType=VARCHAR},
+		#{arrives,jdbcType=VARCHAR},
+		</trim>
+	</insert>
+		<!-- 修改实体 -->
+	<update id="updateJudgeRoute" parameterType="JudgeRoute">
+		update k_judge_route
+		<set>
+			<trim prefix="" suffix="" suffixOverrides=",">
+	        <if test="No != null">
+					No = #{No,jdbcType=BIGINT},
+	      		</if>
+	        <if test="workId != null and workId!=''">
+					work_id = #{workId,jdbcType=VARCHAR},
+	      		</if>
+			<if test="num != 0">
+					num = #{num,jdbcType=INTEGER},
+	      		</if>
+	        <if test="judgeNodeId != null and judgeNodeId!=''">
+					judge_node_id = #{judgeNodeId,jdbcType=VARCHAR},
+	      		</if>
+			<if test="arriveNum != 0">
+					arrive_num = #{arriveNum,jdbcType=INTEGER},
+	      		</if>
+			<if test="routes != null and routes!=''">
+				routes = #{routes,jdbcType=VARCHAR},
+			</if>
+			<if test="arrives != null and arrives!=''">
+				arrives = #{arrives,jdbcType=VARCHAR},
+			</if>
+			</trim>
+		</set>
+		where No = #{No,jdbcType=BIGINT}
+	</update>
+	<!-- 删除实体 -->
+	<update id="deleteJudgeRoute" parameterType="Long">
+		update k_judge_route
+		<set>
+			is_delete=1
+		</set>
+		where No = #{No,jdbcType=BIGINT}
+	</update>
+</mapper>

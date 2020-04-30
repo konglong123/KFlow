@@ -52,14 +52,6 @@ public class Node extends Entity {
 		return _SendSuccess_FrmEvent;
 	}
 
-	public final CondModel getCondModel() {
-		return CondModel.forValue(this.GetValIntByKey(NodeAttr.CondModel));
-	}
-
-	public final void setCondModel(CondModel value) {
-		this.SetValByKey(NodeAttr.CondModel, value.getValue());
-	}
-
 	/**
 	 * 超时处理方式
 	 * 
@@ -2009,6 +2001,14 @@ public class Node extends Entity {
 		}
 	}
 
+	public String getJudgeNodeId(){
+		return this.GetValStrByKey(NodeAttr.JudgeNodeId);
+	}
+
+	public void  setJudgeNodeId(String judgeNodeId){
+		this.SetValByKey(NodeAttr.JudgeNodeId,judgeNodeId);
+	}
+
 	public final String getEnName() {
 		return "ND" + this.getNodeID();
 	}
@@ -2154,7 +2154,6 @@ public class Node extends Entity {
 		map.AddTBString(NodeAttr.JudgeNodeId, null, "匹配决策节点", true, false, 0, 100, 10, false);//"http://ccbpm.mydoc.io/?v=5404&t=17903"
 
 		map.AddTBInt(NodeAttr.ReadReceipts, 0, "已读回执", true, true);
-		map.AddTBInt(NodeAttr.CondModel, 0, "方向条件控制规则", true, true);
 
 		// 自动跳转.
 		map.AddTBInt(NodeAttr.AutoJumpRole0, 0, "处理人就是提交人0", false, false);

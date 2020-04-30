@@ -1031,58 +1031,8 @@ public class WorkNode {
 	 * @throws Exception
 	 */
 	public final Node NodeSend_GenerNextStepNode() throws Exception {
-		// 如果要是跳转到的节点，自动跳转规则规则就会失效。
-		if (this.JumpToNode != null) {
-			return this.JumpToNode;
-		}
 
-		// 判断是否有延续流程.
-		SubFlowYanXus ygflows = new SubFlowYanXus();
-		ygflows.Retrieve(SubFlowYanXuAttr.FK_Node, this._HisNode.getNodeID());
-		if (ygflows.size() > 0 && 1 == 2) {
-			for (SubFlowYanXu item : ygflows.ToJavaList()) {
-				boolean isPass = false;
-
-				if (item.getExpType() == ConnDataFrom.Paras)
-					isPass = BP.WF.Glo.CondExpPara(item.getCondExp(), this.rptGe.getRow(), this.getWorkID());
-
-				if (item.getExpType() == ConnDataFrom.SQL)
-					isPass = BP.WF.Glo.CondExpSQL(item.getCondExp(), this.rptGe.getRow(), this.getWorkID());
-
-				if (isPass == true)
-					return new Node(Integer.parseInt(item.getFK_Flow() + "01"));
-			}
-		}
-		// 判断是否有延续流程.
-		// 判断是否有用户选择的节点.
-		if (this.getHisNode().getCondModel() == CondModel.ByUserSelected) {
-			// 获取用户选择的节点.
-			String nodes = this.getHisGenerWorkFlow().getParas_ToNodes();
-			if (DotNetToJavaStringHelper.isNullOrEmpty(nodes)) {
-				throw new RuntimeException("@用户没有选择发送到的节点.");
-			}
-
-			String[] mynodes = nodes.split("[,]", -1);
-			for (String item : mynodes) {
-				if (DotNetToJavaStringHelper.isNullOrEmpty(item)) {
-					continue;
-				}
-
-				// 排除到达自身节点.
-				if ((new Integer(this.getHisNode().getNodeID())).toString().equals(item)) {
-					continue;
-				}
-
-				return new Node(Integer.parseInt(item));
-			}
-
-			// 设置他为空,以防止下一次发送出现错误.
-			this.getHisGenerWorkFlow().setParas_ToNodes("");
-		}
-
-		Node nd = NodeSend_GenerNextStepNode_Ext1();
-
-		return nd;
+		return null;
 	}
 
 	/**
@@ -1612,79 +1562,7 @@ public class WorkNode {
 	 * @throws NumberFormatException
 	 */
 	public final Nodes Func_GenerNextStepNodes() throws NumberFormatException, Exception {
-		// 如果跳转节点已经有了变量.
-		if (this.JumpToNode != null) {
-			Nodes myNodesTo = new Nodes();
-			myNodesTo.AddEntity(this.JumpToNode);
-			return myNodesTo;
-		}
-
-		if (this.getHisNode().getCondModel() == CondModel.ByUserSelected) {
-			// 获取用户选择的节点.
-			String nodes = this.getHisGenerWorkFlow().getParas_ToNodes();
-			if (DotNetToJavaStringHelper.isNullOrEmpty(nodes)) {
-				throw new RuntimeException("@用户没有选择发送到的节点.");
-			}
-
-			Nodes nds = new Nodes();
-			String[] mynodes = nodes.split("[,]", -1);
-			for (String item : mynodes) {
-				if (DotNetToJavaStringHelper.isNullOrEmpty(item)) {
-					continue;
-				}
-				nds.AddEntity(new Node(Integer.parseInt(item)));
-			}
-			return nds;
-		}
-
-		// 延续子流程添加 ddl
-		// 判断是否有延续流程.
-
-		Nodes toNodes = this.getHisNode().getHisToNodes();
-
-		// 如果只有一个转向节点, 就不用判断条件了,直接转向他.
-		if (toNodes.size() == 1) {
-			return toNodes;
-		}
-		Conds dcsAll = new Conds();
-		dcsAll.Retrieve(CondAttr.NodeID, this.getHisNode().getNodeID(), CondAttr.PRI);
-
-		/// #region 获取能够通过的节点集合，如果没有设置方向条件就默认通过.
-		Nodes myNodes = new Nodes();
-		int toNodeId = 0;
-		int numOfWay = 0;
-
-		for (Node nd : toNodes.ToJavaList()) {
-			Conds dcs = new Conds();
-			for (Cond dc : dcsAll.ToJavaList()) {
-				if (dc.getToNodeID() != nd.getNodeID()) {
-					continue;
-				}
-
-				dc.setWorkID(this.getHisWork().getOID());
-				dc.en = this.rptGe;
-				dcs.AddEntity(dc);
-			}
-
-			if (dcs.size() == 0) {
-				myNodes.AddEntity(nd);
-				continue;
-			}
-
-			if (dcs.getIsPass()) // 如果多个转向条件中有一个成立.
-			{
-				myNodes.AddEntity(nd);
-				continue;
-			}
-		}
-
-		/// #endregion 获取能够通过的节点集合，如果没有设置方向条件就默认通过.
-
-		if (myNodes.size() == 0) {
-			throw new RuntimeException(String.format("@定义节点的方向条件错误:没有给从%1$s节点到其它节点,定义转向条件或者您定义的所有转向条件都不成立.",
-					this.getHisNode().getNodeID() + this.getHisNode().getName()));
-		}
-		return myNodes;
+		return null;
 	}
 
 	/**

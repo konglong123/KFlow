@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
@@ -213,5 +214,15 @@ public class NodeTaskController {
             logger.error(e.getMessage());
         }
         return result;
+    }
+
+    @RequestMapping("checkNodeTaskIsFinish")
+    @ResponseBody
+    public boolean checkNodeTaskIsFinish(@RequestParam Long no){
+        NodeTaskM nodeTaskM=nodeTaskService.getNodeTaskById(no);
+        if (nodeTaskM.getIsReady()==3){
+            return false;
+        }
+        return true;
     }
 }

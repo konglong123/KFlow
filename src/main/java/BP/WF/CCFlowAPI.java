@@ -42,7 +42,6 @@ import BP.Sys.SysEnumAttr;
 import BP.Sys.SysEnums;
 import BP.Sys.SystemConfig;
 import BP.WF.Data.GERpt;
-import BP.WF.Template.CondModel;
 import BP.WF.Template.FTCAttr;
 import BP.WF.Template.FrmEleType;
 import BP.WF.Template.FrmField;
@@ -522,82 +521,7 @@ public class CCFlowAPI {
                 }
 			}
 
-			// 增加转向下拉框数据.
-			if (nd.getCondModel() == CondModel.SendButtonSileSelect) {
 
-				if (nd.getIsStartNode() == true || gwf.getTodoEmps().contains(WebUser.getNo() + ",") == true) {
-
-					// 如果当前节点，是可以显示下拉框的.
-					Nodes nds = nd.getHisToNodes();
-
-					DataTable dtToNDs = new DataTable();
-					dtToNDs.TableName = "ToNodes";
-					dtToNDs.Columns.Add("No", String.class);
-					dtToNDs.Columns.Add("Name", String.class);
-					dtToNDs.Columns.Add("IsSelectEmps", String.class);
-
-					for (Node item : nds.ToJavaList()) {
-						DataRow dr = dtToNDs.NewRow();
-						dr.setValue("No", item.getNodeID());
-						dr.setValue("Name", item.getName());
-
-						if (item.getHisDeliveryWay() == DeliveryWay.BySelected) {
-							dr.setValue("IsSelectEmps", "1");
-						} else {
-							dr.setValue("IsSelectEmps", "0"); // 是不是，可以选择接受人.
-						}
-						dtToNDs.Rows.add(dr);
-					}
-
-					// 增加到达延续子流程节点.
-					SubFlowYanXus ygflows = new SubFlowYanXus(String.valueOf(fk_node));
-
-					if (ygflows.size() > 1)
-						dtToNDs.Rows.clear(); // 为浙商银行做的特殊判断，如果配置了延续流程，就不让其走分支节点.
-
-					for (SubFlowYanXu item : ygflows.ToJavaList()) {
-						DataRow dr = dtToNDs.NewRow();
-
-						dr.setValue("No", item.getFK_Flow() + "01");
-						dr.setValue("Name", "启动:" + item.getFlowName());
-						dr.setValue("IsSelectEmps", "1");
-
-						dr.put("IsSelected", "0");
-						dtToNDs.Rows.add(dr);
-					}
-					// #endregion 增加到达延续子流程节点。
-
-					// #region 到达其他节点.
-
-					// 上一次选择的节点.
-					//int defalutSelectedNodeID = 0;
-					if (nds.size() > 1) {
-						String mysql = "";
-						// 找出来上次发送选择的节点.
-						if (SystemConfig.getAppCenterDBType() == DBType.MSSQL)
-							mysql = "SELECT  top 1 NDTo FROM ND" + Integer.parseInt(nd.getFK_Flow())
-									+ "Track A WHERE A.NDFrom=" + fk_node + " AND ActionType=1 ORDER BY WorkID DESC";
-						else if (SystemConfig.getAppCenterDBType() == DBType.Oracle)
-							mysql = "SELECT * FROM ( SELECT  NDTo FROM ND" + Integer.parseInt(nd.getFK_Flow())
-									+ "Track A WHERE A.NDFrom=" + fk_node
-									+ " AND ActionType=1 ORDER BY WorkID DESC ) WHERE ROWNUM =1";
-						else if (SystemConfig.getAppCenterDBType() == DBType.MySQL)
-							mysql = "SELECT  NDTo FROM ND" + Integer.parseInt(nd.getFK_Flow())
-									+ "Track A WHERE A.NDFrom=" + fk_node
-									+ " AND ActionType=1 ORDER BY WorkID  DESC limit 1,1";
-
-						// 获得上一次发送到的节点.
-						//defalutSelectedNodeID = DBAccess.RunSQLReturnValInt(mysql, 0);
-					}
-
-					
-
-					// 增加一个下拉框, 对方判断是否有这个数据.
-					myds.Tables.add(dtToNDs);
-				}
-			}
-			
-			
 			// 执行表单事件..
 			String msg = md.getFrmEvents().DoEventNode(FrmEventList.FrmLoadBefore, wk);
 			if (DotNetToJavaStringHelper.isNullOrEmpty(msg) == false) {

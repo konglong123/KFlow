@@ -1721,6 +1721,37 @@ public class Flow extends BP.En.EntityNoName {
 				if (laterFinish==null)
 					msg.append("@错误:最晚结束没有指定");
 
+				if (nd.getHisRunModel()==RunModel.Judge) {
+					String judgeNodeId=nd.getJudgeNodeId();
+					if (judgeNodeId==null||judgeNodeId.equals(""))
+						msg.append("@错误:决策节点需要制定匹配决策节点");
+					else {
+						try {
+							Node node=new Node(judgeNodeId);
+							if (node.getHisRunModel()!=RunModel.Judge)
+								msg.append("@错误:决策匹配节点不是决策节点");
+						}catch (Exception e){
+							msg.append("@错误:决策匹配节点不存在");
+						}
+					}
+				}
+
+				// 子线程节点
+				if (nd.getHisRunModel() == RunModel.SubThread) {
+					//检查子流程是否存在
+					msg.append("@信息:检查子流程");
+					String[] subFlowNos=nd.getSubFlowNos();
+					if (subFlowNos!=null){
+						Flows flows=new Flows();
+						for (String subFlowNo:subFlowNos){
+							flows.Retrieve(FlowAttr.No,subFlowNo);
+							if (flows.size()<1){
+								msg.append("@错误:子流程"+subFlowNo+"不存在");
+							}
+						}
+					}
+				}
+
 				MapAttrs mattrs = new MapAttrs("ND" + nd.getNodeID());
 
                 msg.append("@信息:开始对节点的访问规则进行检查.");
@@ -1825,21 +1856,6 @@ public class Flow extends BP.En.EntityNoName {
 								+ "是合流或者分合流节点，但是该节点设置的接收人规则为由上一步指定，这是错误的，应该为自动计算而非每个子线程人为的选择.");
 				}*/
 
-				// 子线程节点
-				if (nd.getHisRunModel() == RunModel.SubThread) {
-					//检查子流程是否存在
-					msg.append("@信息:检查子流程");
-					String[] subFlowNos=nd.getSubFlowNos();
-					if (subFlowNos!=null){
-						Flows flows=new Flows();
-						for (String subFlowNo:subFlowNos){
-							flows.Retrieve(FlowAttr.No,subFlowNo);
-							if (flows.size()<1){
-								msg.append("@错误:子流程"+subFlowNo+"不存在");
-							}
-						}
-					}
-				}
 			}
 
 			return msg.toString();
@@ -5994,8 +6010,6 @@ public class Flow extends BP.En.EntityNoName {
 		nd.setY(y);
 		nd.setStep(idx);
 
-		// 增加了两个默认值值 . 5. 目的是让创建的节点，就可以使用.
-		nd.setCondModel(CondModel.SendButtonSileSelect); // 默认的发送方向.
 		nd.setHisDeliveryWay(DeliveryWay.BySelected); // 上一步发送人来选择.
 		nd.setFormType(NodeFormType.FoolForm); // 表单类型.
 
@@ -6115,8 +6129,6 @@ public class Flow extends BP.En.EntityNoName {
 		nd.setFK_Flow(this.getNo());
 		nd.setFlowName(this.getName());
 		nd.setStep(idx);
-		// 增加了两个默认值值 . 2016.11.15. 目的是让创建的节点，就可以使用.
-		nd.setCondModel(CondModel.SendButtonSileSelect); // 默认的发送方向.
 		nd.setHisDeliveryWay(DeliveryWay.BySelected); // 上一步发送人来选择.
 		nd.setFormType(NodeFormType.FoolForm); // 表单类型.
 
@@ -6259,7 +6271,6 @@ public class Flow extends BP.En.EntityNoName {
 			nd.setICON("前台");
 
 			// 增加了两个默认值值 . 目的是让创建的节点，就可以使用.
-			nd.setCondModel(CondModel.SendButtonSileSelect); // 默认的发送方向.
 			nd.setHisDeliveryWay(DeliveryWay.BySelected); // 上一步发送人来选择.
 			nd.setFormType(NodeFormType.FoolForm); // 表单类型.
 			nd.Insert();
@@ -6284,8 +6295,6 @@ public class Flow extends BP.En.EntityNoName {
 			nd.setY(250);
 			nd.setICON("审核");
 
-			// 增加了两个默认值值  目的是让创建的节点，就可以使用.
-			nd.setCondModel(CondModel.SendButtonSileSelect); // 默认的发送方向.
 			nd.setHisDeliveryWay(DeliveryWay.BySelected); // 上一步发送人来选择.
 			nd.setFormType(NodeFormType.FoolForm); // 表单类型.
 

@@ -83,10 +83,28 @@ function startNodeTask(no) {
         }
     })
 }
-//执行任务，每次执行前（）
+
+//执行任务，每次执行前（检查该任务是否存在）
 function doNodeTask(no) {
-    var url="/WF/WF/Task/NodeTaskDetail.html?NodeTaskNo="+no;
-    var self = window.open(url);
+    $.ajax({
+        url:"/WF/nodeTask/checkNodeTaskIsFinish",
+        data:{
+            no:no
+        },
+        success:function(data){
+            if (data) {
+                alert("请刷新任务列表!");
+                $("#dgNodeTasks").datagrid('reload');
+            }else {
+                var url="/WF/WF/Task/NodeTaskDetail.html?NodeTaskNo="+no;
+                var self = window.open(url);
+            }
+        },
+        error: function (data) {
+            console.log(data);
+        }
+    })
+
 }
 
 //执行节点任务

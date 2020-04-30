@@ -8987,67 +8987,11 @@ public class Dev2Interface {
 	 */
 	public static String Node_AskforReply(String fk_flow, int fk_node, long workid, long fid, String replyNote)
 			throws Exception {
-		// 把回复信息临时的写入 流程注册信息表以便让发送方法获取这个信息写入日志.
-		GenerWorkFlow gwf = new GenerWorkFlow(workid);
-		gwf.setParas_AskForReply(replyNote);
-		gwf.Update();
-
-		Node nd = new Node(gwf.getFK_Node());
-		String info = "";
-		try {
-			// 执行发送, 在发送的方法里面已经做了判断了,并且把 回复的信息写入了日志.
-			info = BP.WF.Dev2Interface.Node_SendWork(gwf.getFK_Flow(), workid, null, null, 0, null).ToMsgOfHtml();
-		} catch (Exception ex) {
-			if (ex.getMessage().contains("请选择下一步骤工作") == true || ex.getMessage().contains("用户没有选择发送到的节点") == true) {
-				if (nd.getCondModel() == CondModel.ByUserSelected) {
-					/* 如果抛出异常，我们就让其转入选择到达的节点里, 在节点里处理选择人员. */
-					return "SelectNodeUrl@./WorkOpt/ToNodes.htm?FK_Flow=" + gwf.getFK_Flow() + "&FK_Node="
-							+ gwf.getFK_Node() + "&WorkID=" + gwf.getWorkID() + "&FID=" + gwf.getFID();
-
-				}
-				return "err@下一个节点的接收人规则是，当前节点选择来选择，在当前节点属性里您没有启动接受人按钮，系统自动帮助您启动了，请关闭窗口重新打开。" + ex.getMessage();
-			}
-			return ex.getMessage();
-		}
-		Node node = new Node(gwf.getFK_Node());
-		Work wk = node.getHisWork();
-		wk.setOID(workid);
-		wk.RetrieveFromDBSources();
-		// 恢复加签后执行事件
-		info += node.getHisFlow().DoFlowEventEntity(EventListOfNode.AskerReAfter, node, node.getHisWork(), null);
-		return info;
+	return null;
 	}
 
 	public static String Node_AskforReply(long workid, String replyNote) throws Exception {
-		// 把回复信息临时的写入 流程注册信息表以便让发送方法获取这个信息写入日志.
-		GenerWorkFlow gwf = new GenerWorkFlow(workid);
-		gwf.setParas_AskForReply(replyNote);
-		gwf.Update();
-		String info = "";
-		Node nd = new Node(gwf.getFK_Node());
-		try {
-			// 执行发送, 在发送的方法里面已经做了判断了,并且把 回复的信息写入了日志.
-			info = BP.WF.Dev2Interface.Node_SendWork(gwf.getFK_Flow(), workid).ToMsgOfHtml();
-			Node node = new Node(gwf.getFK_Node());
-			Work wk = node.getHisWork();
-			wk.setOID(workid);
-			wk.RetrieveFromDBSources();
-
-			// 恢复加签后执行事件
-			info += node.getHisFlow().DoFlowEventEntity(EventListOfNode.AskerReAfter, node, wk, null);
-			return info;
-		} catch (Exception ex) {
-			if (ex.getMessage().contains("请选择下一步骤工作") == true || ex.getMessage().contains("用户没有选择发送到的节点") == true) {
-				if (nd.getCondModel() == CondModel.ByUserSelected) {
-					/* 如果抛出异常，我们就让其转入选择到达的节点里, 在节点里处理选择人员. */
-					return "SelectNodeUrl@./WorkOpt/ToNodes.htm?FK_Flow=" + gwf.getFK_Flow() + "&FK_Node="
-							+ gwf.getFK_Node() + "&WorkID=" + gwf.getWorkID() + "&FID=" + gwf.getFID();
-
-				}
-				return "err@下一个节点的接收人规则是，当前节点选择来选择，在当前节点属性里您没有启动接受人按钮，系统自动帮助您启动了，请关闭窗口重新打开。" + ex.getMessage();
-			}
-			return ex.getMessage();
-		}
+		return null;
 
 	}
 

@@ -1,24 +1,20 @@
 package BP.Task;
 
-import BP.DA.DBAccess;
 import BP.DA.DataRow;
 import BP.DA.DataTable;
-import BP.DA.Paras;
+import BP.springCloud.entity.JudgeRoute;
+import BP.Judge.JudgeRouteManager;
 import BP.Judge.JudgeTool;
-import BP.Port.Dept;
 import BP.Port.Emp;
 import BP.Port.EmpAttr;
 import BP.Port.Emps;
-import BP.Sys.OSModel;
 import BP.Tools.StringUtils;
 import BP.WF.Flow;
-import BP.WF.FlowAppType;
 import BP.WF.Node;
 import BP.WF.Template.*;
 import BP.Web.WebUser;
 import BP.springCloud.entity.GenerFlow;
 import BP.springCloud.entity.NodeTaskM;
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +39,9 @@ public class NodeTaskService {
 
     @Resource
     private GenerFlowManager generFlowManager;
+
+    @Resource
+    private JudgeRouteManager judgeRouteManager;
 
     public NodeTaskM getNodeTaskById(Long no){
         return nodeTaskManage.getNodeTaskById(no);
@@ -172,7 +171,24 @@ public class NodeTaskService {
             int runModel=node.GetValIntByKey(NodeAttr.RunModel);
             switch (runModel){
                 case 9:
+                    //如果存在judgeNodeId=当前节点，则说明该决策节点是匹配前置决策节点，不增加JudgeRoute信息
+                    JudgeRoute con=new JudgeRoute();
+                    con.setWorkId(nodeTaskM.getWorkId());
+                    con.setJudgeNodeId(nodeTaskM.getNodeId());
+                    List list=judgeRouteManager.findJudgeRouteList(con);
+                    if (list.size()!=0){//走正常路线，获取后置连线节点
+                        break;
+                    }
+
                     List<String> nextNodes=JudgeTool.judge(nodeTaskM);
+                    //记录分支信息（决策多分支，合并时使用）
+                    JudgeRoute route=new JudgeRoute();
+                    route.setNum(nextNodes.size());
+                    route.setWorkId(nodeTaskM.getWorkId());
+                    route.setJudgeNodeId(node.getJudgeNodeId());
+                    route.setRoutes(nextNodes.toString());
+                    judgeRouteManager.insertJudgeRoute(route);
+
                     return nodeTaskManage.getNodeTaskByNodeIdsAndParentTaskId(nodeTaskM.getParentNodeTask(),nextNodes);
             }
         }catch (Exception e){
@@ -252,14 +268,38 @@ public class NodeTaskService {
     *@Date: 2020/3/17 
     */
     public boolean beforeStartNodeTask(NodeTaskM nodeTaskM){
-        List<NodeTaskM> preList=getPreNodeTask(nodeTaskM);
-        if (preList!=null) {
-            for (NodeTaskM pre : preList) {
-                if (pre.getIsReady() != 3) {//前置节点任务存在未完成项，不允许启动该节点任务
-                    return false;
-                }
+        try{
+            Node node=new Node(nodeTaskM.getNodeId());
+            switch (node.getHisRunModel()){
+                case Judge://检查是否有与该决策节点对应的前置决策节点，存在时，前置决策节点的所有分支运行到该处，才允许启动
+                    JudgeRoute con=new JudgeRoute();
+                    con.setWorkId(nodeTaskM.getWorkId());
+                    con.setJudgeNodeId(nodeTaskM.getNodeId());
+                    List<JudgeRoute> judgeRouteList=judgeRouteManager.findJudgeRouteList(con);
+                    if (judgeRouteList.size()>0){
+                        JudgeRoute route=judgeRouteList.get(0);
+                        route.setArriveNum(route.getArriveNum()+1);
+                        judgeRouteManager.updateJudgeRoute(route);
+                        if (route.getArriveNum()==route.getNum()) //所有分支到齐
+                            return true;
+                        else
+                            return false;
+                    }
+
+                default:
+                    List<NodeTaskM> preList=getPreNodeTask(nodeTaskM);
+                    if (preList!=null) {
+                        for (NodeTaskM pre : preList) {
+                            if (pre.getIsReady() != 3) {//前置节点任务存在未完成项，不允许启动该节点任务
+                                return false;
+                            }
+                        }
+                    }
             }
+        }catch (Exception e){
+            logger.error(e.getMessage());
         }
+
         return true;
     }
     

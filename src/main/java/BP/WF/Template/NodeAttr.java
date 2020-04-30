@@ -386,11 +386,7 @@ public class NodeAttr
 	 
 	*/
 	public static final String SaveModel = "SaveModel";
-	/** 
-	 方向条件控制规则
-	 
-	*/
-	public static final String CondModel = "CondModel";
+
 	/** 
 	 子流程启动方式
 	 
