@@ -125,7 +125,10 @@ public class MapAttrString extends EntityMyPK {
 		map.AddBoolean("IsRichText", false, "是否大块文本？", true, true);
 		map.AddBoolean("IsSupperText", false, "是否富文本？", true, true);
 		map.AddTBString(MapAttrAttr.Tip, null, "激活提示", true, false, 0, 500, 20, true);
+		map.AddDDLSysEnum(MapAttrAttr.IsReferOut, 0, "字段引用", true, false, MapAttrAttr.IsReferOut,
+				"@0=未引用@1=引用父流程@2=引用本流程@3=引用子流程");
 
+		map.AddTBString(MapAttrAttr.ReferNodeId, null, "引用节点", true, false, 0, 500, 20, true);
 		map.AddDDLSysEnum(MapAttrAttr.ColSpan, 1, "单元格数量", true, true, "ColSpanAttrString",
 				"@0=跨0个单元格@1=跨1个单元格@2=跨2个单元格@3=跨3个单元格@4=跨4个单元格@5=跨4个单元格@6=跨4个单元格");
 

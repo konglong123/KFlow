@@ -92,7 +92,7 @@ function doNodeTask(no) {
             no:no
         },
         success:function(data){
-            if (data) {
+            if (!data) {
                 alert("请刷新任务列表!");
                 $("#dgNodeTasks").datagrid('reload');
             }else {

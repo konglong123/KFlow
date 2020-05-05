@@ -1052,6 +1052,8 @@ public class MapAttr extends EntityMyPK {
          map.AddBoolean(MapAttrAttr.IsEnableInAPP, true, "是否在移动端中显示", true, true);
          map.AddTBInt(MapAttrAttr.Idx, 0, "序号", true, false);
 
+		map.AddDDLSysEnum(MapAttrAttr.IsReferOut, 0, "字段引用", true, false, MapAttrAttr.IsReferOut,
+				"@0=未引用@1=引用外部流程@2=引用本流程");
 		// 参数属性.
 		map.AddTBAtParas(4000);
 
@@ -1343,4 +1345,21 @@ public class MapAttr extends EntityMyPK {
         SFTable sf = new SFTable(this.getUIBindKey());
         return BP.Tools.Json.ToJson(sf.getGenerHisDataTable());
     }
+
+    public String getReferNodeId(){
+		return this.GetValStrByKey(MapAttrAttr.ReferNodeId);
+	}
+	public void setReferNodeID(String referNodeID){
+		this.SetValByKey(MapAttrAttr.ReferNodeId,referNodeID);
+	}
+
+	public int getIsReferOut(){
+		return this.GetValIntByKey(MapAttrAttr.IsReferOut);
+	}
+	public void setIsReferOut(int type){
+		this.SetValByKey(MapAttrAttr.IsReferOut,type);
+	}
+
+
+
 }

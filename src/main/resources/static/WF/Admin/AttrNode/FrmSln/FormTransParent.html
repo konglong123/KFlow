@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>父子流程间表单数据传递</title>
+</head>
+<body>
+<fieldset>
+    <legend>
+        <label>引用父流程节点表单 </label>
+    </legend>
+    <div>
+        <table cellpadding="5">
+            <tr>
+                <td>节点编码：</td>
+                <td><input class="easyui-textbox" type="text" id="nodeNoForm"></td>
+                <td>属性字段：</td>
+                <td><input class="easyui-textbox" type="text" id="keyAttrForm"></td>
+                <td>属性名：</td>
+                <td><input class="easyui-textbox" type="text" id="nameAttrForm"></td>
+            </tr>
+        </table>
+    </div>
+    <div style="text-align:right;padding:5px">
+        <button class="easyui-linkbutton" onclick="queryMapAttrByCondition()" >查询</button>
+        <button class="easyui-linkbutton"  onclick="referCurrentForm()">引用到当前节点</button>
+    </div>
+
+    <div id="referParentAttrs">
+        <table id="dgReferParentAttrs" title="引用表单字段">
+        </table>
+    </div>
+</fieldset>
+<script type="text/javascript">
+    function queryMapAttrByCondition() {
+        var nodeId=$("#nodeNoForm").val().trim();
+        $('#dgReferParentAttrs').datagrid({
+            singleSelect:false,
+            autoRowHeight:false,
+            pagination:true,
+            pageSize: 10,
+            pageList:[10,25,50,100],
+            nowrap:false,//数据多行显示
+            fitColumns:true,//表头与数据对齐
+            url:"/WF/form/getNodeFormAttrs",
+            queryParams: {
+                nodeId:nodeId,
+            },
+            columns:[[
+                {field:'MyPK',title: '编码',align: 'center',width:10,hidden:'true'},
+                {field:'ck',checkbox:true},
+                {field:'KeyOfEn',title: '属性',align: 'center',width:10},
+                {field:'Name',title: '描述',align: 'center',width:10},
+                {field:'DefVal',title: '默认值',align: 'center',width:10},
+                {field:'UIVisible',title: '是否可见',align: 'center',width:10,
+                    formatter:function(val,rec){
+                        if (val==1)
+                            return "可见";
+                        else
+                            return "不可见";
+                    }},
+                {field:'UIIsEnable',title: '是否可编辑',align: 'center',width:10,
+                    formatter:function(val,rec){
+                        if (val==1)
+                            return "可编辑";
+                        else
+                            return "只读";
+                    }},
+                {field:'GroupID',title: '显示分组',align: 'center',width:10},
+                {field:'IsReferOut',title: '引用类型',align: 'center',width:10,
+                    formatter:function(val,rec){
+                        if (val==0)
+                            return "未引用";
+                        else if (val==1)
+                            return "引用父流程";
+                        else if (val==2)
+                            return "引用同流程";
+                    }},
+
+            ]]
+        });
+    }
+    function referCurrentForm() {
+
+    }
+</script>
+</body>
+</html>

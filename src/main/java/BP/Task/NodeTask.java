@@ -57,6 +57,13 @@ public class NodeTask extends EntityNo {
         rm.refMethodType= RefMethodType.RightFrameOpen;
         map.AddRefMethod(rm);
 
+        rm = new RefMethod();
+        rm.Title = "节点表单数据";
+        rm.ClassMethodName = this.toString() + ".NodeForm";
+        rm.Icon = "../../WF/Img/Dtl.gif";
+        rm.refMethodType= RefMethodType.RightFrameOpen;
+        map.AddRefMethod(rm);
+
         this.set_enMap(map);
         return this.get_enMap();
     }
@@ -66,6 +73,9 @@ public class NodeTask extends EntityNo {
         return BP.WF.Glo.getCCFlowAppPath() + "/WF/Comm/En.htm?EnName=BP.WF.Template.NodeExt&PKVal="+this.GetValStrByKey(NodeTaskAttr.NodeId);
     }
 
+    public  final String NodeForm(){
+        return BP.WF.Glo.getCCFlowAppPath() +"/WF/Task/NodeTaskDetail.html?NodeTaskNo="+this.GetValStrByKey(NodeTaskAttr.No);
+    }
     public NodeTask(String _no) throws Exception{
         if (_no == null || _no.equals(""))
         {

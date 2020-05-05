@@ -237,4 +237,8 @@ public class MapAttrAttr extends EntityMyPKAttr
 	 
 	*/
 	public static final String IsSum = "IsSum";
+
+	public static final String IsReferOut = "IsReferOut";
+
+	public static final String ReferNodeId="ReferNodeId";
 }

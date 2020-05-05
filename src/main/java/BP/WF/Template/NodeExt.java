@@ -660,6 +660,14 @@ public class NodeExt extends Entity
         map.AddRefMethod(rm);
 
         rm = new RefMethod();
+        rm.Title = "表单数据传递";
+        rm.Icon = "../../WF/Admin/CCFormDesigner/Img/Form.png";
+        rm.ClassMethodName = this.toString() + ".FormDataTrans";
+        rm.refMethodType = RefMethodType.RightFrameOpen;
+        rm.GroupName = "父子流程";
+        map.AddRefMethod(rm);
+
+        rm = new RefMethod();
         rm.Title = "延续子流程"; // "调用事件接口";
         rm.ClassMethodName = this.toString() + ".DoYGFlows";
         rm.refMethodType = RefMethodType.RightFrameOpen;
@@ -807,6 +815,11 @@ public class NodeExt extends Entity
 	{
 		return BP.WF.Glo.getCCFlowAppPath() + "WF/Comm/EnOnly.htm?EnName=BP.WF.Template.FrmSubFlow&PKVal=" + this.getNodeID();
 	}
+
+	public final String FormDataTrans(){
+	    return BP.WF.Glo.getCCFlowAppPath() + "WF/Admin/AttrNode/FrmSln/FormTransParent.html?NodeId=" + this.getNodeID();
+    }
+
 	/** 
 	 接受人规则
 	 @return 
