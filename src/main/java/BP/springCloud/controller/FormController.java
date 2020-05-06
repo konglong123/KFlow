@@ -3,7 +3,10 @@ package BP.springCloud.controller;
 import BP.En.Attr;
 import BP.En.EntityOIDAttr;
 import BP.Sys.*;
+import BP.WF.Flow;
+import BP.WF.Node;
 import BP.springCloud.tool.PageTool;
+import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -61,27 +64,17 @@ public class FormController {
         String curNodeId=request.getParameter("curNodeId");
         String nodeId=request.getParameter("nodeId");
         String fkMapData="ND"+curNodeId;
+        int referNode=Integer.parseInt(nodeId);
 
         try{
             //节点表单整体引用
             if (type.equals("1")){
-                //当前节点表单字段
-                MapAttrs curAttrs=new MapAttrs();
-                curAttrs.Retrieve(MapAttrAttr.FK_MapData,"ND"+curNodeId);
-                Set curSet=new HashSet();
-                List<MapAttr> list=curAttrs.toList();
-                for (MapAttr attr:list){
-                    curSet.add(attr.getKeyOfEn());
-                }
-
                 //处理引用节点字段
                 MapAttrs mapAttrs=new MapAttrs();
                 mapAttrs.Retrieve(MapAttrAttr.FK_MapData,"ND"+nodeId);
                 List<MapAttr> referList=mapAttrs.toList();
                 Map<Integer,Integer> referGroup=new HashMap<>();//记录已经复制的GroupField
                 for (MapAttr attr:referList){
-                    if (curSet.contains(attr.getKeyOfEn()))
-                        continue;//过滤重复字段
 
                     //判断分组是否需要复制
                     if (!referGroup.containsKey(attr.getGroupID())){
@@ -97,7 +90,7 @@ public class FormController {
                     newAttr.setGroupID(referGroup.get(newAttr.getGroupID()));
                     newAttr.SetValByKey(MapAttrAttr.IsReferOut,2);//同流程表单属性
                     if (StringUtils.isEmpty(attr.getReferNodeId())){
-                        newAttr.setReferNodeID("ND"+nodeId);
+                        newAttr.setReferNodeID(referNode);
                     }
                     newAttr.setUIIsEnable(false);//不可编辑
                     newAttr.Insert();
@@ -121,7 +114,7 @@ public class FormController {
                         newAttr.setGroupID(groupField.getOID());
                         newAttr.SetValByKey(MapAttrAttr.IsReferOut,2);//同流程表单属性
                         if (StringUtils.isEmpty(attr.getReferNodeId())){
-                            newAttr.setReferNodeID("ND"+nodeId);
+                            newAttr.setReferNodeID(referNode);
                         }
                         newAttr.setUIIsEnable(false);//不可编辑
                         newAttr.Insert();
@@ -144,8 +137,78 @@ public class FormController {
      */
      @RequestMapping("referFromParent")
      @ResponseBody
-     public void referFromParent(HttpServletRequest request, HttpServletResponse response){
+     public JSONObject referFromParent(HttpServletRequest request, HttpServletResponse response){
+         String nodeId=request.getParameter("nodeId");
+         String curNodeId=request.getParameter("curNodeId");
+         String typeStr=request.getParameter("type");
+         String attrNos=request.getParameter("attrNos");
+         int type=Integer.parseInt(typeStr);
+         String[] attrs=attrNos.split(",");
+         JSONObject result=new JSONObject();
 
+         if (!checkRefer(curNodeId,nodeId,type)){
+             result.put("success",false);
+             result.put("message","不满足节点表单引用关系！");
+             return result;
+         }
+
+         try{
+             if (attrs.length>0){
+                 String fkMapData="ND"+curNodeId;
+                 GroupField groupField=new GroupField();
+                 groupField.setFrmID(fkMapData);
+                 groupField.setOID(0);
+                 groupField.setLab("引用节点");
+                 groupField.Insert();
+
+                 int referNode=Integer.parseInt(nodeId);
+                 for (String no:attrs){
+                     MapAttr attr=new MapAttr(no);
+                     MapAttr newAttr=new MapAttr();
+                     newAttr.setRow(attr.getRow());
+                     newAttr.setFK_MapData(fkMapData);
+                     newAttr.setGroupID(groupField.getOID());
+                     newAttr.setIsReferOut(type);
+                     if (attr.getReferNodeId()==0){
+                         newAttr.setReferNodeID(referNode);
+                     }
+                     newAttr.setUIIsEnable(false);//不可编辑
+                     newAttr.Insert();
+                 }
+             }
+             result.put("success",true);
+         }catch (Exception e){
+             logger.error(e.getMessage());
+         }
+         return result;
+     }
+
+     //检验curNode是否允许引用nodeId
+    //判断能否允许引用（引用父时，父中是否包含该流程，，引用子时，该流程是否包含该子流程）
+    private boolean checkRefer(String curNodeId,String nodeId,int type){
+         try {
+             Node curNode=new Node(curNodeId);
+             Node node=new Node(nodeId);
+             String[] subFlowNos=null;
+             String flowNo=null;
+             if (type==1){//引用父work
+                 flowNo=curNode.getFK_Flow();
+                 subFlowNos=node.getSubFlowNos();
+             }else{//引用子work
+                 flowNo=node.getFK_Flow();
+                 subFlowNos=curNode.getSubFlowNos();
+             }
+             if (subFlowNos!=null){
+                 for (String temp:subFlowNos){
+                     if (temp.equals(flowNo))
+                         return true;
+                 }
+             }
+         }catch (Exception e){
+             logger.error(e.getMessage());
+             return false;
+         }
+         return false;
      }
 
      /**
@@ -158,6 +221,26 @@ public class FormController {
      @RequestMapping("getMapAttrByCondition")
      @ResponseBody
      public void getMapAttrByCondition(HttpServletRequest request, HttpServletResponse response){
+         try {
+             String nodeId=request.getParameter("nodeId");
+             String keyOfEn=request.getParameter("keyOfEn");
+             MapAttrs attrs=new MapAttrs();
+             boolean flag1=StringUtils.isEmpty(nodeId);
+             boolean flag2=StringUtils.isEmpty(keyOfEn);
+             if (!flag1&&!flag2){
+                 attrs.Retrieve(MapAttrAttr.FK_MapData,"ND"+nodeId,MapAttrAttr.KeyOfEn,keyOfEn);
+             }else if (!flag1){
+                 attrs.Retrieve(MapAttrAttr.FK_MapData,"ND"+nodeId);
+             }else if (!flag2){
+                 attrs.Retrieve(MapAttrAttr.KeyOfEn,keyOfEn);
+             }
+             if (!attrs.isEmpty()){
+                 PageTool.TransToResult(attrs,request,response);
+             }
+         }catch (Exception e){
+             logger.error(e.getMessage());
+         }
+
 
      }
 }

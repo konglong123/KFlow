@@ -238,6 +238,7 @@ public class MapAttrAttr extends EntityMyPKAttr
 	*/
 	public static final String IsSum = "IsSum";
 
+	//0否，1引用父流程，2引用同流程节点表单，3引用子流程
 	public static final String IsReferOut = "IsReferOut";
 
 	public static final String ReferNodeId="ReferNodeId";

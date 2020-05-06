@@ -921,8 +921,8 @@ public class Dev2Interface {
 	public static DataTable DB_GenerCanStartFlowsOfDataTable(String userNo, String domain) throws Exception {
 
 		String sql = "SELECT A.No,A.Name,a.IsBatchStart,a.FK_FlowSort,C.Name AS FK_FlowSortText,A.IsStartInMobile, A.Idx";
-		sql += " FROM WF_Flow A, V_FlowStarterBPM B, WF_FlowSort C  ";
-		sql += " WHERE A.No=B.FK_Flow AND A.IsCanStart=1 AND A.FK_FlowSort=C.No  AND FK_Emp='" + userNo + "' ";
+		sql += " FROM WF_Flow A, WF_FlowSort C  ";
+		sql += " WHERE  A.IsCanStart=1 AND A.FK_FlowSort=C.No ";
 		if (DataType.IsNullOrEmpty(domain) == false)
 			sql += " AND C.Domain='" + domain + "'";
 
@@ -930,26 +930,6 @@ public class Dev2Interface {
 
 		DataTable dt = DBAccess.RunSQLReturnTable(sql);
 
-		if (SystemConfig.getAppCenterDBType() == DBType.Oracle) {
-			dt.Columns.get("NO").ColumnName = "No";
-			dt.Columns.get("NAME").ColumnName = "Name";
-			dt.Columns.get("ISBATCHSTART").ColumnName = "IsBatchStart";
-			dt.Columns.get("FK_FLOWSORT").ColumnName = "FK_FlowSort";
-			dt.Columns.get("FK_FLOWSORTTEXT").ColumnName = "FK_FlowSortText";
-			dt.Columns.get("ISSTARTINMOBILE").ColumnName = "IsStartInMobile";
-			dt.Columns.get("IDX").ColumnName = "Idx";
-
-		}
-		if (SystemConfig.getAppCenterDBType() == DBType.PostgreSQL) {
-			dt.Columns.get("no").ColumnName = "No";
-			dt.Columns.get("name").ColumnName = "Name";
-			dt.Columns.get("isbatchstart").ColumnName = "IsBatchStart";
-			dt.Columns.get("fk_flowsort").ColumnName = "FK_FlowSort";
-			dt.Columns.get("fk_flowsorttext").ColumnName = "FK_FlowSortText";
-			dt.Columns.get("isstartinmobile").ColumnName = "IsStartInMobile";
-
-			dt.Columns.get("idx").ColumnName = "Idx";
-		}
 		return dt;
 
 	}

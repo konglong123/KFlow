@@ -299,7 +299,7 @@ public class NodeExt extends Entity
 
         // #region 分合流子线程属性
         map.AddDDLSysEnum(NodeAttr.RunModel, 0, "节点类型",
-            true, false, NodeAttr.RunModel, "@0=普通@1=合流@2=分流@3=分合流@4=子线程");
+            true, false, NodeAttr.RunModel, "@0=普通@1=合流@2=分流@3=分合流@4=子线程@9=决策");
 
         //map.SetHelperUrl(NodeAttr.RunModel, "http://ccbpm.mydoc.io/?v=5404&t=17940"); //增加帮助.
 

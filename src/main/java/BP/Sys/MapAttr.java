@@ -1053,7 +1053,10 @@ public class MapAttr extends EntityMyPK {
          map.AddTBInt(MapAttrAttr.Idx, 0, "序号", true, false);
 
 		map.AddDDLSysEnum(MapAttrAttr.IsReferOut, 0, "字段引用", true, false, MapAttrAttr.IsReferOut,
-				"@0=未引用@1=引用外部流程@2=引用本流程");
+				"@0=未引用@1=引用父流程@2=引用本流程@3=引用子流程");
+
+		map.AddTBInt(MapAttrAttr.ReferNodeId, 0, "引用节点", true, false);
+
 		// 参数属性.
 		map.AddTBAtParas(4000);
 
@@ -1303,16 +1306,13 @@ public class MapAttr extends EntityMyPK {
 			throw new RuntimeException("@错误:[" + this.getKeyOfEn() + "]是字段关键字，您不能用它做字段。");
 		}
 
+		//如果字段存在则删除以前字段，进行更新(引用时，引用字段有可能覆盖当前表单字段)
 		if (this.IsExit(MapAttrAttr.KeyOfEn, this.getKeyOfEn(), MapAttrAttr.FK_MapData, this.getFK_MapData())) {
-			return false;
-			// throw new RuntimeException("@在[" + this.getMyPK() + "]已经存在字段名称["
-			// + this.getName() + "]字段[" + this.getKeyOfEn() + "]");
+			this.Delete(MapAttrAttr.KeyOfEn, this.getKeyOfEn(), MapAttrAttr.FK_MapData, this.getFK_MapData());
 		}
 
 		if (this.getIdx() == 0) {
-			this.setIdx(999); // BP.DA.DBAccess.RunSQLReturnValInt("SELECT
-								// COUNT(*) FROM Sys_MapAttr WHERE FK_MapData='"
-								// + this.FK_MapData + "'") + 1;
+			this.setIdx(999);
 		}
 		this.setMyPK(this.getFK_MapData() + "_" + this.getKeyOfEn());
 		return super.beforeInsert();
@@ -1346,10 +1346,10 @@ public class MapAttr extends EntityMyPK {
         return BP.Tools.Json.ToJson(sf.getGenerHisDataTable());
     }
 
-    public String getReferNodeId(){
-		return this.GetValStrByKey(MapAttrAttr.ReferNodeId);
+    public int getReferNodeId(){
+		return this.GetValIntByKey(MapAttrAttr.ReferNodeId);
 	}
-	public void setReferNodeID(String referNodeID){
+	public void setReferNodeID(int referNodeID){
 		this.SetValByKey(MapAttrAttr.ReferNodeId,referNodeID);
 	}
 

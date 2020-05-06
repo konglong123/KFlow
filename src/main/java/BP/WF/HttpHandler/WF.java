@@ -884,9 +884,6 @@ public class WF extends WebContralBase {
         }
         //该处后面可以加上用户启动流程对权限信息（）
         String json="";
-        json = BP.DA.DBAccess.GetBigTextFromDB("WF_Emp", "No", WebUser.getNo(), "StartFlows");
-        if (DataType.IsNullOrEmpty(json) == false)
-            return json;
 
         //流程类别.
         FlowSorts fss = new FlowSorts();
@@ -901,17 +898,6 @@ public class WF extends WebContralBase {
         dtStart.TableName = "Start";
         ds.Tables.add(dtStart);
         json = BP.Tools.Json.ToJson(ds);
-       //把json存入数据表，避免下一次再取.
-        if (json.length() > 40)
-        {
-            BP.DA.DBAccess.SaveBigTextToDB(json, "WF_Emp", "No", WebUser.getNo(), "StartFlows");
-
-          /*  Paras ps = new Paras();
-            ps.SQL = "UPDATE WF_Emp SET StartFlows=" + ps.getDBStr() + "StartFlows WHERE No=" + ps.getDBStr() + "No";
-            ps.Add("StartFlows", json);
-            ps.Add("No", WebUser.getNo());
-            DBAccess.RunSQL(ps);*/
-        }
 
         //返回组合
         return json;

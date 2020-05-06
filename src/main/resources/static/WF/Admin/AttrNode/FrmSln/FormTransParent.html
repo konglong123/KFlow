@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>父子流程间表单数据传递</title>
+    <link href="../../../Scripts/easyUI/themes/default/easyui.css" rel="stylesheet" type="text/css" />
+    <script src="../../../Scripts/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="../../../Scripts/easyUI/jquery.easyui.min.js" type="text/javascript"></script>
+    <script src="../../../Scripts/QueryString.js" type="text/javascript"></script>
+    <script src="../../../Scripts/EasyUIUtility.js" type="text/javascript"></script>
 </head>
 <body>
 <fieldset>
@@ -13,11 +18,9 @@
         <table cellpadding="5">
             <tr>
                 <td>节点编码：</td>
-                <td><input class="easyui-textbox" type="text" id="nodeNoForm"></td>
+                <td><input class="easyui-textbox" type="text" id="nodeNoForm" ></td>
                 <td>属性字段：</td>
                 <td><input class="easyui-textbox" type="text" id="keyAttrForm"></td>
-                <td>属性名：</td>
-                <td><input class="easyui-textbox" type="text" id="nameAttrForm"></td>
             </tr>
         </table>
     </div>
@@ -27,14 +30,40 @@
     </div>
 
     <div id="referParentAttrs">
-        <table id="dgReferParentAttrs" title="引用表单字段">
+        <table id="dgReferAttrsParent" title="引用表单字段">
+        </table>
+    </div>
+</fieldset>
+
+<fieldset>
+    <legend>
+        <label>引用子流程节点表单 </label>
+    </legend>
+    <div>
+        <table cellpadding="5">
+            <tr>
+                <td>节点编码：</td>
+                <td><input class="easyui-textbox" type="text" id="nodeNoFormChild" ></td>
+                <td>属性字段：</td>
+                <td><input class="easyui-textbox" type="text" id="keyAttrFormChild"></td>
+            </tr>
+        </table>
+    </div>
+    <div style="text-align:right;padding:5px">
+        <button class="easyui-linkbutton" onclick="queryMapAttrByCondition2()" >查询</button>
+        <button class="easyui-linkbutton"  onclick="referCurrentForm2()">引用到当前节点</button>
+    </div>
+
+    <div id="referChildAttrs">
+        <table id="dgReferAttrsChild" title="引用表单字段">
         </table>
     </div>
 </fieldset>
 <script type="text/javascript">
     function queryMapAttrByCondition() {
         var nodeId=$("#nodeNoForm").val().trim();
-        $('#dgReferParentAttrs').datagrid({
+        var keOfEn=$("#keyAttrForm").val().trim();
+        $('#dgReferAttrsParent').datagrid({
             singleSelect:false,
             autoRowHeight:false,
             pagination:true,
@@ -42,9 +71,10 @@
             pageList:[10,25,50,100],
             nowrap:false,//数据多行显示
             fitColumns:true,//表头与数据对齐
-            url:"/WF/form/getNodeFormAttrs",
+            url:"/WF/form/getMapAttrByCondition",
             queryParams: {
                 nodeId:nodeId,
+                keyOfEn:keOfEn,
             },
             columns:[[
                 {field:'MyPK',title: '编码',align: 'center',width:10,hidden:'true'},
@@ -69,20 +99,132 @@
                 {field:'GroupID',title: '显示分组',align: 'center',width:10},
                 {field:'IsReferOut',title: '引用类型',align: 'center',width:10,
                     formatter:function(val,rec){
-                        if (val==0)
-                            return "未引用";
-                        else if (val==1)
-                            return "引用父流程";
-                        else if (val==2)
-                            return "引用同流程";
+                        getMapAttrReferType(val);
                     }},
 
             ]]
         });
     }
     function referCurrentForm() {
+        var nodeId=$("#nodeNoForm").val().trim();
+        if (nodeId==null||nodeId==""){
+            alert("节点编码必填！");
+            return;
+        }
+        var curNodeId=GetQueryString("NodeId");
+        var rows = $('#dgReferAttrsParent').datagrid('getSelections');
+        if (rows==null||rows.length==0){
+            alert("请选择引用属性！");
+            return;
+        }
+        var attrNos=[];
+        for (var index=0;index<rows.length;index++){
+            attrNos.push(rows[index].MyPK);
+        }
+        $.ajax({
+            url:"/WF/form/referFromParent",
+            data:{
+                nodeId:nodeId,
+                curNodeId:curNodeId,
+                type:1,
+                attrNos:attrNos.toString()
+            },
+            success: function(data){
+                if (data.success)
+                    alert("引用成功，刷新表单可见！");
+                else
+                    alert("引用失败："+data.message);
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        })
 
     }
+
+    //引用子节点（后面可能有变化，因此现在没有将父子进行耦合）
+    function queryMapAttrByCondition2() {
+        var nodeId=$("#nodeNoFormChild").val().trim();
+        var keOfEn=$("#keyAttrFormChild").val().trim();
+        $('#dgReferAttrsChild').datagrid({
+            singleSelect:false,
+            autoRowHeight:false,
+            pagination:true,
+            pageSize: 10,
+            pageList:[10,25,50,100],
+            nowrap:false,//数据多行显示
+            fitColumns:true,//表头与数据对齐
+            url:"/WF/form/getMapAttrByCondition",
+            queryParams: {
+                nodeId:nodeId,
+                keyOfEn:keOfEn,
+            },
+            columns:[[
+                {field:'MyPK',title: '编码',align: 'center',width:10,hidden:'true'},
+                {field:'ck',checkbox:true},
+                {field:'KeyOfEn',title: '属性',align: 'center',width:10},
+                {field:'Name',title: '描述',align: 'center',width:10},
+                {field:'DefVal',title: '默认值',align: 'center',width:10},
+                {field:'UIVisible',title: '是否可见',align: 'center',width:10,
+                    formatter:function(val,rec){
+                        if (val==1)
+                            return "可见";
+                        else
+                            return "不可见";
+                    }},
+                {field:'UIIsEnable',title: '是否可编辑',align: 'center',width:10,
+                    formatter:function(val,rec){
+                        if (val==1)
+                            return "可编辑";
+                        else
+                            return "只读";
+                    }},
+                {field:'GroupID',title: '显示分组',align: 'center',width:10},
+                {field:'IsReferOut',title: '引用类型',align: 'center',width:10,
+                    formatter:function(val,rec){
+                        getMapAttrReferType(val);
+                    }},
+
+            ]]
+        });
+    }
+    function referCurrentForm2() {
+        var nodeId=$("#nodeNoFormChild").val().trim();
+        if (nodeId==null||nodeId==""){
+            alert("节点编码必填！");
+            return;
+        }
+        var curNodeId=GetQueryString("NodeId");
+        var rows = $('#dgReferAttrsChild').datagrid('getSelections');
+        if (rows==null||rows.length==0){
+            alert("请选择引用属性！");
+            return;
+        }
+        var attrNos=[];
+        for (var index=0;index<rows.length;index++){
+            attrNos.push(rows[index].MyPK);
+        }
+        $.ajax({
+            url:"/WF/form/referFromParent",
+            data:{
+                nodeId:nodeId,
+                curNodeId:curNodeId,
+                type:3,
+                attrNos:attrNos.toString()
+            },
+            success: function(data){
+                if (data.success)
+                    alert("引用成功，刷新表单可见！");
+                else
+                    alert("引用失败："+data.message);
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        })
+
+    }
+
 </script>
 </body>
 </html>

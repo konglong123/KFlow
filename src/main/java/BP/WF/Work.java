@@ -1,16 +1,19 @@
 package BP.WF;
 
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import BP.DA.DBAccess;
 import BP.DA.DataRow;
 import BP.DA.DataType;
 import BP.En.*;
 import BP.Port.Emp;
-import BP.Sys.EventListOfNode;
-import BP.Sys.FrmAttachments;
-import BP.Sys.MapDtls;
-import BP.Sys.SystemConfig;
+import BP.Sys.*;
+import BP.Task.FlowGener;
+import BP.Task.FlowGenerAttr;
+import BP.Task.FlowGeners;
 import BP.Tools.DateUtils;
 
 /** 
@@ -637,5 +640,69 @@ public abstract class Work extends Entity
 			this.set_enMap(null);
 		}
 		this._nodeID = value;
+	}
+
+	//设置work中引用外流程的字段值
+	public final void setReferAttrValue() throws Exception{
+		Row row=this.getRow();
+		MapAttrs attrs=new MapAttrs();
+		attrs.Retrieve(MapAttrAttr.FK_MapData,this.NodeFrmID);
+		List<MapAttr> list=attrs.toList();
+		List<MapAttr> referList=new ArrayList<>();
+		for (MapAttr attr:list){
+			//引用外部work数据
+			if (attr.getIsReferOut()==1||attr.getIsReferOut()==3)
+				referList.add(attr);
+		}
+		if (referList.size()>0){
+			FlowGener flowGener=new FlowGener(this.getOID()+"");
+			String parentWorkId=flowGener.GetValStrByKey(FlowGenerAttr.ParentWorkId);
+			java.util.Map<String,Work> workMap=new HashMap<>();
+			Row curRow=this.getRow();
+
+			List<FlowGener> children=null;
+
+			for (MapAttr attr:referList) {
+				String referNode=attr.getReferNodeId()+"";
+
+				Work wk=workMap.get(referNode);
+				//引用外部work数据
+				if (attr.getIsReferOut() == 1) {//父work数据
+					if (wk==null) {
+						Node node = new Node(referNode);
+						wk = node.getHisWork();
+						wk.setOID(Long.valueOf(parentWorkId));
+						wk.RetrieveFromDBSources();
+						wk.ResetDefaultVal();
+						workMap.put(referNode,wk);
+					}
+				}else if (attr.getIsReferOut() == 3) {//引用子work数据
+					//初始化子流程实例
+					if (children==null){
+						FlowGeners flowGeners=new FlowGeners();
+						flowGeners.Retrieve(FlowGenerAttr.ParentWorkId,this.getOID()+"");
+						children=flowGeners.toList();
+					}
+
+					if (wk==null) {
+						Node node = new Node(referNode);
+						wk = node.getHisWork();
+						String flowNo=node.getFK_Flow();
+						for (FlowGener temp:children){
+							if (temp.GetValStrByKey(FlowGenerAttr.FlowId).equals(flowNo)){
+								wk.setOID(Long.valueOf(temp.getNo()));
+								wk.RetrieveFromDBSources();
+								wk.ResetDefaultVal();
+								workMap.put(referNode,wk);
+								break;
+							}
+						}
+					}
+				}
+				Row temp=wk.getRow();
+				String key=attr.getKeyOfEn();
+				curRow.put(key,temp.get(key));
+			}
+		}
 	}
 }

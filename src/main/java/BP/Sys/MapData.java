@@ -1286,26 +1286,10 @@ public class MapData extends EntityNoName
 	*/
 	public static Map GenerHisMap(String no) throws Exception
 	{
-		if (SystemConfig.getIsDebug())
-		{
-			MapData md = new MapData();
-			md.setNo(no);
-			md.Retrieve();
-			return md.GenerHisMap();
-		}
-		else
-		{
-			Map map = BP.DA.Cash.GetMap(no);
-			if (map == null)
-			{
-				MapData md = new MapData();
-				md.setNo(no);
-				md.Retrieve();
-				map = md.GenerHisMap();
-				BP.DA.Cash.SetMap(no, map);
-			}
-			return map;
-		}
+		MapData md = new MapData();
+		md.setNo(no);
+		md.Retrieve();
+		return md.GenerHisMap();
 	}
 	/** 
 	 映射基础

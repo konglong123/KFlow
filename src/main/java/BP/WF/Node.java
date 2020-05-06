@@ -2114,7 +2114,7 @@ public class Node extends Entity {
 		map.AddTBInt(NodeAttr.IsRM, 1, "是否启用投递路径自动记忆功能?", true, true);
 		map.AddBoolean(NodeAttr.IsHandOver, false, "是否可以移交", true, true);
 		map.AddTBDecimal(NodeAttr.PassRate, 100, "通过率", true, true);
-		map.AddTBInt(NodeAttr.RunModel, 0, "运行模式(对普通节点有效)", true, true);
+		map.AddTBInt(NodeAttr.RunModel, 0, "运行模式()", true, true);
 		map.AddTBInt(NodeAttr.BlockModel, 0, "阻塞模式", true, true);
 		map.AddTBString(NodeAttr.BlockExp, null, "阻塞表达式", true, false, 0, 200, 10);
 		map.AddTBString(NodeAttr.BlockAlert, null, "被阻塞提示信息", true, false, 0, 100, 10);
@@ -2698,6 +2698,31 @@ public class Node extends Entity {
 		}
 		md.Insert();
 
+		MapAttr attr = new MapAttr();
+		attr.setFK_MapData(md.getNo());
+		attr.setKeyOfEn("OID");
+		attr.setName("WorkID");
+		attr.setMyDataType(BP.DA.DataType.AppInt);
+		attr.setUIContralType(UIContralType.TB);
+		attr.setLGType(FieldTypeS.Normal);
+		attr.setUIVisible(false);
+		attr.setUIIsEnable(false);
+		attr.setDefVal("0");
+		attr.setHisEditType(BP.En.EditType.Readonly);
+		attr.Insert();
+
+		attr = new MapAttr();
+		attr.setFK_MapData(md.getNo());
+		attr.setKeyOfEn("FID");
+		attr.setName("FID");
+		attr.setMyDataType(BP.DA.DataType.AppInt);
+		attr.setUIContralType(UIContralType.TB);
+		attr.setLGType(FieldTypeS.Normal);
+		attr.setUIVisible(false);
+		attr.setUIIsEnable(false);
+		attr.setHisEditType(BP.En.EditType.UnDel);
+		attr.setDefVal("0");
+		attr.Insert();
 
 	}
 	

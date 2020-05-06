@@ -71,5 +71,16 @@ function messageShow(message) {
     });
 }
 
+function getMapAttrReferType(val) {
+    if (val==0)
+        return "未引用";
+    else if (val==1)
+        return "引用父流程";
+    else if (val==2)
+        return "引用同流程";
+    else if (val==3)
+        return "引用子流程";
+}
+
 
 

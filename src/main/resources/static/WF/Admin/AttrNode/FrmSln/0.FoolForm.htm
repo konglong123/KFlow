@@ -90,12 +90,7 @@
                     {field:'GroupID',title: '显示分组',align: 'center',width:10},
                     {field:'IsReferOut',title: '引用类型',align: 'center',width:10,
                         formatter:function(val,rec){
-                            if (val==0)
-                                return "未引用";
-                            else if (val==1)
-                                return "引用父流程";
-                            else if (val==2)
-                                return "引用同流程";
+                            getMapAttrReferType(val);
                         }},
 
                 ]]
@@ -198,22 +193,6 @@
                 <li>如果上一个节点表单也是引用的上一个节点表单，那么系统就会依次类推的去寻找第一个节点表单</li>
             </ul>
         </fieldset>
-
-    </fieldset>
-    <fieldset>
-        <legend>
-            <label>关联引用父子流程表单</label>
-        </legend>
-        <div style="text-align:left;padding:10px">
-            选择节点:
-            <select id="DDL_Frm_Parent" name="DDL_Frm_Parent" onchange="getFormAttr()"> </select>
-            <button  onclick="referPart()"/>部分引用
-        </div>
-
-        <div id="referParentAttrs">
-            <table id="dgReferParentAttrs" title="引用表单字段">
-            </table>
-        </div>
 
     </fieldset>
 

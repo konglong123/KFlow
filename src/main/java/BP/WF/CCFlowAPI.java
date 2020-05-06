@@ -102,6 +102,7 @@ public class CCFlowAPI {
 			wk.setOID(workID);
 			wk.RetrieveFromDBSources();
 			wk.ResetDefaultVal();
+			wk.setReferAttrValue();
 
 			// 第1.2: 调用,处理用户定义的业务逻辑.
 			String sendWhen = nd.getHisFlow().DoFlowEventEntity(EventListOfNode.FrmLoadBefore, nd, wk, null);
