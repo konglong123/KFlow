@@ -52,9 +52,9 @@
                 newRow = "<tr style='width:100%'><td class=Idx style='width:10%'>" + i + "</td>";
                 newRow += "<td style='width:40%'>第" + nd.Step + "步</td>";
                 if ($.inArray(nd.NodeID, rndsArr) > -1) {
-                    newRow += "<td style='width:50%'>" + "<input id='CB_" + nd.NodeID + "' name='CB_" + nd.NodeID + "' type='checkbox' value='" + nd.Name + "' checked='checked' /><label for='CB_" + nd.NodeID + "' >" + nd.Name + "</label></td>";
+                    newRow += "<td style='width:50%'>" + "<input id='CB_" + nd.NodeID + "' name='returnNode' type='radio' value='" + nd.NodeID + "' checked='checked' /><label for='CB_" + nd.NodeID + "' >" + nd.Name + "</label></td>";
                 } else {
-                    newRow += "<td style='width:50%'>" + "<input id='CB_" + nd.NodeID + "' name='CB_" + nd.NodeID + "' type='checkbox' value='" + nd.Name + "' /><label for='CB_" + nd.NodeID + "' >" + nd.Name + "</label></td>";
+                    newRow += "<td style='width:50%'>" + "<input id='CB_" + nd.NodeID + "' name='returnNode' type='radio' value='" + nd.NodeID + "' /><label for='CB_" + nd.NodeID + "' >" + nd.Name + "</label></td>";
                 }
                 newRow += "</tr>";
                 $("#table1 tr:last").after(newRow);
@@ -64,30 +64,42 @@
             return;
         }
 
+
         //  提交
         function Btn_Save_Click() {
 
             var nodeID = GetQueryString("FK_Node");
             var flowNo = GetQueryString("FK_Flow");
+            var toNodeId=$("input[name='returnNode']:checked").val();
+            debugger
+            //检验是否符合规则
+            $.ajax({
+                url: "/WF/flow/checkReturn",
+                type: 'Get',
+                async: false,
+                data: {
+                    curNode:nodeID,
+                    toNode:toNodeId
+                },
+                success: function (data) {
+                    if (!data.success){
+                        alert("退回节点不符合规则！");
+                        return;
+                    }
+                    debugger
+                    var toNode = new Entity("BP.WF.Node", toNodeId);
 
-            var nodeReturn = new Entity("BP.WF.Template.NodeReturn");
-            nodeReturn.Delete("FK_Node", nodeID); //删除已经存在的数据.
-
-            var nds = new Entities("BP.WF.Nodes");
-            nds.Retrieve("FK_Flow", flowNo);
-
-            for (var i = 0; i < nds.length; i++) {
-                var node = nds[i];
-
-                var checked = $("#CB_" + node.NodeID).prop("checked");
-
-                if (checked == false)
-                    continue;
-
-                nodeReturn.FK_Node = GetQueryString("FK_Node");
-                nodeReturn.ReturnTo = node.NodeID;
-                nodeReturn.Insert();
-            }
+                    var nodeReturn = new Entity("BP.WF.Template.NodeReturn");
+                    nodeReturn.Delete("FK_Node", nodeID); //删除已经存在的数据.
+                    nodeReturn.FK_Node = nodeID;
+                    nodeReturn.ReturnTo = toNodeId;
+                    nodeReturn.return_node_name=toNode.Name;
+                    nodeReturn.Insert();
+                },
+                error: function (data) {
+                    console.log("error"+data);
+                }
+            });
 
             window.location.href = window.location.href;
             return;
@@ -106,8 +118,8 @@
     <fieldset>
         <legend>&nbsp;特别说明:&nbsp;</legend>
         <ul>
-            <li>只有节点属性的退回规则被设置成退回制订的节点，此功能才有效。 </li>
-            <li>设置退回的节点如果是当前节点下一步骤的节点，设置无意义，系统不做检查，退回时才做检查。</li>
+            <li>当前仅支持同粒度流程顺序节点间的回退， </li>
+            <li>若回退接待设置跨流程，经过非普通类型的节点，则不允许回退！</li>
         </ul>
     </fieldset>
     </form>

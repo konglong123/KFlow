@@ -33,6 +33,7 @@ public class NodeTask extends EntityNo {
         map.AddTBString(NodeTaskAttr.WorkGroupId, null, "实例组编码", true, true, 0, 50, 50);
         map.AddTBString(NodeTaskAttr.FlowId, null, "流程编码", true, true, 1, 50, 50);
         map.AddTBString(NodeTaskAttr.NodeId, null, "节点编码", true, true, 0, 50, 50);
+        map.AddTBString(NodeTaskAttr.NodeName, null, "节点名", true, true, 0, 50, 50);
         map.AddDDLSysEnum(NodeTaskAttr.IsReady, 0, "任务状态", true, false, NodeTaskAttr.IsReady,
                 "@20=未准备@1=可以开始@2=已经开始@3=已经完成@9=计划完成");
         map.AddDDLSysEnum(NodeTaskAttr.Status, 0, "提示信息", true, false, NodeTaskAttr.Status,
@@ -47,8 +48,8 @@ public class NodeTask extends EntityNo {
         map.AddTBDateTime(NodeTaskAttr.StartTime, null,"实际开始时间", true, true);
         map.AddTBDateTime(NodeTaskAttr.EndTime,  null,"实际结束时间", true, true);
         map.AddTBString(NodeTaskAttr.Executor, null, "执行人", true, true, 0, 100, 100);
-        map.AddDDLSysEnum(NodeTaskAttr.Yn, 0, "删除标志", true, false, NodeTaskAttr.Yn,
-                "@0=未删除@1=删除");
+       /* map.AddDDLSysEnum(NodeTaskAttr.Yn, 0, "删除标志", true, false, NodeTaskAttr.Yn,
+                "@0=未删除@1=删除");*/
 
         RefMethod rm = new RefMethod();
         rm.Title = "节点详细";
@@ -149,4 +150,45 @@ public class NodeTask extends EntityNo {
         }
         return _HisUAC;
     }
+
+    public String getNodeId(){
+        return this.GetValStrByKey(NodeTaskAttr.NodeId);
+    }
+
+    public void setNodeId(String nodeId){
+        this.SetValByKey(NodeTaskAttr.NodeId,nodeId);
+    }
+
+    public String getNodeName(){
+        return this.GetValStrByKey(NodeTaskAttr.NodeName);
+    }
+
+    public void setNodeName(String nodeName){
+        this.SetValByKey(NodeTaskAttr.NodeName,nodeName);
+    }
+
+    public String getExecutor(){
+        return this.GetValStrByKey(NodeTaskAttr.Executor);
+    }
+
+    public void setExecutor(String executor){
+        this.SetValByKey(NodeTaskAttr.Executor,executor);
+    }
+
+    public String getWorkId(){
+        return this.GetValStrByKey(NodeTaskAttr.WorkId);
+    }
+
+    public void setWorkId(String workId){
+        this.SetValByKey(NodeTaskAttr.WorkId,workId);
+    }
+
+    public String getFlowId(){
+        return this.GetValStrByKey(NodeTaskAttr.FlowId);
+    }
+
+    public void setFlowId(String flowId){
+        this.SetValByKey(NodeTaskAttr.FlowId,flowId);
+    }
+
 }

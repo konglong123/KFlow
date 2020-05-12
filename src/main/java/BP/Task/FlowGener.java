@@ -79,4 +79,16 @@ public class FlowGener extends EntityNo {
     {
         return BP.WF.Glo.getCCFlowAppPath() + "/WF/Comm/En.htm?EnName=BP.WF.Flow&PKVal="+this.GetValStrByKey(FlowGenerAttr.FlowId);
     }
+
+    public final void addActiveNode(String nodeId){
+        String activeNodes=this.GetValStrByKey(FlowGenerAttr.ActivatedNodes);
+        activeNodes=activeNodes+nodeId+",";
+        this.SetValByKey(FlowGenerAttr.ActivatedNodes,activeNodes);
+    }
+
+    public final void delActiveNode(String nodeId){
+        String activeNodes=this.GetValStrByKey(FlowGenerAttr.ActivatedNodes);
+        activeNodes=activeNodes.replace(nodeId+",","");
+        this.SetValByKey(FlowGenerAttr.ActivatedNodes,activeNodes);
+    }
 }

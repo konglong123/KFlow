@@ -13,6 +13,7 @@ import BP.DA.Log;
 import BP.Difference.ContextHolderUtils;
 import BP.En.Entity;
 import BP.En.QueryObject;
+import BP.En.Row;
 import BP.Port.Emp;
 import BP.Sys.AthCtrlWay;
 import BP.Sys.AthUploadWay;
@@ -41,6 +42,7 @@ import BP.Sys.MapExts;
 import BP.Sys.SysEnumAttr;
 import BP.Sys.SysEnums;
 import BP.Sys.SystemConfig;
+import BP.Task.FlowGener;
 import BP.WF.Data.GERpt;
 import BP.WF.Template.FTCAttr;
 import BP.WF.Template.FrmEleType;
@@ -101,6 +103,13 @@ public class CCFlowAPI {
 			Work wk = nd.getHisWork();
 			wk.setOID(workID);
 			wk.RetrieveFromDBSources();
+			Row row=wk.getRow();
+			//当前数据不是最新版本数据，获取最新版本workId
+			int newVersion=(int)row.get("newVersion");
+			if (newVersion!=0) {//有节点任务回退的情况
+				wk.setOID(newVersion);
+				wk.RetrieveFromDBSources();
+			}
 			wk.ResetDefaultVal();
 			wk.setReferAttrValue();
 
@@ -161,10 +170,8 @@ public class CCFlowAPI {
             myds.Tables.add(Sys_MapAttr);
 
 			// 把流程信息表发送过去.
-			GenerWorkFlow gwf = new GenerWorkFlow();
-			gwf.setWorkID(workID);
-			gwf.RetrieveFromDBSources();
-            myds.Tables.add(gwf.ToDataTableField("WF_GenerWorkFlow"));
+			FlowGener fg = new FlowGener(workID+"");
+            myds.Tables.add(fg.ToDataTableField("WF_GenerWorkFlow"));
 
 			// 加入WF_Node.
 			DataTable WF_Node = nd.ToDataTableField("WF_Node");
@@ -267,15 +274,9 @@ public class CCFlowAPI {
 
 				 //查询所有的分组, 如果是查看表单的方式，就不应该把当前的表单显示出来.
                 String myFrmIDs = ""; 
-                if (fromWorkOpt.equals("1") == true)
-                {
-                    if (gwf.getWFState() == WFState.Complete)
-                        myFrmIDs = wk.HisPassedFrmIDs + ",'ND" + fk_node + "'";
-                    else
-                        myFrmIDs = wk.HisPassedFrmIDs; //流程未完成并且是查看表单的情况.
-                }
-                else
-                {
+                if (fromWorkOpt.equals("1") == true) {
+                	myFrmIDs = wk.HisPassedFrmIDs; //流程未完成并且是查看表单的情况.
+                } else {
                     myFrmIDs = wk.HisPassedFrmIDs + ",'ND" + fk_node + "'";
                 }
 				
@@ -508,20 +509,7 @@ public class CCFlowAPI {
                 // 加入最新的Sys_FrmAttachment.
                 myds.Tables.add(frmAtchs.ToDataTableField("Sys_FrmAttachment"));
 
-				
-
 			}
-
-			// #region 流程设置信息.
-			BP.WF.Dev2Interface.Node_SetWorkRead(fk_node, workID);
-			if(nd.getIsStartNode() == false){
-				if (gwf.getTodoEmps().contains(BP.Web.WebUser.getName() + ";") == false)
-                {
-                    gwf.setTodoEmps(gwf.getTodoEmps() +BP.Web.WebUser.getNo() + "," + BP.Web.WebUser.getName());
-                    gwf.Update();
-                }
-			}
-
 
 			// 执行表单事件..
 			String msg = md.getFrmEvents().DoEventNode(FrmEventList.FrmLoadBefore, wk);
@@ -715,53 +703,14 @@ public class CCFlowAPI {
 			dtAlert.Columns.Add("Msg", String.class);
 			dtAlert.Columns.Add("URL", String.class);
 
-			switch (gwf.getWFState()) {
-			case AskForReplay: // 返回加签的信息.
-				String mysql = "SELECT * FROM ND" + Integer.parseInt(fk_flow) + "Track WHERE WorkID=" + workID + " AND "
-						+ TrackAttr.ActionType + "=" + ActionType.ForwardAskfor.getValue();
-				DataTable mydt = BP.DA.DBAccess.RunSQLReturnTable(mysql);
-				for (DataRow dr : mydt.Rows) {
-					String msgAskFor = dr.getValue(TrackAttr.Msg).toString();
-					String worker = dr.getValue(TrackAttr.EmpFrom).toString();
-					String workerName = dr.getValue(TrackAttr.EmpFromT).toString();
-					String rdt = dr.getValue(TrackAttr.RDT).toString();
-
-					DataRow drMsg = dtAlert.NewRow();
-					drMsg.put("Title", worker + "," + workerName + "回复信息:");
-					drMsg.put("Msg", DataType.ParseText2Html(msgAskFor) + "<br>" + rdt);
-					dtAlert.Rows.add(drMsg);
-				}
-				break;
-			case Askfor: // 加签.
-
-				String sql = "SELECT * FROM ND" + Integer.parseInt(fk_flow) + "Track WHERE WorkID=" + workID + " AND "
-						+ TrackAttr.ActionType + "=" + ActionType.AskforHelp.getValue();
-				DataTable dt = BP.DA.DBAccess.RunSQLReturnTable(sql);
-				for (DataRow dr : dt.Rows) {
-					String msgAskFor = dr.getValue(TrackAttr.Msg).toString();
-					String worker = dr.getValue(TrackAttr.EmpFrom).toString();
-					String workerName = dr.getValue(TrackAttr.EmpFromT).toString();
-					String rdt = dr.getValue(TrackAttr.RDT).toString();
-
-					DataRow drMsg = dtAlert.NewRow();
-					drMsg.put("Title", worker + "," + workerName + "请求加签:");
-					drMsg.put("Msg", DataType.ParseText2Html(msgAskFor) + "<br>" + rdt + "<a href='#' onclick='AskForRe("+fk_flow+","+fk_node+","+workID+","+fid+")' >回复加签意见</a>");
-					
-					dtAlert.Rows.add(drMsg);
-
-
-				}
-
-				break;
-			case ReturnSta:
-				// 如果工作节点退回了
+			if (newVersion!=0) {
+				// 如果工作节点退回了 flagKong
 				ReturnWorks rws = new ReturnWorks();
-				rws.Retrieve(ReturnWorkAttr.ReturnToNode, fk_node, ReturnWorkAttr.WorkID, workID, ReturnWorkAttr.RDT);
+				rws.Retrieve(ReturnWorkAttr.WorkID, newVersion, ReturnWorkAttr.ReturnToNode, fk_node);
 				if (rws.size() != 0) {
 					//String msgInfo = "";
 					for (BP.WF.ReturnWork rw : rws.ToJavaList()) {
 						DataRow drMsg = dtAlert.NewRow();
-
 						drMsg.put("Title", "来自节点:" + rw.getReturnNodeName() + " 退回人:" + rw.getReturnerName() + "  "
 								+ rw.getRDT() + "");
 						drMsg.put("Msg", rw.getBeiZhuHtml());
@@ -778,7 +727,6 @@ public class CCFlowAPI {
 						str = str.replace("@PFlowNo", fk_flow);
 						str = str.replace("@FK_Flow", fk_flow);
 						str = str.replace("@PWorkID", (new Long(workID)).toString());
-
 						str = str.replace("@WorkID", (new Long(workID)).toString());
 						str = str.replace("@OID", (new Long(workID)).toString());
 
@@ -787,39 +735,10 @@ public class CCFlowAPI {
 						drMsg.put("Msg", str);
 						dtAlert.Rows.add(drMsg);
 					}
-	
-				}
-				break;
-			case Shift:
-				// 判断移交过来的。
-				ShiftWorks fws = new ShiftWorks();
-				BP.En.QueryObject qo = new QueryObject(fws);
-				qo.AddWhere(ShiftWorkAttr.WorkID, workID);
-				qo.addAnd();
-				qo.AddWhere(ShiftWorkAttr.FK_Node, fk_node);
-				qo.addOrderBy(ShiftWorkAttr.RDT);
-				qo.DoQuery();
-				if (fws.size() >= 1) {
-					DataRow drMsg = dtAlert.NewRow();
-					drMsg.put("Title", "移交历史信息");
-					msg = "";
-					for (ShiftWork fw : fws.ToJavaList()) {
-						String temp = "@移交人[" + fw.getFK_Emp() + "," + fw.getFK_EmpName() + "]。@接受人：" + fw.getToEmp()
-								+ "," + fw.getToEmpName() + "。<br>移交原因：-------------" + fw.getNoteHtml();
-						if (fw.getFK_Emp().equals(WebUser.getNo())) {
-							temp = "<b>" + temp + "</b>";
-						}
 
-						temp = temp.replace("@", "<br>@");
-						msg += temp + "<hr/>";
-					}
-					drMsg.put("Msg", msg);
-					dtAlert.Rows.add(drMsg);
 				}
-				break;
-			default:
-				break;
 			}
+
 
 			// #region 增加流程节点表单绑定信息.
 			if (nd.getHisFormType() == NodeFormType.RefOneFrmTree) {

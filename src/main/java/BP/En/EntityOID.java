@@ -65,7 +65,8 @@ public abstract class EntityOID extends Entity {
 	@Override
 	public int DirectInsert() {
 		try {
-			this.setOID(DBAccess.GenerOID());
+			if (this.getOID()==0)
+				this.setOID(DBAccess.GenerOID());
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}

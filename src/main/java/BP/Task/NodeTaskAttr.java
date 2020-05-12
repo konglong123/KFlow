@@ -13,6 +13,7 @@ public class NodeTaskAttr {
     public static final String WorkGroupId = "work_group_id";
     public static final String FlowId = "flow_id";
     public static final String NodeId = "node_id";
+    public static final String NodeName = "node_name";
     public static final String IsReady = "is_ready";
     public static final String PreNodeTask = "pre_node_task";
     public static final String NextNodeTask = "next_node_task";

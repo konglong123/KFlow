@@ -21,7 +21,6 @@ $(function () {
     initPageParam(); //初始化参数
 
     InitToolBar(); //工具栏.ajax
-
     GenerWorkNode(); //表单数据.ajax
 
 
@@ -387,7 +386,7 @@ function ResizeWindow() {
 }
 window.onload = ResizeWindow;
 
-//以下是软通写的
+
 //初始化网页URL参数
 function initPageParam() {
     //新建独有
@@ -407,6 +406,7 @@ function initPageParam() {
     pageData.IsStartFlow = GetQueryString("IsStartFlow"); //是否是启动流程页面 即发起流程
 
     pageData.DoType1 = GetQueryString("DoType")//View
+    pageData.NodeTaskNo=GetQueryString("NodeTaskNo");
 }
 
 //将获取过来的URL参数转成URL中的参数形式  &
@@ -2009,7 +2009,7 @@ function initModal(modalType, toNode) {
         switch (modalType) {
             case "returnBack":
                 $('#modalHeader').text("提示信息");
-                modalIframeSrc = "./WorkOpt/ReturnWork.htm?FK_Node=" + pageData.FK_Node + "&FID=" + pageData.FID + "&WorkID=" + pageData.WorkID + "&FK_Flow=" + pageData.FK_Flow + "&s=" + Math.random()
+                modalIframeSrc = "./WorkOpt/ReturnWork.htm?FK_Node=" + pageData.FK_Node + "&FID=" + pageData.FID + "&WorkID=" + pageData.WorkID + "&FK_Flow=" + pageData.FK_Flow + "&NodeTaskNo=" + pageData.NodeTaskNo;
                 break;
             case "TransferCustom":
                 $('#modalHeader').text("流转自定义");

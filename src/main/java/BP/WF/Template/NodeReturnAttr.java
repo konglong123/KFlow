@@ -24,4 +24,7 @@ public class NodeReturnAttr
 	 
 	*/
 	public static final String Dots = "Dots";
+
+	public static final String NodeName = "node_name";
+	public static final String ReturnNodeName = "return_node_name";
 }

@@ -1950,18 +1950,18 @@ public class WF_WorkOpt extends WebContralBase {
 
 			DataTable dt = BP.WF.Dev2Interface.DB_GenerWillReturnNodes(this.getFK_Node(), this.getWorkID(),
 					this.getFID());
-			//如果只有一个退回节点，就需要判断是否启用了单节点退回规则.
+			/*//如果只有一个退回节点，就需要判断是否启用了单节点退回规则.
             if (dt.Rows.size() == 1)
             {
                Node nd = new Node(this.getFK_Node());
                if (nd.getReturnOneNodeRole() != 0)
                {
-                   /* 如果:启用了单节点退回规则.
-                    */
+                   *//* 如果:启用了单节点退回规则.
+                    *//*
                    String returnMsg = "";
                    if (nd.getReturnOneNodeRole() == 1 && DataType.IsNullOrEmpty(nd.getReturnField()) == false)
                    {
-                       /*从表单字段里取意见.*/
+                       *//*从表单字段里取意见.*//*
                        Flow fl = new Flow(nd.getFK_Flow());
                        String sql = "SELECT " + nd.getReturnField() + " FROM " + fl.getPTable() + " WHERE OID=" + this.getWorkID();
                        returnMsg = DBAccess.RunSQLReturnStringIsNull(sql, "未填写意见");
@@ -1969,7 +1969,7 @@ public class WF_WorkOpt extends WebContralBase {
 
                    if (nd.getReturnOneNodeRole() == 2)
                    {
-                       /*从审核组件里取意见.*/
+                       *//*从审核组件里取意见.*//*
                        String sql = "SELECT Msg FROM ND" + Integer.parseInt(nd.getFK_Flow()) + "Track WHERE WorkID=" + this.getWorkID() + " AND NDFrom=" + this.getFK_Node() + " AND EmpFrom='" + WebUser.getNo() + "' AND ActionType=" + ActionType.WorkCheck.getValue();
                        returnMsg = DBAccess.RunSQLReturnStringIsNull(sql, "未填写意见");
                    }
@@ -1980,7 +1980,7 @@ public class WF_WorkOpt extends WebContralBase {
                    return "info@" + info;
                }
             }
-
+*/
 			if (dt.Rows.size() == 0)
 				return "err@没有获取到应该退回到的节点.";
 
@@ -1997,22 +1997,12 @@ public class WF_WorkOpt extends WebContralBase {
 
 		try {
 
-			String[] vals = this.GetRequestVal("ReturnToNode").split("@");
+			String toNodeID = this.GetRequestVal("ReturnToNode");
+			String message = this.GetRequestVal("ReturnInfo");
+			String nodeTaskNo=this.GetRequestVal("NodeTaskNo");
 
-			int toNodeID = Integer.parseInt(vals[0]);
 
-            String toEmp = vals[1];
-            
-			String reMesage = this.GetRequestVal("ReturnInfo");
-
-			boolean isBackBoolen = false;
-			String isBack = this.GetRequestVal("IsBack");
-			if (isBack.equals("1")) {
-				isBackBoolen = true;
-			}
-
-			return BP.WF.Dev2Interface.Node_ReturnWork(this.getFK_Flow(), this.getWorkID(), this.getFID(),
-					this.getFK_Node(), toNodeID,toEmp, reMesage, isBackBoolen);
+			return BP.WF.Dev2Interface.Node_ReturnWork(nodeTaskNo,Integer.parseInt(toNodeID),message);
 		} catch (Exception ex) {
 			return "err@" + ex.getMessage();
 		}

@@ -116,12 +116,11 @@ function doNodeTaskDetail(no) {
         data:{
             no:no
         },
-        success:function (data) {
-            var nodeTask=JSON.parse(data);
-            dataUrl+="&FK_Flow="+nodeTask.flow_id;
-            dataUrl+="&WorkID="+nodeTask.work_id;
-            dataUrl+="&FK_Node="+nodeTask.node_id;
-            dataUrl+="&FID="+nodeTask.flow_id;
+        success:function (nodeTask) {
+            dataUrl+="&FK_Flow="+nodeTask.flowId;
+            dataUrl+="&WorkID="+nodeTask.workId;
+            dataUrl+="&FK_Node="+nodeTask.nodeId;
+            dataUrl+="&FID="+nodeTask.flowId;
             window.location.href = dataUrl;
         }
     });

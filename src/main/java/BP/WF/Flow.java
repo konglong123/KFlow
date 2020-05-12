@@ -1721,8 +1721,9 @@ public class Flow extends BP.En.EntityNoName {
 				if (laterFinish==null)
 					msg.append("@错误:最晚结束没有指定");
 
+
 				if (nd.getHisRunModel()==RunModel.Judge) {
-					String judgeNodeId=nd.getJudgeNodeId();
+					String judgeNodeId=nd.getJudgeNodeId()+"";
 					if (judgeNodeId==null||judgeNodeId.equals(""))
 						msg.append("@错误:决策节点需要制定匹配决策节点");
 					else {
@@ -6265,7 +6266,7 @@ public class Flow extends BP.En.EntityNoName {
 			nd.setFK_Flow(this.getNo());
 			nd.setFlowName(this.getName());
 			nd.setHisNodePosType(NodePosType.Start);
-			nd.setHisNodeWorkType(NodeWorkType.StartWork);
+			nd.setHisNodeWorkType(NodeWorkType.Work);
 			nd.setX(200);
 			nd.setY(150);
 			nd.setICON("前台");
@@ -6298,7 +6299,7 @@ public class Flow extends BP.En.EntityNoName {
 			nd.setHisDeliveryWay(DeliveryWay.BySelected); // 上一步发送人来选择.
 			nd.setFormType(NodeFormType.FoolForm); // 表单类型.
 
-			// 为创建节点设置默认值.
+			/*// 为创建节点设置默认值.
 			String fileNewNode = SystemConfig.getPathOfDataUser() + "XML/DefaultNewNodeAttr.xml";
 			if ((new java.io.File(fileNewNode)).isFile()) {
 				DataSet ds_NodeDef = new DataSet();
@@ -6308,7 +6309,7 @@ public class Flow extends BP.En.EntityNoName {
 				for (DataColumn dc : dt.Columns) {
 					nd.SetValByKey(dc.ColumnName, dt.Rows.get(0).getValue(dc.ColumnName));
 				}
-			}
+			}*/
 
 			nd.Insert();
 			nd.CreateMap();

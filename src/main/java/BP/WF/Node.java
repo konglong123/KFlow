@@ -117,6 +117,25 @@ public class Node extends Entity {
 	}
 
 	/**
+	 * 他的前置节点集合 .
+	 *
+	 * @throws Exception
+	 */
+	public final Nodes getHisPreNodes() throws Exception {
+		Directions directions=new Directions();
+
+		directions.Retrieve(DirectionAttr.ToNode,this.getNodeID());
+
+		List<Direction> directionList=directions.toList();
+		Nodes nodes=new Nodes();
+		for (Direction dir:directionList){
+			Node node=new Node(dir.getNode());
+			nodes.add(node);
+		}
+		return nodes;
+	}
+
+	/**
 	 * 他的工作
 	 * 
 	 * @throws Exception
@@ -1969,11 +1988,11 @@ public class Node extends Entity {
 		}
 	}
 
-	public String getJudgeNodeId(){
-		return this.GetValStrByKey(NodeAttr.JudgeNodeId);
+	public int getJudgeNodeId(){
+		return this.GetValIntByKey(NodeAttr.JudgeNodeId);
 	}
 
-	public void  setJudgeNodeId(String judgeNodeId){
+	public void  setJudgeNodeId(int judgeNodeId){
 		this.SetValByKey(NodeAttr.JudgeNodeId,judgeNodeId);
 	}
 
@@ -2119,7 +2138,7 @@ public class Node extends Entity {
 		map.AddTBString(NodeAttr.BlockExp, null, "阻塞表达式", true, false, 0, 200, 10);
 		map.AddTBString(NodeAttr.BlockAlert, null, "被阻塞提示信息", true, false, 0, 100, 10);
 
-		map.AddTBString(NodeAttr.JudgeNodeId, null, "匹配决策节点", true, false, 0, 100, 10, false);//"http://ccbpm.mydoc.io/?v=5404&t=17903"
+		map.AddTBInt(NodeAttr.JudgeNodeId, 0, "匹配决策节点", true, false);//"http://ccbpm.mydoc.io/?v=5404&t=17903"
 
 		map.AddTBInt(NodeAttr.ReadReceipts, 0, "已读回执", true, true);
 
@@ -2715,6 +2734,48 @@ public class Node extends Entity {
 		attr.setFK_MapData(md.getNo());
 		attr.setKeyOfEn("FID");
 		attr.setName("FID");
+		attr.setMyDataType(BP.DA.DataType.AppInt);
+		attr.setUIContralType(UIContralType.TB);
+		attr.setLGType(FieldTypeS.Normal);
+		attr.setUIVisible(false);
+		attr.setUIIsEnable(false);
+		attr.setHisEditType(BP.En.EditType.UnDel);
+		attr.setDefVal("0");
+		attr.Insert();
+
+		//解决节点回退，数据多版本
+		attr = new MapAttr();
+		attr.setFK_MapData(md.getNo());
+		attr.setKeyOfEn("OriOID");
+		attr.setName("原始WorkId");
+		attr.setMyDataType(BP.DA.DataType.AppInt);
+		attr.setUIContralType(UIContralType.TB);
+		attr.setLGType(FieldTypeS.Normal);
+		attr.setUIVisible(false);
+		attr.setUIIsEnable(false);
+		attr.setHisEditType(BP.En.EditType.UnDel);
+		attr.setDefVal("0");
+		attr.Insert();
+
+		attr = new MapAttr();
+		attr.setFK_MapData(md.getNo());
+		attr.setKeyOfEn("version");
+		attr.setName("当前版本");
+		attr.setMyDataType(BP.DA.DataType.AppInt);
+		attr.setUIContralType(UIContralType.TB);
+		attr.setLGType(FieldTypeS.Normal);
+		attr.setUIVisible(false);
+		attr.setUIIsEnable(false);
+		attr.setHisEditType(BP.En.EditType.UnDel);
+		attr.setDefVal("0");
+		attr.Insert();
+
+		//每次节点回退都需要更新原始work中的
+		//newVersion
+		attr = new MapAttr();
+		attr.setFK_MapData(md.getNo());
+		attr.setKeyOfEn("newVersion");
+		attr.setName("最新版本");
 		attr.setMyDataType(BP.DA.DataType.AppInt);
 		attr.setUIContralType(UIContralType.TB);
 		attr.setLGType(FieldTypeS.Normal);

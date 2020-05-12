@@ -1,9 +1,7 @@
 package BP.springCloud.controller;
 
-import BP.En.Attr;
 import BP.En.EntityOIDAttr;
 import BP.Sys.*;
-import BP.WF.Flow;
 import BP.WF.Node;
 import BP.springCloud.tool.PageTool;
 import com.alibaba.fastjson.JSONObject;
@@ -99,7 +97,7 @@ public class FormController {
             }else if (type.equals("2")){//节点表单部分引用
                 String attrNos=request.getParameter("attrNos");
                 String[] attrs=attrNos.split(",");
-                if (attrs.length>1){
+                if (attrs.length>0){
                     GroupField groupField=new GroupField();
                     groupField.setFrmID(fkMapData);
                     groupField.setOID(0);

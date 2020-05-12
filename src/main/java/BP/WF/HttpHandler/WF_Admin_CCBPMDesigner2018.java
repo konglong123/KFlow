@@ -1245,9 +1245,9 @@ public class WF_Admin_CCBPMDesigner2018 extends WebContralBase
 
 			String flowNo = BP.WF.Template.TemplateGlo.NewFlow(fk_floSort, flowName, dataSaveModel, pTable, flowMark, flowVer);
 			
-			//执行一次流程检查.
+			/*//执行一次流程检查.
 			Flow fl=new Flow(flowNo);
-			fl.DoCheck();
+			fl.DoCheck();*/
 			
 			
             return flowNo;

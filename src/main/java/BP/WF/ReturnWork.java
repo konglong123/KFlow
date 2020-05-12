@@ -3,6 +3,7 @@ package BP.WF;
 import BP.DA.DataType;
 import BP.En.EntityMyPK;
 import BP.En.Map;
+import BP.springCloud.tool.FeignTool;
 
 /** 
  退回轨迹
@@ -159,6 +160,8 @@ public class ReturnWork extends EntityMyPK
 	{
 		this.setReturner(BP.Web.WebUser.getNo());
 		this.setReturnerName(BP.Web.WebUser.getName());
+		if (this.getMyPK()==null||this.getMyPK().equals(""))
+			this.setMyPK(FeignTool.getSerialNumber("BP.WF.ReturnWork")+"");
 
 		this.setRDT(DataType.getCurrentDataTime());
 		return super.beforeInsert();

@@ -10,6 +10,7 @@ import BP.WF.Node;
 import BP.WF.WFSta;
 import BP.WF.WFState;
 import BP.WF.WorkAttr;
+import BP.springCloud.tool.FeignTool;
 
 /** 
  报表
@@ -154,6 +155,16 @@ public class GERpt extends BP.En.EntityOID
 	{
 		return this.GetValStringByKey(GERptAttr.FlowEnderRDT);
 	}
+
+	@Override
+	protected boolean beforeInsert() throws Exception {
+		if (this.getOID()==0) {
+			Long newVersion = FeignTool.getSerialNumber("BP.WF.Work");
+			this.setOID(newVersion);
+		}
+		return true;
+	}
+
 	public final void setFlowEnderRDT(String value)
 	{
 		this.SetValByKey(GERptAttr.FlowEnderRDT, value);
@@ -284,6 +295,33 @@ public class GERpt extends BP.En.EntityOID
 	{
 		this.SetValByKey(GERptAttr.PrjNo, value);
 	}
+	public final String getVersion()
+	{
+		return this.GetValStringByKey(GERptAttr.Version);
+	}
+	public final void setVersion(String value)
+	{
+		this.SetValByKey(GERptAttr.Version, value);
+	}
+
+	public final String getNewVersion()
+	{
+		return this.GetValStringByKey(GERptAttr.NewVersion);
+	}
+	public final void setNewVersion(String value)
+	{
+		this.SetValByKey(GERptAttr.NewVersion, value);
+	}
+
+	public final String getOriOID()
+	{
+		return this.GetValStringByKey(GERptAttr.OriOID);
+	}
+	public final void setOriOID(String value)
+	{
+		this.SetValByKey(GERptAttr.OriOID, value);
+	}
+
 	public final String getPrjName()
 	{
 		return this.GetValStringByKey(GERptAttr.PrjName);
@@ -292,6 +330,7 @@ public class GERpt extends BP.En.EntityOID
 	{
 		this.SetValByKey(GERptAttr.PrjName, value);
 	}
+
 	@Override
 	public void Copy(BP.DA.DataRow dr)
 	{
@@ -408,7 +447,9 @@ public class GERpt extends BP.En.EntityOID
 	public GERpt()
 	{
 	}
-	/** 
+
+
+	/**
 	 报表
 	 @param rptName
 	 @param oid

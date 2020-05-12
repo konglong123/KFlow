@@ -1,5 +1,6 @@
 package BP.Task;
 
+import BP.WF.Dev2Interface;
 import BP.WF.Flow;
 import BP.WF.Node;
 import BP.WF.Nodes;
@@ -181,5 +182,31 @@ public class FlowController {
         }
         return null;
     }
+
+    /**
+    *@Description: 检查回退节点设置是否符合条件
+    *@Param:
+    *@return:
+    *@Author: Mr.kong
+    *@Date: 2020/5/12
+    */
+    @RequestMapping("checkReturn")
+    @ResponseBody
+    public JSONObject checkReturnNode(HttpServletRequest request, HttpServletResponse response){
+        String curNode=request.getParameter("curNode");
+        String toNodeId=request.getParameter("toNode");
+        JSONObject result=new JSONObject();
+        try{
+            List<Integer> needReturnNodes=Dev2Interface.getNeedReturnNodes(Integer.parseInt(curNode),Integer.parseInt(toNodeId));
+            if (needReturnNodes==null)//检查不通过
+                result.put("success",false);
+            else
+                result.put("success",true);
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+        return result;
+    }
+
 
 }

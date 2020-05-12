@@ -45,7 +45,8 @@
                 WorkID: GetQueryString('WorkID'),
                 FID: GetQueryString('FID'),
                 Message: GetQueryString('Info'),
-                FK_Flow: GetQueryString("FK_Flow")
+                FK_Flow: GetQueryString("FK_Flow"),
+                NodeTaskNo:GetQueryString("NodeTaskNo")
             };
 
             if (pageData.Message != undefined && pageData.Message != '') {
@@ -90,15 +91,10 @@
             }
 
             var returnNodeArr = JSON.parse(data);
-            var nodeListHtml = '';
-
+            var nodeListHtml = "";
+            debugger
             $.each(returnNodeArr, function (i, returnNode) {
-
-                if (returnNode.AtPara && returnNode.AtPara.indexOf('IsHuiQian=1') >= 0) {
-                    return true;
-                }
-
-                nodeListHtml += '<option data-IsBackTracking=' + returnNode.IsBackTracking + ' value="' + returnNode.No + '@' + returnNode.Rec + '">' + returnNode.RecName + '=&gt;' + returnNode.Name + '</option>';
+                nodeListHtml += "<option value='" + returnNode.No  + "'>" + returnNode.Name +  '</option>';
             });
 
 
@@ -121,7 +117,6 @@
         //确定 退回 执行退回操作
         function ReturnWork(isBack) {
             //WorkID, this.FID, this.FK_Node
-
             var selectedNodeID = $('#DDL_Nodes').val();
 
 
@@ -149,6 +144,7 @@
             handler.AddPara("WorkID", pageData.WorkID);
             handler.AddPara("FID", pageData.FID);
             handler.AddPara("FK_Node", pageData.FK_Node);
+            handler.AddPara("NodeTaskNo",pageData.NodeTaskNo);
             handler.AddPara("ReturnToNode", selectedNodeID);
             handler.AddPara("ReturnInfo", doc);
             handler.AddPara("IsBack", isBack);

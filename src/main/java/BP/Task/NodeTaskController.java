@@ -1,6 +1,9 @@
 package BP.Task;
 
+import BP.En.Row;
 import BP.Tools.StringUtils;
+import BP.WF.Node;
+import BP.WF.Work;
 import BP.Web.WebUser;
 import BP.springCloud.entity.GenerFlow;
 import BP.springCloud.entity.NodeTaskM;
@@ -80,24 +83,52 @@ public class NodeTaskController {
         }
     }
 
-
+/**
+*@Description:
+*@Param:
+*@return:
+*@Author: Mr.kong
+*@Date: 2020/5/7
+*/
     @RequestMapping("/getNodeTaskByNo")
     @ResponseBody
     public Object getNodeTask(String no){
-        NodeTask nodeTask=new NodeTask();
-        nodeTask.setNo(no);
+        NodeTaskM nodeTask=nodeTaskService.getNodeTaskById(Long.parseLong(no));
+        return JSONObject.fromObject(nodeTask);
+    }
+
+    /**
+    *@Description:  获取节点表单最新版本数据
+    *@Param: no为nodeTaskNo
+    *@return:
+    *@Author: Mr.kong
+    *@Date: 2020/5/7
+    */
+    @RequestMapping("/getLatestWork")
+    @ResponseBody
+    public Object getLatestWork(String no){
+        NodeTaskM nodeTask=nodeTaskService.getNodeTaskById(Long.parseLong(no));
         try {
-            nodeTask.RetrieveByNo();
+            Node node=new Node(nodeTask.getNodeId());
+            Work work=node.getHisWork();
+            work.setOID(Long.parseLong(nodeTask.getWorkId()));
+            work.RetrieveFromDBSources();
+            Row row=work.getRow();
+            //当前数据不是最新版本数据，获取最新版本workId
+            int newVersion=(int)row.get("newVersion");
+            int oid=(int)row.get("OID");
+            if (newVersion!=0&&newVersion!=oid)//有节点任务回退的情况
+                nodeTask.setWorkId(newVersion+"");
         }catch (Exception e){
             logger.error(e.getMessage());
         }
-        return nodeTask.ToJson();
+        return JSONObject.fromObject(nodeTask);
     }
 
     @RequestMapping("/startNodeTask")
-    public void startNodeTask(Long no){
+    public void startNodeTask(String no){
         try {
-            NodeTaskM nodeTaskM=nodeTaskService.getNodeTaskById(no);
+            NodeTaskM nodeTaskM=nodeTaskService.getNodeTaskById(Long.parseLong(no));
             if (nodeTaskM.getIsReady()==1){
                 nodeTaskM.setStartTime(new Date());
                 nodeTaskM.setIsReady(2);

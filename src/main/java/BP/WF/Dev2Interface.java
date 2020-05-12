@@ -6,9 +6,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Hashtable;
+import java.util.*;
+
+import BP.En.Map;
+import BP.Task.FlowGener;
+import BP.Task.NodeTask;
+import BP.Task.NodeTaskAttr;
+import BP.Task.NodeTasks;
+import BP.springCloud.tool.FeignTool;
 import org.apache.commons.lang.StringUtils;
 
 import com.sun.star.util.DateTime;
@@ -2482,228 +2487,30 @@ public class Dev2Interface {
 		dt.Columns.Add("No", String.class); // 节点ID
 		dt.Columns.Add("Name", String.class); // 节点名称.
 		dt.Columns.Add("Rec", String.class); // 被退回节点上的操作员编号.
-		dt.Columns.Add("RecName", String.class); // 被退回节点上的操作员名称.
-		dt.Columns.Add("IsBackTracking", String.class); // 该节点是否可以退回并原路返回？ 0否,
-														// 1是.
+		dt.Columns.Add("IsBackTracking", String.class); // 该节点是否可以退回并原路返回？ 0否,// 1是.
 
+        //目前只支持退回到同粒度流程节点，并且退回路径仅包含普通节点
 		Node nd = new Node(fk_node);
-		// 增加退回到父流程节点的设计.
-		if (nd.getIsStartNode() == true) {
-			// *如果是开始的节点有可能退回到子流程上去.*/@du
-			GenerWorkFlow gwf = new GenerWorkFlow(workid);
-			if (gwf.getPWorkID() == 0)
-				throw new RuntimeException("@当前节点是开始节点，您不能执行退回。");
-
-			GenerWorkerLists gwls = new GenerWorkerLists();
-			int i = gwls.Retrieve(GenerWorkerListAttr.WorkID, gwf.getPWorkID());
-
-			String nodes = "";
-
-			for (GenerWorkerList gwl : gwls.ToJavaList()) {
-
-				if (nodes.contains(String.valueOf(gwl.getFK_Node()) + ",") == true)
-					continue;
-
-				nodes += String.valueOf(gwl.getFK_Node()) + ",";
-
-				DataRow dr = dt.NewRow();
-				dr.setValue("No", String.valueOf(gwl.getFK_Node()));
-				dr.setValue("Name", gwl.getFK_NodeText());
-				dr.setValue("Rec", gwl.getFK_Emp());
-				dr.setValue("RecName", gwl.getFK_EmpText());
-				dr.setValue("IsBackTracking", 0);
-
-				dt.Rows.add(dr);
-
-				// dt.Rows.Add(vals)
-			}
-			return dt;
-		}
-
-		if (nd.getHisRunModel() == RunModel.SubThread) {
-			// 如果是子线程，它只能退回它的上一个节点，现在写死了，其它的设置不起作用了。
-			Nodes nds = nd.getFromNodes();
-			for (Node ndFrom : nds.ToJavaList()) {
-				Work wk;
-				switch (ndFrom.getHisRunModel()) {
-				case FL:
-				case FHL:
-					wk = ndFrom.getHisWork();
-					wk.setOID(fid);
-					if (wk.RetrieveFromDBSources() == 0) {
-						continue;
-					}
-					break;
-				case SubThread:
-					wk = ndFrom.getHisWork();
-					wk.setOID(workid);
-					if (wk.RetrieveFromDBSources() == 0) {
-						continue;
-					}
-					break;
-				case Ordinary:
-				default:
-					throw new RuntimeException("流程设计异常，子线程的上一个节点不能是普通节点。");
-				}
-
-				if (ndFrom.getNodeID() == fk_node) {
-					continue;
-				}
-
-				DataRow dr = dt.NewRow();
-				dr.setValue("No", String.valueOf(ndFrom.getNodeID()));
-				dr.setValue("Name", ndFrom.getName());
-
-				dr.setValue("Rec", wk.getRec());
-				dr.setValue("RecName", wk.getRecText());
-
-				if (ndFrom.getIsBackTracking()) {
-					dr.setValue("IsBackTracking", 1);
-				} else {
-					dr.setValue("IsBackTracking", "0");
-				}
-
-				dt.Rows.add(dr);
-			}
-			if (dt.Rows.size() == 0) {
-				throw new RuntimeException("没有获取到应该退回的节点列表.");
-			}
-			return dt;
-		}
 
 		String sql = "";
-
-		WorkNode wn = new WorkNode(workid, fk_node);
-		WorkNodes wns = new WorkNodes();
 		switch (nd.getHisReturnRole()) {
 		case CanNotReturn:
 			return dt;
-		case ReturnAnyNodes:
-			if (nd.getIsHL() || nd.getIsFLHL()) {
-				// 如果当前点是分流，或者是分合流，就不按退回规则计算了。
-				sql = "SELECT a.FK_Node AS No,a.FK_NodeText as Name, a.FK_Emp as Rec, a.FK_EmpText as RecName, b.IsBackTracking FROM WF_GenerWorkerlist a, WF_Node b WHERE a.FK_Node=b.NodeID AND a.FID="
-						+ fid + " AND a.WorkID=" + workid + " AND a.FK_Node!=" + fk_node
-						+ " AND a.IsPass=1 ORDER BY RDT  ";
-
-			} else {
-
-				if (nd.getTodolistModel() == TodolistModel.Order)
-					sql = "SELECT a.FK_Node as No,a.FK_NodeText as Name, a.FK_Emp as Rec, a.FK_EmpText as RecName, b.IsBackTracking FROM WF_GenerWorkerlist a, WF_Node b WHERE a.FK_Node=b.NodeID AND (a.WorkID="
-							+ workid + " AND a.IsEnable=1 AND a.IsPass=1 AND a.FK_Node!=" + fk_node + ") OR (a.FK_Node="
-							+ fk_node + " AND a.IsPass <0)  ORDER BY a.RDT";
-				else
-					sql = "SELECT a.FK_Node as No,a.FK_NodeText as Name, a.FK_Emp as Rec, a.FK_EmpText as RecName, b.IsBackTracking FROM WF_GenerWorkerlist a,WF_Node b WHERE a.FK_Node=b.NodeID AND a.WorkID="
-							+ workid + " AND a.IsEnable=1 AND a.IsPass=1 AND a.FK_Node!=" + fk_node + " ORDER BY a.RDT";
-			}
-
-			if (BP.Sys.SystemConfig.getAppCenterDBType() == DBType.Oracle) {
-				DataTable dtt = DBAccess.RunSQLReturnTable(sql);
-				dtt.Columns.clear();
-				dtt.Columns.Add("No", String.class); // 节点ID
-				dtt.Columns.Add("Name", String.class); // 节点名称.
-				dtt.Columns.Add("Rec", String.class); // 被退回节点上的操作员编号.
-				dtt.Columns.Add("RecName", String.class); // 被退回节点上的操作员名称.
-				dtt.Columns.Add("IsBackTracking", String.class); // 该节点是否可以退回并原路返回？
-																	// 0否, 1是.
-				return dtt;
-			} else {
-				return DBAccess.RunSQLReturnTable(sql);
-			}
-		case ReturnPreviousNode:
-			WorkNode mywnP = wn.GetPreviousWorkNode();
-
-			if (nd.getIsHL() || nd.getIsFLHL()) {
-				// 如果当前点是分流，或者是分合流，就不按退回规则计算了。
-				sql = "SELECT a.FK_Node AS No,a.FK_NodeText as Name, a.FK_Emp as Rec, a.FK_EmpText as RecName, b.IsBackTracking FROM WF_GenerWorkerlist a, WF_Node b WHERE a.FK_Node=b.NodeID AND a.FID="
-						+ fid + " AND a.WorkID=" + workid + " AND a.FK_Node=" + mywnP.getHisNode().getNodeID()
-						+ " AND a.IsPass=1 ORDER BY RDT  ";
-				return DBAccess.RunSQLReturnTable(sql);
-			}
-
-			if (nd.getTodolistModel() == TodolistModel.Order) {
-				sql = "SELECT a.FK_Node as No,a.FK_NodeText as Name, a.FK_Emp as Rec, a.FK_EmpText as RecName, b.IsBackTracking FROM WF_GenerWorkerlist a, WF_Node b WHERE a.FK_Node=b.NodeID AND (a.WorkID="
-						+ workid + " AND a.IsEnable=1 AND a.IsPass=1 AND a.FK_Node=" + mywnP.getHisNode().getNodeID()
-						+ ") OR (a.FK_Node=" + mywnP.getHisNode().getNodeID() + " AND a.IsPass <0)  ORDER BY a.RDT";
-			} else {
-				sql = "SELECT a.FK_Node as No,a.FK_NodeText as Name, a.FK_Emp as Rec, a.FK_EmpText as RecName, b.IsBackTracking FROM WF_GenerWorkerlist a,WF_Node b WHERE a.FK_Node=b.NodeID AND a.WorkID="
-						+ workid + " AND a.IsEnable=1 AND a.IsPass=1 AND a.FK_Node=" + mywnP.getHisNode().getNodeID()
-						+ " ORDER BY a.RDT ";
-			}
-
-			if (BP.Sys.SystemConfig.getAppCenterDBType() == DBType.Oracle) {
-				DataTable dtt = DBAccess.RunSQLReturnTable(sql);
-				dtt.Columns.clear();
-				dtt.Columns.Add("No", String.class); // 节点ID
-				dtt.Columns.Add("Name", String.class); // 节点名称.
-				dtt.Columns.Add("Rec", String.class); // 被退回节点上的操作员编号.
-				dtt.Columns.Add("RecName", String.class); // 被退回节点上的操作员名称.
-				dtt.Columns.Add("IsBackTracking", String.class); // 该节点是否可以退回并原路返回？
-																	// 0否, 1是.
-				return dtt;
-			} else {
-				return DBAccess.RunSQLReturnTable(sql);
-			}
 		case ReturnSpecifiedNodes: // 退回指定的节点。
-			if (wns.size() == 0) {
-				wns.GenerByWorkID(wn.getHisNode().getHisFlow(), workid);
+
+			NodeReturns nodeReturns = new NodeReturns();
+            nodeReturns.Retrieve(NodeReturnAttr.FK_Node, fk_node);
+			if (nodeReturns.size() == 0) {
+				throw new RuntimeException("@流程设计错误，您设置该节点可以退回指定的节点，但是指定的节点集合为空，请在节点属性设置它的指定节点。");
 			}
-
-			NodeReturns rnds = new NodeReturns();
-			rnds.Retrieve(NodeReturnAttr.FK_Node, fk_node);
-			if (rnds.size() == 0) {
-				throw new RuntimeException("@流程设计错误，您设置该节点可以退回指定的节点，但是指定的节点集合为空，请在节点属性设置它的制订节点。");
-			}
-			for (WorkNode mywn : wns) {
-				if (mywn.getHisNode().getNodeID() == fk_node) {
-					continue;
-				}
-
-				if (rnds.Contains(NodeReturnAttr.ReturnTo, mywn.getHisNode().getNodeID()) == false) {
-					continue;
-				}
-
+			List<NodeReturn> returnList=nodeReturns.toList();
+			for (NodeReturn nr:returnList) {
 				DataRow dr = dt.NewRow();
-				dr.setValue("No", String.valueOf(mywn.getHisNode().getNodeID()));
-				dr.setValue("Name", mywn.getHisNode().getName());
-				dr.setValue("Rec", mywn.getHisWork().getRec());
-				dr.setValue("RecName", mywn.getHisWork().getRecText());
-				if (mywn.getHisNode().getIsBackTracking()) {
-					dr.setValue("IsBackTracking", 1);
-				} else {
-					dr.setValue("IsBackTracking", "0");
-				}
-
+				dr.setValue("No", nr.getReturnTo());
+				dr.setValue("Name", nr.getReturnNodeName());
 				dt.Rows.add(dr);
 			}
-			break;
-		case ByReturnLine: // 按照流程图画的退回线执行退回.
-			Directions dirs = new Directions();
-			dirs.Retrieve(DirectionAttr.Node, fk_node);
-			if (dirs.size() == 0) {
-				throw new RuntimeException("@流程设计错误:当前节点没有画向后退回的退回线,更多的信息请参考退回规则.");
-			}
-			for (Direction dir : dirs.ToJavaList()) {
-				Node toNode = new Node(dir.getToNode());
-				sql = "SELECT a.FK_Emp,a.FK_EmpText FROM WF_GenerWorkerlist a, WF_Node b WHERE   a.FK_Node="
-						+ toNode.getNodeID() + " AND a.WorkID=" + workid + " AND a.IsEnable=1 AND a.IsPass=1";
-				DataTable dt1 = DBAccess.RunSQLReturnTable(sql);
-				if (dt1.Rows.size() == 0) {
-					continue;
-				}
 
-				DataRow dr = dt.NewRow();
-				dr.setValue("No", new Integer(toNode.getNodeID()));
-				dr.setValue("Name", toNode.getName());
-				dr.setValue("Rec", dt1.Rows.get(0).get(0));
-				dr.setValue("RecName", dt1.Rows.get(0).get(1));
-
-				if (toNode.getIsBackTracking() == true) {
-					dr.setValue("IsBackTracking", 1);
-				} else {
-					dr.setValue("IsBackTracking", "0");
-				}
-				dt.Rows.add(dr);
-			}
 			break;
 		default:
 			throw new RuntimeException("@没有判断的退回类型。");
@@ -8256,8 +8063,8 @@ public class Dev2Interface {
 	/**
 	 * 保存
 	 * 
-	 * @param nodeID
-	 *            节点ID
+	 * @param
+	 *
 	 * @param workID
 	 *            工作ID
 	 * @return 返回保存的信息
@@ -8315,6 +8122,13 @@ public class Dev2Interface {
 			if (workID != 0) {
 				wk.setOID(workID);
 				wk.RetrieveFromDBSources();
+				Row row=wk.getRow();
+				//当前数据不是最新版本数据，获取最新版本workId
+				int newVersion=(int)row.get("newVersion");
+				if (newVersion!=0) {//有节点任务回退的情况
+					wk.setOID(newVersion);
+					wk.RetrieveFromDBSources();
+				}
 			}
 			wk.ResetDefaultVal();
 
@@ -9221,11 +9035,96 @@ public class Dev2Interface {
 		return wr.DoIt();
 	}
 
-	// 根据浙江莲荷科技要求，将master版本6参数退回方法重新放入新版本
-	public static String Node_ReturnWork(String fk_flow, long workID, long fid, int currentNodeID, int returnToNodeID,
-			String returnToEmp) throws Exception {
-		return Node_ReturnWork(fk_flow, workID, fid, currentNodeID, returnToNodeID, returnToEmp, "无", false);
+	// KFlow采用该方式回退节点任务flagkong
+	public static String Node_ReturnWork(String nodeTaskNo, int toNodeID, String message) throws Exception {
+		NodeTask task=new NodeTask(nodeTaskNo);
+	    //备份当前数据
+        GERpt report=new GERpt("ND"+task.getFlowId()+"Rpt",Long.parseLong(task.getWorkId()));
+		Long newVersion=FeignTool.getSerialNumber("BP.WF.Work");
+        report.setNewVersion(newVersion+"");
+        report.Update();
+
+        report.setOID(newVersion);
+        report.setOriOID(task.getWorkId());
+        report.Insert();
+
+        //work数据回退成功，开始回退节点任务数据
+		List<Integer> needReturnNodes=getNeedReturnNodes(Integer.parseInt(task.getNodeId()),toNodeID);
+		NodeTasks nodeTasks=new NodeTasks();
+		for (Integer nodeId:needReturnNodes){
+			nodeTasks.Retrieve(NodeTaskAttr.WorkId,task.getWorkId(),NodeTaskAttr.NodeId,nodeId);
+			NodeTask nodeTask=(NodeTask) nodeTasks.get(0);
+			if (nodeId==toNodeID)
+				nodeTask.SetValByKey(NodeTaskAttr.IsReady,1);
+			else
+				nodeTask.SetValByKey(NodeTaskAttr.IsReady,20);
+			nodeTask.Update();
+		}
+
+		//更新流程实例信息
+		FlowGener flowGener=new FlowGener(task.getWorkId());
+		flowGener.delActiveNode(task.getNodeId());
+		flowGener.addActiveNode(toNodeID+"");
+		flowGener.Update();
+
+		//产生回退信息ReturnWorks
+		ReturnWork returnWork=new ReturnWork();
+		returnWork.setWorkID(newVersion);
+		returnWork.setReturnNode(Integer.parseInt(task.getNodeId()));
+		returnWork.setReturnNodeName(task.getNodeName());
+		returnWork.setBeiZhu(message);
+		returnWork.setReturnToNode(toNodeID);
+		returnWork.Insert();
+
+		return "回退成功，新的工作区间workId："+newVersion;
 	}
+	
+	/**
+	*@Description:
+	*@Param:  
+	*@return:  
+	*@Author: Mr.kong
+	*@Date: 2020/5/12 
+	*/
+	public static List<Integer> getNeedReturnNodes(Integer curNodeId,Integer toNodeId) throws Exception{
+		//需要回退节点列表
+		List<Integer> nodeIdList=new ArrayList<>();
+		Node toNode=new Node(toNodeId);
+		boolean mark=true;
+
+		//正向检查是否是顺序
+		nodeIdList.add(toNodeId);
+		while (true){
+			Nodes nextNodes=toNode.getHisToNodes();
+			if (nextNodes.size()!=1) {
+				mark=false;//不满足回退同粒度顺序节点条件
+				break;
+			}
+			toNode=(Node) nextNodes.get(0);
+			int nextId=toNode.getNodeID();
+			nodeIdList.add(nextId);
+			if (nextId==curNodeId)
+				break;
+		}
+
+		//逆向检查是否是顺序
+		Node curNode=new Node(curNodeId);
+		if (mark){
+			while (true){
+				Nodes preNodes=curNode.getHisPreNodes();
+				if (preNodes.size()!=1) {
+					mark=false;//不满足回退同粒度顺序节点条件
+					break;
+				}
+				curNode=(Node) preNodes.get(0);
+				if (curNode.getNodeID()==toNodeId)
+					break;
+			}
+		}
+
+		return mark?nodeIdList:null;
+	}
+	
 
 	/**
 	 * 退回

@@ -14,7 +14,7 @@
     <TCent>2</TCent>
     
     <!-- 退回规则 0不能退回,1,只能退回上一个节点, 2退回任意节点, 3指定的节点.  -->
-    <ReturnRole>1</ReturnRole>
+    <ReturnRole>0</ReturnRole>
 
     </Node> 
 </NewDataSet>

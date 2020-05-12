@@ -85,19 +85,19 @@
     <AtPara />
   </Sys_MapAttr>
   <Sys_MapAttr>
-    <MyPK>ND201_Emps</MyPK>
+    <MyPK>ND201_version</MyPK>
     <FK_MapData>ND201</FK_MapData>
-    <KeyOfEn>Emps</KeyOfEn>
-    <Name>Emps</Name>
-    <DefVal />
+    <KeyOfEn>version</KeyOfEn>
+    <Name>当前版本</Name>
+    <DefVal>0</DefVal>
     <UIContralType>0</UIContralType>
-    <MyDataType>1</MyDataType>
+    <MyDataType>2</MyDataType>
     <LGType>0</LGType>
     <LGTypeText>普通</LGTypeText>
     <UIWidth>100</UIWidth>
     <UIHeight>23</UIHeight>
     <MinLen>0</MinLen>
-    <MaxLen>8000</MaxLen>
+    <MaxLen>300</MaxLen>
     <UIBindKey />
     <UIRefKey />
     <UIRefKeyText />
@@ -171,20 +171,20 @@
     <AtPara />
   </Sys_MapAttr>
   <Sys_MapAttr>
-    <MyPK>ND201_FK_Dept</MyPK>
+    <MyPK>ND201_OriOID</MyPK>
     <FK_MapData>ND201</FK_MapData>
-    <KeyOfEn>FK_Dept</KeyOfEn>
-    <Name>操作员部门</Name>
-    <DefVal />
-    <UIContralType>1</UIContralType>
-    <MyDataType>1</MyDataType>
-    <LGType>2</LGType>
-    <LGTypeText>外键</LGTypeText>
+    <KeyOfEn>OriOID</KeyOfEn>
+    <Name>原始WorkId</Name>
+    <DefVal>0</DefVal>
+    <UIContralType>0</UIContralType>
+    <MyDataType>2</MyDataType>
+    <LGType>0</LGType>
+    <LGTypeText>普通</LGTypeText>
     <UIWidth>100</UIWidth>
     <UIHeight>23</UIHeight>
     <MinLen>0</MinLen>
-    <MaxLen>50</MaxLen>
-    <UIBindKey>BP.Port.Depts</UIBindKey>
+    <MaxLen>300</MaxLen>
+    <UIBindKey />
     <UIRefKey />
     <UIRefKeyText />
     <ExtIsSum>0</ExtIsSum>
@@ -257,11 +257,11 @@
     <AtPara />
   </Sys_MapAttr>
   <Sys_MapAttr>
-    <MyPK>ND201_MyNum</MyPK>
+    <MyPK>ND201_newVersion</MyPK>
     <FK_MapData>ND201</FK_MapData>
-    <KeyOfEn>MyNum</KeyOfEn>
-    <Name>个数</Name>
-    <DefVal>1</DefVal>
+    <KeyOfEn>newVersion</KeyOfEn>
+    <Name>最新版本</Name>
+    <DefVal>0</DefVal>
     <UIContralType>0</UIContralType>
     <MyDataType>2</MyDataType>
     <LGType>0</LGType>

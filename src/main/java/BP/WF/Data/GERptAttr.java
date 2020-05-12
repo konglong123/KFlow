@@ -126,4 +126,11 @@ public class GERptAttr
 	 * 延续流程编号
 	 */
 	public static final String CFlowNo = "CFlowNo";
+
+	public static final String Version="version";
+
+	public static final String NewVersion="newVersion";
+
+	public static final String OriOID="OriOID";
+
 }

@@ -52,6 +52,22 @@ public class NodeReturn extends EntityMM
 		this.SetValByKey(NodeReturnAttr.FK_Node, value);
 	}
 
+	public void setNodeName(String nodeName){
+		this.SetValByKey(NodeReturnAttr.NodeName,nodeName);
+	}
+
+	public String getNodeName(){
+		return this.GetValStrByKey(NodeReturnAttr.NodeName);
+	}
+
+	public void setReturnNodeName(String nodeName){
+		this.SetValByKey(NodeReturnAttr.ReturnNodeName,nodeName);
+	}
+
+	public String getReturnNodeName(){
+		return this.GetValStrByKey(NodeReturnAttr.ReturnNodeName);
+	}
+
 		///#endregion
 
 
@@ -78,7 +94,11 @@ public class NodeReturn extends EntityMM
 		Map map = new Map("WF_NodeReturn", "可退回的节点");
 
 		map.AddTBIntPK(NodeReturnAttr.FK_Node, 0, "节点", true, true);
+		map.AddTBString(NodeReturnAttr.NodeName, null, "节点名", true, true,0,300,0,false);
+
 		map.AddTBIntPK(NodeReturnAttr.ReturnTo, 0, "退回到", true, true);
+		map.AddTBString(NodeReturnAttr.ReturnNodeName, null, "退回节点名", true, true,0,300,0,false);
+
 		map.AddTBString(NodeReturnAttr.Dots, null, "轨迹信息", true, true,0,300,0,false);
 
 		this.set_enMap(map);

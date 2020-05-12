@@ -272,17 +272,9 @@ public class NodeExt extends Entity
 
         map.AddTBString(NodeAttr.Name, null, "名称", true, false, 0, 100, 10, false);//"http://ccbpm.mydoc.io/?v=5404&t=17903"
 
-        map.AddTBString(NodeAttr.JudgeNodeId, null, "匹配决策节点", true, false, 0, 100, 10, false);//"http://ccbpm.mydoc.io/?v=5404&t=17903"
+        map.AddTBInt(NodeAttr.JudgeNodeId, 0, "匹配决策节点", true, false);//"http://ccbpm.mydoc.io/?v=5404&t=17903"
 
         //map.SetHelperUrl(NodeAttr.WhoExeIt, "http://ccbpm.mydoc.io/?v=5404&t=17913");
-
-        map.AddDDLSysEnum(NodeAttr.ReadReceipts, 0, "已读回执", true, true, NodeAttr.ReadReceipts,
-        "@0=不回执@1=自动回执@2=由上一节点表单字段决定@3=由SDK开发者参数决定");
-       // map.SetHelperUrl(NodeAttr.ReadReceipts, "http://ccbpm.mydoc.io/?v=5404&t=17915");
-
-        // 撤销规则.
-        map.AddDDLSysEnum(NodeAttr.CancelRole,0, "撤销规则", true, true,
-            NodeAttr.CancelRole, "@0=上一步可以撤销@1=不能撤销@2=上一步与开始节点可以撤销@3=指定的节点可以撤销");
 
         //节点业务类型.
         map.AddTBInt("NodeAppType", 0, "节点业务类型", false, false);
@@ -358,8 +350,17 @@ public class NodeExt extends Entity
        // map.SetHelperUrl(NodeAttr.JumpWay, "http://ccbpm.mydoc.io/?v=5404&t=16261"); //增加帮助.
 
         map.AddTBString(BtnAttr.ReturnLab, "退回", "退回按钮标签", true, false, 0, 50, 10);
-        map.AddDDLSysEnum(NodeAttr.ReturnRole, 0, "退回规则", true, true, NodeAttr.ReturnRole);
+        map.AddDDLSysEnum(NodeAttr.ReturnRole, 0, "退回规则", true, true, NodeAttr.ReturnRole,"@0=不能退回@3=可退回指定的节点");
        // map.SetHelperUrl(NodeAttr.ReturnRole, "http://ccbpm.mydoc.io/?v=5404&t=16255"); //增加帮助.
+
+
+        map.AddDDLSysEnum(NodeAttr.ReadReceipts, 0, "已读回执", true, true, NodeAttr.ReadReceipts,
+                "@0=不回执@1=自动回执@2=由上一节点表单字段决定@3=由SDK开发者参数决定");
+        // map.SetHelperUrl(NodeAttr.ReadReceipts, "http://ccbpm.mydoc.io/?v=5404&t=17915");
+
+        // 撤销规则.
+        map.AddDDLSysEnum(NodeAttr.CancelRole,0, "撤销规则", true, true,
+                NodeAttr.CancelRole, "@0=上一步可以撤销@1=不能撤销@2=上一步与开始节点可以撤销@3=指定的节点可以撤销");
 
         map.AddTBString(NodeAttr.ReturnAlert, null, "被退回后信息提示", true, false, 0, 999, 10, true);
 

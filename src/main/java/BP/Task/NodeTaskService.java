@@ -102,8 +102,8 @@ public class NodeTaskService {
         //结束节点任务
         currentTask.setIsReady(3);
         currentTask.setStatus(3);
-        //设置节点任务为删除状态（）
-        currentTask.setYn(1);
+        /*//设置节点任务为删除状态（）
+        currentTask.setYn(1);*/
         currentTask.setEndTime(new Date());
         nodeTaskManage.updateNodeTask(currentTask);
 
@@ -185,7 +185,7 @@ public class NodeTaskService {
                     JudgeRoute route=new JudgeRoute();
                     route.setNum(nextNodes.size());
                     route.setWorkId(nodeTaskM.getWorkId());
-                    route.setJudgeNodeId(node.getJudgeNodeId());
+                    route.setJudgeNodeId(node.getJudgeNodeId()+"");
                     route.setRoutes(nextNodes.toString());
                     judgeRouteManager.insertJudgeRoute(route);
 
