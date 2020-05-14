@@ -4,6 +4,8 @@ import BP.En.EntityNoName;
 import BP.En.Map;
 import BP.springCloud.tool.FeignTool;
 
+import java.util.HashMap;
+
 /**
  * @program: kflow-web
  * @description: 资源
@@ -36,5 +38,29 @@ public class Resource extends EntityNoName {
         Long id=FeignTool.getSerialNumber("BP.Resource.Resource");
         this.SetValByKey(ResourceAttr.Id,id);
         return super.beforeInsert();
+    }
+
+    @Override
+    protected boolean beforeUpdate() throws Exception {
+        java.util.Map<String, Object> postBody = new HashMap<>();
+        String id=this.GetValStrByKey(ResourceAttr.Id);
+        postBody.put("id",id);
+        postBody.put("mysqlId",id);
+        postBody.put("name",this.GetValStrByKey(ResourceAttr.Name));
+        postBody.put("abstracts",this.GetValStrByKey(ResourceAttr.Abstracts));
+        postBody.put("no",id);
+        postBody.put("kind",this.GetValStrByKey(ResourceAttr.Kind));
+        postBody.put("deptId",this.GetValStrByKey(ResourceAttr.DeptId));
+        String url="http://112.125.90.132:8082/es/addResource";
+        FeignTool.updateToES(url,postBody);
+        return super.beforeUpdate();
+    }
+
+    @Override
+    protected void afterDelete() throws Exception {
+        //删除es中数据
+
+
+        super.afterDelete();
     }
 }

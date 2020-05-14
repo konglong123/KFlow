@@ -6,6 +6,10 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +34,7 @@ public class FeignTool {
         JSONObject jsonObject=(JSONObject)callFeign(url,postBody);
         return jsonObject.getBoolean("success");
     }
+
 
     /**
     *@Description:  请求序列号服务，获取主键
@@ -58,5 +63,46 @@ public class FeignTool {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     *@Description: 请求url获取es分页返回结果（均通过对abstracts进行相似度计算）
+     *@Param:
+     *@return:
+     *@Author: Mr.kong
+     *@Date: 2020/2/23
+     */
+    public static void esQuery(String url, HttpServletRequest request, HttpServletResponse response) throws Exception{
+
+            response.setCharacterEncoding("utf-8");
+            request.setCharacterEncoding("utf-8");
+            response.setContentType("text/html");
+            PrintWriter out = response.getWriter();
+            //请求页码、每页显示行数、偏移、总数
+            int page,rows;
+            String input_page=request.getParameter("page");
+            page=(input_page==null)?1:Integer.parseInt(input_page);
+            String input_rows=request.getParameter("rows");
+            rows=(input_rows==null)?10:Integer.parseInt(input_rows);
+            String abstracts=request.getParameter("abstracts");
+            Map<String, Object> postBody = new HashMap<>();
+            postBody.put("startPoint", (page-1)*rows);
+            postBody.put("pageLength", rows);
+            postBody.put("abstracts", abstracts);
+            HttpEntity<Map> requestEntity = new HttpEntity<>(postBody, null);
+            ResponseEntity<Page> resTemp = FeignTool.template.postForEntity(url, requestEntity, Page.class);
+            Page pageResult=resTemp.getBody();
+            Map<String, Object> jsonMap = new HashMap<>();//定义map
+            jsonMap.put("total", pageResult.getTotalNums());//total键 存放总记录数，必须的
+            if (pageResult.getData()==null){
+                jsonMap.put("rows", new ArrayList<>());//消除查询结果为空时，前端报错
+            }else {
+                jsonMap.put("rows", pageResult.getData());//rows键 存放每页记录 list
+            }
+            String result = net.sf.json.JSONObject.fromObject(jsonMap).toString();//格式化result   一定要是JSONObject
+            out.print(result);
+            out.flush();
+            out.close();
+
     }
 }

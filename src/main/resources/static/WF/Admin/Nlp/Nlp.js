@@ -32,6 +32,7 @@ function initNlpModels() {
             {field:'action',title: '操作',align: 'center',width:20,
                 formatter:function(val,rec){
                     var str="<input type='button' value='启用'  onclick='loadModel(\""+rec.id+"\")'/>";
+                    str+="<input type='button' value='删除'  onclick='deleteModel(\""+rec.id+"\")'/>";
                     if (rec.modelType==2)
                         str+="<input type='button' value='详情'  onclick='gotoModelDetail(\""+rec.id+"\")'/>";
                     return str;
@@ -58,6 +59,23 @@ function trainSegmentModel() {
 function trainWord2vecModel() {
     var url="/WF/WF/Admin/Nlp/ModelTrainWord2.html?"
     window.parent.addTab("模型训练", url);
+}
+function deleteModel(id) {
+    $.ajax({
+        url: "/WF/NLPModel/deletedModel",
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            modelId:id
+        },
+        success: function (data) {
+            messageShow("删除成功！");
+            queryNlpModels();
+        },
+        error:function (data) {
+            alert("删除失败！"+data);
+        }
+    });
 }
 
 function learnOnLine() {
@@ -115,7 +133,7 @@ function startTrain(type) {
             if (type==2)
                 showTrainProgress(data.progress);
             else
-                messageShow("训练成功！");
+                alert("训练成功！");
         },
         error:function (data) {
             alert("训练失败");

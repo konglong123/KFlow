@@ -18,8 +18,19 @@
 <fieldset>
     <textarea id="abstractsText" rows="5" cols="120" placeholder="请输入功能性描述"></textarea>
     <div style="width:95%;border-top: 0px solid #C0C0C0;">
-        <input type="button" value="查询" onclick="queryWorkflow()" />
-        <input type="button" value="重置" onclick="resetText()" />
+        <table  class="Table" cellpadding="0"  style="border-collapse:separate; border-spacing:5px;" cellspacing="0" border="0" style="width: 100%">
+            <tr>
+                <td> <label>检索方式：</label></td>
+                <td><select id="queryType">
+                    <option value="1">Lucene</option>
+                    <option value="2">Word2vec</option>
+                </select></td>
+                <td><input type="button" value="查询" onclick="queryWorkflow()" /></td>
+                <td><input type="button" value="重置" onclick="resetText()" /></td>
+                <td><input type="button" value="同步W2V数据" onclick="updateWord2Document()" /></td>
+            </tr>
+        </table>
+
     </div>
 </fieldset>
 </body>

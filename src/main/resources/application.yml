@@ -35,10 +35,11 @@ hanlp:
   #trainingFile: /opt/nlp/training/pku98/199801-train.txt
   #modelFile: /opt/nlp/model/cws.bin
   #testFile: /opt/nlp/training/pku98/199801-test.txt
-  segmentTrainingFile: /199801-test.txt
+  segmentTrainingFile: D:/Springboot/nlp/segment-mini.txt
   segmentModelFile: D:/Springboot/nlp/cws.bin
-  word2vecModelFile: /opt/nlp/model/word2vecDefaultModel.bin
-  word2vecDataFile: /opt/nlp/model/word2vecDefaultData.txt
+  word2vecModelFile: D:/Springboot/nlp/word2.txt
+  word2vecTrainigFile: D:/Springboot/nlp/sogo_mini_word2.txt
   dir: D:/Springboot/nlp
+  docFile: D:/Springboot/nlp/document.txt
 
 

@@ -1,11 +1,16 @@
 package BP.Nlp;
 
 import BP.Sys.EnCfg;
+import BP.WF.Flow;
+import BP.WF.Flows;
+import BP.WF.Template.FlowAttr;
 import BP.springCloud.entity.Nlpmodel;
 import BP.springCloud.tool.FeignTool;
+import BP.springCloud.tool.Page;
 import BP.springCloud.tool.PageTool;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.hankcs.hanlp.mining.word2vec.DocVectorModel;
 import com.hankcs.hanlp.mining.word2vec.Word2VecTrainer;
 import com.hankcs.hanlp.mining.word2vec.WordVectorModel;
 import com.hankcs.hanlp.model.perceptron.CWSTrainer;
@@ -15,6 +20,8 @@ import com.hankcs.hanlp.model.perceptron.model.LinearModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,8 +31,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @program: basic-services
@@ -54,6 +64,9 @@ public class NLPModelController {
     @Value("${hanlp.dir}")
     private String userFileDir;
 
+    @Value("${hanlp.docFile}")
+    private  String docFile;
+
     @RequestMapping("insert")
     @ResponseBody
     public Long insertNLPModel(@RequestBody Nlpmodel nlpmodel){
@@ -75,7 +88,55 @@ public class NLPModelController {
         Word2VecTrainer trainerBuilder = new Word2VecTrainer();
         WordVectorModel wordVectorModel = trainerBuilder.train(nlpmodel.getTrainFile(), nlpmodel.getModelFile());
         nlpmodelService.insertNlpmodel(nlpmodel);
-        wordVectorModel.nearest("中国");
+        return null;
+    }
+
+    /**
+    *@Description:  文档相似度模型中，增加文档
+    *@Param:
+    *@return:
+    *@Author: Mr.kong
+    *@Date: 2020/5/14
+    */
+    @RequestMapping("getNearestDoc")
+    @ResponseBody
+    public Object getNearestDoc(String doc){
+        return queryWord2Document(doc);
+    }
+
+    /**
+    *@Description: 根据abstracts查询相似文档，并返回list<JSONObject</>>
+    *@Param:  JSONObject("score","abstracts")
+    *@return:
+    *@Author: Mr.kong
+    *@Date: 2020/5/14
+    */
+    private List<JSONObject> queryWord2Document(String doc){
+        try {
+            DocVectorModel docVectorModel = NLPTool.getDocVectorModel();
+            if (docVectorModel == null) {
+                docVectorModel = NLPTool.createDocVectorModel(word2vecModelFile, docFile);
+            } else if (docVectorModel.size() == 0) {
+                NLPTool.initDocVectorModelDocument(docFile);
+            }
+            List<Map.Entry<Integer, Float>> list=docVectorModel.nearest(doc);
+            List result= NLPTool.transToJson(list,docFile);
+            return result;
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+        return null;
+    }
+
+    @RequestMapping("addDoc")
+    @ResponseBody
+    public JSONObject addDoc(String doc){
+        try {
+            NLPTool.addDocumentToFile(doc,docFile);
+        }catch (Exception  e){
+            logger.error(e.getMessage());
+        }
+
         return null;
     }
 
@@ -90,13 +151,6 @@ public class NLPModelController {
     @RequestMapping("getWordVector")
     @ResponseBody
     public JSONObject getWordVector(HttpServletRequest request){
-        return null;
-    }
-
-    //查询词向量相近词（语义相近词）
-    @RequestMapping("getNearestWords")
-    @ResponseBody
-    public JSONObject getNearestWords(HttpServletRequest request){
         return null;
     }
 
@@ -315,5 +369,91 @@ public class NLPModelController {
         result.put("progress",context);
         return result;
     }
+
+    @RequestMapping("deletedModel")
+    @ResponseBody
+    public void delModel(HttpServletRequest request){
+        String modelId=request.getParameter("modelId");
+        nlpmodelService.deleteNlpmodel(Integer.parseInt(modelId));
+    }
+
+    @RequestMapping("updateW2VDocument")
+    @ResponseBody
+    public Object updateW2VDocument(){
+
+        Map<String, Object> postBody = new HashMap<>();
+        postBody.put("startPoint", 0);
+        postBody.put("pageLength", 1000);
+        postBody.put("abstracts", "");
+        HttpEntity<Map> requestEntity = new HttpEntity<>(postBody, null);
+        ResponseEntity<Page> resTemp = FeignTool.template.postForEntity("http://112.125.90.132:8082/es/getWFDsl", requestEntity, Page.class);
+        Page pageResult=resTemp.getBody();
+        Map<String, Object> jsonMap = new HashMap<>();//定义map
+        List<Map> esData= pageResult.getData();
+        if (esData.size()!=0){
+            List<String> fileList=new ArrayList<>(esData.size());
+            for (Map item: esData){
+                fileList.add((String) item.get("abstracts"));
+            }
+            try {
+                NLPTool.updateDocumentFile(docFile,fileList);
+            }catch (Exception e){
+                logger.error(e.getMessage());
+            }
+        }
+
+        return null;
+    }
+
+
+    @RequestMapping("getWFMultiType")
+    @ResponseBody
+    public void getWFbyWord2(HttpServletRequest request,HttpServletResponse response){
+        String type=request.getParameter("type");
+        try {
+            if (type.equals("1"))
+                FeignTool.esQuery("http://112.125.90.132:8082/es/getWFDsl",request,response);
+            else 
+                word2Query(request,response);
+                
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+        
+    }
+    
+    /**
+    *@Description: word2vec查询流程 
+    *@Param:  
+    *@return:  
+    *@Author: Mr.kong
+    *@Date: 2020/5/14 
+    */
+    private void word2Query(HttpServletRequest request,HttpServletResponse response){
+        String abstracts=request.getParameter("abstracts");
+        List<JSONObject> data=queryWord2Document(abstracts);
+
+        List<Object> result=new ArrayList<>();
+        //查询流程信息
+        try {
+            Flows flows = new Flows();
+            for (JSONObject item : data) {
+                String doc = item.getString("abstracts");
+                flows.Retrieve(FlowAttr.Note, doc);
+                if (flows.size()>0) {
+                    Flow flow=(Flow) flows.get(0);
+                    item.put("mysqlId", flow.getNo());
+                    item.put("name",flow.getName());
+                    result.add(item);
+                }
+
+            }
+
+            PageTool.TransToResultList(result,request,response);
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+    }
+    
 
 }

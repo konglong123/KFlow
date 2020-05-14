@@ -2,9 +2,11 @@ package BP.WF.Template;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 
 import BP.DA.*;
 import BP.Difference.ContextHolderUtils;
+import BP.Nlp.NLPTool;
 import BP.Port.*;
 import BP.En.*;
 import BP.Web.*;
@@ -33,6 +35,7 @@ import BP.WF.WorkNode;
 import BP.WF.Work;
 import BP.WF.Works;
 import BP.WF.Data.*;
+import BP.springCloud.tool.FeignTool;
 
 /** 
  流程
@@ -997,7 +1000,7 @@ public class FlowExt extends EntityNoName
 	 
 	 @param dtFrom 日期从
 	 @param dtTo 日期到
-	 @param isOk 仅仅删除当前流程？1=删除当前流程, 0=删除全部流程.
+	 @param  仅仅删除当前流程？1=删除当前流程, 0=删除全部流程.
 	 @return 
 	 * @throws Exception 
 	*/
@@ -1033,8 +1036,8 @@ public class FlowExt extends EntityNoName
 	/** 
 	 批量重命名字段.
 	 
-	 @param FieldOld
-	 @param FieldNew
+	 @param
+	 @param
 	 @param FieldNewName
 	 @return 
 	 * @throws Exception 
@@ -1549,7 +1552,7 @@ public class FlowExt extends EntityNoName
 	 删除流程
 	 
 	 @param workid
-	 @param sd
+	 @param
 	 @return 
 	 * @throws Exception 
 	*/
@@ -1701,6 +1704,17 @@ public class FlowExt extends EntityNoName
 	@Override
 	protected boolean beforeUpdate() throws Exception
 	{
+		//更新ES检索信息
+		java.util.Map<String, Object> postBody = new HashMap<>();
+		String no=this.getNo();
+		postBody.put("id",no);
+		postBody.put("mysqlId",no);
+		postBody.put("name",this.getName());
+		postBody.put("abstracts",this.GetValStrByKey(FlowAttr.Note));
+		String url="http://112.125.90.132:8082/es/addWorkflow";
+		FeignTool.updateToES(url,postBody);
+
+
 		//更新流程版本
 		Flow.UpdateVer(this.getNo());
 
@@ -1731,16 +1745,10 @@ public class FlowExt extends EntityNoName
 			}
 		}
 		
-		try
-		{
-			
+		try {
 			String fee=BP.WF.Glo.GetFlowEventEntityStringByFlowMark(this.getFlowMark(), this.getNo());
-			
 			this.setFlowEventEntity(fee);
-			
-		}
-		catch (java.lang.Exception e)
-		{
+		} catch (java.lang.Exception e) {
 			this.setFlowEventEntity("");
 		}
 

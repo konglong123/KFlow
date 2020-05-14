@@ -624,7 +624,6 @@ public class WF_Comm extends WebContralBase {
 	public final String Entity_Update() throws Exception {
 		try {
 			String enName=this.getEnName();
-			updateToEs(enName);
 			Entity en = ClassFactory.GetEn(enName);
 			en.setPKVal(this.getPKVal());
 			en.RetrieveFromDBSources();

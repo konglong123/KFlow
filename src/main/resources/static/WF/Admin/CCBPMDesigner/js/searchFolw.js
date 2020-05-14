@@ -8,9 +8,10 @@ $(function(){
         pageList:[10,25,50,100],
         nowrap:false,//数据多行显示
         fitColumns:true,//表头与数据对齐
-        url:"/WF/feign/getWF",
+        url:"/WF/NLPModel/getWFMultiType",
         queryParams: {
-            abstracts: ""
+            abstracts: "",
+            type:1
         },
         columns:[[
             {field:'action',title: '操作',align: 'center',width:10,
@@ -22,7 +23,6 @@ $(function(){
             {field:'abstracts',title: '功能性描述',align: 'center',width:10},
             {field:'score',title: '相似度分值',align: 'center',width:10},
             {field:'sensitiveHash',title: '局部敏感哈希',align: 'center',width:10},
-            {field:'updateTime',title: '更新时间',align: 'center',width:10}
         ]]  
     });
 });
@@ -33,6 +33,7 @@ function gotoWorkflow(id,name) {
 function queryWorkflow() {
     var queryParams = $('#dgSearchflow').datagrid('options').queryParams;
     queryParams.abstracts = $("#abstractsText").val();
+    queryParams.type=$("#queryType").val();
     $("#dgSearchflow").datagrid('reload');
 }
 function resetText() {
@@ -46,7 +47,7 @@ function getWorkflowData() {
     $.ajax({
         type: 'post',
         async: false,
-        url: "feign/getWF",
+        url: "/WF/feign/getWF",
         dataType: 'json',
         data:{
             "abstracts": abstracts
@@ -75,9 +76,17 @@ function getWorkflowData() {
 }
 
 
-function iconAction() {
-
-}
-function parseDate() {
+function updateWord2Document() {
+    $.ajax({
+        type: 'get',
+        async: false,
+        url: "/WF/NLPModel/updateW2VDocument",
+        success: function (data) {
+            alert("同步成功！");
+        },
+        error: function (data) {
+            alert("同步异常"+data);
+        }
+    });
 
 }

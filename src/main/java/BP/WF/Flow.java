@@ -6539,6 +6539,14 @@ public class Flow extends BP.En.EntityNoName {
 
 	public final String DoDelete() throws Exception {
 
+		//删除es中流程数据
+		java.util.Map<String, Object> postBody = new HashMap<>();
+		String no=this.getNo();
+		postBody.put("id",no);
+		String url="http://112.125.90.132:8082/es/delEsById";
+		FeignTool.updateToES(url,postBody);
+
+
 		// 检查流程有没有版本管理？
 		if (this.getFK_FlowSort().length() > 1) {
 			String str = "SELECT * FROM WF_Flow WHERE PTable='" + this.getPTable() + "' AND FK_FlowSort='' ";
