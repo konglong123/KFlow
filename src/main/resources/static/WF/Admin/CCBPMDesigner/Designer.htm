@@ -215,24 +215,6 @@
                 <li id="Node_JC"><i class="icon-tags"></i>&nbsp;<span class="_label">决策</span></li>
             </ul>
         </div>
-        <div id="canvasMenu" style="display: none;">
-            <ul>
-                <li id="cmNewNode"><i class="icon-plus"></i> <span class="_label">新建节点</span></li>
-                <li id="cmNewLabel"><i class="icon-plus"></i>&nbsp;<span class="_label">添加标签</span></li>
-                <!--&lt;!&ndash;  <li id="cmSave"><i class="icon-ok"></i>&nbsp;<span class="_label">保存设计</span></li>
-                <li id="cmRefresh"><i class="icon-refresh"></i>&nbsp;<span class="_label">刷新 F5</span></li>-->
-                <li id="cmPaste"><i class="icon-share"></i>&nbsp;<span class="_label">粘贴节点</span></li>
-                <li id="Li3"><i class="icon-plus"></i>&nbsp;<span class="_label" onclick="alert('用鼠标按住节点icon,然后拖拉会出现连接线，然后指向要连接到的节点.');">增加连接线</span></li>
-                <li id="cmHelp"><i class="icon-search"></i>&nbsp;<span class="_label">获得帮助</span></li>
-            </ul>
-        </div>
-        <div id="canvasLabMenu" style="display: none;">
-            <ul>
-                <li id="clmNewName"><i class="icon-wrench"></i>&nbsp;<span class="_label">修改标签</span></li>
-                <li id="clmDelete"><i class="icon-trash"></i>&nbsp;<span class="_label">删除标签</span></li>
-            </ul>
-        </div>
-        <!--end div-->
         <style type="text/css">
             #moveSelected{
                 display: block !important;
@@ -287,6 +269,33 @@
                 border: 0;
             }
         </style>
+        <div id="canvasMenu" style="display: none;">
+            <ul>
+                <li id="cmNewNode"><i class="icon-plus"></i> <span class="_label">新建节点</span></li>
+                <li id="cmNewLabel"><i class="icon-plus"></i>&nbsp;<span class="_label">添加标签</span></li>
+                <!--&lt;!&ndash;  <li id="cmSave"><i class="icon-ok"></i>&nbsp;<span class="_label">保存设计</span></li>
+                <li id="cmRefresh"><i class="icon-refresh"></i>&nbsp;<span class="_label">刷新 F5</span></li>-->
+                <li id="cmPaste"><i class="icon-share"></i>&nbsp;<span class="_label">粘贴节点</span></li>
+                <li id="Li3"><i class="icon-plus"></i>&nbsp;<span class="_label" onclick="alert('用鼠标按住节点icon,然后拖拉会出现连接线，然后指向要连接到的节点.');">增加连接线</span></li>
+                <li id="cmHelp"><i class="icon-search"></i>&nbsp;<span class="_label">获得帮助</span></li>
+                <li id="cmAlign"><i class="icon-search"></i>&nbsp;<span class="_label">对齐</span>
+                    <ul class="child">
+                        <li id="downAlign" ><i class="icon-search"></i>&nbsp;<span class="_label" >下对齐</span></li>
+                        <li id="topAlign" ><i class="icon-search" ></i>&nbsp;<span class="_label" >上对齐</span></li>
+                        <li id="rightAlign" ><i class="icon-search" ></i>&nbsp;<span class="_label" >右对齐</span></li>
+                        <li id="leftAlign" ><i class="icon-search" ></i>&nbsp;<span class="_label" >左对齐</span></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div id="canvasLabMenu" style="display: none;">
+            <ul>
+                <li id="clmNewName"><i class="icon-wrench"></i>&nbsp;<span class="_label">修改标签</span></li>
+                <li id="clmDelete"><i class="icon-trash"></i>&nbsp;<span class="_label">删除标签</span></li>
+            </ul>
+        </div>
+        <!--end div-->
+
         <div class="container mini-layout"  id="flowdesign_canvas">
             <!--里面加一张大画布 -->
             <canvas id="canvas" width="2000" height="2000" style="background-color: #97CBFF" >
