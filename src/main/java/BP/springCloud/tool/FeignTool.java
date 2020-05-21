@@ -2,6 +2,8 @@ package BP.springCloud.tool;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.JsonObject;
+import org.apache.http.HttpResponse;
+import org.apache.http.util.EntityUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -104,5 +106,39 @@ public class FeignTool {
             out.flush();
             out.close();
 
+    }
+
+    //发送手机短息
+    public static String sendPhoneMessage(String mobile,String message){
+        String host = "http://yzxyzm.market.alicloudapi.com";
+        String path = "/yzx/verifySms";
+        String method = "POST";
+        String appcode = "2b47ef9f8e9c4dd89129440aafc0fd82";
+        Map<String, String> headers = new HashMap<String, String>();
+        //最后在header中的格式(中间是英文空格)为Authorization:APPCODE 83359fd73fe94948385f570e3c139105
+        headers.put("Authorization", "APPCODE " + appcode);
+        Map<String, String> querys = new HashMap<String, String>();
+        querys.put("phone", mobile);
+        querys.put("templateId", "TP1803086");
+        querys.put("variable", "code:123456");
+        Map<String, String> bodys = new HashMap<String, String>();
+
+
+        try {
+            /**
+             * 重要提示如下:
+             * HttpUtils请从
+             * https://github.com/aliyun/api-gateway-demo-sign-java/blob/master/src/main/java/com/aliyun/api/gateway/demo/util/HttpUtils.java
+             * 下载
+             *
+             * 相应的依赖请参照
+             * https://github.com/aliyun/api-gateway-demo-sign-java/blob/master/pom.xml
+             */
+            HttpResponse response = HttpUtils.doPost(host, path, method, headers, querys, bodys);
+            return EntityUtils.toString(response.getEntity());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

@@ -337,12 +337,10 @@ public class NodeExt extends Entity
         map.AddBoolean(BtnAttr.SaveEnable, true, "是否启用", true, true);
        // map.SetHelperUrl(BtnAttr.SaveLab, "http://ccbpm.mydoc.io/?v=5404&t=24366"); //增加帮助
 
-        map.AddTBString(BtnAttr.ThreadLab, "子线程", "子线程按钮标签", true, false, 0, 50, 10);
-        map.AddBoolean(BtnAttr.ThreadEnable, false, "是否启用", true, true);
-       // map.SetHelperUrl(BtnAttr.ThreadLab, "http://ccbpm.mydoc.io/?v=5404&t=16263"); //增加帮助
+        map.AddTBString(BtnAttr.TrackLab, "消息", "消息按钮标签", true, false, 0, 50, 10);
+        map.AddBoolean(BtnAttr.TrackEnable, true, "是否启用", true, true);
 
-        map.AddDDLSysEnum(NodeAttr.ThreadKillRole,0, "子线程删除方式", true, true,
-        NodeAttr.ThreadKillRole, "@0=不能删除@1=手工删除@2=自动删除", true);
+
 
         map.AddTBString(BtnAttr.JumpWayLab, "跳转", "跳转按钮标签", true, false, 0, 50, 10);
         map.AddDDLSysEnum(NodeAttr.JumpWay, 0, "跳转规则", true, true, NodeAttr.JumpWay);
@@ -420,10 +418,12 @@ public class NodeExt extends Entity
        /* map.AddDDLSysEnum(BtnAttr.PrintDocEnable, 0, "打印方式", true,
             true, BtnAttr.PrintDocEnable, "@0=不打印@1=打印网页@2=打印RTF模板@3=打印Word模版");
         map.SetHelperUrl(BtnAttr.PrintDocEnable, "http://ccbpm.mydoc.io/?v=5404&t=17979"); //增加帮助
-        */        
-        map.AddTBString(BtnAttr.TrackLab, "轨迹", "轨迹按钮标签", true, false, 0, 50, 10);
-        map.AddBoolean(BtnAttr.TrackEnable, true, "是否启用", true, true);
-       // map.SetHelperUrl(BtnAttr.TrackLab, "http://ccbpm.mydoc.io/?v=5404&t=24369");
+        */
+        map.AddTBString(BtnAttr.ThreadLab, "子线程", "子线程按钮标签", true, false, 0, 50, 10);
+        map.AddBoolean(BtnAttr.ThreadEnable, false, "是否启用", true, true);
+        // map.SetHelperUrl(BtnAttr.ThreadLab, "http://ccbpm.mydoc.io/?v=5404&t=16263"); //增加帮助
+        map.AddDDLSysEnum(NodeAttr.ThreadKillRole,0, "子线程删除方式", true, true,
+                NodeAttr.ThreadKillRole, "@0=不能删除@1=手工删除@2=自动删除", true);
 
         map.AddTBString(BtnAttr.HungLab, "挂起", "挂起按钮标签", true, false, 0, 50, 10);
         map.AddBoolean(BtnAttr.HungEnable, false, "是否启用", true, true);

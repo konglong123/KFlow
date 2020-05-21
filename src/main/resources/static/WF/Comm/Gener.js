@@ -24,6 +24,7 @@ function trim(s) {
     return s.replace(/(^\s*)|(\s*$)/g, "");
 }
 
+/*
 //
 if (plant == "CCFlow") {
     // CCFlow
@@ -32,7 +33,9 @@ if (plant == "CCFlow") {
     // JFlowWF/Comm/ProcessRequest
     dynamicHandler = basePath + "/WF/Comm/ProcessRequest";
 }
+*/
 
+dynamicHandler = basePath + "/WF/Comm/ProcessRequest";
 
 /* 把一个 @XB=1@Age=25 转化成一个js对象.  */
 function AtParaToJson(json) {
@@ -1130,45 +1133,6 @@ var Entity = (function () {
 
             var val = null;
 
-
-            if (jsonString != null) {
-                val = jsonString["MyPK"];
-                if (val == undefined || val == "")
-                    val = jsonString["OID"];
-                if (val == undefined || val == "")
-                    val = jsonString["WorkID"];
-                if (val == undefined || val == "")
-                    val = jsonString["NodeID"];
-                if (val == undefined || val == "")
-                    val = jsonString["No"];
-                if (val == undefined || val == "")
-                    val = this.pkval;
-
-                if (val == undefined || val == "" || val == null) {
-                } else {
-                    return val;
-                }
-            }
-
-            if (self != null) {
-                val = self["MyPK"];
-                if (val == undefined || val == "")
-                    val = self["OID"];
-                if (val == undefined || val == "")
-                    val = self["WorkID"];
-                if (val == undefined || val == "")
-                    val = self["NodeID"];
-                if (val == undefined || val == "")
-                    val = self["No"];
-                if (val == undefined || val == "")
-                    val = this.pkval;
-
-                if (val == undefined || val == "" || val == null) {
-                } else {
-                    return val;
-                }
-            }
-
             if (val == undefined || val == "")
                 val = this["MyPK"];
             if (val == undefined || val == "")
@@ -1187,7 +1151,6 @@ var Entity = (function () {
         RetrieveFromDBSources: function () {
             var self = this;
             // var params = getParams1(this); //查询的时候不需要把参数传入里面去.
-
             var pkavl = this.GetPKVal();
 
             if (pkavl == null || pkavl == "") {

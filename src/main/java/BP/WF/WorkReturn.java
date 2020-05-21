@@ -398,7 +398,7 @@ public class WorkReturn
         rw.setBeiZhu(Msg);
          
         // 去掉了 else .
-        rw.setIsBackTracking(this.IsBackTrack);
+       // rw.setIsBackTracking(this.IsBackTrack);
         rw.setMyPK( DBAccess.GenerGUID());
         rw.Insert();
 
@@ -724,7 +724,7 @@ public class WorkReturn
 
 		rw.setMyPK(String.valueOf(DBAccess.GenerOIDByGUID()));
 		rw.setBeiZhu(Msg);
-		rw.setIsBackTracking(this.IsBackTrack);
+		//rw.setIsBackTracking(this.IsBackTrack);
 		rw.Insert();
 
 		// 加入track.
@@ -813,7 +813,7 @@ public class WorkReturn
 
 		rw.setMyPK(String.valueOf(DBAccess.GenerOIDByGUID()));
 		rw.setBeiZhu(Msg);
-		rw.setIsBackTracking(this.IsBackTrack);
+		//rw.setIsBackTracking(this.IsBackTrack);
 		rw.Insert();
 
 		// 加入track.
@@ -1038,13 +1038,13 @@ public class WorkReturn
 			if (BP.DA.DBAccess.RunSQL(sql) == 0 && 1==2)
 				throw new RuntimeException("@退回错误，没有找到要更新的目标数据.技术信息:" + sql);
 
-			//杨玉慧 将流程的  任务池状态设置为  NONE
+			// 将流程的  任务池状态设置为  NONE
 			sql = "UPDATE WF_GenerWorkFlow SET TaskSta=0 WHERE  WorkID=" + this.WorkID;
 			if (BP.DA.DBAccess.RunSQL(sql) == 0 && 1==2)
 				throw new RuntimeException("@退回错误，没有找到要更新的目标数据.技术信息:" + sql);
 		}
 
-		rw.setIsBackTracking(this.IsBackTrack);
+		//rw.setIsBackTracking(this.IsBackTrack);
 
 		//调用删除GenerWorkerList数据，不然会导致两个节点之间有垃圾数据，特别遇到中间有分合流时候。
 		this.DeleteSpanNodesGenerWorkerListData();

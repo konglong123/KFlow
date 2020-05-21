@@ -1693,9 +1693,6 @@ public class Flow extends BP.En.EntityNoName {
 
 			Nodes nds = new Nodes(this.getNo());
 
-			// 条件集合.
-			Conds conds = new Conds(this.getNo());
-
 			/// #region 对节点进行检查
 			// 节点表单字段数据类型检查--begin---------
             msg.append(CheckFormFields());
@@ -1721,6 +1718,18 @@ public class Flow extends BP.En.EntityNoName {
 				if (laterFinish==null)
 					msg.append("@错误:最晚结束没有指定");
 
+				//可回退节点，检查回退是否满足规则
+				if (nd.getHisReturnRole()==ReturnRole.ReturnSpecifiedNodes){
+					NodeReturns nodeReturns = new NodeReturns();
+					nodeReturns.Retrieve(NodeReturnAttr.FK_Node, nd.getNodeID());
+					if (nodeReturns.size() == 0) {
+						msg.append("@错误:流程设计错误，您设置该节点可以退回指定的节点，但是指定的节点集合为空，请在节点属性设置它的指定节点。");
+					}
+					NodeReturn nodeReturn=(NodeReturn)nodeReturns.get(0);
+					List<Integer> needReturnNodes=Dev2Interface.getNeedReturnNodes(nodeReturn.getFK_Node(),nodeReturn.getReturnTo());
+					if (needReturnNodes==null)//检查不通过
+						msg.append("@错误:可回退节点设置不符合规则！");
+				}
 
 				if (nd.getHisRunModel()==RunModel.Judge) {
 					String judgeNodeId=nd.getJudgeNodeId()+"";
@@ -1775,7 +1784,6 @@ public class Flow extends BP.En.EntityNoName {
 							msg.append("@错误:您设置了该节点的访问规则是按人员，但是您没有为节点绑定人员。");
 						}
 						break;
-					case BySpecNodeEmp: // 按指定的岗位计算.
 					case BySpecNodeEmpStation: // 按指定的岗位计算.
 						if (nd.getDeliveryParas().trim().length() == 0) {
 							msg.append("@错误:您设置了该节点的访问规则是按指定的岗位计算，但是您没有设置节点编号.</font>");
@@ -1807,39 +1815,7 @@ public class Flow extends BP.En.EntityNoName {
 				// 设置它没有流程完成条件.
 				nd.setIsCCFlow(false);
 
-				if (conds.size() != 0) {
-                    msg.append("@信息:开始检查(" + nd.getName() + ")方向条件:");
-					for (Cond cond : conds.ToJavaList()) {
-						if (cond.getFK_Node() == nd.getNodeID() && cond.getHisCondType() == CondType.Flow) {
-							nd.setIsCCFlow(true);
-							nd.Update();
-						}
-
-						Node ndOfCond = new Node();
-						ndOfCond.setNodeID(ndOfCond.getNodeID());
-						if (ndOfCond.RetrieveFromDBSources() == 0) {
-							continue;
-						}
-
-						try {
-							if (cond.getAttrKey().length() < 2) {
-								continue;
-							}
-							if (ndOfCond.getHisWork().getEnMap().getAttrs().Contains(cond.getAttrKey()) == false) {
-								throw new RuntimeException(
-										"@错误:属性:" + cond.getAttrKey() + " , " + cond.getAttrName() + " 不存在。");
-							}
-						} catch (RuntimeException ex) {
-                            msg.append("@错误:" + ex.getMessage());
-							ndOfCond.Delete();
-						}
-                        msg.append(cond.getAttrKey() + cond.getAttrName() + cond.getOperatorValue() + "、");
-					}
-                    msg.append("@(" + nd.getName() + ")方向条件检查完成.....");
-				}
-
 			}
-
 
             msg.append("@流程的基础信息: ------ ");
             msg.append("@编号:  " + this.getNo() + " 名称:" + this.getName() + " , 存储表:" + this.getPTable());
@@ -1849,15 +1825,6 @@ public class Flow extends BP.En.EntityNoName {
 
             msg.append("@流程报表检查完成...");
 
-			for (Node nd : nds.ToJavaList()) {
-				// 如果是合流节点.
-				/*if (nd.getHisRunModel()==RunModel.HL) {
-					if (nd.getHisDeliveryWay() == DeliveryWay.BySelected)
-                        msg.append("@错误:节点ID:" + nd.getNodeID() + " 名称:" + nd.getName()
-								+ "是合流或者分合流节点，但是该节点设置的接收人规则为由上一步指定，这是错误的，应该为自动计算而非每个子线程人为的选择.");
-				}*/
-
-			}
 
 			return msg.toString();
 		} catch (RuntimeException ex) {
@@ -2844,29 +2811,10 @@ public class Flow extends BP.En.EntityNoName {
 		String fk_mapData = "ND" + Integer.parseInt(this.getNo()) + "Rpt";
 		String flowId = String.valueOf(Integer.parseInt(this.getNo()));
 
-		// 处理track表.
-		Track.CreateOrRepairTrackTable(flowId);
 		/// #region 插入字段。
 		String sql = "";
 		switch (SystemConfig.getAppCenterDBType()) {
-		case Oracle:
-			sql = "SELECT distinct  KeyOfEn FROM Sys_MapAttr WHERE EXISTS ( SELECT 'ND' "
-					+ SystemConfig.getAppCenterDBAddStringStr()
-					+ " cast(NodeID as varchar(20)) FROM WF_Node WHERE FK_Flow='" + this.getNo()
-					+ "' AND Sys_MapAttr.FK_MapData = 'ND' || CAST(WF_Node.NodeID AS VARCHAR(20)))";
-			break;
-		case MSSQL:
-			sql = "SELECT distinct  KeyOfEn FROM Sys_MapAttr WHERE EXISTS ( SELECT 'ND' + cast(NodeID as varchar(20)) FROM WF_Node WHERE FK_Flow='"
-					+ this.getNo() + "' AND Sys_MapAttr.FK_MapData = 'ND' + CAST(WF_Node.NodeID AS VARCHAR(20)))";
-			break;
-		case Informix:
-			sql = "SELECT distinct KeyOfEn FROM Sys_MapAttr WHERE EXISTS ( SELECT 'ND' "
-					+ SystemConfig.getAppCenterDBAddStringStr()
-					+ " cast(NodeID as varchar(20)) FROM WF_Node WHERE FK_Flow='" + this.getNo()
-					+ "' AND Sys_MapAttr.FK_MapData = 'ND' || CAST(WF_Node.NodeID AS VARCHAR(20)))";
-			break;
-		case MySQL:
-			//sql = "SELECT DISTINCT KeyOfEn FROM Sys_MapAttr WHERE FK_MapData like 'ND"+Integer.parseInt(this.getNo())+"%' AND FK_MapData !='ND"+Integer.parseInt(this.getNo())+"rpt'";
+		case  MySQL:
 			sql = "SELECT DISTINCT KeyOfEn FROM ( SELECT NodeID AS No FROM WF_Node WHERE FK_Flow='"+this.getNo()+"') t1 LEFT JOIN Sys_MapAttr ma on ma.FK_MapData=CONCAT('ND',t1.No)";
 			break;
 		default:
@@ -2890,13 +2838,6 @@ public class Flow extends BP.En.EntityNoName {
 
 		// 补充上没有字段。
 		switch (SystemConfig.getAppCenterDBType()) {
-		case Oracle:
-			// sunxd ORACLE数据库语句增加别名
-			sql = "SELECT MyPK \"MyPK\", KeyOfEn \"KeyOfEn\" FROM Sys_MapAttr WHERE EXISTS ( SELECT 'ND' "
-					+ SystemConfig.getAppCenterDBAddStringStr()
-					+ " cast(NodeID as varchar(20)) FROM WF_Node WHERE FK_Flow='" + this.getNo()
-					+ "' AND Sys_MapAttr.FK_MapData = 'ND' || CAST(WF_Node.NodeID AS VARCHAR(20)))";
-			break;
 		case MySQL:
 			sql ="SELECT MyPK, KeyOfEn FROM (SELECT NodeID AS No FROM WF_Node WHERE FK_Flow='" +this.getNo()+"') t1 LEFT JOIN Sys_MapAttr ma ON ma.FK_MapData=CONCAT('ND',t1.No)";
 			//sql = "SELECT MyPK, KeyOfEn FROM Sys_MapAttr WHERE EXISTS (SELECT X.No FROM ( SELECT CONCAT('ND',NodeID) AS No FROM WF_Node WHERE FK_Flow='"
@@ -2909,7 +2850,7 @@ public class Flow extends BP.En.EntityNoName {
 		}
 
 		DataTable dt = DBAccess.RunSQLReturnTable(sql);
-		// sunxd ORACLE数据库语句增加别名
+		// 数据库语句增加别名
 		sql = "SELECT KeyOfEn \"KeyOfEn\" FROM Sys_MapAttr WHERE FK_MapData='ND" + flowId + "Rpt'";
 		DataTable dtExits = DBAccess.RunSQLReturnTable(sql);
 		String pks = "@";
@@ -3021,24 +2962,6 @@ public class Flow extends BP.En.EntityNoName {
 			attr.Insert();
 		}
 
-		if (attrs.Contains(md.getNo() + "_" + GERptAttr.WFState) == false) {
-			// 流程状态
-			MapAttr attr = new BP.Sys.MapAttr();
-			attr.setFK_MapData(md.getNo());
-			attr.setHisEditType(EditType.UnDel);
-			attr.setKeyOfEn(GERptAttr.WFState);
-			attr.setName("流程状态");
-			attr.setMyDataType(DataType.AppInt);
-			attr.setUIBindKey(GERptAttr.WFState);
-			attr.setUIContralType(UIContralType.DDL);
-			attr.setLGType(FieldTypeS.Enum);
-			attr.setUIVisible(true);
-			attr.setUIIsEnable(false);
-			attr.setMinLen(0);
-			attr.setMaxLen(1000);
-			attr.setIdx(-1);
-			attr.Insert();
-		}
 
 		if (attrs.Contains(md.getNo() + "_" + GERptAttr.WFSta) == false) {
 			// 流程状态Ext
@@ -3059,24 +2982,6 @@ public class Flow extends BP.En.EntityNoName {
 			attr.Insert();
 		}
 
-		if (attrs.Contains(md.getNo() + "_" + GERptAttr.FlowEmps) == false) {
-			// 参与人
-			MapAttr attr = new MapAttr();
-			attr.setFK_MapData(md.getNo());
-			attr.setHisEditType(EditType.UnDel);
-			attr.setKeyOfEn(GERptAttr.FlowEmps); // "FlowEmps";
-			attr.setName("参与人");
-			attr.setMyDataType(DataType.AppString);
-			attr.setUIContralType(UIContralType.TB);
-			attr.setLGType(FieldTypeS.Normal);
-			attr.setUIVisible(true);
-			attr.setUIIsEnable(false);
-			attr.setUIIsLine(true);
-			attr.setMinLen(0);
-			attr.setMaxLen(1000);
-			attr.setIdx(-100);
-			attr.Insert();
-		}
 
 		if (attrs.Contains(md.getNo() + "_" + GERptAttr.FlowStarter) == false) {
 			// 发起人
@@ -3152,24 +3057,6 @@ public class Flow extends BP.En.EntityNoName {
 			attr.Insert();
 		}
 
-		if (attrs.Contains(md.getNo() + "_" + GERptAttr.FlowEndNode) == false) {
-			// 结束节点
-			MapAttr attr = new BP.Sys.MapAttr();
-			attr.setFK_MapData(md.getNo());
-			attr.setHisEditType(EditType.UnDel);
-			attr.setKeyOfEn(GERptAttr.FlowEndNode);
-			attr.setName("结束节点");
-			attr.setMyDataType(DataType.AppInt);
-			attr.setDefVal("0");
-			attr.setUIContralType(UIContralType.TB);
-			attr.setLGType(FieldTypeS.Normal);
-			attr.setUIVisible(true);
-			attr.setUIIsEnable(false);
-			attr.setUIIsLine(false);
-			attr.setHisEditType(EditType.UnDel);
-			attr.setIdx(-101);
-			attr.Insert();
-		}
 
 		if (attrs.Contains(md.getNo() + "_" + GERptAttr.FlowDaySpan) == false) {
 			// FlowDaySpan
@@ -3207,175 +3094,8 @@ public class Flow extends BP.En.EntityNoName {
 			attr.Insert();
 		}
 
-		if (attrs.Contains(md.getNo() + "_" + GERptAttr.PNodeID) == false) {
-			// 父流程WorkID
-			MapAttr attr = new BP.Sys.MapAttr();
-			attr.setFK_MapData(md.getNo());
-			attr.setHisEditType(EditType.UnDel);
-			attr.setKeyOfEn(GERptAttr.PNodeID);
-			attr.setName("父流程启动的节点");
-			attr.setMyDataType(DataType.AppInt);
-			attr.setDefVal("0");
-			attr.setUIContralType(UIContralType.TB);
-			attr.setLGType(FieldTypeS.Normal);
-			attr.setUIVisible(true);
-			attr.setUIIsEnable(false);
-			attr.setUIIsLine(false);
-			attr.setHisEditType(EditType.UnDel);
-			attr.setIdx(-101);
-			attr.Insert();
-		}
 
-		if (attrs.Contains(md.getNo() + "_" + GERptAttr.PWorkID) == false) {
-			// 父流程WorkID
-			MapAttr attr = new BP.Sys.MapAttr();
-			attr.setFK_MapData(md.getNo());
-			attr.setHisEditType(EditType.UnDel);
-			attr.setKeyOfEn(GERptAttr.PWorkID);
-			attr.setName("父流程WorkID");
-			attr.setMyDataType(DataType.AppInt);
-			attr.setDefVal("0");
-			attr.setUIContralType(UIContralType.TB);
-			attr.setLGType(FieldTypeS.Normal);
-			attr.setUIVisible(true);
-			attr.setUIIsEnable(false);
-			attr.setUIIsLine(false);
-			attr.setHisEditType(EditType.UnDel);
-			attr.setIdx(-101);
-			attr.Insert();
-		}
 
-		if (attrs.Contains(md.getNo() + "_" + GERptAttr.PEmp) == false) {
-			// 调起子流程的人员
-			MapAttr attr = new BP.Sys.MapAttr();
-			attr.setFK_MapData(md.getNo());
-			attr.setHisEditType(EditType.UnDel);
-			attr.setKeyOfEn(GERptAttr.PEmp);
-			attr.setName("调起子流程的人员");
-			attr.setMyDataType(DataType.AppString);
-			attr.setUIContralType(UIContralType.TB);
-			attr.setLGType(FieldTypeS.Normal);
-			attr.setUIVisible(true);
-			attr.setUIIsEnable(false);
-			attr.setUIIsLine(true);
-			attr.setMinLen(0);
-			attr.setMaxLen(32);
-			attr.setIdx(-100);
-			attr.Insert();
-		}
-
-		if (attrs.Contains(md.getNo() + "_" + GERptAttr.BillNo) == false) {
-			// 父流程 流程编号
-			MapAttr attr = new BP.Sys.MapAttr();
-			attr.setFK_MapData(md.getNo());
-			attr.setHisEditType(EditType.UnDel);
-			attr.setKeyOfEn(GERptAttr.BillNo);
-			attr.setName("单据编号"); // 单据编号
-			attr.setMyDataType(DataType.AppString);
-			attr.setUIContralType(UIContralType.TB);
-			attr.setLGType(FieldTypeS.Normal);
-			attr.setUIVisible(true);
-			attr.setUIIsEnable(false);
-			attr.setUIIsLine(false);
-			attr.setMinLen(0);
-			attr.setMaxLen(100);
-			attr.setIdx(-100);
-			attr.Insert();
-		}
-
-		if (attrs.Contains(md.getNo() + "_MyNum") == false) {
-			// MyNum
-			MapAttr attr = new BP.Sys.MapAttr();
-			attr.setFK_MapData(md.getNo());
-			attr.setHisEditType(EditType.UnDel);
-			attr.setKeyOfEn("MyNum");
-			attr.setName("条");
-			attr.setMyDataType(DataType.AppInt);
-			attr.setDefVal("1");
-			attr.setUIContralType(UIContralType.TB);
-			attr.setLGType(FieldTypeS.Normal);
-			attr.setUIVisible(true);
-			attr.setUIIsEnable(false);
-			attr.setUIIsLine(false);
-			attr.setHisEditType(EditType.UnDel);
-			attr.setIdx(-101);
-			attr.Insert();
-		}
-
-		if (attrs.Contains(md.getNo() + "_" + GERptAttr.AtPara) == false) {
-			// 父流程 流程编号
-			MapAttr attr = new BP.Sys.MapAttr();
-			attr.setFK_MapData(md.getNo());
-			attr.setHisEditType(EditType.UnDel);
-			attr.setKeyOfEn(GERptAttr.AtPara);
-			attr.setName("参数"); // 单据编号
-			attr.setMyDataType(DataType.AppString);
-			attr.setUIContralType(UIContralType.TB);
-			attr.setLGType(FieldTypeS.Normal);
-			attr.setUIVisible(false);
-			attr.setUIIsEnable(false);
-			attr.setUIIsLine(false);
-			attr.setMinLen(0);
-			attr.setMaxLen(4000);
-			attr.setIdx(-100);
-			attr.Insert();
-		}
-
-		if (attrs.Contains(md.getNo() + "_" + GERptAttr.GUID) == false) {
-			// 父流程 流程编号
-			MapAttr attr = new BP.Sys.MapAttr();
-			attr.setFK_MapData(md.getNo());
-			attr.setHisEditType(EditType.UnDel);
-			attr.setKeyOfEn(GERptAttr.GUID);
-			attr.setName("GUID"); // 单据编号
-			attr.setMyDataType(DataType.AppString);
-			attr.setUIContralType(UIContralType.TB);
-			attr.setLGType(FieldTypeS.Normal);
-			attr.setUIVisible(false);
-			attr.setUIIsEnable(false);
-			attr.setUIIsLine(false);
-			attr.setMinLen(0);
-			attr.setMaxLen(32);
-			attr.setIdx(-100);
-			attr.Insert();
-		}
-
-		if (attrs.Contains(md.getNo() + "_" + GERptAttr.PrjNo) == false) {
-			// 项目编号
-			MapAttr attr = new BP.Sys.MapAttr();
-			attr.setFK_MapData(md.getNo());
-			attr.setHisEditType(EditType.UnDel);
-			attr.setKeyOfEn(GERptAttr.PrjNo);
-			attr.setName("项目编号"); // 项目编号
-			attr.setMyDataType(DataType.AppString);
-			attr.setUIContralType(UIContralType.TB);
-			attr.setLGType(FieldTypeS.Normal);
-			attr.setUIVisible(true);
-			attr.setUIIsEnable(false);
-			attr.setUIIsLine(false);
-			attr.setMinLen(0);
-			attr.setMaxLen(100);
-			attr.setIdx(-100);
-			attr.Insert();
-		}
-		if (attrs.Contains(md.getNo() + "_" + GERptAttr.PrjName) == false) {
-			// 项目名称
-			MapAttr attr = new BP.Sys.MapAttr();
-			attr.setFK_MapData(md.getNo());
-			attr.setHisEditType(EditType.UnDel);
-			attr.setKeyOfEn(GERptAttr.PrjName);
-			attr.setName("项目名称");
-			attr.setMyDataType(DataType.AppString);
-			attr.setUIContralType(UIContralType.TB);
-			attr.setLGType(FieldTypeS.Normal);
-			attr.setUIVisible(true);
-			attr.setUIIsEnable(false);
-			attr.setUIIsLine(false);
-			attr.setMinLen(0);
-			attr.setMaxLen(100);
-			attr.setIdx(-100);
-			attr.Insert();
-		}
 
 		if (attrs.Contains(md.getNo() + "_" + GERptAttr.FlowNote) == false) {
 			// 流程信息
@@ -3425,475 +3145,7 @@ public class Flow extends BP.En.EntityNoName {
 				+ "' AND OID NOT IN (SELECT GroupID FROM Sys_MapAttr WHERE FK_MapData = '" + fk_mapData + "')");
 		DBAccess.RunSQL("UPDATE Sys_MapAttr SET Name='活动时间' WHERE FK_MapData='ND" + flowId + "Rpt' AND KeyOfEn='CDT'");
 		DBAccess.RunSQL("UPDATE Sys_MapAttr SET Name='参与者' WHERE FK_MapData='ND" + flowId + "Rpt' AND KeyOfEn='Emps'");
-		/// #region 处理报表.
-		String mapRpt = "ND" + Integer.parseInt(this.getNo()) + "MyRpt";
-		MapData mapData = new MapData();
-		mapData.setNo(mapRpt);
-		if (mapData.RetrieveFromDBSources() == 0) {
-			mapData.setNo(mapRpt);
-			mapData.setPTable(this.getPTable());
-			mapData.setName(this.getName() + "报表");
-			mapData.setNote("默认.");
 
-			// 默认的查询字段.
-			mapData.Insert();
-
-			BP.WF.Rpt.MapRpt rpt = new BP.WF.Rpt.MapRpt();
-			rpt.setNo(mapRpt);
-			rpt.RetrieveFromDBSources();
-			rpt.setFK_Flow(this.getNo());
-			rpt.ResetIt();
-			rpt.Update();
-		}
-
-		if (!this.getPTable().equals(mapData.getPTable())) {
-			mapData.setPTable(this.getPTable());
-			mapData.Update();
-		}
-
-		// 补充基础字段.
-		attrs = new MapAttrs(mapData.getNo());
-		/// #region 补充上流程字段到NDxxxRpt.
-		for (MapAttr attr : attrs.ToJavaList()) {
-			String keyOfEn = attr.getKeyOfEn();
-			if (keyOfEn.equals(StartWorkAttr.FK_Dept)) {
-				attr.setUIBindKey("BP.Port.Depts");
-				attr.setUIContralType(UIContralType.DDL);
-				attr.setLGType(FieldTypeS.FK);
-				attr.setUIVisible(true);
-				attr.setGroupID(groupID); // gfs[0].GetValIntByKey("OID");
-				attr.setUIIsEnable(false);
-				attr.setDefVal("");
-				attr.setMaxLen(100);
-				attr.Update();
-			} else if (keyOfEn.equals("FK_NY")) {
-				attr.setUIBindKey("BP.Pub.NYs");
-				attr.setUIContralType(UIContralType.DDL);
-				attr.setLGType(FieldTypeS.FK);
-				attr.setUIVisible(true);
-				attr.setGroupID(groupID); // gfs[0].GetValIntByKey("OID");
-				attr.setUIIsEnable(false);
-				attr.Update();
-			}
-		}
-
-		if (attrs.Contains(mapData.getNo() + "_" + GERptAttr.OID) == false) {
-			// WorkID
-			MapAttr attr = new BP.Sys.MapAttr();
-			attr.setFK_MapData(md.getNo());
-			attr.setKeyOfEn("OID");
-			attr.setName("WorkID");
-			attr.setMyDataType(BP.DA.DataType.AppInt);
-			attr.setUIContralType(UIContralType.TB);
-			attr.setLGType(FieldTypeS.Normal);
-			attr.setUIVisible(false);
-			attr.setUIIsEnable(false);
-			attr.setDefVal("0");
-			attr.setHisEditType(BP.En.EditType.Readonly);
-			attr.Insert();
-		}
-
-		if (attrs.Contains(mapData.getNo() + "_" + GERptAttr.WFSta) == false) {
-			// 流程状态Ext
-			MapAttr attr = new MapAttr();
-			attr.setFK_MapData(md.getNo());
-			attr.setHisEditType(EditType.UnDel);
-			attr.setKeyOfEn(GERptAttr.WFSta);
-			attr.setName("状态");
-			attr.setMyDataType(DataType.AppInt);
-			attr.setUIBindKey(GERptAttr.WFSta);
-			attr.setUIContralType(UIContralType.DDL);
-			attr.setLGType(FieldTypeS.Enum);
-			attr.setUIVisible(true);
-			attr.setUIIsEnable(false);
-			attr.setMinLen(0);
-			attr.setMaxLen(1000);
-			attr.setIdx(-1);
-			attr.Insert();
-		}
-
-		if (attrs.Contains(mapData.getNo() + "_" + GERptAttr.FlowEmps) == false) {
-			// 参与人
-			MapAttr attr = new MapAttr();
-			attr.setFK_MapData(md.getNo());
-			attr.setHisEditType(EditType.UnDel);
-			attr.setKeyOfEn(GERptAttr.FlowEmps); // "FlowEmps");
-			attr.setName("参与人");
-			attr.setMyDataType(DataType.AppString);
-			attr.setUIContralType(UIContralType.TB);
-			attr.setLGType(FieldTypeS.Normal);
-			attr.setUIVisible(true);
-			attr.setUIIsEnable(false);
-			attr.setUIIsLine(true);
-			attr.setMinLen(0);
-			attr.setMaxLen(1000);
-			attr.setIdx(-100);
-			attr.Insert();
-		}
-
-		if (attrs.Contains(mapData.getNo() + "_" + GERptAttr.FlowStarter) == false) {
-			// 发起人
-			MapAttr attr = new MapAttr();
-			attr.setFK_MapData(md.getNo());
-			attr.setHisEditType(EditType.UnDel);
-			attr.setKeyOfEn(GERptAttr.FlowStarter);
-			attr.setName("发起人");
-			attr.setMyDataType(DataType.AppString);
-
-			attr.setUIBindKey("BP.Port.Emps");
-			attr.setUIContralType(UIContralType.DDL);
-			attr.setLGType(FieldTypeS.FK);
-
-			attr.setUIVisible(true);
-			attr.setUIIsEnable(false);
-			attr.setMinLen(0);
-			attr.setMaxLen(20);
-			attr.setIdx(-1);
-			attr.Insert();
-		}
-
-		if (attrs.Contains(mapData.getNo() + "_" + GERptAttr.FlowStartRDT) == false) {
-			// MyNum
-			MapAttr attr = new MapAttr();
-			attr.setFK_MapData(md.getNo());
-			attr.setHisEditType(EditType.UnDel);
-			attr.setKeyOfEn(GERptAttr.FlowStartRDT); // "FlowStartRDT");
-			attr.setName("发起时间");
-			attr.setMyDataType(DataType.AppDateTime);
-			attr.setUIContralType(UIContralType.TB);
-			attr.setLGType(FieldTypeS.Normal);
-			attr.setUIVisible(true);
-			attr.setUIIsEnable(false);
-			attr.setUIIsLine(false);
-			attr.setIdx(-101);
-			attr.Insert();
-		}
-
-		if (attrs.Contains(mapData.getNo() + "_" + GERptAttr.FlowEnder) == false) {
-			// 发起人
-			MapAttr attr = new MapAttr();
-			attr.setFK_MapData(md.getNo());
-			attr.setHisEditType(EditType.UnDel);
-			attr.setKeyOfEn(GERptAttr.FlowEnder);
-			attr.setName("结束人");
-			attr.setMyDataType(DataType.AppString);
-			attr.setUIBindKey("BP.Port.Emps");
-			attr.setUIContralType(UIContralType.DDL);
-			attr.setLGType(FieldTypeS.FK);
-			attr.setUIVisible(true);
-			attr.setUIIsEnable(false);
-			attr.setMinLen(0);
-			attr.setMaxLen(20);
-			attr.setIdx(-1);
-			attr.Insert();
-		}
-
-		if (attrs.Contains(mapData.getNo() + "_" + GERptAttr.FlowEnderRDT) == false) {
-			// MyNum
-			MapAttr attr = new MapAttr();
-			attr.setFK_MapData(md.getNo());
-			attr.setHisEditType(EditType.UnDel);
-			attr.setKeyOfEn(GERptAttr.FlowEnderRDT); // "FlowStartRDT");
-			attr.setName("结束时间");
-			attr.setMyDataType(DataType.AppDateTime);
-			attr.setUIContralType(UIContralType.TB);
-			attr.setLGType(FieldTypeS.Normal);
-			attr.setUIVisible(true);
-			attr.setUIIsEnable(false);
-			attr.setUIIsLine(false);
-			attr.setIdx(-101);
-			attr.Insert();
-		}
-
-		if (attrs.Contains(mapData.getNo() + "_" + GERptAttr.FlowEndNode) == false) {
-			// 结束节点
-			MapAttr attr = new MapAttr();
-			attr.setFK_MapData(md.getNo());
-			attr.setHisEditType(EditType.UnDel);
-			attr.setKeyOfEn(GERptAttr.FlowEndNode);
-			attr.setName("结束节点");
-			attr.setMyDataType(DataType.AppInt);
-			attr.setDefVal("0");
-			attr.setUIContralType(UIContralType.TB);
-			attr.setLGType(FieldTypeS.Normal);
-			attr.setUIVisible(true);
-			attr.setUIIsEnable(false);
-			attr.setUIIsLine(false);
-			attr.setHisEditType(EditType.UnDel);
-			attr.setIdx(-101);
-			attr.Insert();
-		}
-
-		if (attrs.Contains(mapData.getNo() + "_" + GERptAttr.FlowDaySpan) == false) {
-			// FlowDaySpan
-			MapAttr attr = new MapAttr();
-			attr.setFK_MapData(md.getNo());
-			attr.setHisEditType(EditType.UnDel);
-			attr.setKeyOfEn(GERptAttr.FlowDaySpan); // "FlowStartRDT");
-			attr.setName("跨度(天)");
-			attr.setMyDataType(DataType.AppMoney);
-			attr.setUIContralType(UIContralType.TB);
-			attr.setLGType(FieldTypeS.Normal);
-			attr.setUIVisible(true);
-			attr.setUIIsEnable(true);
-			attr.setUIIsLine(false);
-			attr.setIdx(-101);
-			attr.setDefVal("0");
-			attr.Insert();
-		}
-
-		if (attrs.Contains(mapData.getNo() + "_" + GERptAttr.PFlowNo) == false) {
-			// 父流程 流程编号
-			MapAttr attr = new MapAttr();
-			attr.setFK_MapData(md.getNo());
-			attr.setHisEditType(EditType.UnDel);
-			attr.setKeyOfEn(GERptAttr.PFlowNo);
-			attr.setName("父流程编号"); // 父流程流程编号
-			attr.setMyDataType(DataType.AppString);
-			attr.setUIContralType(UIContralType.TB);
-			attr.setLGType(FieldTypeS.Normal);
-			attr.setUIVisible(true);
-			attr.setUIIsEnable(false);
-			attr.setUIIsLine(true);
-			attr.setMinLen(0);
-			attr.setMaxLen(3);
-			attr.setIdx(-100);
-			attr.Insert();
-		}
-
-		if (attrs.Contains(mapData.getNo() + "_" + GERptAttr.PNodeID) == false) {
-			// 父流程WorkID
-			MapAttr attr = new BP.Sys.MapAttr();
-			attr.setFK_MapData(md.getNo());
-			attr.setHisEditType(EditType.UnDel);
-			attr.setKeyOfEn(GERptAttr.PNodeID);
-			attr.setName("父流程启动的节点");
-			attr.setMyDataType(DataType.AppInt);
-			attr.setDefVal("0");
-			attr.setUIContralType(UIContralType.TB);
-			attr.setLGType(FieldTypeS.Normal);
-			attr.setUIVisible(true);
-			attr.setUIIsEnable(false);
-			attr.setUIIsLine(false);
-			attr.setHisEditType(EditType.UnDel);
-			attr.setIdx(-101);
-			attr.Insert();
-		}
-
-		if (attrs.Contains(mapData.getNo() + "_" + GERptAttr.PWorkID) == false) {
-			// 父流程WorkID
-			MapAttr attr = new MapAttr();
-			attr.setFK_MapData(md.getNo());
-			attr.setHisEditType(EditType.UnDel);
-			attr.setKeyOfEn(GERptAttr.PWorkID);
-			attr.setName("父流程WorkID");
-			attr.setMyDataType(DataType.AppInt);
-			attr.setDefVal("0");
-			attr.setUIContralType(UIContralType.TB);
-			attr.setLGType(FieldTypeS.Normal);
-			attr.setUIVisible(true);
-			attr.setUIIsEnable(false);
-			attr.setUIIsLine(false);
-			attr.setHisEditType(EditType.UnDel);
-			attr.setIdx(-101);
-			attr.Insert();
-		}
-
-		if (attrs.Contains(mapData.getNo() + "_" + GERptAttr.PEmp) == false) {
-			// 调起子流程的人员
-			MapAttr attr = new MapAttr();
-			attr.setFK_MapData(md.getNo());
-			attr.setHisEditType(EditType.UnDel);
-			attr.setKeyOfEn(GERptAttr.PEmp);
-			attr.setName("调起子流程的人员");
-			attr.setMyDataType(DataType.AppString);
-			attr.setUIContralType(UIContralType.TB);
-			attr.setLGType(FieldTypeS.Normal);
-			attr.setUIVisible(true);
-			attr.setUIIsEnable(false);
-			attr.setUIIsLine(true);
-			attr.setMinLen(0);
-			attr.setMaxLen(32);
-			attr.setIdx(-100);
-			attr.Insert();
-		}
-
-		// if (attrs.Contains(mapData.getNo() + "_" + GERptAttr.CWorkID) ==
-		// false)
-		// {
-		// /* 延续流程WorkID */
-		// MapAttr attr = new BP.Sys.MapAttr();
-		// attr.FK_MapData = md.No;
-		// attr.HisEditType = EditType.UnDel;
-		// attr.KeyOfEn = GERptAttr.CWorkID;
-		// attr.Name = "延续流程WorkID";
-		// attr.MyDataType = DataType.AppInt;
-		// attr.DefVal = "0";
-		// attr.UIContralType = UIContralType.TB;
-		// attr.LGType = FieldTypeS.Normal;
-		// attr.UIVisible = true;
-		// attr.UIIsEnable = false;
-		// attr.UIIsLine = false;
-		// attr.HisEditType = EditType.UnDel;
-		// attr.Idx = -101;
-		// attr.Insert();
-		// }
-
-		// if (attrs.Contains(mapData.getNo() + "_" + GERptAttr.CFlowNo) ==
-		// false)
-		// {
-		// /* 延续流程编号 */
-		// MapAttr attr = new BP.Sys.MapAttr();
-		// attr.FK_MapData = md.No;
-		// attr.HisEditType = EditType.UnDel;
-		// attr.KeyOfEn = GERptAttr.CFlowNo;
-		// attr.Name = "延续流程编号";
-		// attr.MyDataType = DataType.AppString;
-		// attr.UIContralType = UIContralType.TB;
-		// attr.LGType = FieldTypeS.Normal;
-		// attr.UIVisible = true;
-		// attr.UIIsEnable = false;
-		// attr.UIIsLine = true;
-		// attr.MinLen = 0;
-		// attr.MaxLen = 3;
-		// attr.Idx = -100;
-		// attr.Insert();
-		// }
-
-		if (attrs.Contains(mapData.getNo() + "_" + GERptAttr.BillNo) == false) {
-			// 单据编号
-			MapAttr attr = new MapAttr();
-			attr.setFK_MapData(md.getNo());
-			attr.setHisEditType(EditType.UnDel);
-			attr.setKeyOfEn(GERptAttr.BillNo);
-			attr.setName("单据编号"); // 单据编号
-			attr.setMyDataType(DataType.AppString);
-			attr.setUIContralType(UIContralType.TB);
-			attr.setLGType(FieldTypeS.Normal);
-			attr.setUIVisible(true);
-			attr.setUIIsEnable(false);
-			attr.setUIIsLine(false);
-			attr.setMinLen(0);
-			attr.setMaxLen(100);
-			attr.setIdx(-100);
-			attr.Insert();
-		}
-
-		if (attrs.Contains(mapData.getNo() + "_MyNum") == false) {
-			// MyNum
-			MapAttr attr = new MapAttr();
-			attr.setFK_MapData(md.getNo());
-			attr.setHisEditType(EditType.UnDel);
-			attr.setKeyOfEn("MyNum");
-			attr.setName("条");
-			attr.setMyDataType(DataType.AppInt);
-			attr.setDefVal("1");
-			attr.setUIContralType(UIContralType.TB);
-			attr.setLGType(FieldTypeS.Normal);
-			attr.setUIVisible(true);
-			attr.setUIIsEnable(false);
-			attr.setUIIsLine(false);
-			attr.setHisEditType(EditType.UnDel);
-			attr.setIdx(-101);
-			attr.Insert();
-		}
-
-		if (attrs.Contains(mapData.getNo() + "_" + GERptAttr.AtPara) == false) {
-			// 父流程 流程编号
-			MapAttr attr = new MapAttr();
-			attr.setFK_MapData(md.getNo());
-			attr.setHisEditType(EditType.UnDel);
-			attr.setKeyOfEn(GERptAttr.AtPara);
-			attr.setName("参数"); // 单据编号
-			attr.setMyDataType(DataType.AppString);
-			attr.setUIContralType(UIContralType.TB);
-			attr.setLGType(FieldTypeS.Normal);
-			attr.setUIVisible(false);
-			attr.setUIIsEnable(false);
-			attr.setUIIsLine(false);
-			attr.setMinLen(0);
-			attr.setMaxLen(4000);
-			attr.setIdx(-100);
-			attr.Insert();
-		}
-
-		if (attrs.Contains(mapData.getNo() + "_" + GERptAttr.GUID) == false) {
-			// 父流程 流程编号
-			MapAttr attr = new MapAttr();
-			attr.setFK_MapData(md.getNo());
-			attr.setHisEditType(EditType.UnDel);
-			attr.setKeyOfEn(GERptAttr.GUID);
-			attr.setName("GUID"); // 单据编号
-			attr.setMyDataType(DataType.AppString);
-			attr.setUIContralType(UIContralType.TB);
-			attr.setLGType(FieldTypeS.Normal);
-			attr.setUIVisible(false);
-			attr.setUIIsEnable(false);
-			attr.setUIIsLine(false);
-			attr.setMinLen(0);
-			attr.setMaxLen(32);
-			attr.setIdx(-100);
-			attr.Insert();
-		}
-
-		// if (attrs.Contains(mapData.getNo() + "_" + GERptAttr.PrjNo) == false)
-		// {
-		// /* 项目编号 */
-		// MapAttr attr = new BP.Sys.MapAttr();
-		// attr.FK_MapData = md.No;
-		// attr.HisEditType = EditType.UnDel;
-		// attr.KeyOfEn = GERptAttr.PrjNo;
-		// attr.Name = "项目编号"; // 项目编号
-		// attr.MyDataType = DataType.AppString;
-		// attr.UIContralType = UIContralType.TB;
-		// attr.LGType = FieldTypeS.Normal;
-		// attr.UIVisible = true;
-		// attr.UIIsEnable = false;
-		// attr.UIIsLine = false;
-		// attr.MinLen = 0;
-		// attr.MaxLen = 100;
-		// attr.Idx = -100;
-		// attr.Insert();
-		// }
-		// if (attrs.Contains(mapData.getNo() + "_" + GERptAttr.PrjName) ==
-		// false)
-		// {
-		// /* 项目名称 */
-		// MapAttr attr = new BP.Sys.MapAttr();
-		// attr.FK_MapData = md.No;
-		// attr.HisEditType = EditType.UnDel;
-		// attr.KeyOfEn = GERptAttr.PrjName;
-		// attr.Name = "项目名称"; // 项目名称
-		// attr.MyDataType = DataType.AppString;
-		// attr.UIContralType = UIContralType.TB;
-		// attr.LGType = FieldTypeS.Normal;
-		// attr.UIVisible = true;
-		// attr.UIIsEnable = false;
-		// attr.UIIsLine = false;
-		// attr.MinLen = 0;
-		// attr.MaxLen = 100;
-		// attr.Idx = -100;
-		// attr.Insert();
-		// }
-
-		if (attrs.Contains(mapData.getNo() + "_" + GERptAttr.FlowNote) == false) {
-			// 流程信息
-			MapAttr attr = new MapAttr();
-			attr.setFK_MapData(md.getNo());
-			attr.setHisEditType(EditType.UnDel);
-			attr.setKeyOfEn(GERptAttr.FlowNote);
-			attr.setName("流程信息"); // 父流程流程编号
-			attr.setMyDataType(DataType.AppString);
-			attr.setUIContralType(UIContralType.TB);
-			attr.setLGType(FieldTypeS.Normal);
-			attr.setUIVisible(true);
-			attr.setUIIsEnable(false);
-			attr.setUIIsLine(true);
-			attr.setMinLen(0);
-			attr.setMaxLen(500);
-			attr.setIdx(-100);
-			attr.Insert();
-		}
 	}
 
 	/**
@@ -6278,7 +5530,7 @@ public class Flow extends BP.En.EntityNoName {
 			nd.CreateMap();
 			// nd.getHisWork().CheckPhysicsTable();
 
-			CreatePushMsg(nd);
+			//CreatePushMsg(nd);
 			// 通用的人员选择器.
 			BP.WF.Template.Selector select = new Selector(nd.getNodeID());
 			select.setSelectorModel(BP.WF.Template.SelectorModel.GenerUserSelecter);
@@ -6314,7 +5566,7 @@ public class Flow extends BP.En.EntityNoName {
 			nd.Insert();
 			nd.CreateMap();
 			// nd.getHisWork().CheckPhysicsTable();
-			CreatePushMsg(nd);
+			//CreatePushMsg(nd);
 
 			// 通用的人员选择器.
 			select = new Selector(nd.getNodeID());

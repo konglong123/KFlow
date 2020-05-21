@@ -43,6 +43,7 @@ import BP.Sys.SysEnumAttr;
 import BP.Sys.SysEnums;
 import BP.Sys.SystemConfig;
 import BP.Task.FlowGener;
+import BP.Task.NodeTask;
 import BP.WF.Data.GERpt;
 import BP.WF.Template.FTCAttr;
 import BP.WF.Template.FrmEleType;
@@ -703,41 +704,25 @@ public class CCFlowAPI {
 			dtAlert.Columns.Add("Msg", String.class);
 			dtAlert.Columns.Add("URL", String.class);
 
-			if (newVersion!=0) {
-				// 如果工作节点退回了 flagKong
-				ReturnWorks rws = new ReturnWorks();
-				rws.Retrieve(ReturnWorkAttr.WorkID, newVersion, ReturnWorkAttr.ReturnToNode, fk_node);
-				if (rws.size() != 0) {
-					//String msgInfo = "";
-					for (BP.WF.ReturnWork rw : rws.ToJavaList()) {
-						DataRow drMsg = dtAlert.NewRow();
-						drMsg.put("Title", "来自节点:" + rw.getReturnNodeName() + " 退回人:" + rw.getReturnerName() + "  "
+
+			// 如果工作节点退回了 flagKong
+			ReturnWorks rws = new ReturnWorks();
+			rws.Retrieve(ReturnWorkAttr.WorkID, workID, ReturnWorkAttr.ReturnToNode, fk_node);
+			if (rws.size() != 0) {
+				//String msgInfo = "";
+				for (BP.WF.ReturnWork rw : rws.ToJavaList()) {
+					DataRow drMsg = dtAlert.NewRow();
+					if (rw.getType()==1){
+						drMsg.put("Title", "来自节点:" + rw.getReturnNodeName() + " 退回人:" + rw.getReturnerName() + " 时间："
 								+ rw.getRDT() + "");
-						drMsg.put("Msg", rw.getBeiZhuHtml());
-						dtAlert.Rows.add(drMsg);
+					}else {
+						drMsg.put("Title","来自监管人："+rw.getReturnerName()+" 时间："+rw.getRDT());
 					}
-
-					String str = nd.getReturnAlert();
-					if (!str.equals("")) {
-						str = str.replace("~", "'");
-						str = str.replace("@PWorkID", (new Long(workID)).toString());
-						str = str.replace("@PNodeID", (new Integer(nd.getNodeID())).toString());
-						str = str.replace("@FK_Node", (new Integer(nd.getNodeID())).toString());
-
-						str = str.replace("@PFlowNo", fk_flow);
-						str = str.replace("@FK_Flow", fk_flow);
-						str = str.replace("@PWorkID", (new Long(workID)).toString());
-						str = str.replace("@WorkID", (new Long(workID)).toString());
-						str = str.replace("@OID", (new Long(workID)).toString());
-
-						DataRow drMsg = dtAlert.NewRow();
-						drMsg.put("Title", "退回信息");
-						drMsg.put("Msg", str);
-						dtAlert.Rows.add(drMsg);
-					}
-
+					drMsg.put("Msg", rw.getBeiZhuHtml());
+					dtAlert.Rows.add(drMsg);
 				}
 			}
+
 
 
 			// #region 增加流程节点表单绑定信息.
@@ -757,6 +742,30 @@ public class CCFlowAPI {
 			Log.DebugWriteError(ex.getStackTrace() + ex.getMessage());
 			throw new RuntimeException(ex.getMessage());
 		}
+	}
+
+	/**
+	*@Description: 获取节点任务的最新workId
+	*@Param:
+	*@return:
+	*@Author: Mr.kong
+	*@Date: 2020/5/20
+	*/
+	public static Work getNodeTaskWork(NodeTask nodeTask) throws Exception{
+		Node node=new Node(nodeTask.getNodeId());
+		Work wk = node.getHisWork();
+		wk.setOID(Long.parseLong(nodeTask.getWorkId()));
+		wk.RetrieveFromDBSources();
+		Row row=wk.getRow();
+		//当前数据不是最新版本数据，获取最新版本workId
+		int newVersion=(int)row.get("newVersion");
+		if (newVersion!=0) {//有节点任务回退的情况
+			wk.setOID(newVersion);
+			wk.RetrieveFromDBSources();
+		}
+		wk.ResetDefaultVal();
+		wk.setReferAttrValue();
+		return wk;
 	}
 
 }

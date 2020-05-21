@@ -20,7 +20,8 @@ $(function(){
                 }},
             {field:'mysqlId',title: '流程编号',align: 'center',width:10},
             {field:'name',title: '流程名',align: 'center',width:10},
-            {field:'abstracts',title: '功能性描述',align: 'center',width:10},
+            {field:'abstracts',title: '功能性描述',align: 'center',width:10,
+                formatter:function (val) { return "<span title='" + val + "'>" + val + "</span>" }},
             {field:'score',title: '相似度分值',align: 'center',width:10},
             {field:'sensitiveHash',title: '局部敏感哈希',align: 'center',width:10},
         ]]  

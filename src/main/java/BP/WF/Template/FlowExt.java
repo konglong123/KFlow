@@ -1000,7 +1000,7 @@ public class FlowExt extends EntityNoName
 	 
 	 @param dtFrom 日期从
 	 @param dtTo 日期到
-	 @param  仅仅删除当前流程？1=删除当前流程, 0=删除全部流程.
+	 @param  1=删除当前流程, 0=删除全部流程.
 	 @return 
 	 * @throws Exception 
 	*/
@@ -1343,7 +1343,7 @@ public class FlowExt extends EntityNoName
 			rw.setReturnToEmp(currWl.getFK_Emp());
 			rw.setBeiZhu(note);
 			rw.setRDT(DataType.getCurrentDataTime());
-			rw.setIsBackTracking(false);
+			//rw.setIsBackTracking(false);
 			rw.setMyPK(BP.DA.DBAccess.GenerGUID());
 
 				///#endregion   加入退回信息, 让接受人能够看到退回原因.

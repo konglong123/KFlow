@@ -105,15 +105,15 @@ public class ReturnWork extends EntityMyPK
 		SetValByKey(ReturnWorkAttr.RDT, value);
 	}
 	/** 
-	 是否要原路返回？
+	 消息类型，1回退，2监管命令？
 	*/
-	public final boolean getIsBackTracking()
+	public final int getType()
 	{
-		return this.GetValBooleanByKey(ReturnWorkAttr.IsBackTracking);
+		return this.GetValIntByKey(ReturnWorkAttr.Type);
 	}
-	public final void setIsBackTracking(boolean value)
+	public final void setType(int value)
 	{
-		SetValByKey(ReturnWorkAttr.IsBackTracking, value);
+		SetValByKey(ReturnWorkAttr.Type, value);
 	}
 		
 	/** 
@@ -151,7 +151,7 @@ public class ReturnWork extends EntityMyPK
 		map.AddTBString(ReturnWorkAttr.Note, "", "退回原因", true, true, 0, 4000, 10);
 		map.AddTBDateTime(ReturnWorkAttr.RDT, null, "退回日期", true, true);
 
-		map.AddTBInt(ReturnWorkAttr.IsBackTracking, 0, "是否要原路返回?", true, true);
+		map.AddTBInt(ReturnWorkAttr.Type, 0, "消息类型", true, true);
 		this.set_enMap(map);
 		return this.get_enMap();
 	}

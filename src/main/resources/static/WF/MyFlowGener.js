@@ -2369,3 +2369,11 @@ function SendK() {
         }
     });
 }
+
+//查看节点任务消息
+function openMessage() {
+    var workId=GetQueryString("WorkID");
+    var nodeId=GetQueryString("FK_Node");
+    var url = "/WF/WF/Task/NodeTaskMessage.html?workId=" + workId + "&nodeId=" + nodeId;
+    OpenEasyUiDialogExt(url,"任务消息", 800, 450, false);
+}

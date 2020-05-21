@@ -40,6 +40,7 @@ function initDgGenerFlows() {
                     var str="<input type='button' value='详细' id='btnToDetail' onclick='gotoGenerFlowDetail(\""+rec.no+"\")'/>";
                     str+="<input type='button' value='甘特图' id='btnShowProgress' onclick='showProgress(\""+rec.no+"\")'/>";
                     str+="<input type='button' value='流程图' id='btnShowProgressFlow' onclick='showProgressFlow(\""+rec.no+"\")'/>";
+                    str+="<input type='button' value='下发指令' id='btnShowProgressFlow' onclick='doManage(\""+rec.no+"\")'/>";
                     return str;
                 }},
 
@@ -149,12 +150,13 @@ function showProgress(no) {
 }
 
 function showProgressFlow(no) {
-    var url="/WF/WF/Admin/CCBPMDesigner/Designer.htm?NodetaskNo="+no+"&type=2";
+    var url="/WF/WF/Admin/CCBPMDesigner/Designer.htm?GenerFlowNo="+no+"&type=2";
     var self = window.open(url);
 }
-
-function getGenerFlowGantData(generFlowNo,depth) {
-
+//下发监管命令
+function doManage(no) {
+    var url = "/WF/WF/Task/Manage.html?GenerFlowNo=" + no;
+    OpenEasyUiDialogExt(url,"下发监管指令", 800, 450, false);
 }
 
 function queryGenerFlowByCondition() {
@@ -180,4 +182,15 @@ function gotoGenerFlowDetail(no) {
     var enName = "BP.Task.FlowGener";
     var url = "/WF/WF/Comm/En.htm?EnName=" + enName + "&PKVal=" + no;
     OpenEasyUiDialogExt(url,"流程实例", 800, 450, true);
+}
+
+function getActiveNodes() {
+    var generFlow=new Entity("BP.Task.FlowGener");
+    var no=GetQueryString("GenerFlowNo");
+    generFlow.No=no;
+    generFlow.RetrieveFromDBSources();
+    flowNo=generFlow.flow_id;
+    var activeNodeStr=generFlow.activated_nodes;
+    activeNodes=activeNodeStr.split(",");
+    return activeNodes;
 }

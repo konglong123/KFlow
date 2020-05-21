@@ -9046,6 +9046,7 @@ public class Dev2Interface {
 
         report.setOID(newVersion);
         report.setOriOID(task.getWorkId());
+        report.setNewVersion(newVersion+"");
         report.Insert();
 
         //work数据回退成功，开始回退节点任务数据
@@ -9069,12 +9070,22 @@ public class Dev2Interface {
 
 		//产生回退信息ReturnWorks
 		ReturnWork returnWork=new ReturnWork();
-		returnWork.setWorkID(newVersion);
+		returnWork.setWorkID(Long.parseLong(task.getWorkId()));
 		returnWork.setReturnNode(Integer.parseInt(task.getNodeId()));
 		returnWork.setReturnNodeName(task.getNodeName());
 		returnWork.setBeiZhu(message);
+		returnWork.setType(1);//回退类型
 		returnWork.setReturnToNode(toNodeID);
 		returnWork.Insert();
+
+		//发送短信提醒，
+		NodeTasks tasks=new NodeTasks();
+		tasks.Retrieve(NodeTaskAttr.WorkId,task.getWorkId(),NodeTaskAttr.NodeId,toNodeID);
+		NodeTask returnTask=(NodeTask) tasks.get(0);
+		Emp emp=new Emp(returnTask.getExecutor());
+		if (!StringUtils.isEmpty(emp.getMobile()))
+			FeignTool.sendPhoneMessage(emp.getMobile(),"任务被回退："+message);
+
 
 		return "回退成功，新的工作区间workId："+newVersion;
 	}

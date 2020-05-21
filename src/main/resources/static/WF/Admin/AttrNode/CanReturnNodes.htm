@@ -71,7 +71,6 @@
             var nodeID = GetQueryString("FK_Node");
             var flowNo = GetQueryString("FK_Flow");
             var toNodeId=$("input[name='returnNode']:checked").val();
-            debugger
             //检验是否符合规则
             $.ajax({
                 url: "/WF/flow/checkReturn",
@@ -86,7 +85,6 @@
                         alert("退回节点不符合规则！");
                         return;
                     }
-                    debugger
                     var toNode = new Entity("BP.WF.Node", toNodeId);
 
                     var nodeReturn = new Entity("BP.WF.Template.NodeReturn");

@@ -1,12 +1,15 @@
 package BP.Task;
 
+import BP.DA.DataRow;
+import BP.DA.DataTable;
 import BP.En.Row;
+import BP.Port.Emp;
 import BP.Tools.StringUtils;
-import BP.WF.Node;
-import BP.WF.Work;
+import BP.WF.*;
 import BP.Web.WebUser;
 import BP.springCloud.entity.GenerFlow;
 import BP.springCloud.entity.NodeTaskM;
+import BP.springCloud.tool.FeignTool;
 import BP.springCloud.tool.PageTool;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -256,4 +259,72 @@ public class NodeTaskController {
         }
         return true;
     }
+
+    /**
+    *@Description: 下发监管命令 
+    *@Param:  
+    *@return:  
+    *@Author: Mr.kong
+    *@Date: 2020/5/20 
+    */
+    @RequestMapping("doManage")
+    @ResponseBody
+    public String doManage(HttpServletRequest request, HttpServletResponse response){
+        String generFlowNo=request.getParameter("generFlowNo");
+        String nodeId=request.getParameter("nodeId");
+        String message=request.getParameter("message");
+
+        String result="";
+        try {
+            //产生节点ReturnWork
+            ReturnWork returnWork=new ReturnWork();
+            returnWork.setWorkID(Integer.parseInt(generFlowNo));
+            returnWork.setReturnToNode(Integer.parseInt(nodeId));
+            returnWork.setBeiZhu(message);
+            returnWork.setType(2);//监管命令
+            returnWork.Insert();
+
+            //短信通知
+            NodeTasks tasks=new NodeTasks();
+            tasks.Retrieve(NodeTaskAttr.WorkId,generFlowNo,NodeTaskAttr.NodeId,nodeId);
+            NodeTask task=(NodeTask) tasks.get(0);
+            String executor=task.getExecutor();
+            Emp emp=new Emp(executor);
+            /*if (!org.springframework.util.StringUtils.isEmpty(emp.getMobile())) {
+                FeignTool.sendPhoneMessage(emp.getMobile(), message);
+                result="短信已经通知！";
+            }else*/
+                result="人员信息中无手机号！";
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+        return result;
+    }
+
+    /**
+    *@Description: 查看节点任务消息（任务回退信息，监管信息，历史work信息等）
+    *@Param:
+    *@return:
+    *@Author: Mr.kong
+    *@Date: 2020/5/20
+    */
+    @RequestMapping("getTaskMessage")
+    @ResponseBody
+    public Object getTaskMessage(HttpServletRequest request, HttpServletResponse response){
+        String nodeId=request.getParameter("nodeId");
+        String workId=request.getParameter("workId");
+
+        try {
+            ReturnWorks rws = new ReturnWorks();
+            rws.Retrieve(ReturnWorkAttr.WorkID, workId, ReturnWorkAttr.ReturnToNode, nodeId);
+            PageTool.TransToResult(rws,request,response);
+
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+
+        return null;
+    }
+
+
 }

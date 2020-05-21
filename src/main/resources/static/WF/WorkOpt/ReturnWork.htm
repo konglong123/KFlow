@@ -92,7 +92,6 @@
 
             var returnNodeArr = JSON.parse(data);
             var nodeListHtml = "";
-            debugger
             $.each(returnNodeArr, function (i, returnNode) {
                 nodeListHtml += "<option value='" + returnNode.No  + "'>" + returnNode.Name +  '</option>';
             });
@@ -194,7 +193,7 @@
 -->
     <div style="position: fixed;right: 10px;bottom: 40px;" class="foot">
         <input type="button" value="确定退回" onclick="ReturnWork(0);"  id="btnReturn" />
-        <input type="button" value="退回后并发送给我" onclick="ReturnWork(1);" id="btnIsBackTracking" />
+        <!--<input type="button" value="退回后并发送给我" onclick="ReturnWork(1);" id="btnIsBackTracking" />-->
         <input type="button" value="关闭" onclick="Close();" id="btnClose"/>
     </div>
 </body>

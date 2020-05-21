@@ -32,6 +32,8 @@ public class EmpAttr extends BP.En.EntityNoNameAttr
 	public static final String Email = "Email";
 	public static final String PinYin = "PinYin";
 	public static final String SignType = "SignType";
+
+	public static final String Mobile = "Mobile";
 	
 	 
 }

@@ -63,7 +63,7 @@ public class ReturnWorkAttr
 	 退回后是否需要原路返回？
 	 
 	*/
-	public static final String IsBackTracking = "IsBackTracking";
+	public static final String Type = "Type";
 
 		///#endregion
 }

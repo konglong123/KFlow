@@ -207,3 +207,39 @@ function initDgNodeTasksAll() {
         ]]
     });
 }
+function initDgTaskMessage() {
+    var workId=GetQueryString("workID");
+    var nodeId=GetQueryString("nodeID");
+    $('#dgTaskMessage').datagrid({
+        singleSelect:true,
+        autoRowHeight:false,
+        pagination:true,
+        pageSize: 10,
+        pageList:[10,25,50,100],
+        nowrap:false,//数据多行显示
+        fitColumns:true,//表头与数据对齐
+        url:"/WF/nodeTask/getTaskMessage",
+        queryParams: {
+            nodeId:nodeId,
+            workId:workId,
+        },
+        columns:[[
+            {field:'MyPK',title: '消息编码',align: 'center',width:10},
+            {field:'WorkID',title: '工作编码',align: 'center',width:10},
+            {field:'Returner',title: '消息来源',align: 'center',width:10},
+            {field:'BeiZhu',title: '内容',align: 'center',width:10,
+                formatter:function (val) { return "<span title='" + val + "'>" + val + "</span>" }},
+            {field:'Type',title: '消息类型',align: 'center',width:10,
+                formatter:function (val,rec) {
+                    if (val==1)
+                        return "<font color=red>任务退回</font>";
+                    else if (val==2)
+                        return "<font color=black>监管命令</font>";
+                }},
+            {field:'RDT',title: '创建时间',align: 'center',width:10},
+            {field:'ReturnNode',title: '回退节点',align: 'center',width:10},
+
+
+        ]]
+    });
+}

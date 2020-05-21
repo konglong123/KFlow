@@ -1023,11 +1023,10 @@ public class WF_MyFlow extends WebContralBase {
 		}
 
 		if (btnLab.getTrackEnable()){
-			toolbar += "<input type=button name='流程运行轨迹'  value='" + btnLab.getTrackLab()
-							+ "' enable=true onclick=\"WinOpen('./WorkOpt/OneWork/OneWork.htm?CurrTab=Truck&WorkID="
-							+ workId + "&FK_Flow=" + this.getFK_Flow() + "&FID=" + this.getFID() + "&FK_Node="
-							+ this.getFK_Node() + "&s=" + tKey + "','ds'); \" />";
-
+			toolbar += "<input type=button name='消息'  value='" + btnLab.getTrackLab()
+							+ "' enable=true onclick='openMessage(\""
+							+ workId + "\",\""
+							+ this.getFK_Node() + "\")'/>";
 		}
 
 		FrmWorkCheck fwc = new FrmWorkCheck(this.getFK_Node());
@@ -1110,11 +1109,6 @@ public class WF_MyFlow extends WebContralBase {
 						+ "' enable=true onclick=\"WinOpen('" + urlr + "','dsdd'); \" />";
 			}
 
-			if (btnLab.getTrackEnable())
-				toolbar += "<input type=button name='Track'  value='" + btnLab.getTrackLab()
-						+ "' enable=true onclick=\"WinOpen('./WorkOpt/OneWork/OneWork.htm?CurrTab=Truck&WorkID="
-						+ this.getWorkID() + "&FK_Flow=" + this.getFK_Flow() + "&FID=" + this.getFID() + "&FK_Node="
-						+ this.getFK_Node() + "&s=" + tKey + "','ds'); \" />";
 
 			if (btnLab.getSearchEnable())
 				toolbar += "<input type=button name='Search'  value='" + btnLab.getSearchLab()

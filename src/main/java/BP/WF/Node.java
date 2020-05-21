@@ -142,12 +142,12 @@ public class Node extends Entity {
 	 */
 	public final Work getHisWork() throws Exception {
 		Work obj = null;
-		if (this.getIsStartNode()) {
+		/*if (this.getIsStartNode()) {
 			obj = new BP.WF.GEStartWork(this.getNodeID(), this.getNodeFrmID());
 			obj.setHisNode(this);
 			obj.setNodeID(this.getNodeID());
 			return obj;
-		}
+		}*/
 
 		if (this.getFormType() != NodeFormType.FoolTruck || this.WorkID == 0 || this.getIsStartNode() == true) {
 			obj = new BP.WF.GEWork(this.getNodeID(), this.getNodeFrmID());
@@ -1792,7 +1792,10 @@ public class Node extends Entity {
 	 * 退回规则
 	 */
 	public final ReturnRole getHisReturnRole() {
-		return ReturnRole.forValue(this.GetValIntByKey(NodeAttr.ReturnRole));
+		int num=this.GetValIntByKey(NodeAttr.ReturnRole);
+		if (num==3)
+			num=1;
+		return ReturnRole.forValue(num);
 	}
 
 	public final void setHisReturnRole(ReturnRole value) {
@@ -2095,7 +2098,7 @@ public class Node extends Entity {
 		map.AddBoolean(NodeAttr.IsTask, true, "允许分配工作否?", true, true);
 
 		// 退回相关.
-		map.AddTBInt(NodeAttr.ReturnRole, 2, "退回规则", true, true);
+		map.AddTBInt(NodeAttr.ReturnRole, 0, "退回规则", true, true);
 		map.AddTBString(NodeAttr.ReturnReasonsItems, null, "退回原因", true, false, 0, 50, 10, true);
 		map.AddTBString(NodeAttr.ReturnAlert, null, "被退回后信息提示", true, false, 0, 50, 10, true);
 		map.AddBoolean(FrmWorkCheckAttr.FWCIsShowReturnMsg, false, "是否显示退回信息？", true, true, true);
@@ -2165,7 +2168,7 @@ public class Node extends Entity {
 		// false);
 		// map.AddTBInt(NodeAttr.IsFullSAAlert, 0, "是否接受未来工作到达消息提醒?", false,
 		// false);
-
+		map.AddBoolean(BtnAttr.TrackEnable, true, "是否启用", true, true);
 		// 表单相关.
 		map.AddTBInt(NodeAttr.FormType, 1, "表单类型", false, false);
 		map.AddTBString(NodeAttr.FormUrl, "http://", "表单URL", true, false, 0, 150, 10);

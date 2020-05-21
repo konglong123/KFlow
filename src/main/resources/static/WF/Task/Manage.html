@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>流程监管</title>
+    <link href="../Scripts/easyUI/themes/default/easyui.css" rel="stylesheet" type="text/css" />
+    <script src="../Scripts/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="../Scripts/easyUI/jquery.easyui.min.js" type="text/javascript"></script>
+    <script src="../Scripts/QueryString.js" type="text/javascript"></script>
+    <script src="../Scripts/config.js" type="text/javascript"></script>
+    <script src="../Comm/Gener.js" type="text/javascript"></script>
+    <script src="../Scripts/EasyUIUtility.js" type="text/javascript"></script>
+    <script src="FlowGener.js" type="text/javascript"></script>
+</head>
+<body>
+<div style=" margin:30px;" id="DIV_Nodes">
+    请选择要下发命令的节点:<br />
+    <select id="DDL_Nodes" name="DDL_Nodes" style="width: 77%;"></select>
+</div>
+<div style=" margin:30px;" id="DIV_Doc">
+    命令信息：
+    <textarea id="TB_Doc" name="TB_Doc" style="vertical-align: top; width: 98%; height:150px;" maxlength="500"></textarea>
+</div>
+<div style="text-align:right;padding:5px">
+    <button class="easyui-linkbutton" onclick="createManegeOrder()" >下发监管信息</button>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        var activeNodes=getActiveNodes();
+        var nodeListHtml = "";
+        $.each(activeNodes, function (i, nodeNo) {
+            if (nodeNo!=""){
+                var node=new Entity("BP.WF.Node");
+                node.NodeID=nodeNo;
+                node.RetrieveFromDBSources();
+                nodeListHtml += "<option value='" + node.NodeID  + "'>" + node.Name +  '</option>';
+            }
+        });
+        $('#DDL_Nodes').html(nodeListHtml);
+    });
+
+    function createManegeOrder() {
+        var selectedNodeID = $('#DDL_Nodes').val();
+        var message=$("#TB_Doc").val();
+        if (message==null||message==""){
+            alert("请填写监管信息！");
+            return;
+        }
+
+        $.ajax({
+            url: "/WF/nodeTask/doManage",
+            data:{
+                generFlowNo:GetQueryString("GenerFlowNo"),
+                nodeId:selectedNodeID,
+                message:message
+            },
+            success:function (data) {
+                alert("命令下发成功！");
+            },
+            error:function (data) {
+                alert("命令下发失败！"+data);
+            }
+        });
+    }
+</script>
+</body>
+</html>

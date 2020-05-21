@@ -398,7 +398,7 @@
             var type=GetQueryString("type");
             if (type==2){///查看流程实例进度
                 var generFlow=new Entity("BP.Task.FlowGener");
-                var no=GetQueryString("NodetaskNo");
+                var no=GetQueryString("GenerFlowNo");
                 generFlow.No=no;
                 generFlow.RetrieveFromDBSources();
                 flowNo=generFlow.flow_id;
