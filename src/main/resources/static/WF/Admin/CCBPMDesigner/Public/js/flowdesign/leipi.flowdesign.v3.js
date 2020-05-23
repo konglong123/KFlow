@@ -677,7 +677,18 @@
                         }
                     }
                     return selectedList1;
-                }，
+		}
+		    
+                function clearDragData() {
+                    moveSelected.style.width = 0;
+                    moveSelected.style.height = 0;
+                    moveSelected.style.top = 0;
+                    moveSelected.style.left = 0;
+                    moveSelected.style.bottom = 0;
+                    moveSelected.style.right = 0;
+                }
+                console.log(window.selectedList);
+            }，
 	    //左键选择右键对齐菜单功能，这里的对齐逻辑是按照ID顺序，取得节点的X,Y值进行对齐
             rightAlign1:function(list) {
                 let node_1 = list[0];
