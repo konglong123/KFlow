@@ -290,10 +290,11 @@ public class NodeTaskController {
             NodeTask task=(NodeTask) tasks.get(0);
             String executor=task.getExecutor();
             Emp emp=new Emp(executor);
-            /*if (!org.springframework.util.StringUtils.isEmpty(emp.getMobile())) {
-                FeignTool.sendPhoneMessage(emp.getMobile(), message);
+            if (!org.springframework.util.StringUtils.isEmpty(emp.getMobile())) {
+                //FeignTool.sendPhoneMessage(emp.getMobile(), message);
+                FeignTool.sendPhoneMessage(emp.getMobile(), task.getNo());
                 result="短信已经通知！";
-            }else*/
+            }else
                 result="人员信息中无手机号！";
         }catch (Exception e){
             logger.error(e.getMessage());

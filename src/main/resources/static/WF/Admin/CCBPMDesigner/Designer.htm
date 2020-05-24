@@ -596,8 +596,18 @@
                         }
                     },
                     "cmPaste": function (t) {
+                        debugger
                         var cIds=getCookie("copyFlow");//读取批量复制的节点数据
                         var pasteIds = _canvas.paste(); //读取手动单个复制的节点数据
+                        var list=window.selectedList;
+                        if (list.length>0) {
+                            pasteIds="";
+                            for (var index=0;index<list.length;index++){
+                                pasteIds=pasteIds+list[index].NodeID+",";
+                            }
+                            pasteIds=pasteIds.substring(0,pasteIds.length-1);
+                        }
+
                         if (cIds==""&&pasteIds <= 0) {
                             alert("你未复制任何步骤!");
                             return;
@@ -605,6 +615,7 @@
                         if (cIds!=""){//优先批量复制
                             pasteIds=cIds;
                         }
+                        //pasteNode(flowNo,_canvas,pasteIds);
                         pasteNode(flowNo,_canvas,pasteIds);
                     },
                     "cmHelp": function (t) {
@@ -776,7 +787,7 @@
                 }
             });
             //画布左键绑定
-            let moveSelected=$('#moveSelected')[0];
+            var moveSelected=$('#moveSelected')[0];
             _canvas.Mouse1(moveSelected);
             $("#moveSelected").show();
             var list=window.selectedList;//获取被选择节点
@@ -784,16 +795,7 @@
             //选择不到节点，这里将第所有节点坐标默认（200,200）
             //init_Align();
         });
-//         function init_Align() {
-//             var nodes = new Entities("BP.WF.Template.NodeSimples");
-//             nodes.Retrieve("FK_Flow", flowNo);
-//             for (var idx = 0; idx < nodes.length; idx++) {
-//                  var node_new = nodes[idx];
-//                   node_new = new Entity("BP.WF.Template.NodeSimple", node_new);
-//                   node_new.X = 200;
-//                   node_new.Y = 200;
-//                   node_new.Update();
-//           }
+
         function SaveFlow2018(_canvas) {
 
             //获取所有节点信息.
