@@ -3,6 +3,7 @@ import BP.DA.Depositary;
 import BP.En.EnType;
 import BP.En.EntityMyPK;
 import BP.En.Map;
+import BP.Sys.FrmUI.MapAttrString;
 import BP.Tools.StringHelper;
 import BP.Tools.StringUtils;
 
@@ -781,10 +782,9 @@ public class FrmAttachment extends EntityMyPK
 		map.AddTBString(FrmAttachmentAttr.FK_MapData, null, "表单ID", true, false, 1, 100, 20);
 		map.AddTBString(FrmAttachmentAttr.NoOfObj, null, "附件编号", true, false, 0, 50, 20);
 		map.AddTBInt(FrmAttachmentAttr.FK_Node, 0, "节点控制(对sln有效)", false, false);
-		
-		 //for渔业厅增加.
-        map.AddTBInt(FrmAttachmentAttr.AthRunModel, 0, "运行模式", false, false);
-        map.AddTBInt(FrmAttachmentAttr.AthSaveWay, 0, "保存方式", false, false);
+		map.AddDDLSQL(FrmAttachmentAttr.GroupID, 0, "显示的分组", MapAttrString.SQLOfGroupAttr(), true);
+
+		map.AddTBInt(FrmAttachmentAttr.AthSaveWay, 0, "保存方式", false, false);
 
 		map.AddTBString(FrmAttachmentAttr.Name, null, "名称", true, false, 0, 50, 20);
 		map.AddTBString(FrmAttachmentAttr.Exts, null, "要求上传的格式", true, false, 0, 50, 20);

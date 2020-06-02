@@ -2,6 +2,7 @@ package BP.Task;
 
 import BP.En.*;
 import BP.WF.Node;
+import BP.Web.WebUser;
 
 /**
  * @program: kflow-web
@@ -147,6 +148,9 @@ public class NodeTask extends EntityNo {
             _HisUAC = new UAC();
             _HisUAC.IsUpdate = true;
             _HisUAC.IsView = true;
+            if (WebUser.getNo().equals("admin")){
+                _HisUAC.IsDelete=true;
+            }
         }
         return _HisUAC;
     }

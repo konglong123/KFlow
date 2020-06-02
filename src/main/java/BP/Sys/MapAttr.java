@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import BP.DA.*;
 import BP.En.*;
 import BP.Tools.StringHelper;
+import BP.Web.WebUser;
 
 /**
  * 实体属性

@@ -8,6 +8,8 @@
         <result column="resource_no" jdbcType="VARCHAR" property="resourceNo" />
         <result column="resource_id" jdbcType="BIGINT" property="resourceId" />
         <result column="node_id" jdbcType="BIGINT" property="nodeId" />
+        <result column="work_id" jdbcType="BIGINT" property="workId" />
+        <result column="use_time" jdbcType="INTEGER" property="useTime" />
         <result column="plan_end" jdbcType="TIMESTAMP" property="planEnd" />
         <result column="plan_start" jdbcType="TIMESTAMP" property="planStart" />
         <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
@@ -33,7 +35,7 @@
     <update id="updateResourceTask" parameterType="ResourceTaskM">
         update k_resource_task
         <trim prefix="set" suffixOverrides=",">
-            <if test="resTask.resourceNo!=null AND resTask.resourceNo!=''">resource_no=#{resTask.resourceNo},</if>
+            <if test="resTask.resourceNo!=null ">resource_no=#{resTask.resourceNo},</if>
             <if test="resTask.resourceId!=0">resource_id=#{resTask.resourceId},</if>
             <if test="resTask.nodeId!=0">node_id=#{resTask.nodeId},</if>
             <if test="resTask.planStart!=null">plan_start=#{resTask.planStart},</if>
@@ -50,7 +52,7 @@
     <insert id="addResourceTask" parameterType="ResourceTaskM">
         insert  into k_resource_task
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="resTask.resourceNo != null AND resTask.resourceNo!=''">
+            <if test="resTask.resourceNo != null">
                 resource_no,
             </if>
             <if test="resTask.resourceId != 0">
@@ -83,10 +85,16 @@
             <if test="resTask.isPlan != 0">
                 is_plan,
             </if>
+            <if test="resTask.useTime != 0">
+                use_time,
+            </if>
+            <if test="resTask.workId != null">
+                work_id,
+            </if>
 
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="resTask.resourceNo != null AND resTask.resourceNo!=''">
+            <if test="resTask.resourceNo != null ">
                 #{resTask.resourceNo,jdbcType=VARCHAR},
             </if>
             <if test="resTask.resourceId != 0">
@@ -114,10 +122,16 @@
                 #{resTask.bookStart,jdbcType=TIMESTAMP},
             </if>
             <if test="resTask.isFinish != 0">
-                #{resTask.isFinish,jdbcType=TINYINT},
+                #{resTask.isFinish,jdbcType=INTEGER},
             </if>
             <if test="resTask.isPlan != 0">
-                #{resTask.isPlan,jdbcType=TINYINT},
+                #{resTask.isPlan,jdbcType=INTEGER},
+            </if>
+            <if test="resTask.useTime != 0">
+                #{resTask.useTime,jdbcType=INTEGER},
+            </if>
+            <if test="resTask.workId != null">
+                #{resTask.workId,jdbcType=BIGINT},
             </if>
         </trim>
     </insert>

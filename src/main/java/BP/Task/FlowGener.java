@@ -1,6 +1,7 @@
 package BP.Task;
 
 import BP.En.*;
+import BP.Web.WebUser;
 
 /**
  * @program: kflow-web
@@ -67,10 +68,12 @@ public class FlowGener extends EntityNo {
     @Override
     public UAC getHisUAC() throws Exception {
         if (_HisUAC == null) {
-
             _HisUAC = new UAC();
             _HisUAC.IsUpdate = true;
             _HisUAC.IsView = true;
+            if (WebUser.getNo().equals("admin")){
+                _HisUAC.IsDelete=true;
+            }
         }
         return _HisUAC;
     }

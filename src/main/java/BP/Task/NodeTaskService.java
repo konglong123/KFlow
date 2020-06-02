@@ -457,6 +457,8 @@ public class NodeTaskService {
             JSONObject completed=new JSONObject();
 
             Double amount = (nodeTaskM.getUseTime()+0.0)/nodeTaskM.getTotalTime();
+            if (nodeTaskM.getIsReady()==3)//已经完成时，不按用时计算
+                amount=1.0;
             BigDecimal bd = new BigDecimal(amount);
             amount = bd.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
             completed.put("amount",amount);

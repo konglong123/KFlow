@@ -55,11 +55,14 @@ function initDgNodeResource(nodeId) {
             {field:'resource_no',title: '资源编号',align: 'center',width:10},
             {field:'book_start',title: '预定开始时间',align: 'center',width:15},
             {field:'book_end',title: '预定结束时间',align: 'center',width:15},
+            {field:'use_time',title: '预占用时间(h)',align: 'center',width:15},
             {field:'is_plan',title: '是否计划',align: 'center',width:10,
                 formatter:function(val,rec){
-                    if (val==1)
+                    if (val==1){
                         return "已计划";
-                    return "未计划";
+                    }else {
+                        return "未计划";
+                    }
                 }},
             {field:'plan_start',title: '计划开始时间',align: 'center',width:15},
             {field:'plan_end',title: '计划结束时间',align: 'center',width:15},

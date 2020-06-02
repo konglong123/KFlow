@@ -150,13 +150,14 @@ public class FlowController {
         nodeTask.setStatus(20);
         //因为执行人需要汉卿的计划，所以现在直接指定
         nodeTask.setExecutor(WebUser.getNo());
-        Date now=new Date();
-        nodeTask.setPlanEndTime(now);
-        nodeTask.setPlanStartTime(now);
-        nodeTask.setEndTime(now);
-        nodeTask.setStartTime(now);
-        nodeTask.setEarlyStartTime(node.GetValDateTime(NodeAttr.EarlyStart));
-        nodeTask.setOldestFinishTime(node.GetValDateTime(NodeAttr.LaterFinish));
+        Date start=node.GetValDateTime(NodeAttr.EarlyStart);
+        Date end=node.GetValDateTime(NodeAttr.LaterFinish);
+        nodeTask.setPlanEndTime(end);
+        nodeTask.setPlanStartTime(start);
+        nodeTask.setEndTime(end);
+        nodeTask.setStartTime(start);
+        nodeTask.setEarlyStartTime(start);
+        nodeTask.setOldestFinishTime(end);
         nodeTaskService.insertNodeTask(nodeTask);
 
         String[] childFlows=node.getSubFlowNos();

@@ -51,7 +51,7 @@ public class ResourceController {
             ResourceTasks resourceTasks=new ResourceTasks();
             Long noodId=Long.parseLong(request.getParameter("nodeId"));
             resourceTasks.RetrieveByAttr(ResourceTaskAttr.NodeId,noodId);
-            DataTable dt =resourceTasks.ToDataTableField();//此方法针对boolean类型对字段无法正常转换（建议换成string类型，map中定义）
+            DataTable dt =resourceTasks.ToDataTableField();//此方法针对tinyint默认转换成boolean
             List resourceList=dt.Rows;
 
             Map<String, Object> jsonMap = new HashMap<>();//定义map
@@ -119,11 +119,12 @@ public class ResourceController {
         String nodeId=request.getParameter("nodeId");
         String startTime=request.getParameter("startTime");
         String endTime=request.getParameter("endTime");
+        String useTime=request.getParameter("useTime");
         try{
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             Date start = sdf.parse(startTime);
             Date end=sdf.parse(endTime);
-            resourceService.bookResource(resourceNo,Long.parseLong(nodeId),start,end);
+            resourceService.bookResource(resourceNo,Long.parseLong(nodeId),start,end,Integer.parseInt(useTime));
         }catch (Exception e){
             logger.error(e.getMessage());
             return e.getMessage();

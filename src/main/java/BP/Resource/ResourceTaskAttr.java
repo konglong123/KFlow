@@ -22,6 +22,8 @@ public class ResourceTaskAttr {
     //工作id（工作编码）
     public static final String WorkId = "work_id";
 
+    public static final String UseTime = "use_time";
+
     //任务的开始时间（实际）
     public static final String StartTime = "start_time";
 

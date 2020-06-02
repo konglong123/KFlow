@@ -215,60 +215,6 @@
                 <li id="Node_JC"><i class="icon-tags"></i>&nbsp;<span class="_label">决策</span></li>
             </ul>
         </div>
-        <style type="text/css">
-            #moveSelected{
-                display: block !important;
-                background-color: blue;
-                opacity:0.3;
-                border:2px dashed black;
-                position:absolute;
-                top:0;
-                left:0;
-                z-index: inherit;
-            }
-            #cmAlign {
-                position: relative;
-            }
-            .child {
-                display: none;
-                /*float: left;*/
-                left: 125px;
-                position: absolute;
-                top: 0px;
-                outline: #0a0a0a solid 1px;
-                background-color: #fff3f3;
-            }
-            #cmAlign:hover ul{
-                display:block;
-            }
-            #rightAlign {
-                width: 80px;
-                height:20px;
-                /*fontFamily: 'verdana, helvetica, arial, sans-serif';*/
-                color: #fff;
-                /*fontSize: 12px;*/
-                border: 0;
-                /*borderLeft:'5px solid #fff',*/
-            }
-            #downAlign {
-                width: 80px;
-                height: 20px;
-                color: #fff;
-                border: 0;
-            }
-            #leftAlign {
-                width: 80px;
-                height: 20px;
-                color: #fff;
-                border: 0;
-            }
-            #topAlign {
-                width: 80px;
-                height: 20px;
-                color: #fff;
-                border: 0;
-            }
-        </style>
         <div id="canvasMenu" style="display: none;">
             <ul>
                 <li id="cmNewNode"><i class="icon-plus"></i> <span class="_label">新建节点</span></li>
@@ -278,14 +224,6 @@
                 <li id="cmPaste"><i class="icon-share"></i>&nbsp;<span class="_label">粘贴节点</span></li>
                 <li id="Li3"><i class="icon-plus"></i>&nbsp;<span class="_label" onclick="alert('用鼠标按住节点icon,然后拖拉会出现连接线，然后指向要连接到的节点.');">增加连接线</span></li>
                 <li id="cmHelp"><i class="icon-search"></i>&nbsp;<span class="_label">获得帮助</span></li>
-                <li id="cmAlign"><i class="icon-search"></i>&nbsp;<span class="_label">对齐</span>
-                    <ul class="child">
-                        <li id="downAlign" ><i class="icon-search"></i>&nbsp;<span class="_label" >下对齐</span></li>
-                        <li id="topAlign" ><i class="icon-search" ></i>&nbsp;<span class="_label" >上对齐</span></li>
-                        <li id="rightAlign" ><i class="icon-search" ></i>&nbsp;<span class="_label" >右对齐</span></li>
-                        <li id="leftAlign" ><i class="icon-search" ></i>&nbsp;<span class="_label" >左对齐</span></li>
-                    </ul>
-                </li>
             </ul>
         </div>
         <div id="canvasLabMenu" style="display: none;">
@@ -295,13 +233,11 @@
             </ul>
         </div>
         <!--end div-->
-
         <div class="container mini-layout"  id="flowdesign_canvas">
             <!--里面加一张大画布 -->
             <canvas id="canvas" width="2000" height="2000" style="background-color: #97CBFF" >
                 <p>您的浏览器不支持画布!</p>
             </canvas>
-            <div id="moveSelected"></div>
             <!--div class="process-step btn" style="left: 189px; top: 340px;"><span class="process-num badge badge-inverse"><i class="icon-star icon-white"></i>3</span> 步骤3</div-->
         </div>
 
@@ -598,15 +534,6 @@
                     "cmPaste": function (t) {
                         var cIds=getCookie("copyFlow");//读取批量复制的节点数据
                         var pasteIds = _canvas.paste(); //读取手动单个复制的节点数据
-                        var list=window.selectedList;
-                        if (list.length>0) {
-                            pasteIds="";
-                            for (var index=0;index<list.length;index++){
-                                pasteIds=pasteIds+list[index].NodeID+",";
-                            }
-                            pasteIds=pasteIds.substring(0,pasteIds.length-1);
-                        }
-
                         if (cIds==""&&pasteIds <= 0) {
                             alert("你未复制任何步骤!");
                             return;
@@ -614,32 +541,10 @@
                         if (cIds!=""){//优先批量复制
                             pasteIds=cIds;
                         }
-                        //pasteNode(flowNo,_canvas,pasteIds);
                         pasteNode(flowNo,_canvas,pasteIds);
                     },
                     "cmHelp": function (t) {
                         Help();
-                    },
-                    //新增对齐子菜单，对齐后自动保存刷新并清空被选择节点list
-                   "rightAlign": function (t) {
-                        _canvas.rightAlign1(list);
-                        window.selectedList=[];
-                        page_reload()
-                    },
-                    "downAlign": function (t) {
-                        _canvas.downAlign1(list);
-                        window.selectedList=[];
-                        page_reload()
-                    },
-                    "leftAlign": function (t) {
-                        _canvas.leftAlign1(list);
-                        window.selectedList=[];
-                        page_reload()
-                    },
-                    "topAlign": function (t) {
-                        _canvas.topAlign1(list);
-                        window.selectedList=[];
-                        page_reload()
                     }
                 }
                 /*步骤右键*/
@@ -785,14 +690,7 @@
                     mAlert("清空连接失败");
                 }
             });
-            //画布左键绑定
-            var moveSelected=$('#moveSelected')[0];
-            _canvas.Mouse1(moveSelected);
-            $("#moveSelected").show();
-            var list=window.selectedList;//获取被选择节点
-            //初始化节点位置,预留这个函数的意义是，某次把节点对齐到画布外了，
-            //选择不到节点，这里将第所有节点坐标默认（200,200）
-            //init_Align();
+
         });
 
         function SaveFlow2018(_canvas) {
