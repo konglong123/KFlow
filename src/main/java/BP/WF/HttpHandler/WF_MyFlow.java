@@ -1260,9 +1260,7 @@ public class WF_MyFlow extends WebContralBase {
 
 			ds = BP.WF.CCFlowAPI.GenerWorkNode(this.getFK_Flow(), this.getFK_Node(), this.getWorkID(), this.getFID(),
 					BP.Web.WebUser.getNo(), "0");
-
 			String str = BP.Tools.Json.ToJson(ds);
-
 			return str;
 		} catch (RuntimeException ex) {
 

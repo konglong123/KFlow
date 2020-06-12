@@ -50,7 +50,7 @@ public class ResourceService {
             resourceTaskM.setIsPlan(2);
             List<ResourceTaskM> bookList=resourceTaskMDao.getResourceTaskByPlanTime(resourceTaskM,startTime,endTime);
 
-            //已预定（没有完成，预定加计划完成任务）
+            //预定（没有完成，预定加计划完成任务）（后续可替换成推荐预定）
             resourceTaskM.setIsPlan(0);
             resourceTaskM.setIsFinish(2);
             List<ResourceTaskM> bookPlanList=resourceTaskMDao.getResourceTaskByPlanTime(resourceTaskM,startTime,endTime);

@@ -1,5 +1,7 @@
-package BP.Task;
+package BP.springCloud.controller;
 
+import BP.Task.GenerFlowService;
+import BP.Task.NodeTaskService;
 import BP.WF.Dev2Interface;
 import BP.WF.Flow;
 import BP.WF.Node;
@@ -10,6 +12,8 @@ import BP.springCloud.entity.GenerFlow;
 import BP.springCloud.entity.NodeTaskM;
 import BP.springCloud.tool.FeignTool;
 import BP.springCloud.tool.PageTool;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -172,7 +176,9 @@ public class FlowController {
         return flag;
     }
 
+
     @RequestMapping("getAfterNodes")
+    @ResponseBody
     public JSONObject getAfterNodes(HttpServletRequest request, HttpServletResponse response,@RequestParam String nodeId){
         try {
             Node node=new Node(nodeId);

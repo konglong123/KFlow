@@ -9059,6 +9059,7 @@ public class Dev2Interface {
 				nodeTask.SetValByKey(NodeTaskAttr.IsReady,1);
 			else
 				nodeTask.SetValByKey(NodeTaskAttr.IsReady,20);
+			nodeTask.SetValByKey(NodeTaskAttr.Yn,0);
 			nodeTask.Update();
 		}
 
