@@ -162,11 +162,12 @@ public class ResourceService {
     *@Author: Mr.kong
     *@Date: 2020/2/29
     */
-    public void bookResource(String resourceNo,Long nodeId,Date startTime,Date endTime,int useTime){
+    public void bookResource(String resourceNo,Long nodeId,Date startTime,Date endTime,int useTime,String planId){
 
         ResourceTaskM resourceTaskM=new ResourceTaskM();
         resourceTaskM.setResourceNo(resourceNo);
         resourceTaskM.setNodeId(nodeId);
+        resourceTaskM.setPlanId(planId);
         resourceTaskM.setBookStart(startTime);
         resourceTaskM.setBookEnd(endTime);
         resourceTaskM.setUseTime(useTime);

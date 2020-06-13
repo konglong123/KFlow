@@ -39,6 +39,7 @@
         $('#btnBook').click(function () {
             var nodeId=GetQueryString("nodeId");
             var resourceNo=GetQueryString("resourceNo");
+            var planId=GetQueryString("planId");
             var startTime=$('#bookStartTime').datetimebox('getValue');
             var endTime=$('#bookEndTime').datetimebox('getValue');
             var useTime=$('#useTime').val();
@@ -54,7 +55,8 @@
                     resourceNo:resourceNo,
                     startTime:startTime,
                     endTime:endTime,
-                    useTime:useTime
+                    useTime:useTime,
+                    planId:planId
                 },
                 success: function (data) {
                     alert("预定成功！");

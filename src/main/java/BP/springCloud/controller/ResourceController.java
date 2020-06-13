@@ -1,13 +1,14 @@
 package BP.springCloud.controller;
 
 import BP.DA.DataTable;
-import BP.Resource.ResourceService;
-import BP.Resource.ResourceTaskAttr;
-import BP.Resource.ResourceTasks;
+import BP.Resource.*;
+import BP.Web.WebUser;
+import BP.springCloud.tool.PageTool;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
@@ -30,6 +31,47 @@ public class ResourceController {
 
     @Resource
     private ResourceService resourceService;
+
+    //获取节点资源方案
+    @RequestMapping("/getNodeResourcePlans")
+    public void getNodeResourcePlans(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            ResourcePlans resourcePlans=new ResourcePlans();
+            Long nodeId=Long.parseLong(request.getParameter("nodeId"));
+            resourcePlans.RetrieveByAttr(ResourcePlanAttr.NodeId,nodeId);
+
+            PageTool.TransToResult(resourcePlans,request,response);
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+    }
+
+    //创建资源方案
+    @RequestMapping("addResourcePlan")
+    public void addResourcePlan(HttpServletResponse response,HttpServletRequest request){
+        ResourcePlan plan=new ResourcePlan();
+        try {
+            String nodeId=request.getParameter("nodeId");
+            plan.SetValByKey(ResourcePlanAttr.NodeId,nodeId);
+            plan.Insert();
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+    }
+
+    @RequestMapping("delResourcePlan")
+    public void delResourcePlan(HttpServletResponse response,HttpServletRequest request){
+        try {
+            String no=request.getParameter("no");
+            ResourcePlan plan=new ResourcePlan(no);
+            plan.Delete();
+            //删除资源方案下预定资源
+            ResourceTasks tasks=new ResourceTasks();
+            tasks.Delete(ResourceTaskAttr.PlanId,no);
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+    }
     /**
     *@Description: 获取节点占用资源列表
     *@Param:
@@ -52,8 +94,9 @@ public class ResourceController {
             rows = (input_rows == null) ? 10 : Integer.parseInt(input_rows);
 
             ResourceTasks resourceTasks=new ResourceTasks();
-            Long noodId=Long.parseLong(request.getParameter("nodeId"));
-            resourceTasks.RetrieveByAttr(ResourceTaskAttr.NodeId,noodId);
+            Long nodeId=Long.parseLong(request.getParameter("nodeId"));
+            String planId=request.getParameter("planId");
+            resourceTasks.Retrieve(ResourceTaskAttr.NodeId,nodeId,ResourceTaskAttr.PlanId,planId);
             DataTable dt =resourceTasks.ToDataTableField();//此方法针对tinyint默认转换成boolean
             List resourceList=dt.Rows;
 
@@ -123,11 +166,12 @@ public class ResourceController {
         String startTime=request.getParameter("startTime");
         String endTime=request.getParameter("endTime");
         String useTime=request.getParameter("useTime");
+        String planId=request.getParameter("planId");
         try{
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             Date start = sdf.parse(startTime);
             Date end=sdf.parse(endTime);
-            resourceService.bookResource(resourceNo,Long.parseLong(nodeId),start,end,Integer.parseInt(useTime));
+            resourceService.bookResource(resourceNo,Long.parseLong(nodeId),start,end,Integer.parseInt(useTime),planId);
         }catch (Exception e){
             logger.error(e.getMessage());
             return e.getMessage();

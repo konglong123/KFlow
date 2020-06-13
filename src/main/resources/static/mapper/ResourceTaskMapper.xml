@@ -18,6 +18,7 @@
         <result column="book_start" jdbcType="TIMESTAMP" property="bookStart" />
         <result column="is_finish" jdbcType="TINYINT" property="isFinish" />
         <result column="is_plan" jdbcType="TINYINT" property="isPlan" />
+        <result column="plan_id" jdbcType="VARCHAR" property="planId" />
     </resultMap>
     <select id="getResourceTaskByPlanTime" resultMap="baseResultMap" parameterType="java.lang.String">
         select * from k_resource_task where plan_start &gt;= #{startTime} and plan_start &lt;= #{endTime}
@@ -46,6 +47,7 @@
             <if test="resTask.bookStart!=null">book_start=#{resTask.bookStart},</if>
             <if test="resTask.isFinish!=0">is_finish=#{resTask.isFinish},</if>
             <if test="resTask.isPlan!=0">is_plan=#{resTask.isPlan},</if>
+            <if test="resTask.planId!=null ">plan_id=#{resTask.planId},</if>
         </trim>
         WHERE no=#{resTask.no}
     </update>
@@ -91,6 +93,9 @@
             <if test="resTask.workId != null">
                 work_id,
             </if>
+            <if test="resTask.planId != null">
+                plan_id,
+            </if>
 
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -132,6 +137,9 @@
             </if>
             <if test="resTask.workId != null">
                 #{resTask.workId,jdbcType=BIGINT},
+            </if>
+            <if test="resTask.planId != null">
+                #{resTask.planId,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>

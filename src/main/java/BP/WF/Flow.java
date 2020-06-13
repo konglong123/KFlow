@@ -3691,7 +3691,7 @@ public class Flow extends BP.En.EntityNoName {
 		// false, FlowAttr.FlowRunWay,
 		// "@0=手工启动@1=指定人员按时启动@2=数据集按时启动@3=触发式启动");
 
-		map.AddTBString(FlowAttr.RunObj, null, "运行内容", true, false, 0, 3000, 10);
+		map.AddTBString(FlowAttr.RunObj, null, "运行内容", true, false, 0, 30, 10);
 		map.AddTBString(FlowAttr.Note, null, "功能性描述", true, false, 0, 100, 10);
 		map.AddTBString(FlowAttr.RunSQL, null, "流程结束执行后执行的SQL", true, false, 0, 2000, 10);
 

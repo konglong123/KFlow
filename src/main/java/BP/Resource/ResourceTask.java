@@ -22,6 +22,7 @@ public class ResourceTask extends EntityNo {
         map.AddTBIntPK(ResourceTaskAttr.No,0,"id",false,true);
         map.AddTBInt(ResourceTaskAttr.ResourceId, 0, "资源id", false, true);
         map.AddTBString(ResourceTaskAttr.ResourceNo, null, "资源编码", true, true, 0, 100, 100);
+        map.AddTBString(ResourceTaskAttr.PlanId, null, "资源方案编码", true, true, 0, 100, 100);
         map.AddTBInt(ResourceTaskAttr.NodeId, 0, "节点编码",true, true);
         map.AddTBInt(ResourceTaskAttr.WorkId, 0, "工作编码",true, true);
         map.AddTBInt(ResourceTaskAttr.UseTime, 0, "占用时间",true, true);
