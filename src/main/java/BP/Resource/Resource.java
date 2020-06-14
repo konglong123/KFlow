@@ -21,7 +21,7 @@ public class Resource extends EntityNoName {
         }
 
         Map map = new Map("k_resource", "资源");
-        map.AddTBStringPK(ResourceAttr.No, null, "ID", false, true,1, 40, 100);
+        map.AddTBStringPK(ResourceAttr.No, null, "编号", true, true,1, 40, 100);
         map.AddTBString(ResourceAttr.Code, null, "编号", true, false, 1, 40, 100);
         map.AddTBString(ResourceAttr.Name, null, "名称", true, false, 0, 100, 100);
         map.AddDDLSysEnum(ResourceAttr.Kind, 0, "类型", true, true, ResourceAttr.Kind,

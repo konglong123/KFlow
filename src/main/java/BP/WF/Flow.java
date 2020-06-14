@@ -1738,6 +1738,8 @@ public class Flow extends BP.En.EntityNoName {
 					else {
 						try {
 							Node node=new Node(judgeNodeId);
+							if (!node.getFK_Flow().equals(this.getNo()))
+								msg.append("@错误:决策匹配节点不在本流程！");
 							if (node.getHisRunModel()!=RunModel.Judge)
 								msg.append("@错误:决策匹配节点不是决策节点");
 						}catch (Exception e){
