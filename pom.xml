@@ -338,6 +338,14 @@
             <version>1.7.7</version>
         </dependency>
 
+        <!--javamail-->     
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-email</artifactId>
+            <version>1.5</version>
+        </dependency>
+             
+
         <!--swagger相关-->
         <dependency>
             <groupId>io.springfox</groupId>
@@ -358,8 +366,6 @@
             <artifactId>guava</artifactId>
             <version>26.0-jre</version>
         </dependency>
-
-
     </dependencies>
 
     <build>
