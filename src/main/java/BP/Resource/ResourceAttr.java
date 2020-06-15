@@ -9,9 +9,10 @@ package BP.Resource;
 public class ResourceAttr extends BP.En.EntityNoNameAttr {
 
 
-    public static final String Id = "Id";
 
     public static final String No = "No";
+
+    public static final String Code = "code";
 
     public static final String Kind = "kind";
 

@@ -11,28 +11,42 @@
     <script src="../../../Scripts/QueryString.js" type="text/javascript"></script>
 </head>
 <body>
-<div style="float:left ">
-    <label>开始时间：</label>
-    <input id="bookStartTime" type="text" class="easyui-datetimebox" required="required">
+<div>
+    <table cellpadding="5">
+        <tr>
+            <td>开始时间：</td>
+            <td><input id="bookStartTime" type="text" class="easyui-datetimebox" required="required"></td>
+        </tr>
+        <tr>
+            <td>结束时间：</td>
+            <td><input id="bookEndTime" type="text" class="easyui-datetimebox" required="required"></td>
+        </tr>
+        <tr>
+            <td>预计占用时间(h)：</td>
+            <td><input id="useTime" class="easyui-textbox" type="text" required="required"></td>
+
+        </tr>
+
+    </table>
+    <div style="text-align:right;padding:5px">
+        <button id="btnBook" class="easyui-linkbutton" >预定</button>
+    </div>
 </div>
-<div style="float:left ">
-    <label>结束时间：</label>
-    <input id="bookEndTime" type="text" class="easyui-datetimebox" required="required">
-</div>
-<div style="float:left ">
-    <input id="btnBook" type="button" value="预定">
-</div>
+
 <script>
     $(function(){
 
         $('#btnBook').click(function () {
             var nodeId=GetQueryString("nodeId");
             var resourceNo=GetQueryString("resourceNo");
+            var planId=GetQueryString("planId");
             var startTime=$('#bookStartTime').datetimebox('getValue');
             var endTime=$('#bookEndTime').datetimebox('getValue');
-            debugger
-            if (startTime==null||startTime==""||endTime==null||endTime=="")
+            var useTime=$('#useTime').val();
+            if (startTime==null||startTime==""||endTime==null||endTime==""||useTime==""){
+                alert("请完善信息！");
                 return;
+            }
             $.ajax({
                 url: "/WF/resource/bookResource",
                 type: 'POST',
@@ -40,7 +54,9 @@
                     nodeId:nodeId,
                     resourceNo:resourceNo,
                     startTime:startTime,
-                    endTime:endTime
+                    endTime:endTime,
+                    useTime:useTime,
+                    planId:planId
                 },
                 success: function (data) {
                     alert("预定成功！");

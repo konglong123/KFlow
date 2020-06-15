@@ -22,6 +22,9 @@ public class ResourceTaskM {
     private Date bookEnd;
     private int isFinish;
     private int isPlan;
+    private int useTime;
+    private Long workId;
+    private String planId;
 
     public Long getNo() {
         return no;
@@ -117,6 +120,30 @@ public class ResourceTaskM {
 
     public void setIsPlan(int isPlan) {
         this.isPlan = isPlan;
+    }
+
+    public int getUseTime() {
+        return useTime;
+    }
+
+    public void setUseTime(int useTime) {
+        this.useTime = useTime;
+    }
+
+    public Long getWorkId() {
+        return workId;
+    }
+
+    public void setWorkId(Long workId) {
+        this.workId = workId;
+    }
+
+    public String getPlanId() {
+        return planId;
+    }
+
+    public void setPlanId(String planId) {
+        this.planId = planId;
     }
 
     @Override

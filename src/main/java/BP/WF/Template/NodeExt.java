@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import BP.DA.*;
+import BP.Sys.*;
 import org.apache.commons.lang.StringEscapeUtils;
 
 import BP.Difference.ContextHolderUtils;
@@ -12,11 +13,6 @@ import BP.En.Map;
 import BP.En.RefMethod;
 import BP.En.RefMethodType;
 import BP.En.UAC;
-import BP.Sys.FrmAttachment;
-import BP.Sys.GroupCtrlType;
-import BP.Sys.GroupField;
-import BP.Sys.GroupFieldAttr;
-import BP.Sys.PubClass;
 import BP.Tools.StringHelper;
 import BP.WF.DeliveryWay;
 import BP.WF.Flow;
@@ -1154,6 +1150,11 @@ public class NodeExt extends Entity
 	@Override
 	protected boolean beforeUpdate() throws Exception
 	{
+	    //更新mapdata数据
+        MapData data=new MapData("ND"+this.getNodeID());
+        data.setName(this.getName());
+        data.Update();
+
 		//更新流程版本
 		Flow.UpdateVer(this.getFK_Flow());
 
@@ -1177,17 +1178,7 @@ public class NodeExt extends Entity
 				this.SetValByKey(BtnAttr.ThreadEnable, false); //子线程.
 			}
 
-		    
-			//如果启动了会签,并且是抢办模式,强制设置为队列模式.
-		    int roleInt= this.GetValIntByKey(BtnAttr.HuiQianRole);
-		    String sql="";
-			if (roleInt == HuiQianRole.Teamup.getValue())
-				sql="UPDATE WF_Node SET TodolistModel=" + TodolistModel.Teamup.getValue() + "  WHERE NodeID=" + this.getNodeID();
-			
-			if (roleInt== HuiQianRole.TeamupGroupLeader.getValue())
-                sql="UPDATE WF_Node SET TodolistModel=" + TodolistModel.TeamupGroupLeader.getValue() + ", TeamLeaderConfirmRole=" + TeamLeaderConfirmRole.HuiQianLeader.getValue() + " WHERE NodeID=" + this.getNodeID();
-            
-            DBAccess.RunSQL(sql);
+
 
 			//创建审核组件附件
             if(this.getFWCAth() == FWCAth.MinAth) {

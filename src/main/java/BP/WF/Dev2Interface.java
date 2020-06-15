@@ -9059,6 +9059,7 @@ public class Dev2Interface {
 				nodeTask.SetValByKey(NodeTaskAttr.IsReady,1);
 			else
 				nodeTask.SetValByKey(NodeTaskAttr.IsReady,20);
+			nodeTask.SetValByKey(NodeTaskAttr.Yn,0);
 			nodeTask.Update();
 		}
 
@@ -9083,8 +9084,10 @@ public class Dev2Interface {
 		tasks.Retrieve(NodeTaskAttr.WorkId,task.getWorkId(),NodeTaskAttr.NodeId,toNodeID);
 		NodeTask returnTask=(NodeTask) tasks.get(0);
 		Emp emp=new Emp(returnTask.getExecutor());
-		if (!StringUtils.isEmpty(emp.getMobile()))
-			FeignTool.sendPhoneMessage(emp.getMobile(),"任务被回退："+message);
+		if (!StringUtils.isEmpty(emp.getMobile())) {
+			//FeignTool.sendPhoneMessage(emp.getMobile(), "任务被回退：" + message);
+			FeignTool.sendPhoneMessage(emp.getMobile(),  task.getNo());
+		}
 
 
 		return "回退成功，新的工作区间workId："+newVersion;

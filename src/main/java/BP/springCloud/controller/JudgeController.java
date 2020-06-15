@@ -1,9 +1,11 @@
-package BP.Judge;
+package BP.springCloud.controller;
 
+import BP.Judge.JudgeRuleService;
+import BP.Judge.JudgeTool;
+import BP.Judge.NodeRuleService;
 import BP.Sys.MapAttr;
 import BP.Sys.MapAttrAttr;
 import BP.Sys.MapAttrs;
-import BP.Sys.MapData;
 import BP.springCloud.entity.JudgeRuleM;
 import BP.springCloud.entity.NodeRule;
 import BP.springCloud.tool.PageTool;
@@ -36,7 +38,8 @@ public class JudgeController {
     @Resource
     private JudgeRuleService judgeRuleService;
     
-    @Resource NodeRuleService nodeRuleService;
+    @Resource
+    NodeRuleService nodeRuleService;
 
     /**
     *@Description: 条件查找决策bean
@@ -67,7 +70,7 @@ public class JudgeController {
     @ResponseBody
     public Map testExpression(@RequestParam int no){
         JudgeRuleM rule=judgeRuleService.getJudgeRule(no);
-        Map map=JudgeTool.testExpression(rule.getExpression());
+        Map map= JudgeTool.testExpression(rule.getExpression());
         if ((boolean)map.get("success")) {
             rule.setIsTest(1);
             judgeRuleService.updateJudgeRule(rule);

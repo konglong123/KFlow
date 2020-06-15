@@ -1,5 +1,7 @@
-package BP.Nlp;
+package BP.springCloud.controller;
 
+import BP.Nlp.NLPTool;
+import BP.Nlp.NlpmodelService;
 import BP.Sys.EnCfg;
 import BP.WF.Flow;
 import BP.WF.Flows;
@@ -31,7 +33,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -249,6 +250,8 @@ public class NLPModelController {
     public JSONObject trainCWS(@RequestBody Nlpmodel nlpmodel){
         try {
             PerceptronTrainer trainer = new CWSTrainer();
+            nlpmodel.setTrainFile("D:/Springboot/nlp/pku98/199801-train.txt");
+            nlpmodel.setTestFile("D:/Springboot/nlp/pku98/199801-test.txt");
             initSegmentNlpModel(nlpmodel);
             PerceptronTrainer.Result modelResult=trainer.train(nlpmodel.getTrainFile(), nlpmodel.getTestFile(),nlpmodel.getModelFile(),nlpmodel.getCompressRate(),nlpmodel.getIterations(),nlpmodel.getNumThreads());
             nlpmodel.setCorrectRate(modelResult.getAccuracy());

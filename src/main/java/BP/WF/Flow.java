@@ -1738,6 +1738,8 @@ public class Flow extends BP.En.EntityNoName {
 					else {
 						try {
 							Node node=new Node(judgeNodeId);
+							if (!node.getFK_Flow().equals(this.getNo()))
+								msg.append("@错误:决策匹配节点不在本流程！");
 							if (node.getHisRunModel()!=RunModel.Judge)
 								msg.append("@错误:决策匹配节点不是决策节点");
 						}catch (Exception e){
@@ -1759,6 +1761,8 @@ public class Flow extends BP.En.EntityNoName {
 								msg.append("@错误:子流程"+subFlowNo+"不存在");
 							}
 						}
+					}else {
+						msg.append("@错误:子流程节点"+nd.getNodeID()+"未配置子流程！");
 					}
 				}
 
@@ -1820,6 +1824,9 @@ public class Flow extends BP.En.EntityNoName {
             msg.append("@流程的基础信息: ------ ");
             msg.append("@编号:  " + this.getNo() + " 名称:" + this.getName() + " , 存储表:" + this.getPTable());
 
+            //流程功能性描述
+			if (StringUtils.isEmpty(this.getNote()))
+				msg.append("@警告:缺乏流程的功能性描述，将无法被检索！");
             msg.append("@信息:开始检查节点流程报表.");
 			this.DoCheck_CheckRpt(this.getHisNodes());
 
@@ -3686,8 +3693,8 @@ public class Flow extends BP.En.EntityNoName {
 		// false, FlowAttr.FlowRunWay,
 		// "@0=手工启动@1=指定人员按时启动@2=数据集按时启动@3=触发式启动");
 
-		map.AddTBString(FlowAttr.RunObj, null, "运行内容", true, false, 0, 3000, 10);
-		map.AddTBString(FlowAttr.Note, null, "备注", true, false, 0, 100, 10);
+		map.AddTBString(FlowAttr.RunObj, null, "运行内容", true, false, 0, 30, 10);
+		map.AddTBString(FlowAttr.Note, null, "功能性描述", true, false, 0, 100, 10);
 		map.AddTBString(FlowAttr.RunSQL, null, "流程结束执行后执行的SQL", true, false, 0, 2000, 10);
 
 		map.AddTBInt(FlowAttr.NumOfBill, 0, "是否有单据", false, false);
@@ -5334,7 +5341,7 @@ public class Flow extends BP.En.EntityNoName {
 			String nodeId=nodeIdsNew.get(i);
 			node.setNodeID(Integer.parseInt(nodeId));
 			node.setStep(Integer.parseInt(nodeId.substring(nodeId.length()-2)));
-			node.setName(node.getName()+"(复制)");
+			//node.setName(node.getName()+"(复制)");
 			node.setFK_Flow(flowNo);//复制节点表单时需要flow信息
 			Node nodeNew = BP.WF.Template.TemplateGlo.CopyNode(node,nodeIds[i]);
 

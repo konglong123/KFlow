@@ -23,6 +23,10 @@ import javax.imageio.stream.ImageInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import BP.Sys.*;
+import BP.Task.FlowGener;
+import BP.Task.FlowGenerAttr;
+import BP.Task.FlowGeners;
 import org.apache.axis.encoding.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.protocol.HttpContext;
@@ -44,43 +48,6 @@ import BP.En.ClassFactory;
 import BP.En.Entities;
 import BP.En.Entity;
 import BP.En.QueryObject;
-import BP.Sys.AthCtrlWay;
-import BP.Sys.AthDeleteWay;
-import BP.Sys.AthSaveWay;
-import BP.Sys.AthUploadWay;
-import BP.Sys.AttachmentUploadType;
-import BP.Sys.FileShowWay;
-import BP.Sys.FrmAttachment;
-import BP.Sys.FrmAttachmentDB;
-import BP.Sys.FrmAttachmentDBAttr;
-import BP.Sys.FrmEventList;
-import BP.Sys.FrmEventListDtl;
-import BP.Sys.FrmEvents;
-import BP.Sys.FrmImgAthDBAttr;
-import BP.Sys.FrmImgAthDBs;
-import BP.Sys.FrmSubFlowAttr;
-import BP.Sys.FrmType;
-import BP.Sys.FrmWorkCheckAttr;
-import BP.Sys.GEDtl;
-import BP.Sys.GEDtlAttr;
-import BP.Sys.GEDtls;
-import BP.Sys.GEEntity;
-import BP.Sys.GENoNames;
-import BP.Sys.GroupFieldAttr;
-import BP.Sys.MapAttrAttr;
-import BP.Sys.MapAttrs;
-import BP.Sys.MapData;
-import BP.Sys.MapDtl;
-import BP.Sys.MapDtls;
-import BP.Sys.MapExt;
-import BP.Sys.MapExtAttr;
-import BP.Sys.MapExtXmlList;
-import BP.Sys.MapExts;
-import BP.Sys.PopValWorkModel;
-import BP.Sys.PubClass;
-import BP.Sys.SysEnum;
-import BP.Sys.SysEnums;
-import BP.Sys.SystemConfig;
 import BP.Tools.FileAccess;
 import BP.Tools.FtpUtil;
 import BP.Tools.SftpUtil;
@@ -134,6 +101,23 @@ public class WF_CCForm extends WebContralBase {
 		String pkVal = this.getPKVal();
 		if (athDesc.getHisCtrlWay() == AthCtrlWay.FID)
 			pkVal = String.valueOf(this.getFID());
+
+		String mapAttrPK=athDesc.getMyPK();
+		MapAttr attr=new MapAttr(mapAttrPK);
+		//此处建议做成枚举，但是我懒
+		int isReferOut=attr.getIsReferOut();
+		switch (isReferOut){//引用父流程
+			case 1:
+				FlowGener flowGener=new FlowGener(pkVal);
+				pkVal=flowGener.GetValStrByKey(FlowGenerAttr.ParentWorkId);
+				break;
+			case 3:
+				Node node=new Node(attr.getReferNodeId());
+				FlowGeners flowGeners=new FlowGeners();
+				flowGeners.Retrieve(FlowGenerAttr.FlowId,node.getFK_Flow(),FlowGenerAttr.ParentWorkId,pkVal);
+				pkVal=flowGeners.get(0).GetValStrByKey(FlowGenerAttr.No);
+
+		}
 
 		// 查询出来数据实体.
 		BP.Sys.FrmAttachmentDBs dbs = BP.WF.Glo.GenerFrmAttachmentDBs(athDesc, pkVal, this.getFK_FrmAttachment());

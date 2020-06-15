@@ -108,7 +108,7 @@ public class FeignTool {
 
     }
 
-    //发送手机短息
+    //发送手机短息,当前只支持，发送message为节点任务编码，其他数据需要花钱定制短信模板（我没钱）
     public static String sendPhoneMessage(String mobile,String message){
         String host = "http://yzxyzm.market.alicloudapi.com";
         String path = "/yzx/verifySms";
@@ -120,20 +120,11 @@ public class FeignTool {
         Map<String, String> querys = new HashMap<String, String>();
         querys.put("phone", mobile);
         querys.put("templateId", "TP1803086");
-        querys.put("variable", "code:123456");
+        querys.put("variable", "code:"+message);
         Map<String, String> bodys = new HashMap<String, String>();
 
-
         try {
-            /**
-             * 重要提示如下:
-             * HttpUtils请从
-             * https://github.com/aliyun/api-gateway-demo-sign-java/blob/master/src/main/java/com/aliyun/api/gateway/demo/util/HttpUtils.java
-             * 下载
-             *
-             * 相应的依赖请参照
-             * https://github.com/aliyun/api-gateway-demo-sign-java/blob/master/pom.xml
-             */
+
             HttpResponse response = HttpUtils.doPost(host, path, method, headers, querys, bodys);
             return EntityUtils.toString(response.getEntity());
         } catch (Exception e) {

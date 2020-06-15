@@ -102,8 +102,8 @@ public class NodeTaskService {
         //结束节点任务
         currentTask.setIsReady(3);
         currentTask.setStatus(3);
-        /*//设置节点任务为删除状态（）
-        currentTask.setYn(1);*/
+        //设置节点任务为删除状态（）
+        currentTask.setYn(1);
         currentTask.setEndTime(new Date());
         nodeTaskManage.updateNodeTask(currentTask);
 
@@ -144,8 +144,7 @@ public class NodeTaskService {
 
         NodeTaskM con=new NodeTaskM();
         con.setWorkId(workId);
-        List list=nodeTaskManage.findNodeTaskList(con);
-
+        List<NodeTaskM> list=nodeTaskManage.findNodeTaskList(con);
         if (list==null||list.size()==0){
             //该work下没有未完成任务，结束该流程,
             GenerFlow currentWork=generFlowManager.getGenerFlowById(Long.parseLong(workId));
@@ -457,6 +456,8 @@ public class NodeTaskService {
             JSONObject completed=new JSONObject();
 
             Double amount = (nodeTaskM.getUseTime()+0.0)/nodeTaskM.getTotalTime();
+            if (nodeTaskM.getIsReady()==3)//已经完成时，不按用时计算
+                amount=1.0;
             BigDecimal bd = new BigDecimal(amount);
             amount = bd.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
             completed.put("amount",amount);

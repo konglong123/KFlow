@@ -227,7 +227,7 @@ function initDgTaskMessage() {
             {field:'MyPK',title: '消息编码',align: 'center',width:10},
             {field:'WorkID',title: '工作编码',align: 'center',width:10},
             {field:'Returner',title: '消息来源',align: 'center',width:10},
-            {field:'BeiZhu',title: '内容',align: 'center',width:10,
+            {field:'BeiZhu',title: '消息内容',align: 'center',width:10,
                 formatter:function (val) { return "<span title='" + val + "'>" + val + "</span>" }},
             {field:'Type',title: '消息类型',align: 'center',width:10,
                 formatter:function (val,rec) {

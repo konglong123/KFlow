@@ -1,6 +1,7 @@
 package BP.springCloud.controller;
 
 import BP.En.EntityOIDAttr;
+import BP.En.UIContralType;
 import BP.Sys.*;
 import BP.WF.Node;
 import BP.springCloud.tool.PageTool;
@@ -107,6 +108,15 @@ public class FormController {
                     for (String no:attrs){
                         MapAttr attr=new MapAttr(no);
                         MapAttr newAttr=new MapAttr();
+                        //附件类型，需要增加frmAttachment数据
+                        if (attr.getUIContralType()== UIContralType.AthShow){
+                            FrmAttachment attachment=new FrmAttachment(no);
+                            FrmAttachment newAttachment=new FrmAttachment();
+                            newAttachment.setRow(attachment.getRow());
+                            newAttachment.setFK_MapData(fkMapData);
+                            newAttachment.Insert();
+                        }
+
                         newAttr.setRow(attr.getRow());
                         newAttr.setFK_MapData(fkMapData);
                         newAttr.setGroupID(groupField.getOID());
@@ -172,6 +182,15 @@ public class FormController {
                      }
                      newAttr.setUIIsEnable(false);//不可编辑
                      newAttr.Insert();
+
+                     //附件类型，需要增加frmAttachment数据
+                     if (attr.getUIContralType()== UIContralType.AthShow){
+                         FrmAttachment attachment=new FrmAttachment(no);
+                         FrmAttachment newAttachment=new FrmAttachment();
+                         newAttachment.setRow(attachment.getRow());
+                         newAttachment.setFK_MapData(fkMapData);
+                         newAttachment.Insert();
+                     }
                  }
              }
              result.put("success",true);

@@ -1,5 +1,7 @@
-package BP.Task;
+package BP.springCloud.controller;
 
+import BP.Task.GenerFlowService;
+import BP.Task.NodeTaskService;
 import BP.WF.Dev2Interface;
 import BP.WF.Flow;
 import BP.WF.Node;
@@ -10,6 +12,8 @@ import BP.springCloud.entity.GenerFlow;
 import BP.springCloud.entity.NodeTaskM;
 import BP.springCloud.tool.FeignTool;
 import BP.springCloud.tool.PageTool;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -150,13 +154,14 @@ public class FlowController {
         nodeTask.setStatus(20);
         //因为执行人需要汉卿的计划，所以现在直接指定
         nodeTask.setExecutor(WebUser.getNo());
-        Date now=new Date();
-        nodeTask.setPlanEndTime(now);
-        nodeTask.setPlanStartTime(now);
-        nodeTask.setEndTime(now);
-        nodeTask.setStartTime(now);
-        nodeTask.setEarlyStartTime(node.GetValDateTime(NodeAttr.EarlyStart));
-        nodeTask.setOldestFinishTime(node.GetValDateTime(NodeAttr.LaterFinish));
+        Date start=node.GetValDateTime(NodeAttr.EarlyStart);
+        Date end=node.GetValDateTime(NodeAttr.LaterFinish);
+        nodeTask.setPlanEndTime(end);
+        nodeTask.setPlanStartTime(start);
+        nodeTask.setEndTime(end);
+        nodeTask.setStartTime(start);
+        nodeTask.setEarlyStartTime(start);
+        nodeTask.setOldestFinishTime(end);
         nodeTaskService.insertNodeTask(nodeTask);
 
         String[] childFlows=node.getSubFlowNos();
@@ -171,7 +176,9 @@ public class FlowController {
         return flag;
     }
 
+
     @RequestMapping("getAfterNodes")
+    @ResponseBody
     public JSONObject getAfterNodes(HttpServletRequest request, HttpServletResponse response,@RequestParam String nodeId){
         try {
             Node node=new Node(nodeId);

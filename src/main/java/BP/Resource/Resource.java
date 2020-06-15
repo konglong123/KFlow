@@ -21,8 +21,8 @@ public class Resource extends EntityNoName {
         }
 
         Map map = new Map("k_resource", "资源");
-        map.AddTBStringPK(ResourceAttr.Id, null, "ID", false, true, 1, 20, 100);
-        map.AddTBString(ResourceAttr.No, null, "编号", true, false, 1, 40, 100);
+        map.AddTBStringPK(ResourceAttr.No, null, "编号", true, true,1, 40, 100);
+        map.AddTBString(ResourceAttr.Code, null, "编号", true, false, 1, 40, 100);
         map.AddTBString(ResourceAttr.Name, null, "名称", true, false, 0, 100, 100);
         map.AddDDLSysEnum(ResourceAttr.Kind, 0, "类型", true, true, ResourceAttr.Kind,
                 "@1=人力@2=设备@3=环境@4=知识");
@@ -36,19 +36,19 @@ public class Resource extends EntityNoName {
     @Override
     protected boolean beforeInsert() throws Exception {
         Long id=FeignTool.getSerialNumber("BP.Resource.Resource");
-        this.SetValByKey(ResourceAttr.Id,id);
+        this.SetValByKey(ResourceAttr.No,id);
         return super.beforeInsert();
     }
 
     @Override
     protected boolean beforeUpdate() throws Exception {
         java.util.Map<String, Object> postBody = new HashMap<>();
-        String id=this.GetValStrByKey(ResourceAttr.Id);
+        String id=this.GetValStrByKey(ResourceAttr.No);
         postBody.put("id",id);
         postBody.put("mysqlId",id);
         postBody.put("name",this.GetValStrByKey(ResourceAttr.Name));
         postBody.put("abstracts",this.GetValStrByKey(ResourceAttr.Abstracts));
-        postBody.put("no",id);
+        postBody.put("no",this.GetValStrByKey(ResourceAttr.Code));
         postBody.put("kind",this.GetValStrByKey(ResourceAttr.Kind));
         postBody.put("deptId",this.GetValStrByKey(ResourceAttr.DeptId));
         String url="http://112.125.90.132:8082/es/addResource";
@@ -59,8 +59,14 @@ public class Resource extends EntityNoName {
     @Override
     protected void afterDelete() throws Exception {
         //删除es中数据
-
+        java.util.Map<String, Object> postBody = new HashMap<>();
+        String no=this.getNo();
+        postBody.put("id",no);
+        String url="http://112.125.90.132:8082/es/deleteEsResourceById";
+        FeignTool.updateToES(url,postBody);
 
         super.afterDelete();
     }
+
+
 }

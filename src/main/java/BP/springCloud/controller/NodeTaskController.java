@@ -1,9 +1,8 @@
-package BP.Task;
+package BP.springCloud.controller;
 
-import BP.DA.DataRow;
-import BP.DA.DataTable;
 import BP.En.Row;
 import BP.Port.Emp;
+import BP.Task.*;
 import BP.Tools.StringUtils;
 import BP.WF.*;
 import BP.Web.WebUser;
@@ -11,6 +10,8 @@ import BP.springCloud.entity.GenerFlow;
 import BP.springCloud.entity.NodeTaskM;
 import BP.springCloud.tool.FeignTool;
 import BP.springCloud.tool.PageTool;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
@@ -24,9 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -38,6 +37,8 @@ import java.util.List;
  **/
 @Controller()
 @RequestMapping("nodeTask")
+@Api(value = "节点任务",description = "节点任务操作 API", position = 100, protocols = "http")
+
 public class NodeTaskController {
 
     private final Logger logger = LoggerFactory.getLogger(NodeTaskController.class);
@@ -150,6 +151,13 @@ public class NodeTaskController {
     *@Author: Mr.kong
     *@Date: 2020/3/18
     */
+    @ApiOperation(
+            value = "完成节点任务",
+            notes = "结束当前节点任务，启动后续节点任务",
+            produces = "application/json, application/xml",
+            consumes = "application/json, application/xml",
+            response = JSONObject.class
+    )
     @RequestMapping("sendNode")
     @ResponseBody
     public JSONObject sendNode(Long nodeTaskNo){
@@ -290,10 +298,11 @@ public class NodeTaskController {
             NodeTask task=(NodeTask) tasks.get(0);
             String executor=task.getExecutor();
             Emp emp=new Emp(executor);
-            /*if (!org.springframework.util.StringUtils.isEmpty(emp.getMobile())) {
-                FeignTool.sendPhoneMessage(emp.getMobile(), message);
+            if (!org.springframework.util.StringUtils.isEmpty(emp.getMobile())) {
+                //FeignTool.sendPhoneMessage(emp.getMobile(), message);
+                FeignTool.sendPhoneMessage(emp.getMobile(), task.getNo());
                 result="短信已经通知！";
-            }else*/
+            }else
                 result="人员信息中无手机号！";
         }catch (Exception e){
             logger.error(e.getMessage());
