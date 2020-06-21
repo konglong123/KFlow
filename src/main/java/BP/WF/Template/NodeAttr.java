@@ -530,5 +530,6 @@ public class NodeAttr
 	public static final String LaterStart="LaterStart";
 	public static final String LaterFinish="LaterFinish";
 
-
+	public static final String RealBefore="realBefore";
+	public static final String RealAfter="realAfter";
 }
