@@ -282,7 +282,8 @@ public class NodeExt extends Entity
 
         map.AddTBString(NodeAttr.RealBefore, null, "真前置节点(%分隔)", true, false, 0, 100, 10, false);
         map.AddTBString(NodeAttr.RealAfter, null, "真后置节点(%分隔)", true, false, 0, 100, 10, false);
-
+        map.AddDDLSysEnum(NodeAttr.TaskType, 0, "任务类型",
+                true, true, NodeAttr.TaskType, "@0=主线任务@1=辅线任务@2=质量控制@3=安全控制@4=分合节点@5=黑盒任务");
         map.AddTBInt(NodeAttr.Doc, 0, "工作量(h)", true, false);
         map.AddTBStringDoc(NodeAttr.Tip, null, "操作提示", true, false);//"http://ccbpm.mydoc.io/?v=5404&t=18084"
 

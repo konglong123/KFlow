@@ -443,7 +443,7 @@ public class NodeTaskService {
             int shiCha=8 * 60 * 60 * 1000;//时间戳会存在时差问题
 
             int isReady=nodeTaskM.getIsReady();
-            if (isReady==1||isReady==2)//已经开始
+            if (isReady==3||isReady==2)//已经开始
                 point.put("start",nodeTaskM.getStartTime().getTime()+shiCha);
             else
                 point.put("start",nodeTaskM.getPlanStartTime().getTime()+shiCha);

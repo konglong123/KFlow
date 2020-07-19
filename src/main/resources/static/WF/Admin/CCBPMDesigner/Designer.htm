@@ -236,7 +236,7 @@
         <div class="container mini-layout"  id="flowdesign_canvas">
             <!--里面加一张大画布 -->
             <!--<canvas id="canvas" width="2000" height="2000" style="background-color: #97CBFF" >-->
-            <canvas id="canvas" width="2000" height="2000">
+            <canvas id="canvas" width="20000" height="20000">
                 <p>您的浏览器不支持画布!</p>
             </canvas>
             <!--div class="process-step btn" style="left: 189px; top: 340px;"><span class="process-num badge badge-inverse"><i class="icon-star icon-white"></i>3</span> 步骤3</div-->
@@ -630,9 +630,6 @@
                         var windowtext = $("#lab" + activeId).text();
 
                         windowtext = windowtext.replace(/(^\s*)|(\s*$)/g, ""); //去掉左右空格.
-
-                        alert(windowtext);
-
 
                         var baocunbut = $("#alertModal3 div:eq(2) button").attr("class", "btn btn-primary savetext" + activeId);
                         var saveNodeName = $("#alertModal3 div:eq(2) button").attr("onclick", "saveLabName(\"" + activeId + "\")");

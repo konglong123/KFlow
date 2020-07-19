@@ -291,6 +291,9 @@ public class NodeAttr
 	 
 	*/
 	public static final String RunModel = "RunModel";
+
+	//节点任务类型，0，主线任务，1辅线任务，2质量控制，3安全控制，4分合节点，5黑盒任务
+	public static final String TaskType = "TaskType";
 	/** 
 	 决策节点，匹配节点编号
 	 
