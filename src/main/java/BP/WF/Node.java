@@ -2819,14 +2819,15 @@ public class Node extends Entity {
 		return nextNodes;
 	}
 
+	//获取该节点下的所有子流程编码
 	public String[] getSubFlowNos() throws Exception{
 		//启动子流程
 		FrmSubFlow subFlow=new FrmSubFlow(this.getNodeID());
 		//String childFlow=subFlow.getSFActiveFlows();
 		String childFlow=subFlow.getSFDefInfo();
 		if (childFlow==null||childFlow.equals(""))
-			return null;
-		String[] childFlows=childFlow.split("%");
+			return new String[0];
+		String[] childFlows=childFlow.split("/");
 		return childFlows;
 
 	}

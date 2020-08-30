@@ -6,12 +6,22 @@
     <link href="../Scripts/easyUI/themes/default/easyui.css" rel="stylesheet" type="text/css" />
     <script src="../Scripts/jquery-1.7.2.min.js" type="text/javascript"></script>
     <script src="../Scripts/easyUI/jquery.easyui.min.js" type="text/javascript"></script>
+    <script src="../Scripts/highcharts-gantt.js"></script>
+    <script src="../Scripts/exporting.js"></script>
     <script src="../Scripts/QueryString.js" type="text/javascript"></script>
     <script type="text/javascript" src="../Comm/JS/echarts.js"></script>
     <script src="../Scripts/EasyUIUtility.js" type="text/javascript"></script>
     <script src="NodeTask.js" type="text/javascript"></script>
+    <style type="text/css">
+        #container {
+            overflow-y:auto;
+            margin: 1em auto;
+        }
+
+    </style>
 </head>
 <body>
+
 <div>
     <table cellpadding="5">
         <tr>
@@ -46,8 +56,10 @@
     <table id="dgNodeTasks" title="节点任务">
     </table>
 </div>
+<div id="container"></div>
 <script type="text/javascript">
     $(function(){
+        initGantMyTask();
         initDgNodeTasks();
     });
 </script>

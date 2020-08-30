@@ -75,6 +75,9 @@ function initGantt(generFlowNo) {
                 yAxis: {
                     uniqueNames: true
                 },
+                credits: {
+                    enabled: false
+                },
                 navigator: {
                     enabled: true,
                     series: {
@@ -96,7 +99,19 @@ function initGantt(generFlowNo) {
                     enabled: true,
                     selected: 0
                 },
-                series: gantData.series,
+                series:[
+                    {
+                        name:"任务甘特图",
+                        data:gantData.series[0].data,
+                        events:{
+                            click: function(e) {
+                                var id=e.point.options.id;
+                                var taskNo=id.split("-")[0];
+                                gotoNodeTaskDetail(taskNo);
+                            }
+                        }
+                    }
+                ],
                 tooltip: {
                     pointFormatter: function () {
                         var point = this,

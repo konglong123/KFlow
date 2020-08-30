@@ -5,6 +5,7 @@ import BP.springCloud.entity.NodeTaskM;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,13 +23,21 @@ public class NodeTaskManage {
         return nodeTaskMDao.getNodeTaskById(no);
     }
 
-    public List findNodeTaskList(NodeTaskM nodeTaskM){
-        return nodeTaskMDao.findNodeTaskList(nodeTaskM);
+    //查询条件中yn有效,也就是默认查询是yn=0的数据，
+    public List<NodeTaskM>  findNodeTaskList(NodeTaskM nodeTaskM){
+        List<NodeTaskM> list=nodeTaskMDao.findNodeTaskList(nodeTaskM);
+        if (list==null)
+            return new ArrayList<NodeTaskM>();
+        return list;
     }
 
-    public List findNodeTaskAllList(NodeTaskM nodeTaskM){
+    //查询条件中yn无效
+    public List<NodeTaskM> findNodeTaskAllList(NodeTaskM nodeTaskM){
         nodeTaskM.setYn(2);
-        return nodeTaskMDao.findNodeTaskList(nodeTaskM);
+        List<NodeTaskM> list= nodeTaskMDao.findNodeTaskList(nodeTaskM);
+        if (list==null)
+            return new ArrayList<NodeTaskM>();
+        return list;
     }
 
     public Long updateNodeTask(NodeTaskM nodeTask){

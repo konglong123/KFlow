@@ -1868,7 +1868,7 @@ public class FlowExt extends EntityNoName
 
 
 	    ///#region 为systype设置，当前所在节点的第2级别目录。
-		FlowSort fs = new FlowSort(fl.getFK_FlowSort());
+	/*	FlowSort fs = new FlowSort(fl.getFK_FlowSort());
 		if (fs.getParentNo().equals("99") || fs.getParentNo().equals("0"))
 		{
 			this.setSysType(fl.getFK_FlowSort());
@@ -1885,7 +1885,7 @@ public class FlowExt extends EntityNoName
 				FlowSort fsPP = new FlowSort(fsP.getParentNo());
 				this.setSysType(fsPP.getNo());
 			}
-		}
+		}*/
 		
 		 fl.Update();
 		

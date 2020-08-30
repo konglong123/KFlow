@@ -225,6 +225,13 @@ public class NodeTaskController {
     }
 
 
+    /**
+    *@Description: 查询流程实例下所有任务的甘特数据
+    *@Param:
+    *@return:
+    *@Author: Mr.kong
+    *@Date: 2020/8/30
+    */
     @RequestMapping("getNodeTaskGantData")
     @ResponseBody
     public JSONObject getNodeTaskGantData(Long generFlowNo,int depth){
@@ -252,6 +259,33 @@ public class NodeTaskController {
         try {
             result.put("series", JSONArray.fromObject(seriesList));
             result.put("xAxis",xAxis);
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+        return result;
+    }
+
+    /**
+    *@Description:  查询用户名下的所有节点任务，甘特数据
+    *@Param:
+    *@return:
+    *@Author: Mr.kong
+    *@Date: 2020/8/30
+    */
+    @RequestMapping("getMyTaskGantData")
+    @ResponseBody
+    public JSONObject getMyTaskGantData(){
+        List<JSONObject> seriesList=new ArrayList<>();
+
+        JSONObject seriesN=new JSONObject();
+        seriesN.put("name","任务甘特图");
+        List<JSONObject> data= nodeTaskService.getMyTaskGant();
+        seriesN.put("data",JSONArray.fromObject(data));
+        seriesList.add(seriesN);
+
+        JSONObject result=new JSONObject();
+        try {
+            result.put("series", JSONArray.fromObject(seriesList));
         }catch (Exception e){
             logger.error(e.getMessage());
         }

@@ -6,6 +6,7 @@
 		<result column="work_group_id" property="workGroupId" jdbcType="VARCHAR" />
 		<result column="work_id" property="workId" jdbcType="VARCHAR" />
 		<result column="flow_id" property="flowId" jdbcType="VARCHAR" />
+		<result column="flow_name" property="flowName" jdbcType="VARCHAR" />
 		<result column="node_id" property="nodeId" jdbcType="VARCHAR" />
 		<result column="node_name" property="nodeName" jdbcType="VARCHAR" />
 		<result column="is_ready" property="isReady" jdbcType="TINYINT" />
@@ -31,6 +32,7 @@
 			work_group_id,
 			work_id,
 			flow_id,
+			flow_name,
 			node_id,
 			node_name,
 			is_ready,
@@ -79,6 +81,9 @@
 			<if test="flowId != null">
 				AND flow_id = #{flowId,jdbcType=VARCHAR}
 			</if>
+			<if test="flowName != null">
+				AND flow_name = #{flowName,jdbcType=VARCHAR}
+			</if>
 			<if test="nodeId != null">
 				AND	node_id = #{nodeId,jdbcType=VARCHAR}
 			</if>
@@ -123,6 +128,7 @@
 		work_id,
 		work_group_id,
 		flow_id,
+		flow_name,
 		node_id,
 		node_name,
 		is_ready,
@@ -147,6 +153,7 @@
 		#{workId,jdbcType=VARCHAR},
 		#{workGroupId,jdbcType=VARCHAR},
 		#{flowId,jdbcType=VARCHAR},
+		#{flowName,jdbcType=VARCHAR},
 		#{nodeId,jdbcType=VARCHAR},
 		#{nodeName,jdbcType=VARCHAR},
 		#{isReady,jdbcType=TINYINT},
@@ -180,6 +187,9 @@
 	        <if test="flowId != null">
 					flow_id = #{flowId,jdbcType=VARCHAR},
 	      		</if>
+			<if test="flowName != null">
+				flow_name = #{flowName,jdbcType=VARCHAR},
+			</if>
 	        <if test="nodeId != null">
 					node_id = #{nodeId,jdbcType=VARCHAR},
 	      		</if>

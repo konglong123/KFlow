@@ -146,6 +146,7 @@ public class FlowController {
         nodeTask.setNodeId(nodeId+"");
         nodeTask.setNodeName(node.getName());
         nodeTask.setFlowId(node.GetValStringByKey(NodeAttr.FK_Flow));
+        nodeTask.setFlowName(node.getFlowName());
         nodeTask.setWorkGroupId(workGroupID+"");
         nodeTask.setWorkId(workId+"");
         nodeTask.setParentNodeTask(parentTaskId+"");

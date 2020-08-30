@@ -69,7 +69,7 @@ function getNodeTaskStatus(val) {
 function gotoNodeTaskDetail(pkVal) {
     var enName = "BP.Task.NodeTask";
     var url = "/WF/WF/Comm/En.htm?EnName=" + enName + "&PKVal=" + pkVal;
-    OpenEasyUiDialogExt(url,"任务详情", 800, 450, true);
+    OpenEasyUiDialogExt(url,"任务详情", 800, 450, false);
 }
 //开始任务，(将任务状态设定成已经开始)
 function startNodeTask(no) {
@@ -242,4 +242,108 @@ function initDgTaskMessage() {
 
         ]]
     });
+}
+
+function initGantMyTask() {
+
+        var gantData;
+        $.ajax({
+            url: "/WF/nodeTask/getMyTaskGantData",
+            type: 'POST',
+            success: function (data) {
+                gantData=data;
+
+                dateFormat = Highcharts.dateFormat,
+                    defined = Highcharts.defined,
+                    isObject = Highcharts.isObject,
+                    reduce = Highcharts.reduce;
+
+                Highcharts.ganttChart('container', {
+                    title: {
+                        text: '任务甘特图'
+                    },
+                    yAxis: {
+                        uniqueNames: true
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    navigator: {
+                        enabled: true,
+                        series: {
+                            type: 'gantt',
+                            pointPlacement: 0.5,
+                            pointPadding: 0.25
+                        },
+                        yAxis: {
+                            min: 0,
+                            max: 3,
+                            reversed: true,
+                            categories: []
+                        }
+                    },
+                    scrollbar: {
+                        enabled: true
+                    },
+                    rangeSelector: {
+                        enabled: true,
+                        selected: 0
+                    },
+                    series:[
+                        {
+                            name:"任务甘特图",
+                            data:gantData.series[0].data,
+                            events:{
+                                click: function(e) {
+                                    var id=e.point.options.id;
+                                    var taskNo=id.split("-")[0];
+                                    gotoNodeTaskDetail(taskNo);
+                                }
+                            }
+                        }
+                    ],
+                    tooltip: {
+                        pointFormatter: function () {
+                            var point = this,
+                                format = '%Y-%m-%d %H',
+                                options = point.options,
+                                completed = options.completed,
+                                amount = isObject(completed) ? completed.amount : completed,
+                                status = ((amount || 0) * 100) + '%',
+                                lines;
+                            lines = [{
+                                value: point.name,
+                                style: 'font-weight: bold;'
+                            }, {
+                                title: 'Start',
+                                value: dateFormat(format, point.start)
+                            }, {
+                                visible: !options.milestone,
+                                title: 'End',
+                                value: dateFormat(format, point.end)
+                            }, {
+                                title: 'Owner',
+                                value: options.owner || 'unassigned'
+                            }];
+                            return reduce(lines, function (str, line) {
+                                var s = '',
+                                    style = (
+                                        defined(line.style) ? line.style : 'font-size: 0.8em;'
+                                    );
+                                if (line.visible !== false) {
+                                    s = (
+                                        '<span style="' + style + '">' +
+                                        (defined(line.title) ? line.title + ': ' : '') +
+                                        (defined(line.value) ? line.value : '') +
+                                        '</span><br/>'
+                                    );
+                                }
+                                return str + s;
+                            }, '');
+                        }
+                    },
+                });
+            }
+        });
+
 }

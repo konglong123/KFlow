@@ -15,6 +15,7 @@ import BP.WF.Template.*;
 import BP.Web.WebUser;
 import BP.springCloud.entity.GenerFlow;
 import BP.springCloud.entity.NodeTaskM;
+import com.google.common.collect.Lists;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -245,7 +246,7 @@ public class NodeTaskService {
             if (childFlow==null||childFlow.equals("")){
                 return null;
             }
-            String[] childFlows=childFlow.split("%");
+            String[] childFlows=childFlow.split("/");
             List<String> childs=new ArrayList<>(childFlows.length);
             for (String childFlowNo:childFlows){
                 Flow flow=new Flow(childFlowNo);
@@ -417,6 +418,7 @@ public class NodeTaskService {
         return data;
     }
 
+
     public void transToGant(List<NodeTaskM> children,String parentId,List<JSONObject> data,int depth,int curDepth){
 
         if (children==null)
@@ -574,4 +576,65 @@ public class NodeTaskService {
         return true;
     }
 
+    public List<JSONObject> getMyTaskGant(){
+
+        try {
+            String userNo = WebUser.getNo();
+            NodeTaskM con=new NodeTaskM();
+            con.setExecutor(userNo);
+            List<NodeTaskM> list=nodeTaskManage.findNodeTaskList(con);
+            List<JSONObject> data=new ArrayList<>();
+            for (NodeTaskM nodeTaskM:list){
+                JSONObject point=new JSONObject();
+                String id=nodeTaskM.getNo()+"-"+nodeTaskM.getNodeName();
+                point.put("name",id);
+                point.put("id",id);
+
+                int shiCha=8 * 60 * 60 * 1000;//时间戳会存在时差问题
+
+                int isReady=nodeTaskM.getIsReady();
+                if (isReady==3||isReady==2)//已经开始
+                    point.put("start",nodeTaskM.getStartTime().getTime()+shiCha);
+                else
+                    point.put("start",nodeTaskM.getPlanStartTime().getTime()+shiCha);
+
+                if (nodeTaskM.getIsReady()==3)//已经结束
+                    point.put("end",nodeTaskM.getEndTime().getTime()+shiCha);
+                else
+                    point.put("end",nodeTaskM.getPlanEndTime().getTime()+shiCha);
+
+                JSONObject completed=new JSONObject();
+
+                Double amount = (nodeTaskM.getUseTime()+0.0)/nodeTaskM.getTotalTime();
+                if (nodeTaskM.getIsReady()==3)//已经完成时，不按用时计算
+                    amount=1.0;
+                BigDecimal bd = new BigDecimal(amount);
+                amount = bd.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                completed.put("amount",amount);
+                point.put("completed",completed);
+                point.put("owner",nodeTaskM.getExecutor());
+
+                data.add(point);
+            }
+
+            //按照开始时间进行排序
+            data.sort(new Comparator<JSONObject>() {
+                @Override
+                public int compare(JSONObject o1, JSONObject o2) {
+                    long start1=o1.getLong("start");
+                    long start2=o2.getLong("start");
+                    if (start1>start2)
+                        return 1;
+                    else if (start1<start2)
+                        return -1;
+                    return 0;
+                }
+            });
+            return data;
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+
+        return new ArrayList<>();
+    }
 }

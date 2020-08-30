@@ -33,6 +33,7 @@ public class NodeTask extends EntityNo {
         map.AddTBString(NodeTaskAttr.WorkId, null, "流程实例编码", true, true, 0, 50, 50);
         map.AddTBString(NodeTaskAttr.WorkGroupId, null, "实例组编码", true, true, 0, 50, 50);
         map.AddTBString(NodeTaskAttr.FlowId, null, "流程编码", true, true, 1, 50, 50);
+        map.AddTBString(NodeTaskAttr.FlowName, null, "流程名", true, true, 1, 50, 50);
         map.AddTBString(NodeTaskAttr.NodeId, null, "节点编码", true, true, 0, 50, 50);
         map.AddTBString(NodeTaskAttr.NodeName, null, "节点名", true, true, 0, 50, 50);
         map.AddDDLSysEnum(NodeTaskAttr.IsReady, 0, "任务状态", true, false, NodeTaskAttr.IsReady,

@@ -31,6 +31,11 @@ public class NodeTaskM implements Serializable {
 	 */
 	private String flowId;
 
+	/**
+	 * 流程name
+	 */
+	private String flowName;
+
 	
 	/**
 	 * 节点id
@@ -400,5 +405,13 @@ public class NodeTaskM implements Serializable {
 
 	public void setNodeName(String nodeName) {
 		this.nodeName = nodeName;
+	}
+
+	public String getFlowName() {
+		return flowName;
+	}
+
+	public void setFlowName(String flowName) {
+		this.flowName = flowName;
 	}
 }

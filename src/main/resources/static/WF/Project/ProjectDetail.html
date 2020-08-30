@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+<head>
+    <meta charset="utf-8">
+</head>
+<body style="height: 100%; margin: 0">
+<div style="width:95%;border-top: 0px solid #C0C0C0;">
+    <table  class="Table" cellpadding="0"  style="border-collapse:separate; border-spacing:5px;" cellspacing="0" border="0" style="width: 100%">
+        <tr>
+            <td><input type="text" id="projectNodeQuery"/></td>
+            <td><input type="button" value="查询" onclick="queryProjectNode()" /></td>
+        </tr>
+    </table>
+</div>
+
+<div class="tree-container">
+    <div id="main" style="width: 1200px;height:1000px;"></div>
+</div>
+<script src="../Scripts/jquery-1.7.2.min.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-gl/dist/echarts-gl.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-stat/dist/ecStat.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/extension/dataTool.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/map/js/china.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/map/js/world.js"></script>
+<script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=PlGB8MIZCxrfkgDBoGfAuxjvOaVukRVl&__ec_v__=20190126"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/extension/bmap.min.js"></script>
+<script src="../Scripts/QueryString.js" type="text/javascript"></script>
+<script type="text/javascript">
+    var dom = document.getElementById("main");
+    var myChart = echarts.init(dom);
+    var match = "@";
+    option = null;
+    myChart.showLoading();
+    var projectTreeNo=GetQueryString("projectTreeNo");
+    $.get('http://localhost:8081/WF/Project/getProjectTreeData?projectNo='+projectTreeNo, function (data) {
+        myChart.hideLoading();
+        /*echarts.util.each(data.children, function (datum, index) {
+            index % 2 === 0 && (datum.collapsed = true);
+        });*/
+        myChart.on('dblclick', function (params) {
+            var id=params.data.value;
+            var name=params.data.name;
+            var url="/WF/WF/Admin/CCBPMDesigner/Designer.htm?FK_Flow="+id+"&UserNo=admin&SID=&Flow_V=1";
+            window.open(url);
+        });
+        myChart.setOption(option = {
+            tooltip: {
+                trigger: 'item',
+                triggerOn: 'mousemove'
+            },
+            series: [
+                {
+                    type: 'tree',
+                    roam: true,
+                    data: [data],
+
+                    top: '1%',
+                    left: '3%',
+                    bottom: '1%',
+                    right: '1%',
+
+                    symbolSize: 7,
+                    initialTreeDepth: 3,
+
+                    label: {
+                        position: 'left',
+                        verticalAlign: 'middle',
+                        align: 'right',
+                        fontSize: 9,
+                        formatter: function (param) {
+                            if (param.name.match(match)) {
+                                return '{a|' + param.name + '}'
+                            } else {
+                                return param.name;
+                            }
+                        },
+                        rich: {
+                            a: {
+                                color: 'red',
+                                lineHeight: 10
+                            }
+                        }
+                    },
+
+                    leaves: {
+                        label: {
+                            position: 'right',
+                            verticalAlign: 'middle',
+                            align: 'left'
+                        }
+                    },
+
+                    expandAndCollapse: true,
+                    animationDuration: 550,
+                    animationDurationUpdate: 750
+                }
+            ]
+        });
+    });
+
+</script>
+<script>
+    function queryProjectNode() {
+        match=$("#projectNodeQuery").val();
+        var option = myChart.getOption();
+        //option.series[0].data = data;
+        myChart.setOption(option);
+    }
+
+</script>
+</body>
+</html>

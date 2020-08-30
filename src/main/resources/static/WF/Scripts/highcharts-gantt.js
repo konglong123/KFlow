@@ -9162,7 +9162,6 @@
                 }, update: function (c) {
                     var b = this.chart, a = this, d = a.connections;
                     a.connections = [];
-                    debugger
                     b.series.forEach(function (c) {
                         c.visible && !c.options.isInternal && c.points.forEach(function (c) {
                             var d, e = c.options && c.options.connect && n(c.options.connect);
@@ -9529,7 +9528,6 @@
                             f.type : "treegrid"
                     }, f)
                 });
-                debugger
                 C.series = null;
                 C = q(!0, {chart: {type: "gantt"}, title: {text: null}, legend: {enabled: !1}}, C, {isGantt: !0});
                 C.series = y.series = A;
@@ -9538,7 +9536,6 @@
                         f.seriesTypes.gantt.prototype.setGanttPointAliases(l)
                     })
                 });
-                debugger
                 return E ? new M(k, C, F) : new M(C, C)
             }
         });
