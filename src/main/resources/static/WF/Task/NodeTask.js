@@ -154,6 +154,8 @@ function queryNodeTaskByCondition() {
     queryParams.flowNo = $("#flowNoQuery").val().trim();
     queryParams.status = $("#statusQuery").val().trim();
     $("#dgNodeTasks").datagrid('reload');
+
+    initGantMyTask();
 }
 
 function queryNodeTaskAllByCondition() {
@@ -247,9 +249,18 @@ function initDgTaskMessage() {
 function initGantMyTask() {
 
         var gantData;
+        var con={
+            No: $("#nodeTaskNoQuery").val().trim(),
+            workId :$("#workIdQuery").val().trim(),
+            flowId:$("#flowNoQuery").val().trim(),
+            status : $("#statusQuery").val().trim(),
+        };
         $.ajax({
             url: "/WF/nodeTask/getMyTaskGantData",
             type: 'POST',
+            dataType: 'json',
+            contentType:'application/json',
+            data: JSON.stringify(con),
             success: function (data) {
                 gantData=data;
 
@@ -346,4 +357,45 @@ function initGantMyTask() {
             }
         });
 
+}
+
+//查询每个状态下任务统计信息
+function getTaskInfoForStatus() {
+    var  con={
+    };
+    var data;
+    $.ajax({
+        url: "/WF/nodeTask/getTaskInfoForStatus",
+        type: 'POST',
+        dataType: 'json',
+        async:false,
+        contentType:'application/json',
+        data: JSON.stringify(con),
+        success: function (dataTemp) {
+            data= dataTemp;
+        }
+    });
+    return data;
+}
+
+//查询单个状态下任务统计信息
+function getTaskInfoOneStatus(status) {
+    if (status==null)
+        status=0;
+    var  con={
+        status:status
+    };
+    var data;
+    $.ajax({
+        url: "/WF/nodeTask/getTaskInfoOneStatus",
+        type: 'POST',
+        dataType: 'json',
+        async:false,
+        contentType:'application/json',
+        data: JSON.stringify(con),
+        success: function (dataTemp) {
+            data= dataTemp;
+        }
+    });
+    return data;
 }

@@ -2232,6 +2232,20 @@ public class Node extends Entity {
 		return false;
 	}
 
+	@Override
+	protected boolean beforeInsert() throws Exception {
+
+		//更新系统FlowInfo
+		EnCfg enCfg=new EnCfg("System.FlowInfo");
+		java.util.Map<String,String> map=enCfg.getMap();
+		int projectNum=Integer.valueOf(map.get("nodeNum"))+1;
+		map.put("nodeNum",projectNum+"");
+		enCfg.setMap(map);
+		enCfg.Update();
+
+		return super.beforeInsert();
+	}
+
 	/**
 	 * 删除前的逻辑处理.
 	 * 
@@ -2240,6 +2254,14 @@ public class Node extends Entity {
 	 */
 	@Override
 	protected boolean beforeDelete() throws Exception {
+
+		//更新系统FlowInfo
+		EnCfg enCfg=new EnCfg("System.FlowInfo");
+		java.util.Map<String,String> map=enCfg.getMap();
+		int projectNum=Integer.valueOf(map.get("nodeNum"))-1;
+		map.put("nodeNum",projectNum+"");
+		enCfg.setMap(map);
+		enCfg.Update();
 
 		int num = 0;
 		// 如果是结束节点，则自动结束流程

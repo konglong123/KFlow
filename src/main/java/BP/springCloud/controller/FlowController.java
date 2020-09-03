@@ -1,5 +1,6 @@
 package BP.springCloud.controller;
 
+import BP.Sys.EnCfg;
 import BP.Task.GenerFlowService;
 import BP.Task.NodeTaskService;
 import BP.WF.Dev2Interface;
@@ -27,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @program: kflow-web
@@ -91,6 +93,16 @@ public class FlowController {
 
         Long workId= FeignTool.getSerialNumber("BP.WF.Work");
 
+        int sumTime=0;
+        Nodes nodes=new Nodes();
+        nodes.Retrieve(NodeAttr.FK_Flow,flow.getNo());
+        List<Node> nodeList=nodes.toList();
+        Boolean flag=true;
+        for (Node node:nodeList){
+                flag=flag&createNodeTask(workGroupId,workId,parentTaskId,node);
+                sumTime+=Integer.valueOf(node.GetValStrByKey(NodeAttr.Doc));
+        }
+
         //创建流程实例信息
         GenerFlow generFlow=new GenerFlow();
         generFlow.setNo(workId);
@@ -101,15 +113,8 @@ public class FlowController {
         generFlow.setStatus(1);
         generFlow.setCreator(WebUser.getNo());
         generFlow.setActivatedNodes(flow.getStartNodeID()+",");
+        generFlow.setTotalTime(sumTime);
         generFlowService.insertGenerFlow(generFlow);
-
-        Nodes nodes=new Nodes();
-        nodes.Retrieve(NodeAttr.FK_Flow,flow.getNo());
-        List<Node> nodeList=nodes.toList();
-        Boolean flag=true;
-        for (Node node:nodeList){
-                flag=flag&createNodeTask(workGroupId,workId,parentTaskId,node);
-        }
 
         //更新节点任务间关系
         nodeTaskService.updateNodeTaskPreAfter(flow.getStartNodeID()+"",workId);
@@ -216,6 +221,25 @@ public class FlowController {
         return result;
     }
 
-
+    /**
+    *@Description: 获取系统流程信息（流程数，节点数，实例数，项目数） 
+    *@Param:  
+    *@return:  
+    *@Author: Mr.kong
+    *@Date: 2020/9/1 
+    */
+    @RequestMapping("getSystemFlowInfo")
+    @ResponseBody
+    public JSONObject getSystemFlowInfo(){
+        JSONObject data=new JSONObject();
+        try {
+            EnCfg enCfg = new EnCfg("System.FlowInfo");
+            Map<String,String> map=enCfg.getMap();
+            data.putAll(map);
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+        return data;
+    }
 
 }

@@ -13,5 +13,6 @@ public class ProjectTreeAttr {
     public static final String FlowNo = "flow_no";
     public static final String FlowName = "flow_name";
     public static final String Detail = "detail";
+    public static final String Status = "status";
 
 }

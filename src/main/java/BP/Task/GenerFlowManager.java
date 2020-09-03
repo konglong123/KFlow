@@ -1,5 +1,6 @@
 package BP.Task;
 
+import BP.Sys.EnCfg;
 import BP.Web.WebUser;
 import BP.springCloud.dao.GenerFlowDao;
 import BP.springCloud.entity.GenerFlow;
@@ -55,6 +56,20 @@ public class GenerFlowManager  {
         generFlow.setCreateTime(date);
         generFlow.setFinishTime(date);
         generFlowDao.insertGenerFlow(generFlow);
+
+        try {
+			//更新系统FlowInfo
+			EnCfg enCfg=new EnCfg("System.FlowInfo");
+			java.util.Map<String,String> map=enCfg.getMap();
+			int projectNum=Integer.valueOf(map.get("generNum"))+1;
+			map.put("generNum",projectNum+"");
+			enCfg.setMap(map);
+			enCfg.Update();
+		}catch (Exception e){
+        	log.error(e.getMessage());
+		}
+
+
 		Long id=generFlow.getNo();
 		return  id;
 	}
@@ -72,6 +87,17 @@ public class GenerFlowManager  {
 	 */
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
 	public Long deleteGenerFlow(Long no) {
+		try {
+			//更新系统FlowInfo
+			EnCfg enCfg=new EnCfg("System.FlowInfo");
+			java.util.Map<String,String> map=enCfg.getMap();
+			int projectNum=Integer.valueOf(map.get("generNum"))-1;
+			map.put("generNum",projectNum+"");
+			enCfg.setMap(map);
+			enCfg.Update();
+		}catch (Exception e){
+			log.error(e.getMessage());
+		}
 		return generFlowDao.deleteGenerFlow(no);
 	}
 

@@ -75,10 +75,10 @@
 				<if test="totalTime != 0">
 					AND total_time = #{totalTime,jdbcType=INTEGER}
 				</if>
-				<if test="activatedNodes != null">
+				<if test="activatedNodes != null and activatedNodes !=''">
 					AND activated_nodes = #{activatedNodes,jdbcType=VARCHAR}
 				</if>
-				<if test="creator != null">
+				<if test="creator != null and creator !=''">
 					AND creator = #{creator,jdbcType=VARCHAR}
 				</if>
 				<if test="createTime != null">

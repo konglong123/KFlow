@@ -1,7 +1,9 @@
 package BP.Task;
 
+import BP.Sys.EnCfg;
 import BP.springCloud.dao.NodeTaskMDao;
 import BP.springCloud.entity.NodeTaskM;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -16,6 +18,7 @@ import java.util.List;
  **/
 @Component
 public class NodeTaskManage {
+    private static final Logger log = Logger.getLogger(NodeTaskManage.class);
     @Resource
     private NodeTaskMDao nodeTaskMDao;
 
@@ -41,6 +44,20 @@ public class NodeTaskManage {
     }
 
     public Long updateNodeTask(NodeTaskM nodeTask){
+        //完成节点任务时，更新FlowInfo
+        if (nodeTask.getYn()==1){
+            try {
+                //更新系统FlowInfo
+                EnCfg enCfg=new EnCfg("System.FlowInfo");
+                java.util.Map<String,String> map=enCfg.getMap();
+                int projectNum=Integer.valueOf(map.get("nodeTaskNum"))-1;
+                map.put("nodeTaskNum",projectNum+"");
+                enCfg.setMap(map);
+                enCfg.Update();
+            }catch (Exception e){
+                log.error(e.getMessage());
+            }
+        }
         return nodeTaskMDao.updateNodeTask(nodeTask);
     }
 
@@ -49,6 +66,19 @@ public class NodeTaskManage {
     }
 
     public Long insertNodeTask(NodeTaskM nodeTaskM){
+
+        try {
+            //更新系统FlowInfo
+            EnCfg enCfg=new EnCfg("System.FlowInfo");
+            java.util.Map<String,String> map=enCfg.getMap();
+            int projectNum=Integer.valueOf(map.get("nodeTaskNum"))+1;
+            map.put("nodeTaskNum",projectNum+"");
+            enCfg.setMap(map);
+            enCfg.Update();
+        }catch (Exception e){
+            log.error(e.getMessage());
+        }
+
         return nodeTaskMDao.insertNodeTask(nodeTaskM);
     }
 

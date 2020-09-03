@@ -72,13 +72,13 @@
 			<if test="no != null">
 				AND no = #{no,jdbcType=BIGINT}
 			</if>
-			<if test="workId != null">
+			<if test="workId != null and workId !=''">
 				AND	work_id = #{workId,jdbcType=VARCHAR}
 			</if>
 			<if test="workGroupId != null">
 			  	AND	work_group_id = #{workGroupId,jdbcType=VARCHAR}
 			</if>
-			<if test="flowId != null">
+			<if test="flowId != null and flowId !=''">
 				AND flow_id = #{flowId,jdbcType=VARCHAR}
 			</if>
 			<if test="flowName != null">

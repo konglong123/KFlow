@@ -1,6 +1,7 @@
 package BP.Task;
 
 import BP.En.*;
+import BP.Sys.EnCfg;
 import BP.Web.WebUser;
 
 /**
@@ -93,5 +94,33 @@ public class FlowGener extends EntityNo {
         String activeNodes=this.GetValStrByKey(FlowGenerAttr.ActivatedNodes);
         activeNodes=activeNodes.replace(nodeId+",","");
         this.SetValByKey(FlowGenerAttr.ActivatedNodes,activeNodes);
+    }
+
+    @Override
+    protected boolean beforeInsert() throws Exception {
+
+        //更新系统FlowInfo
+        EnCfg enCfg=new EnCfg("System.FlowInfo");
+        java.util.Map<String,String> map=enCfg.getMap();
+        int projectNum=Integer.valueOf(map.get("generNum"))+1;
+        map.put("generNum",projectNum+"");
+        enCfg.setMap(map);
+        enCfg.Update();
+
+        return super.beforeInsert();
+    }
+
+    @Override
+    protected boolean beforeDelete() throws Exception {
+
+        //更新系统FlowInfo
+        EnCfg enCfg=new EnCfg("System.FlowInfo");
+        java.util.Map<String,String> map=enCfg.getMap();
+        int projectNum=Integer.valueOf(map.get("generNum"))-1;
+        map.put("generNum",projectNum+"");
+        enCfg.setMap(map);
+        enCfg.Update();
+
+        return super.beforeDelete();
     }
 }

@@ -191,6 +191,9 @@ function queryGenerFlowByCondition() {
     queryParams.creator = creator;
     queryParams.yn = yn;
     $("#dgGenerFlows").datagrid('reload');
+
+    initGenerFlow(queryParams);
+
 }
 
 function gotoGenerFlowDetail(no) {
@@ -208,4 +211,161 @@ function getActiveNodes() {
     var activeNodeStr=generFlow.activated_nodes;
     activeNodes=activeNodeStr.split(",");
     return activeNodes;
+}
+
+function getGenerInfoAll(con) {
+    var toUrl='/WF/generFlow/getDataForGeners';
+    var data;
+    $.ajax({
+        url: toUrl,
+        type: 'POST',
+        dataType: 'json',
+        async:false,
+        contentType:'application/json',
+        data: JSON.stringify(con),
+        success: function (dataTemp) {
+            data= dataTemp;
+        }
+    });
+    return data;
+}
+
+function getGenerInfoForOne(generFlowNo) {
+    var toUrl='/WF/generFlow/getDataForOneGener';
+    var  con={
+        no:generFlowNo
+    };
+    var data;
+    $.ajax({
+        url: toUrl,
+        type: 'POST',
+        dataType: 'json',
+        async:false,
+        contentType:'application/json',
+        data: JSON.stringify(con),
+        success: function (dataTemp) {
+            data= dataTemp;
+        }
+    });
+    return data;
+}
+
+function initGenerFlow(con) {
+    var dom = document.getElementById("generFlowShow");
+    var myChart = echarts.init(dom);
+    var dataChart={
+        pieData:[],
+        barDataAll:[],
+        barDataUse:[],
+        lineData:[],
+        xAxis:[]
+    };
+
+    dataTemp=getGenerInfoAll(con);
+    dataChart.xAxis=dataTemp.xAxis;
+    dataChart.lineData=dataTemp.lineData;
+    dataChart.barDataAll=dataTemp.barDataAll;
+    dataChart.barDataUse=dataTemp.barDataUse;
+
+    option = {
+        title: {
+            text: '流程实例统计图',
+            left: 'center'
+        },
+
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'cross',
+                crossStyle: {
+                    color: '#999'
+                }
+            }
+        },
+        toolbox: {
+            feature: {
+                dataView: {show: true, readOnly: false},
+                magicType: {show: true, type: ['line', 'bar']},
+                restore: {show: true},
+                saveAsImage: {show: true}
+            }
+        },
+        legend: {
+            x: '40%',
+            y: '68%',
+            data: ['总工时', '已用工时','完成进度']
+        },
+        grid: [
+            {x: '5%', y: '15%', width: '50%', height: '48%'},//折线图位置控制
+        ],
+        xAxis: [
+            {
+                type: 'category',
+                name:'流程实例',
+                data: dataChart.xAxis,
+                axisPointer: {
+                    type: 'shadow'
+                }
+            }
+        ],
+        yAxis: [
+            {
+                type: 'value',
+                name: '工时',
+                interval: 50,
+                axisLabel: {
+                    formatter: '{value} h'
+                }
+            },
+            {
+                type: 'value',
+                name: '完成进度',
+                interval: 0.05,
+                axisLabel: {
+                    formatter: '{value}'
+                }
+            }
+        ],
+        series: [
+            {
+                name: '任务状态分布',
+                type: 'pie',
+                radius: [30, 100],
+                center: ['80%', '40%'],
+                roseType: 'area',
+                tooltip: {
+                    trigger: 'item',
+                    formatter: " <br/>{b} : {c} ({d}%)"
+                },
+                data: dataChart.pieData
+            },
+            {
+                name: '总工时',
+                type: 'bar',
+                data: dataChart.barDataAll
+            },
+            {
+                name: '已用工时',
+                type: 'bar',
+                data: dataChart.barDataUse
+            },
+            {
+                name: '完成进度',
+                type: 'line',
+                yAxisIndex: 1,
+                data: dataChart.lineData
+            },
+        ]
+    };
+    myChart.setOption(option);
+    myChart.on("click",function (param) {
+        //饼图联动
+        if (param.seriesType=='bar'){
+            debugger
+            var generNo=param.name;
+            var data =getGenerInfoForOne(generNo);
+            option.series[0].data=data.pieData;
+            myChart.setOption(option);
+        };
+    });
 }

@@ -5,7 +5,9 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import BP.DA.*;
+import BP.Sys.*;
 import BP.Tools.EntityIdUtil;
+import BP.WF.Template.FrmWorkCheck;
 import BP.springCloud.tool.FeignTool;
 import org.apache.commons.lang.StringUtils;
 
@@ -19,57 +21,6 @@ import BP.En.RefMethod;
 import BP.En.UAC;
 import BP.En.UIContralType;
 import BP.Port.Emp;
-import BP.Sys.AttachmentUploadType;
-import BP.Sys.EventListOfNode;
-import BP.Sys.FrmAttachment;
-import BP.Sys.FrmAttachmentDB;
-import BP.Sys.FrmAttachmentDBAttr;
-import BP.Sys.FrmAttachmentDBs;
-import BP.Sys.FrmAttachments;
-import BP.Sys.FrmEle;
-import BP.Sys.FrmEles;
-import BP.Sys.FrmEvent;
-import BP.Sys.FrmEvents;
-import BP.Sys.FrmImg;
-import BP.Sys.FrmImgAths;
-import BP.Sys.FrmImgs;
-import BP.Sys.FrmLab;
-import BP.Sys.FrmLabs;
-import BP.Sys.FrmLine;
-import BP.Sys.FrmLines;
-import BP.Sys.FrmLink;
-import BP.Sys.FrmLinks;
-import BP.Sys.FrmRB;
-import BP.Sys.FrmRBs;
-import BP.Sys.GEDtl;
-import BP.Sys.GEDtlAttr;
-import BP.Sys.GEDtls;
-import BP.Sys.GEEntity;
-import BP.Sys.GroupField;
-import BP.Sys.GroupFieldAttr;
-import BP.Sys.GroupFields;
-import BP.Sys.MapAttr;
-import BP.Sys.MapAttrAttr;
-import BP.Sys.MapAttrs;
-import BP.Sys.MapData;
-import BP.Sys.MapDataAttr;
-import BP.Sys.MapDatas;
-import BP.Sys.MapDtl;
-import BP.Sys.MapDtlAttr;
-import BP.Sys.MapDtls;
-import BP.Sys.MapExt;
-import BP.Sys.MapExtXmlList;
-import BP.Sys.MapExts;
-import BP.Sys.MapFrame;
-import BP.Sys.MapFrames;
-import BP.Sys.OSModel;
-import BP.Sys.PubClass;
-import BP.Sys.SysEnum;
-import BP.Sys.SysEnumMain;
-import BP.Sys.SysEnumMainAttr;
-import BP.Sys.SysEnumMains;
-import BP.Sys.SysEnums;
-import BP.Sys.SystemConfig;
 import BP.Tools.DateUtils;
 import BP.Tools.FileAccess;
 import BP.Tools.StringHelper;
@@ -3655,6 +3606,29 @@ public class Flow extends BP.En.EntityNoName {
 	}
 
 	@Override
+	protected boolean beforeDelete() throws Exception {
+
+
+
+		return super.beforeDelete();
+	}
+
+	@Override
+	protected boolean beforeInsert() throws Exception {
+
+
+		//更新系统FlowInfo
+		EnCfg enCfg=new EnCfg("System.FlowInfo");
+		java.util.Map<String,String> map=enCfg.getMap();
+		int projectNum=Integer.valueOf(map.get("flowNum"))+1;
+		map.put("flowNum",projectNum+"");
+		enCfg.setMap(map);
+		enCfg.Update();
+
+		return super.beforeInsert();
+	}
+
+	@Override
 	protected boolean beforeUpdateInsertAction() throws Exception {
 		// 获得事件实体.
 		this.setFlowEventEntity(BP.WF.Glo.GetFlowEventEntityStringByFlowMark(this.getFlowMark(), this.getNo()));
@@ -5805,6 +5779,13 @@ public class Flow extends BP.En.EntityNoName {
 		String url="http://112.125.90.132:8082/es/delEsById";
 		FeignTool.updateToES(url,postBody);
 
+		//更新系统FlowInfo
+		EnCfg enCfg=new EnCfg("System.FlowInfo");
+		java.util.Map<String,String> map=enCfg.getMap();
+		int projectNum=Integer.valueOf(map.get("flowNum"))-1;
+		map.put("flowNum",projectNum+"");
+		enCfg.setMap(map);
+		enCfg.Update();
 
 		// 检查流程有没有版本管理？
 		if (this.getFK_FlowSort().length() > 1) {
@@ -5860,19 +5841,6 @@ public class Flow extends BP.En.EntityNoName {
 				+ this.getNo() + "')";
 		sql += "@ DELETE FROM WF_SelectAccper WHERE   FK_Node IN (SELECT NodeID FROM WF_Node WHERE FK_Flow='"
 				+ this.getNo() + "')";
-		// sql += "@ DELETE FROM WF_TurnTo WHERE FK_Node IN (SELECT NodeID FROM
-		// WF_Node WHERE FK_Flow='" + this.getNo() + "')";
-
-		// 删除d2d数据.
-		// sql += "@GO DELETE WF_M2M WHERE FK_Node IN (SELECT NodeID FROM
-		// WF_Node WHERE FK_Flow='" + this.getNo() + "')";
-		//// 删除配置.
-		// sql += "@ DELETE FROM WF_FAppSet WHERE NodeID IN (SELECT NodeID FROM
-		// WF_Node WHERE FK_Flow='" + this.getNo() + "')";
-
-		//// 外部程序设置
-		// sql += "@ DELETE FROM WF_FAppSet WHERE NodeID in (SELECT NodeID FROM
-		//// WF_Node WHERE FK_Flow='" + this.getNo() + "')";
 
 		// 删除单据.
 		sql += "@ DELETE FROM WF_BillTemplate WHERE  NodeID in (SELECT NodeID FROM WF_Node WHERE FK_Flow='"
@@ -5885,9 +5853,6 @@ public class Flow extends BP.En.EntityNoName {
 		sql += "@ DELETE FROM WF_CCList WHERE FK_Flow='" + this.getNo() + "'";
 		Nodes nds = new Nodes(this.getNo());
 		for (Node nd : nds.ToJavaList()) {
-			// 删除节点所有相关的东西.
-			// sql += "@ DELETE FROM Sys_MapM2M WHERE FK_MapData='ND" +
-			// nd.getNodeID() + "'";
 			nd.Delete();
 		}
 

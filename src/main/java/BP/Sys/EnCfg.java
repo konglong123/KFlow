@@ -5,6 +5,8 @@ import BP.En.EnType;
 import BP.En.EntityNo;
 import BP.En.Map;
 
+import java.util.HashMap;
+
 /**
  * EnCfgs
  */
@@ -98,7 +100,7 @@ public class EnCfg extends EntityNo
 	/**
 	 * 系统实体
 	 * 
-	 * @param no
+	 * @param
 	 * @throws Exception 
 	 */
 	public EnCfg(String enName) throws Exception
@@ -108,6 +110,32 @@ public class EnCfg extends EntityNo
 			this.RetrieveFromDBSources();
 		 
 	}
+
+	//将单项值，按@拆分成map
+	public java.util.Map<String,String> getMap(){
+		String str=this.getGroupTitle();
+		java.util.Map<String,String> result=new HashMap<>();
+		String[] datas=str.split("@");
+		for(String data:datas){
+			String[] kv=data.split("=");
+			result.put(kv[0],kv[1]);
+		}
+		return result;
+	}
+
+	public void setMap(java.util.Map<String,String> map){
+		StringBuilder sb=new StringBuilder();
+		for (java.util.Map.Entry entry:map.entrySet()){
+			sb.append("@");
+			sb.append(entry.getKey());
+			sb.append("=");
+			sb.append(entry.getValue());
+		}
+		if (sb.length()>1)
+			sb.deleteCharAt(0);
+		this.setGroupTitle(sb.toString());
+	}
+
 	
 	/**
 	 * map

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<head>
+    <title>Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../Task/model/css/bootstrap.css">
+    <link href="../Task/model/css/style.css" rel='stylesheet' type='text/css' />
+    <script src="../Scripts/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="../Scripts/echarts/echarts.min.js"></script>
+    <script type="text/javascript" src="../Scripts/echarts/echarts-gl.min.js"></script>
+    <script type="text/javascript" src="../Scripts/echarts/ecStat.min.js"></script>
+    <script src="../Task/NodeTask.js" type="text/javascript"></script>
+</head>
+<body class="dashboard-page">
+<section class="wrapper scrollable">
+    <div class="main-grid">
+        <div class="social grid">
+            <div class="grid-info">
+                <div class="col-md-3 top-comment-grid">
+                    <div class="comments likes">
+                        <div class="comments-icon">
+                            <i class="fa fa-facebook"></i>
+                        </div>
+                        <div class="comments-info likes-info">
+                            <h3><label id="flowNum"></label></h3>
+                            <a href="#">流程模板</a>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>
+                </div>
+                <div class="col-md-3 top-comment-grid">
+                    <div class="comments">
+                        <div class="comments-icon">
+                            <i class="fa fa-comments"></i>
+                        </div>
+                        <div class="comments-info">
+                            <h3><label id="nodeNum"></label></h3>
+                            <a href="#">节点数</a>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>
+                </div>
+                <div class="col-md-3 top-comment-grid">
+                    <div class="comments tweets">
+                        <div class="comments-icon">
+                            <i class="fa fa-twitter"></i>
+                        </div>
+                        <div class="comments-info tweets-info">
+                            <h3><label id="generNum"></label></h3>
+                            <a href="#">流程实例</a>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>
+                </div>
+                <div class="col-md-3 top-comment-grid">
+                    <div class="comments views">
+                        <div class="comments-icon">
+                            <i class="fa fa-eye"></i>
+                        </div>
+                        <div class="comments-info views-info">
+                            <h3><label id="nodeTaskNum"></label></h3>
+                            <a href="#">节点任务数</a>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>
+                </div>
+                <div class="clearfix"> </div>
+            </div>
+        </div>
+        <fieldset>
+            <legend>系统任务统计</legend>
+            <div id="systemTaskShow" style="width: 100%;height:600px;">
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>所属任务统计</legend>
+            <div id="mainTaskShow" style="width: 100%;height:600px;"></div>
+        </fieldset>
+    </div>
+</section>
+<script>
+    $(function () {
+        initMyTaskInfoChart();
+        initSystemInfo();
+    });
+
+    //初始化系统信息（流程数，节点数，流程实例等）
+    function initSystemInfo() {
+        $.ajax({
+            url: "/WF/flow/getSystemFlowInfo",
+            type: 'POST',
+            success: function (data) {
+                $("#nodeTaskNum").html(data.nodeTaskNum);
+                $("#generNum").html(data.generNum);
+                $("#nodeNum").html(data.nodeNum);
+                $("#flowNum").html(data.flowNum);
+            }
+        });
+    }
+
+    function initMyTaskInfoChart() {
+        var dom = document.getElementById("mainTaskShow");
+        var myChart = echarts.init(dom);
+        var dataChart={
+            pieData:[],
+            barData:[],
+            lineData:[],
+            xAxis:[]
+        };
+        var dataTemp=getTaskInfoOneStatus();
+        dataChart.xAxis=dataTemp.xAxisData;
+        dataChart.lineData=dataTemp.lineData;
+        dataChart.barData=dataTemp.barData;
+
+        dataTemp=getTaskInfoForStatus();
+        dataChart.pieData=dataTemp.pieData;
+
+        option = {
+            title: {
+                text: '未完成任务统计图',
+                left: 'center'
+            },
+
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross',
+                    crossStyle: {
+                        color: '#999'
+                    }
+                }
+            },
+            toolbox: {
+                feature: {
+                    dataView: {show: true, readOnly: false},
+                    magicType: {show: true, type: ['line', 'bar']},
+                    restore: {show: true},
+                    saveAsImage: {show: true}
+                }
+            },
+            legend: {
+                x: '70%',
+                y: '68%',
+                data: ['总工时', '任务数量']
+            },
+            grid: [
+                {x: '45%', y: '15%', width: '50%', height: '48%'},//折线图位置控制
+            ],
+            xAxis: [
+                {
+                    type: 'category',
+                    name:'流程实例',
+                    data: dataChart.xAxis,
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    name: '工时',
+                    interval: 50,
+                    axisLabel: {
+                        formatter: '{value} h'
+                    }
+                },
+                {
+                    type: 'value',
+                    name: '数量',
+                    interval: 5,
+                    axisLabel: {
+                        formatter: '{value}'
+                    }
+                }
+            ],
+            series: [
+                {
+                    name: '任务各状态',
+                    type: 'pie',
+                    radius: [30, 100],
+                    center: ['20%', '40%'],
+                    roseType: 'area',
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: " <br/>{b} : {c} ({d}%)"
+                    },
+                    data: dataChart.pieData
+                },
+                {
+                    name: '总工时',
+                    type: 'bar',
+                    data: dataChart.barData
+                },
+                {
+                    name: '任务数量',
+                    type: 'line',
+                    yAxisIndex: 1,
+                    data: dataChart.lineData
+                },
+            ]
+        };
+        myChart.setOption(option);
+        myChart.on("click",function (param) {
+            //饼图联动
+            if (param.seriesType=='pie'){
+                var status=param.data.status;
+                var data =getTaskInfoOneStatus(status);
+                option.xAxis[0].data=data.xAxisData;
+                option.series[2].data=data.lineData;
+                option.series[1].data=data.barData;
+                myChart.setOption(option);
+            };
+        });
+    }
+
+
+</script>
+</body>
+</html>

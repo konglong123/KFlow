@@ -153,6 +153,7 @@ public class NodeTaskService {
             currentWork.setStatus(2);
             currentWork.setFinishTime(new Date());
             currentWork.setActivatedNodes("");
+            currentWork.setUseTime(currentWork.getUseTime()+currentTask.getUseTime());
             generFlowManager.updateGenerFlow(currentWork);
         }
         return true;
@@ -391,6 +392,7 @@ public class NodeTaskService {
     
 
     public Long insertNodeTask(NodeTaskM nodeTaskM){
+
         return nodeTaskManage.insertNodeTask(nodeTaskM);
     }
 
@@ -576,12 +578,9 @@ public class NodeTaskService {
         return true;
     }
 
-    public List<JSONObject> getMyTaskGant(){
+    public List<JSONObject> getMyTaskGant(NodeTaskM con){
 
         try {
-            String userNo = WebUser.getNo();
-            NodeTaskM con=new NodeTaskM();
-            con.setExecutor(userNo);
             List<NodeTaskM> list=nodeTaskManage.findNodeTaskList(con);
             List<JSONObject> data=new ArrayList<>();
             for (NodeTaskM nodeTaskM:list){

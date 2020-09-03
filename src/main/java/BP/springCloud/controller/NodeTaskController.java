@@ -25,9 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @program: kflow-web
@@ -274,12 +272,14 @@ public class NodeTaskController {
     */
     @RequestMapping("getMyTaskGantData")
     @ResponseBody
-    public JSONObject getMyTaskGantData(){
+    public JSONObject getMyTaskGantData(@RequestBody NodeTaskM con) throws Exception{
         List<JSONObject> seriesList=new ArrayList<>();
 
         JSONObject seriesN=new JSONObject();
         seriesN.put("name","任务甘特图");
-        List<JSONObject> data= nodeTaskService.getMyTaskGant();
+        String userNo = WebUser.getNo();
+        con.setExecutor(userNo);
+        List<JSONObject> data= nodeTaskService.getMyTaskGant(con);
         seriesN.put("data",JSONArray.fromObject(data));
         seriesList.add(seriesN);
 
@@ -367,6 +367,93 @@ public class NodeTaskController {
         }
 
         return null;
+    }
+
+    @RequestMapping("getTaskInfoOneStatus")
+    @ResponseBody
+    public JSONObject getTaskInfoOneStatus(@RequestBody NodeTaskM con){
+        JSONObject data=new JSONObject();
+        try{
+            String userNo=WebUser.getNo();
+            con.setExecutor(userNo);
+            List<NodeTaskM> list=nodeTaskService.findNodeTaskList(con);
+            Map<String,JSONObject> map=new HashMap<>();
+            for (NodeTaskM nodeTaskM:list){
+                JSONObject temp=map.get(nodeTaskM.getWorkId());
+                if (temp==null){
+                    temp=new JSONObject();
+                    temp.put("num",0);
+                    temp.put("sum",0);
+                    map.put(nodeTaskM.getWorkId(),temp);
+                }
+                temp.put("num",temp.getInt("num")+1);
+                temp.put("sum",temp.getInt("sum")+nodeTaskM.getTotalTime());
+            }
+
+            //组装eChart数据
+            List<String> xAxis=new ArrayList<>(map.size());
+            List<Integer> bar=new ArrayList<>(map.size());
+            List<Integer> line=new ArrayList<>(map.size());
+            for (Map.Entry<String,JSONObject> item:map.entrySet()){
+                xAxis.add(item.getKey());
+                JSONObject object=item.getValue();
+                bar.add(object.getInt("sum"));
+                line.add(object.getInt("num"));
+            }
+            data.put("lineData",JSONArray.fromObject(line));
+            data.put("barData",JSONArray.fromObject(bar));
+            data.put("xAxisData",JSONArray.fromObject(xAxis));
+
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+        return data;
+    }
+
+    @RequestMapping("getTaskInfoForStatus")
+    @ResponseBody
+    public JSONObject getTaskInfoForStatus(@RequestBody NodeTaskM con){
+        JSONObject data=new JSONObject();
+        try {
+            String userNo=WebUser.getNo();
+            con.setExecutor(userNo);
+            List<NodeTaskM> list=nodeTaskService.findNodeTaskList(con);
+
+            //每种状态的任务
+            List<NodeTaskM>[] items=new List[9];
+            for (int i=0;i<items.length;i++){
+                items[i]=new ArrayList();
+            }
+            for (NodeTaskM nodeTaskM:list){
+                int status=nodeTaskM.getStatus();
+                List<NodeTaskM> item;
+                if (status==20){
+                    item=items[0];
+                }else {
+                    item=items[status];
+                }
+                item.add(nodeTaskM);
+            }
+
+            String[] names={"未准备","可以开始","已经开始","已经完成","逾期开始","警告开始","正常","逾期结束","警告结束"};
+            List<JSONObject> pieData=new ArrayList<>();
+            for (int i=0;i<names.length;i++){
+                JSONObject temp=new JSONObject();
+                temp.put("name",names[i]);
+                temp.put("value",items[i].size());
+                if (i==0)
+                    temp.put("status",20);
+                else
+                    temp.put("status",i);
+                pieData.add(temp);
+            }
+            data.put("pieData",JSONArray.fromObject(pieData));
+
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+
+        return data;
     }
 
 
