@@ -57,6 +57,7 @@ public class ProjectController {
             for (String flowNo:subFlowNos){
                 Flow subFlow=new Flow(flowNo);
                 JSONObject subData=getTreeData(subFlow);
+                subData.put("name",temp.getNo()+"_"+subData.get("name"));
                 children.add(subData);
             }
         }
