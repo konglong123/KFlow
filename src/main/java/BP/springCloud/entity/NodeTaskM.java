@@ -414,4 +414,32 @@ public class NodeTaskM implements Serializable {
 	public void setFlowName(String flowName) {
 		this.flowName = flowName;
 	}
+
+	private int taskType;
+	private int taskPriority;
+	private int taskWorkModel;
+
+	public int getTaskType() {
+		return taskType;
+	}
+
+	public void setTaskType(int taskType) {
+		this.taskType = taskType;
+	}
+
+	public int getTaskPriority() {
+		return taskPriority;
+	}
+
+	public void setTaskPriority(int taskPriority) {
+		this.taskPriority = taskPriority;
+	}
+
+	public int getTaskWorkModel() {
+		return taskWorkModel;
+	}
+
+	public void setTaskWorkModel(int taskWorkModel) {
+		this.taskWorkModel = taskWorkModel;
+	}
 }

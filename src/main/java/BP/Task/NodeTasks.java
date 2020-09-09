@@ -3,6 +3,7 @@ package BP.Task;
 import BP.En.EntitiesNo;
 import BP.En.Entity;
 
+
 /**
  * @program: kflow-web
  * @description:
@@ -14,4 +15,6 @@ public class NodeTasks extends EntitiesNo {
     public Entity getGetNewEntity() {
         return new NodeTask();
     }
+
+
 }

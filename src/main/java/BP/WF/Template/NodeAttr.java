@@ -535,4 +535,7 @@ public class NodeAttr
 
 	public static final String RealBefore="realBefore";
 	public static final String RealAfter="realAfter";
+
+	public static final String TaskPriority="TaskPriority";
+	public static final String WorkModel="WorkModel";
 }

@@ -162,12 +162,6 @@ public class AppACE extends WebContralBase{
 		ht.put("SysName", BP.Sys.SystemConfig.getSysName());
 
 
-		ht.put("Todolist_EmpWorks", BP.WF.Dev2Interface.getTodolist_EmpWorks());
-		ht.put("Todolist_Runing", BP.WF.Dev2Interface.getTodolist_Runing());
-		ht.put("Todolist_Sharing", BP.WF.Dev2Interface.getTodolist_Sharing());
-		ht.put("Todolist_Draft", BP.WF.Dev2Interface.getTodolist_Draft());
-        //ht.put("Todolist_Apply", BP.WF.Dev2Interface.Todolist_Apply); //申请下来的任务个数.
-
 		//我发起
 		MyStartFlows myStartFlows = new MyStartFlows();
 		QueryObject obj = new QueryObject(myStartFlows);

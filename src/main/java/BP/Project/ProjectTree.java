@@ -51,8 +51,8 @@ public class ProjectTree extends EntityNo {
 
 		Map map = new Map("k_project_tree", "项目流程树");
 		map.AddTBStringPK(ProjectTreeAttr.No, null, "ID", true, true, 0, 50, 50);
-		map.AddTBString(ProjectTreeAttr.ProjectName, null, "项目树名", true, false, 0, 50, 50);
-		map.AddTBString(ProjectTreeAttr.ProjectNo, null, "项目树编码", true, false, 0, 50, 50);
+		map.AddTBString(ProjectTreeAttr.ProjectName, null, "项目名", true, false, 0, 50, 50);
+		map.AddTBString(ProjectTreeAttr.ProjectNo, null, "项目编码", true, false, 0, 50, 50);
 		map.AddTBString(ProjectTreeAttr.FlowNo, null, "流程编码", true, false, 0, 50, 50);
 		map.AddTBString(ProjectTreeAttr.FlowName, null, "流程名", true, false, 0, 50, 50);
 		map.AddTBString(ProjectTreeAttr.Detail, null, "项目树详情", true, false, 0, 50, 50);
@@ -63,7 +63,9 @@ public class ProjectTree extends EntityNo {
 		map.AddTBDateTime(ProjectTreeAttr.PlanFinish,  "2000-01-01 00:00:00","计划完成时间", true, false);
 		map.AddTBDateTime(ProjectTreeAttr.ActualStart, "2000-01-01 00:00:00", "实际开始时间", true, false);
 		map.AddTBDateTime(ProjectTreeAttr.ActualFinish,  "2000-01-01 00:00:00","实际完成时间", true, false);
-		map.AddTBString(ProjectTreeAttr.ActualDuring, "", "持续时间", true, false,0,50,50);
+		map.AddTBInt(ProjectTreeAttr.ActualDuring, 0, "持续时间", true, false);
+		map.AddTBInt(ProjectTreeAttr.PlanDuring, 0, "预计工期", true, false);
+		map.AddTBString(ProjectTreeAttr.Manage,  "admin","负责人", true, false,0,50,50);
 		map.AddTBString(ProjectTreeAttr.Manage,  "admin","负责人", true, false,0,50,50);
 
 
@@ -103,9 +105,7 @@ public class ProjectTree extends EntityNo {
 	{
 		try{
 			FlowController flowController= BeanTool.getBean(FlowController.class);
-			flowController.startFlow(this.GetValStrByKey(ProjectTreeAttr.FlowNo));
-			this.SetValByKey(ProjectTreeAttr.Status,1);//流程启动
-			this.Update();
+			flowController.startProject(this.getNo());
 			return "启动成功！";
 		}catch (Exception e){
 			return "启动失败！"+e.getMessage();
@@ -120,7 +120,7 @@ public class ProjectTree extends EntityNo {
 	@Override
 	protected boolean beforeInsert() throws Exception {
 		//设置基本信息
-		long id= FeignTool.getSerialNumber("BP.Project.ProjectTree");
+		long id= FeignTool.getSerialNumber("BP.WF.Work");
 		this.SetValByKey(ProjectTreeAttr.No,id);
 		this.SetValByKey(ProjectTreeAttr.ProjectNo,id);
 		String flowNo=this.GetValStrByKey(ProjectTreeAttr.FlowNo);

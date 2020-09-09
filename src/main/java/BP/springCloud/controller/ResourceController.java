@@ -3,12 +3,14 @@ package BP.springCloud.controller;
 import BP.DA.DataTable;
 import BP.Resource.*;
 import BP.Web.WebUser;
+import BP.springCloud.entity.ResourceTaskM;
 import BP.springCloud.tool.PageTool;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
@@ -160,18 +162,10 @@ public class ResourceController {
     */
     @RequestMapping("/bookResource")
     @ResponseBody
-    public Object bookResource(HttpServletRequest request, HttpServletResponse response){
-        String resourceNo=request.getParameter("resourceNo");
-        String nodeId=request.getParameter("nodeId");
-        String startTime=request.getParameter("startTime");
-        String endTime=request.getParameter("endTime");
-        String useTime=request.getParameter("useTime");
-        String planId=request.getParameter("planId");
+    public Object bookResource(@RequestBody ResourceTaskM con){
+
         try{
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-            Date start = sdf.parse(startTime);
-            Date end=sdf.parse(endTime);
-            resourceService.bookResource(resourceNo,Long.parseLong(nodeId),start,end,Integer.parseInt(useTime),planId);
+            resourceService.bookResource(con);
         }catch (Exception e){
             logger.error(e.getMessage());
             return e.getMessage();
@@ -189,5 +183,10 @@ public class ResourceController {
         return null;
     }
 
+    @RequestMapping("/getResourceGant")
+    @ResponseBody
+    public JSONObject getResourceGant(@RequestBody Map<String,String> map){
+        return null;
+    }
 
 }

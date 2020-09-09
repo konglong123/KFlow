@@ -22,7 +22,8 @@ public class ProjectTreeAttr {
     public static final String PlanFinish = "plan_finish";
     public static final String Priority = "priority";
     public static final String ActualDuring = "actual_during";
+    public static final String PlanDuring = "plan_during";
     public static final String ParentProject = "parent_project";
     public static final String Manage = "manage";
-
+    public static final String GenerFlowNo = "gener_flow_no";
 }

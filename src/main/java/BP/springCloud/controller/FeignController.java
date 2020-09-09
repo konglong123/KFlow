@@ -1,18 +1,23 @@
 package BP.springCloud.controller;
 
 
+import BP.Project.ProjectTree;
+import BP.Project.ProjectTreeAttr;
+import BP.Project.ProjectTrees;
 import BP.Resource.ResourceAttr;
 import BP.Resource.Resources;
+import BP.Task.NodeTaskService;
+import BP.springCloud.entity.NodeTaskM;
 import BP.springCloud.tool.FeignTool;
-import BP.springCloud.tool.Page;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
@@ -31,6 +36,9 @@ import java.util.Map;
 @RequestMapping("feign")
 public class FeignController {
     private final Logger logger = LoggerFactory.getLogger(FeignController.class);
+
+    @Resource
+    private NodeTaskService nodeTaskService;
 
     @RequestMapping("/addWF")
     @ResponseBody
@@ -79,7 +87,13 @@ public class FeignController {
                     response.setContentType("text/html");
                     PrintWriter out = response.getWriter();
                     String result = JSONObject.fromObject(jsonMap).toString();//格式化result   一定要是JSONObject
-                    out.print(result);
+                    //为适配es数据中no，将No转换成no
+                    char[] cs=result.toCharArray();
+                    for (int i=0;i<cs.length;i++){
+                        if (cs[i]=='N')
+                            cs[i]='n';
+                    }
+                    out.print(new String(cs));
                     out.flush();
                     out.close();
 
@@ -103,6 +117,49 @@ public class FeignController {
         return null;
     }
 
+
+    @ResponseBody
+    @RequestMapping("planAllTask")
+    public JSONObject planAllTask(@RequestBody JSONObject con){
+        JSONObject data=new JSONObject();
+
+        try {
+            //封装项目信息
+            JSONObject projects=new JSONObject();
+            ProjectTrees projectList=new ProjectTrees();
+            projectList.Retrieve(ProjectTreeAttr.Status,1);
+            JSONObject projectData=projectList.getPlanData();
+            data.putAll(projectData);
+            List<ProjectTree> projectTreeList=projectList.toList();
+            List<String> projectNoList=new ArrayList<>();
+            for (ProjectTree project:projectTreeList)
+                projectNoList.add(project.getNo());
+
+            //封装任务信息
+            List<NodeTaskM> tasks=new ArrayList<>();
+            NodeTaskM taskCon=new NodeTaskM();
+            for (String projectNo:projectNoList){
+                taskCon.setWorkGroupId(projectNo);
+                List<NodeTaskM> tempList=nodeTaskService.findNodeTaskList(taskCon);
+                tasks.addAll(tempList);
+            }
+            JSONObject taskData=nodeTaskService.getPlanData(tasks);
+            data.putAll(taskData);
+
+            //封装任务连接信息
+            JSONObject linkData=nodeTaskService.getPlanLinkData(tasks);
+            data.putAll(linkData);
+
+            //封装资源，资源任务
+            JSONObject resource=nodeTaskService.getResourcePlanData(tasks);
+            data.putAll(resource);
+
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+
+        return data;
+    }
 
 
 }

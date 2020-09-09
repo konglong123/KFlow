@@ -1,5 +1,7 @@
 package BP.springCloud.controller;
 
+import BP.Project.ProjectTree;
+import BP.Project.ProjectTreeAttr;
 import BP.Sys.EnCfg;
 import BP.Task.GenerFlowService;
 import BP.Task.NodeTaskService;
@@ -55,7 +57,7 @@ public class FlowController {
             Long workGroupId= FeignTool.getSerialNumber("BP.WF.Work");
             Long parentWorkId=0-FeignTool.getSerialNumber("BP.WF.ParentWork");
             Flow flow=new Flow(flowNo);
-            if (startFlow(workGroupId,parentWorkId,-1L,flow)){
+            startFlow(workGroupId,parentWorkId,-1L,flow);
                 //起始节点任务状态更新为可开始
                 NodeTaskM con=new NodeTaskM();
                 con.setWorkGroupId(workGroupId+"");
@@ -68,9 +70,43 @@ public class FlowController {
                     nodeTaskService.updateNodeTask(startTask);
                 }
                 result.put("success",true);
-            }else {
-                result.put("message","");
+
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+
+        return result;
+    }
+
+    @RequestMapping("startProject")
+    @ResponseBody
+    public JSONObject startProject(String projectNo) {
+        JSONObject result=new JSONObject();
+        try {
+            //启动项目时，发起流程，则ProjectNo作为GroupWorkNo
+            Long workGroupId= Long.valueOf(projectNo);
+            Long parentWorkId=0-FeignTool.getSerialNumber("BP.WF.ParentWork");
+            ProjectTree project=new ProjectTree(projectNo);
+
+            Flow flow=new Flow(project.GetValStrByKey(ProjectTreeAttr.FlowNo));
+            long workId=startFlow(workGroupId,parentWorkId,-1L,flow);
+
+            //更新项目信息
+            project.SetValByKey(ProjectTreeAttr.Status,1);//流程启动
+            project.SetValByKey(ProjectTreeAttr.GenerFlowNo,workId);
+            project.Update();
+                //起始节点任务状态更新为可开始
+            NodeTaskM con=new NodeTaskM();
+            con.setWorkGroupId(workGroupId+"");
+            con.setNodeId(flow.getStartNodeID()+"");
+            List<NodeTaskM> list=nodeTaskService.findNodeTaskList(con);
+            if (list!=null&&list.size()==1){
+                NodeTaskM startTask=list.get(0);
+                startTask.setIsReady(1);
+                startTask.setStatus(1);
+                nodeTaskService.updateNodeTask(startTask);
             }
+            result.put("success",true);
 
         }catch (Exception e){
             logger.error(e.getMessage());
@@ -86,10 +122,10 @@ public class FlowController {
      *@Author: Mr.kong
      *@Date: 2020/3/8
      */
-    public  boolean startFlow(Long workGroupId,Long parentWorkId, Long parentTaskId, Flow flow) throws Exception{
+    public  long startFlow(Long workGroupId,Long parentWorkId, Long parentTaskId, Flow flow) throws Exception{
 
         if (!beforeStart(flow))
-            return false;
+            return -1L;
 
         Long workId= FeignTool.getSerialNumber("BP.WF.Work");
 
@@ -97,9 +133,8 @@ public class FlowController {
         Nodes nodes=new Nodes();
         nodes.Retrieve(NodeAttr.FK_Flow,flow.getNo());
         List<Node> nodeList=nodes.toList();
-        Boolean flag=true;
         for (Node node:nodeList){
-                flag=flag&createNodeTask(workGroupId,workId,parentTaskId,node);
+                createNodeTask(workGroupId,workId,parentTaskId,node);
                 sumTime+=Integer.valueOf(node.GetValStrByKey(NodeAttr.Doc));
         }
 
@@ -118,7 +153,7 @@ public class FlowController {
 
         //更新节点任务间关系
         nodeTaskService.updateNodeTaskPreAfter(flow.getStartNodeID()+"",workId);
-        return flag;
+        return workId;
     }
 
     /**
@@ -140,7 +175,7 @@ public class FlowController {
      *@Author: Mr.kong
      *@Date: 2020/3/8
      */
-    public  Boolean createNodeTask(Long workGroupID,Long workId,Long parentTaskId,Node node) throws Exception{
+    public  void createNodeTask(Long workGroupID,Long workId,Long parentTaskId,Node node) throws Exception{
         int nodeId=node.getNodeID();
 
         //创建节点任务
@@ -168,18 +203,18 @@ public class FlowController {
         nodeTask.setStartTime(start);
         nodeTask.setEarlyStartTime(start);
         nodeTask.setOldestFinishTime(end);
+        nodeTask.setTaskType(node.GetValIntByKey(NodeAttr.TaskType));
+        nodeTask.setTaskPriority(node.GetValIntByKey(NodeAttr.TaskPriority));
+        nodeTask.setTaskWorkModel(node.GetValIntByKey(NodeAttr.WorkModel));
         nodeTaskService.insertNodeTask(nodeTask);
 
         String[] childFlows=node.getSubFlowNos();
-        Boolean flag=true;
         if (childFlows!=null) {
             for (String childFlowNo : childFlows) {
                 Flow f = new Flow(childFlowNo);
-                flag = flag & startFlow(workGroupID, workId, nodeTaskId, f);
+                startFlow(workGroupID, workId, nodeTaskId, f);
             }
         }
-
-        return flag;
     }
 
 

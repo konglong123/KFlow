@@ -3,6 +3,9 @@ package BP.springCloud.controller;
 import BP.Project.ProjectNodeService;
 import BP.Project.ProjectTree;
 import BP.Project.ProjectTreeAttr;
+import BP.Task.FlowGener;
+import BP.Task.FlowGenerAttr;
+import BP.Task.FlowGeners;
 import BP.WF.Flow;
 import BP.WF.Node;
 import BP.WF.Nodes;
@@ -41,7 +44,7 @@ public class ProjectController {
         try{
             ProjectTree projectTree=new ProjectTree(projectNo);
             Flow flow=new Flow(projectTree.GetValStrByKey(ProjectTreeAttr.FlowNo));
-            data=getTreeData(flow);
+            data=getTreeData(flow,projectTree.GetValStrByKey(ProjectTreeAttr.GenerFlowNo));
 
         }catch (Exception e){
             logger.error(e.getMessage());
@@ -49,14 +52,21 @@ public class ProjectController {
         return data;
     }
 
-    private JSONObject getTreeData(Flow flow) throws Exception{
+    private JSONObject getTreeData(Flow flow,String generNo) throws Exception{
         List<JSONObject> children=new ArrayList<>();
         Nodes nodes=flow.getHisNodes();
         for (Node temp:nodes.ToJavaList()){
             String[] subFlowNos=temp.getSubFlowNos();
             for (String flowNo:subFlowNos){
                 Flow subFlow=new Flow(flowNo);
-                JSONObject subData=getTreeData(subFlow);
+                FlowGeners geners=new FlowGeners();
+                geners.Retrieve(FlowGenerAttr.ParentWorkId,generNo,FlowGenerAttr.FlowId,flowNo);
+                List<FlowGener> generList=geners.toList();
+                JSONObject subData=new JSONObject();
+                if (generList.size()>0)
+                    subData=getTreeData(subFlow,generList.get(0).getNo());
+                else
+                    subData=getTreeData(subFlow,null);
                 subData.put("name",temp.getNo()+"_"+subData.get("name"));
                 children.add(subData);
             }
@@ -64,6 +74,7 @@ public class ProjectController {
         JSONObject data=new JSONObject();
         data.put("name",flow.getName());
         data.put("value",flow.getNo());
+        data.put("generNo",generNo);
         data.put("children",children);
         return data;
     }

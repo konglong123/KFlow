@@ -10,6 +10,7 @@
         <result column="node_id" jdbcType="BIGINT" property="nodeId" />
         <result column="work_id" jdbcType="BIGINT" property="workId" />
         <result column="use_time" jdbcType="INTEGER" property="useTime" />
+        <result column="use_num" jdbcType="INTEGER" property="useNum" />
         <result column="plan_end" jdbcType="TIMESTAMP" property="planEnd" />
         <result column="plan_start" jdbcType="TIMESTAMP" property="planStart" />
         <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
@@ -90,6 +91,9 @@
             <if test="resTask.useTime != 0">
                 use_time,
             </if>
+            <if test="resTask.useNum != 0">
+                use_num,
+            </if>
             <if test="resTask.workId != null">
                 work_id,
             </if>
@@ -134,6 +138,9 @@
             </if>
             <if test="resTask.useTime != 0">
                 #{resTask.useTime,jdbcType=INTEGER},
+            </if>
+            <if test="resTask.useNum != 0">
+                #{resTask.useNum,jdbcType=INTEGER},
             </if>
             <if test="resTask.workId != null">
                 #{resTask.workId,jdbcType=BIGINT},

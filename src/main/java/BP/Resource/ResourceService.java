@@ -1,6 +1,7 @@
 package BP.Resource;
 
 import BP.springCloud.dao.ResourceTaskMDao;
+import BP.springCloud.entity.NodeTaskM;
 import BP.springCloud.entity.ResourceTaskM;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
@@ -162,22 +163,15 @@ public class ResourceService {
     *@Author: Mr.kong
     *@Date: 2020/2/29
     */
-    public void bookResource(String resourceNo,Long nodeId,Date startTime,Date endTime,int useTime,String planId){
+    public void bookResource(ResourceTaskM resourceTaskM){
 
-        ResourceTaskM resourceTaskM=new ResourceTaskM();
-        resourceTaskM.setResourceNo(resourceNo);
-        resourceTaskM.setNodeId(nodeId);
-        resourceTaskM.setPlanId(planId);
-        resourceTaskM.setBookStart(startTime);
-        resourceTaskM.setBookEnd(endTime);
-        resourceTaskM.setUseTime(useTime);
         resourceTaskM.setWorkId(0L);//默认时，表示流程未发起
 
         //没有计划时，计划时间为预定时间，没有完成时，完成时间为计划时间）
-        resourceTaskM.setPlanStart(startTime);
-        resourceTaskM.setPlanEnd(endTime);
-        resourceTaskM.setEndTime(endTime);
-        resourceTaskM.setStartTime(startTime);
+        resourceTaskM.setPlanStart(resourceTaskM.getBookStart());
+        resourceTaskM.setPlanEnd(resourceTaskM.getBookEnd());
+        resourceTaskM.setEndTime(resourceTaskM.getBookEnd());
+        resourceTaskM.setStartTime(resourceTaskM.getBookStart());
 
         //新增资源任务，默认is_plan=2(未计划)，is_finish=2（未完成）
         resourceTaskM.setIsPlan(2);

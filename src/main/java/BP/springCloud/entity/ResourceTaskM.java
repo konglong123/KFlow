@@ -146,6 +146,16 @@ public class ResourceTaskM {
         this.planId = planId;
     }
 
+    private int useNum;
+
+    public int getUseNum() {
+        return useNum;
+    }
+
+    public void setUseNum(int useNum) {
+        this.useNum = useNum;
+    }
+
     @Override
     public String toString() {
         return "ResourceTaskM{" +

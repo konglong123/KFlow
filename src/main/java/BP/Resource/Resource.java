@@ -13,6 +13,27 @@ import java.util.HashMap;
  * @create: 2020-02-22 10:58
  **/
 public class Resource extends EntityNoName {
+
+    public Resource(){
+
+    }
+
+    public Resource(String _no) throws Exception{
+        if (_no == null || _no.equals(""))
+        {
+            throw new RuntimeException(this.getEnDesc() + "@对表["
+                    + this.getEnDesc() + "]进行查询前必须指定编号。");
+        }
+
+        this.setNo(_no);
+        if (this.Retrieve() == 0)
+        {
+            throw new RuntimeException("@没有"
+                    + this.get_enMap().getPhysicsTable() + ", No = " + getNo()
+                    + "的记录。");
+        }
+    }
+
     @Override
     public Map getEnMap() {
         if (this.get_enMap() != null)
@@ -25,9 +46,10 @@ public class Resource extends EntityNoName {
         map.AddTBString(ResourceAttr.Code, null, "编号", false, false, 1, 40, 100);
         map.AddTBString(ResourceAttr.Name, null, "名称", true, false, 0, 100, 100);
         map.AddDDLSysEnum(ResourceAttr.Kind, 0, "类型", true, true, ResourceAttr.Kind,
-                "@1=人力@2=设备@3=环境@4=知识");
+                "@0=人力@1=设备@2=环境@3=知识");
         map.AddTBString(ResourceAttr.DeptId, null, "所属部门", true, false, 0, 100, 100);
         map.AddTBStringDoc(ResourceAttr.Abstracts, null, "性能参数", true, false);
+        map.AddTBInt(ResourceAttr.Num, 1, "数量", true, false);
         map.AddSearchAttr(ResourceAttr.Kind);
         this.set_enMap(map);
         return this.get_enMap();

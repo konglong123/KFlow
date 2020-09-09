@@ -51,4 +51,6 @@ public class ResourceTaskAttr {
     //任务是否经过优化调度
     public static final String IsPlan = "is_plan";
 
+    public static final String UseNum = "use_num";
+
 }

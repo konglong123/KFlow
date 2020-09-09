@@ -2059,8 +2059,8 @@ public class Node extends Entity {
 		map.AddTBInt(NodeAttr.IsBUnit, 0, "是否是节点模版(业务单元)", true, false);
 		// #endregion 基本属性.
 
-		map.AddTBString(NodeAttr.RealBefore, null, "真前置节点(%分隔)", true, false, 0, 100, 10, false);
-		map.AddTBString(NodeAttr.RealAfter, null, "真后置节点(%分隔)", true, false, 0, 100, 10, false);
+		map.AddTBString(NodeAttr.RealBefore, null, "真前置节点(/分隔)", true, false, 0, 100, 10, false);
+		map.AddTBString(NodeAttr.RealAfter, null, "真后置节点(/分隔)", true, false, 0, 100, 10, false);
 		map.AddDDLSysEnum(NodeAttr.TaskType, 0, "任务类型",
 				true, true, NodeAttr.TaskType, "@0=主线任务@1=辅线任务@2=质量控制@3=安全控制@4=分合节点@5=黑盒任务");
 		map.AddTBInt(NodeAttr.Doc, 0, "工作量(h)", true, false);
@@ -2216,8 +2216,12 @@ public class Node extends Entity {
 		map.AddTBString(NodeAttr.AutoRunParas, null, "自动运行参数", true, false, 0, 100, 10);
 		map.AddTBString(NodeAttr.SelfParas, null, "启动参数", true, false, 0, 500, 10);
 
-		map.AddTBDateTime(NodeAttr.EarlyStart,  "2000-01-01 00:00:00","最早开始时间", true, false);
-		map.AddTBDateTime(NodeAttr.LaterFinish, "2000-01-01 00:00:00","最晚完成时间", true, false);
+
+		map.AddDDLSysEnum(NodeAttr.TaskPriority, 0, "任务优先级",
+				true, true, NodeAttr.TaskPriority, "@1=普通@2=重要@4=重大");
+
+		map.AddDDLSysEnum(NodeAttr.WorkModel, 0, "任务执行模式",
+				true, true, NodeAttr.WorkModel, "@0=普通（朝8晚6）@1=连续（24h）");
 
 		this.set_enMap(map);
 		return this.get_enMap();

@@ -40,9 +40,14 @@
             index % 2 === 0 && (datum.collapsed = true);
         });*/
         myChart.on('dblclick', function (params) {
-            var id=params.data.value;
-            var name=params.data.name;
-            var url="/WF/WF/Admin/CCBPMDesigner/Designer.htm?FK_Flow="+id+"&UserNo=admin&SID=&Flow_V=1";
+            var generNo=params.data.generNo;
+            var url;
+            if (generNo!=null&&generNo!='')
+                url="/WF/WF/Admin/CCBPMDesigner/Designer.htm?GenerFlowNo="+no+"&type=2";
+            else {
+                var id = params.data.value;
+                var url = "/WF/WF/Admin/CCBPMDesigner/Designer.htm?FK_Flow=" + id + "&UserNo=admin&SID=&Flow_V=1";
+            }
             window.open(url);
         });
         myChart.setOption(option = {

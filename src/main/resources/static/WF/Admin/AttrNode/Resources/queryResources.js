@@ -22,12 +22,23 @@ function initDgSearchResource() {
         columns:[[
             {field:'no',title: '资源编号',align: 'center',width:10},
             {field:'name',title: '资源名',align: 'center',width:10},
-            {field:'kind',title: '类别',align: 'center',width:10},
+            {field:'kind',title: '类别',align: 'center',width:10,
+            formatter:function (val,rec) {
+                if (val==1)
+                    return '人力';
+                else if (val==2)
+                    return '设备';
+                else if (val==3)
+                    return '环境';
+                else if (val==4)
+                    return '知识';
+            }},
             {field:'deptId',title: '所属单位编号',align: 'center',width:10},
             {field:'score',title: '推荐值',align: 'center',width:10},
             {field:'action',title: '操作',align: 'center',width:50,
                 formatter:function(val,rec){
-                    var str="<input type='button' value='资源负载' onclick='resourceLoad(\""+rec.no+"\")'/>";
+                    var str="<input type='button' value='资源每日负载' onclick='resourceLoad(\""+rec.no+"\")'/>";
+                    str+="<input type='button' value='资源甘特图' onclick='resourceGant(\""+rec.no+"\")'/>";
                     str+="<input type='button' value='预定' onclick='bookResource(\""+rec.no+"\")'/>";
                     str+="<input type='button' value='性能详情' onclick='gotoResourceDetail(\""+rec.no+"\")'/>";
                     return str;
@@ -80,6 +91,7 @@ function initDgNodeResource(nodeId,planId) {
     });
 }
 function bookResource(no) {
+    debugger
     var row = $('#dgNodeResourcePlans').datagrid('getSelected');
     if (row==null){
         alert("请选中资源方案！");
@@ -109,7 +121,12 @@ function resetText() {
 }
 function resourceLoad(no) {
     var url="../../../Admin/AttrNode/Resources/ResourceLoad.html?resourceNo="+no;
-    OpenEasyUiDialogExt(url,"资源负载", 800, 500, false);
+    OpenEasyUiDialogExt(url,"资源负载", 1200, 700, false);
+}
+
+function resourceGant() {
+    var url="../../../Admin/AttrNode/Resources/ResourceLoad.html?resourceNo="+no;
+    OpenEasyUiDialogExt(url,"资源负载", 1200, 700, false);
 }
 function deleteResource(no) {
     $.ajax({
@@ -168,7 +185,6 @@ function addResourcePlan() {
         },
         success: function (data) {
             $('#dgNodeResourcePlans').datagrid('reload');
-            alert("资源方案创建成功！");
         },
         error: function (data) {
             console.log("error"+data);

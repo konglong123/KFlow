@@ -2,6 +2,9 @@ package BP.Task;
 
 import BP.DA.DataRow;
 import BP.DA.DataTable;
+import BP.Resource.*;
+import BP.WF.Nodes;
+import BP.springCloud.dao.ResourceTaskMDao;
 import BP.springCloud.entity.JudgeRoute;
 import BP.Judge.JudgeRouteManager;
 import BP.Judge.JudgeTool;
@@ -15,7 +18,9 @@ import BP.WF.Template.*;
 import BP.Web.WebUser;
 import BP.springCloud.entity.GenerFlow;
 import BP.springCloud.entity.NodeTaskM;
+import BP.springCloud.entity.ResourceTaskM;
 import com.google.common.collect.Lists;
+import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +48,7 @@ public class NodeTaskService {
 
     @Resource
     private JudgeRouteManager judgeRouteManager;
+
 
     public NodeTaskM getNodeTaskById(Long no){
         return nodeTaskManage.getNodeTaskById(no);
@@ -326,7 +332,7 @@ public class NodeTaskService {
         }catch (Exception e){
             logger.error(e.getMessage());
         }
-        return null;
+        return new ArrayList();
     }
     
     /**
@@ -636,4 +642,213 @@ public class NodeTaskService {
 
         return new ArrayList<>();
     }
+
+    /**
+    *@Description: 整理tasks输出流程优化所需格式
+    *@Param:
+    *@return:
+    *@Author: Mr.kong
+    *@Date: 2020/9/8
+    */
+    public JSONObject getPlanData(List<NodeTaskM> taskMS){
+
+        JSONObject data=new JSONObject();
+        List<JSONObject> tasks=new ArrayList<>();
+        for (NodeTaskM task:taskMS){
+            JSONObject item=new JSONObject();
+            item.put("taskUid",task.getNo());
+            item.put("taskName",task.getNodeName());
+            item.put("taskType",task.getTaskType());
+            item.put("taskProjUid",task.getWorkGroupId());
+            item.put("taskPriority",task.getTaskPriority());
+            //转换成汉卿中默认单位（天，每天10小时）
+            item.put("taskPlanDur",(task.getTotalTime()+0.1)/10);
+            item.put("taskEarlyStartDateTime",task.getEarlyStartTime().getTime());
+            item.put("taskLateFinishDateTime",task.getOldestFinishTime().getTime());
+            item.put("taskWorkModel",task.getTaskWorkModel());
+            tasks.add(item);
+        }
+        data.put("task",tasks);
+        return data;
+    }
+
+    /**
+     *@Description: 整理task间的连接关系，输出流程优化所需格式
+     *@Param:
+     *@return:
+     *@Author: Mr.kong
+     *@Date: 2020/9/8
+     */
+    public JSONObject getPlanLinkData(List<NodeTaskM> taskMS) throws Exception{
+        JSONObject data=new JSONObject();
+        List<JSONObject> linkList=new ArrayList<>();
+        for (NodeTaskM task:taskMS){
+            //普通连接
+            List<NodeTaskM> after=getAfterNodeTask(task);
+            for (NodeTaskM temp:after){
+                JSONObject item=new JSONObject();
+                item.put("taskLinkPreTaskUid",task.getNo());
+                item.put("taskLinkSucTaskUid",temp.getNo());
+                item.put("taskLinkType",0);
+                linkList.add(item);
+            }
+
+            //真连接
+            List<NodeTaskM> realAfter=getRealAfterTask(task);
+            for (NodeTaskM temp:realAfter){
+                JSONObject item=new JSONObject();
+                item.put("taskLinkPreTaskUid",task.getNo());
+                item.put("taskLinkSucTaskUid",temp.getNo());
+                item.put("taskLinkType",1);
+                linkList.add(item);
+            }
+            List<NodeTaskM> realBefore=getRealBeforeTask(task);
+            for (NodeTaskM temp:realBefore){
+                JSONObject item=new JSONObject();
+                item.put("taskLinkPreTaskUid",temp.getNo());
+                item.put("taskLinkSucTaskUid",task.getNo());
+                item.put("taskLinkType",1);
+                linkList.add(item);
+            }
+
+        }
+        data.put("taskLink",linkList);
+        return data;
+    }
+
+    public List<NodeTaskM> getRealAfterTask(NodeTaskM task) throws Exception{
+        Node node=new Node(task.getNodeId());
+        String realAfter=node.GetValStrByKey(NodeAttr.RealAfter);
+        if (org.springframework.util.StringUtils.isEmpty(realAfter))
+            return new ArrayList<>();
+        List<String> nodeIds=new ArrayList<>();
+        for (String nodeId:realAfter.split("/")){
+            nodeIds.add(nodeId);
+        }
+        return nodeTaskManage.getNodeTaskByNodeIdsAndParentTaskId(task.getParentNodeTask(),nodeIds);
+    }
+
+    public List<NodeTaskM> getRealBeforeTask(NodeTaskM task) throws Exception{
+        Node node=new Node(task.getNodeId());
+        String realAfter=node.GetValStrByKey(NodeAttr.RealBefore);
+        if (org.springframework.util.StringUtils.isEmpty(realAfter))
+            return new ArrayList<>();
+        List<String> nodeIds=new ArrayList<>();
+        for (String nodeId:realAfter.split("/")){
+            nodeIds.add(nodeId);
+        }
+        return nodeTaskManage.getNodeTaskByNodeIdsAndParentTaskId(task.getParentNodeTask(),nodeIds);
+    }
+
+    /**
+    *@Description: 获取资源方案信息
+    *@Param:
+    *@return:
+    *@Author: Mr.kong
+    *@Date: 2020/9/8
+    */
+    public JSONObject getResourcePlanData(List<NodeTaskM> taskMList) throws Exception{
+        JSONObject data=new JSONObject();
+        List<JSONObject> resourcePlanList=new ArrayList<>();
+        List<JSONObject> resourceNeedList=new ArrayList<>();
+        Map<String, BP.Resource.Resource> resourceMap=new HashMap<>();
+
+        for (NodeTaskM task:taskMList){
+            ResourcePlans plans=new ResourcePlans();
+            plans.Retrieve(ResourcePlanAttr.NodeId,task.getNodeId());
+            List<ResourcePlan> tempList=plans.toList();
+            for (ResourcePlan plan:tempList){
+                JSONObject item=new JSONObject();
+                item.put("resPlanUid",plan.getNo());
+                item.put("resPlanTaskUid",task.getNo());
+                resourcePlanList.add(item);
+
+                ResourceTasks resourceTasks=new ResourceTasks();
+                resourceTasks.Retrieve(ResourceTaskAttr.PlanId,plan.getNo());
+                List<ResourceTask> resourceTaskList=resourceTasks.toList();
+                for (ResourceTask temp:resourceTaskList){
+
+                    String resourceNo=temp.GetValStrByKey(ResourceTaskAttr.ResourceNo);
+                    BP.Resource.Resource resource=resourceMap.get(resourceNo);
+                    if (resource==null) {
+                        resource = new BP.Resource.Resource(resourceNo);
+                        resourceMap.put(resourceNo,resource);
+                    }
+
+                    JSONObject resourceTaskItem=new JSONObject();
+                    resourceTaskItem.put("resReqUid",temp.getNo());
+                    resourceTaskItem.put("resReqResPlanUid",plan.getNo());
+                    resourceTaskItem.put("resReqResType",resource.GetValIntByKey(ResourceAttr.Kind));
+                    resourceTaskItem.put("resReqResUid",resource.getNo());
+                    resourceTaskItem.put("resReqResWork",temp.GetValIntByKey(ResourceTaskAttr.UseTime));
+                    resourceTaskItem.put("resReqResAmount",temp.GetValIntByKey(ResourceTaskAttr.UseNum));
+                    //计划数量
+                    resourceNeedList.add(resourceTaskItem);
+                }
+            }
+        }
+        data.put("taskResPlan",resourcePlanList);
+        data.put("taskResReq",resourceNeedList);
+
+        //资源基本信息
+        List<JSONObject> resourceHumanList=new ArrayList<>();
+        List<JSONObject> resourceEquipmentList=new ArrayList<>();
+        List<JSONObject> resourcePlaceList=new ArrayList<>();
+        List<JSONObject> resourceKnowledgeList=new ArrayList<>();
+
+        //资源已用
+        List<JSONObject> resourceLoadList=new ArrayList<>();
+        for (Map.Entry<String, BP.Resource.Resource> resourceEntry:resourceMap.entrySet()){
+            ResourceTasks tasks=new ResourceTasks();
+            tasks.Retrieve(ResourceTaskAttr.ResourceNo,resourceEntry.getKey(),ResourceTaskAttr.IsPlan,1);//已经计划的资源任务
+            List<ResourceTask> list=tasks.toList();
+
+            for (ResourceTask task:list){
+                JSONObject item=new JSONObject();
+                item.put("arUid",task.getNo());
+                item.put("arResUid",task.GetValStrByKey(ResourceTaskAttr.ResourceNo));
+                item.put("arResStartDateTime",task.GetValDateTime(ResourceTaskAttr.PlanStart).getTime());
+                item.put("arResFinishDateTime",task.GetValDateTime(ResourceTaskAttr.PlanEnd).getTime());
+                item.put("arResWork",(task.GetValIntByKey(ResourceTaskAttr.UseTime)+0.0)/10);
+                item.put("arResAmount",task.GetValIntByKey(ResourceTaskAttr.UseNum));
+                resourceLoadList.add(item);
+            }
+
+            BP.Resource.Resource resource=resourceEntry.getValue();
+            int type=resource.GetValIntByKey(ResourceAttr.Kind);//0=人力@1=设备@2=环境@3=知识"
+            JSONObject item=new JSONObject();
+            switch (type){
+                case 0:
+                    item.put("humUid",resource.getNo());
+                    resourceHumanList.add(item);
+                    break;
+                case 1:
+                    item.put("equipUid",resource.getNo());
+                    resourceEquipmentList.add(item);
+                    break;
+                case 2:
+                    item.put("placeUid",resource.getNo());
+                    item.put("placeArea",resource.GetValIntByKey(ResourceAttr.Num));
+                    resourcePlaceList.add(item);
+                    break;
+                case 3:
+                    item.put("knowlUid",resource.getNo());
+                    item.put("knowlAmount",resource.GetValIntByKey(ResourceAttr.Num));
+                    resourceKnowledgeList.add(item);
+                    break;
+            }
+
+        }
+
+        data.put("allocateResource",resourceLoadList);
+        data.put("human",resourceHumanList);
+        data.put("equipment",resourceEquipmentList);
+        data.put("place",resourcePlaceList);
+        data.put("knowledge",resourceKnowledgeList);
+        return data;
+    }
+
+
+
+
 }

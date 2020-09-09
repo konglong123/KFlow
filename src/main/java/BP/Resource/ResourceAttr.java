@@ -24,4 +24,6 @@ public class ResourceAttr extends BP.En.EntityNoNameAttr {
 
     public static final String SignType = "SignType";
 
+    public static final String Num = "num";
+
 }

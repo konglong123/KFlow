@@ -62,7 +62,10 @@ public class NodeTaskManage {
     }
 
     public List getNodeTaskByNodeIdsAndParentTaskId(String parentTaskId,List<String> nodeIds){
-        return nodeTaskMDao.getNodeTaskByNodeIdsAndParentTaskId(parentTaskId,nodeIds);
+        List list=nodeTaskMDao.getNodeTaskByNodeIdsAndParentTaskId(parentTaskId,nodeIds);
+        if (list==null)
+            return new ArrayList();
+        return list;
     }
 
     public Long insertNodeTask(NodeTaskM nodeTaskM){
