@@ -538,4 +538,5 @@ public class NodeAttr
 
 	public static final String TaskPriority="TaskPriority";
 	public static final String WorkModel="WorkModel";
+	public static final String GroupNo="groupNo";
 }

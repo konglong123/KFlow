@@ -693,7 +693,7 @@ public class NodeTaskService {
                 linkList.add(item);
             }
 
-            //真连接
+           /* //真连接
             List<NodeTaskM> realAfter=getRealAfterTask(task);
             for (NodeTaskM temp:realAfter){
                 JSONObject item=new JSONObject();
@@ -701,15 +701,15 @@ public class NodeTaskService {
                 item.put("taskLinkSucTaskUid",temp.getNo());
                 item.put("taskLinkType",1);
                 linkList.add(item);
-            }
-            List<NodeTaskM> realBefore=getRealBeforeTask(task);
+            }*/
+           /* List<NodeTaskM> realBefore=getRealBeforeTask(task);
             for (NodeTaskM temp:realBefore){
                 JSONObject item=new JSONObject();
                 item.put("taskLinkPreTaskUid",temp.getNo());
                 item.put("taskLinkSucTaskUid",task.getNo());
                 item.put("taskLinkType",1);
                 linkList.add(item);
-            }
+            }*/
 
         }
         data.put("taskLink",linkList);
@@ -849,6 +849,17 @@ public class NodeTaskService {
     }
 
 
+    /**
+    *@Description: 获取任务的分组（可调换分组）信息
+    *@Param:
+    *@return:
+    *@Author: Mr.kong
+    *@Date: 2020/9/14
+    */
+    public JSONObject getGroupData(List<NodeTaskM> taskMList) throws Exception{
+        JSONObject data=new JSONObject();
+        return data;
+    }
 
 
 }

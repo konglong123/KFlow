@@ -150,6 +150,11 @@ public class FeignController {
             JSONObject linkData=nodeTaskService.getPlanLinkData(tasks);
             data.putAll(linkData);
 
+            //封装分组信息
+            JSONObject groupData=nodeTaskService.getGroupData(tasks);
+            data.putAll(groupData);
+
+
             //封装资源，资源任务
             JSONObject resource=nodeTaskService.getResourcePlanData(tasks);
             data.putAll(resource);

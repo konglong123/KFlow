@@ -91,7 +91,6 @@ function initDgNodeResource(nodeId,planId) {
     });
 }
 function bookResource(no) {
-    debugger
     var row = $('#dgNodeResourcePlans').datagrid('getSelected');
     if (row==null){
         alert("请选中资源方案！");

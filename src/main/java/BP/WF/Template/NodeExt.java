@@ -291,6 +291,7 @@ public class NodeExt extends Entity
                 true, true, NodeAttr.WorkModel, "@0=普通（朝8晚6）@1=连续（24h）");
 
         map.AddTBInt(NodeAttr.Doc, 0, "工作量(h)", true, false);
+        map.AddTBString(NodeAttr.GroupNo, null, "FrmAttr", true, true, 0, 100, 10);
         map.AddTBStringDoc(NodeAttr.Tip, null, "操作提示", true, false);//"http://ccbpm.mydoc.io/?v=5404&t=18084"
 
         //  #endregion  基础属性

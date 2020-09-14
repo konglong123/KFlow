@@ -1,5 +1,6 @@
 package BP.springCloud.controller;
 
+import BP.NodeGroup.*;
 import BP.Project.ProjectTree;
 import BP.Project.ProjectTreeAttr;
 import BP.Sys.EnCfg;
@@ -21,6 +22,7 @@ import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -275,6 +277,120 @@ public class FlowController {
             logger.error(e.getMessage());
         }
         return data;
+    }
+
+
+    @RequestMapping("getNodeGroups")
+    @ResponseBody
+    public void getNodeGroups(HttpServletRequest request, HttpServletResponse response){
+        try {
+            String flowNo=request.getParameter("flowNo");
+            NodeGroups groups=new NodeGroups();
+            groups.Retrieve(NodeGroupAttr.flow_no,flowNo);
+            PageTool.TransToResult(groups,request,response);
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+
+    }
+
+
+    @RequestMapping("getNodeGroupItems")
+    @ResponseBody
+    public void getNodeGroupItems(HttpServletRequest request, HttpServletResponse response){
+        try {
+            String groupNo=request.getParameter("groupNo");
+            NodeGroupItems groupItems=new NodeGroupItems();
+            groupItems.Retrieve(NodeGroupItemAttr.group_no,groupNo);
+            PageTool.TransToResult(groupItems,request,response);
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+
+    }
+
+
+    @RequestMapping("addNodeGroupItem")
+    @ResponseBody
+    public JSONObject addNodeGroupItem(HttpServletRequest request, HttpServletResponse response){
+        String nodeNo=request.getParameter("nodeNo");
+        String groupNo=request.getParameter("groupNo");
+        String nodeName=request.getParameter("nodeName");
+        JSONObject result=new JSONObject();
+        try {
+            NodeGroupItems items=new NodeGroupItems();
+            items.Retrieve(NodeGroupItemAttr.group_no,groupNo,NodeGroupItemAttr.node_no,nodeNo);
+            if (items.size()>0){
+                result.put("msg","该节点已在分组中");
+                return result;
+            }
+            NodeGroupItem item=new NodeGroupItem();
+            item.SetValByKey(NodeGroupItemAttr.group_no,groupNo);
+            item.SetValByKey(NodeGroupItemAttr.node_no,nodeNo);
+            item.SetValByKey(NodeGroupItemAttr.node_name,nodeName);
+            item.Insert();
+            result.put("msg","添加成功！");
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+        return result;
+    }
+
+    @RequestMapping("delNodeGroupItem")
+    @ResponseBody
+    public void delNodeGroupItem(HttpServletRequest request, HttpServletResponse response){
+        String itemNo=request.getParameter("itemNo");
+        try{
+            NodeGroupItem item=new NodeGroupItem(itemNo);
+            item.Delete();
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+
+    }
+
+    @RequestMapping("addNodeGroup")
+    @ResponseBody
+    public void addNodeGroup(HttpServletRequest request, HttpServletResponse response){
+        try {
+            String flowNo=request.getParameter("flowNo");
+            NodeGroup group=new NodeGroup();
+            group.SetValByKey(NodeGroupAttr.flow_no,flowNo);
+            group.Insert();
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+
+    }
+
+    @RequestMapping("delNodeGroup")
+    @ResponseBody
+    public void delNodeGroup(HttpServletRequest request, HttpServletResponse response){
+        String groupNo=request.getParameter("groupNo");
+        try{
+            NodeGroup group=new NodeGroup(groupNo);
+            group.Delete();
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+    }
+
+    @RequestMapping("getNodesByFlowNo")
+    @ResponseBody
+    public void getNodesByFlowNo(HttpServletRequest request, HttpServletResponse response){
+        String flowNo=request.getParameter("flowNo");
+        String nodeNo=request.getParameter("nodeNo");
+        Nodes nodes=new Nodes();
+        try {
+            if (StringUtils.isEmpty(nodeNo)) {
+                nodes.Retrieve(NodeAttr.FK_Flow, flowNo);
+            }else {
+                nodes.Retrieve(NodeAttr.NodeID,nodeNo);
+            }
+            PageTool.TransToResult(nodes,request,response);
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
     }
 
 }
