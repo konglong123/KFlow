@@ -63,15 +63,18 @@
                     <button class="btn btn-Property" type="button" id="Btn_NodeGroup" onclick="groupNode()">
                         划分片段
                     </button>
+                    <button class="btn btn-Property" type="button" id="Btn_Compose" onclick="composeGroup()">
+                        智能推荐
+                    </button>
                     <!--<button class="btn btn-info" type="button" id="Btn_Rpt" onclick="FlowRpt()">
                         定义报表
                     </button>-->
                     <button class="btn btn-info" type="button" id="Btn_Check" onclick="FlowCheck()">
                         检查流程
                     </button>
-                   <button class="btn btn-danger" type="button" id="Btn_Run" onclick="FlowRun()">
+                  <!-- <button class="btn btn-danger" type="button" id="Btn_Run" onclick="FlowRun()">
                         运行仿真
-                    </button>
+                    </button>-->
                     <!-- <button class="btn btn-danger" type="button" id="Btn_RunIt" onclick="FlowRunAdmin()">
                         admin运行
                     </button>-->
@@ -216,6 +219,7 @@
             -->
                 <li id="Node_ZLC"><i class="icon-tags"></i>&nbsp;<span class="_label">子流程</span></li>
                 <li id="Node_JC"><i class="icon-tags"></i>&nbsp;<span class="_label">决策</span></li>
+                <li id="Node_MH"><i class="icon-tags"></i>&nbsp;<span class="_label">模糊</span></li>
             </ul>
         </div>
         <div id="canvasMenu" style="display: none;">
@@ -319,6 +323,10 @@
         $('#Node_JC').on('click', function () {
             var nodeID = document.getElementById("leipi_active_id");
             SetNodeRunModel(nodeID.value, 9);
+        });
+        $('#Node_MH').on('click', function () {
+            var nodeID = document.getElementById("leipi_active_id");
+            SetNodeRunModel(nodeID.value, 10);
         });
         //节点类型--子流程
         $('#Node_ZLC').on('click', function () {
@@ -1005,6 +1013,9 @@
                             break;
                         case 9:
                             strs+="'icon':'icon-judge',";
+                            break;
+                        case 10:
+                            strs+="'icon':'icon-mohu',";
                             break;
                     }
                 }

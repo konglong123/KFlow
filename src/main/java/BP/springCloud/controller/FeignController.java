@@ -118,6 +118,13 @@ public class FeignController {
     }
 
 
+    /**
+    *@Description: 计划调度基础数据封装
+    *@Param:
+    *@return:
+    *@Author: Mr.kong
+    *@Date: 2020/9/14
+    */
     @ResponseBody
     @RequestMapping("planAllTask")
     public JSONObject planAllTask(@RequestBody JSONObject con){
@@ -166,5 +173,10 @@ public class FeignController {
         return data;
     }
 
+    @ResponseBody
+    @RequestMapping("analysePlanData")
+    public JSONObject analysePlanData(@RequestBody JSONObject con){
+        return null;
+    }
 
 }

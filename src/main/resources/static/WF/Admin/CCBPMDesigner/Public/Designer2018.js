@@ -287,3 +287,8 @@ function groupNode() {
     window.parent.addTab(flowNo, "划分片段" + flowNo, url);
 }
 
+function composeGroup() {
+    url = "../../Admin/CCBPMDesigner/ComposeGroup.html?FK_Flow=" + flowNo;
+    window.parent.addTab(flowNo, "智能推荐" + flowNo, url);
+}
+

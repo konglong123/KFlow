@@ -2036,7 +2036,7 @@ public class Node extends Entity {
 		// #region 基本属性.
 		map.AddTBIntPK(NodeAttr.NodeID, 0, "节点ID", true, true);
 		map.AddTBString(NodeAttr.Name, null, "名称", true, false, 0, 100, 10);
-		map.AddTBString(NodeAttr.Tip, null, "操作提示", true, true, 0, 100, 10, false);
+		map.AddTBString(NodeAttr.Tip, null, "提示/功能描述", true, true, 0, 100, 10, false);
 
 		map.AddTBInt(NodeAttr.Step, 1, "流程步骤", true, false);
 

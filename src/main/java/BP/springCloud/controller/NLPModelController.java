@@ -2,6 +2,9 @@ package BP.springCloud.controller;
 
 import BP.Nlp.NLPTool;
 import BP.Nlp.NlpmodelService;
+import BP.NodeGroup.NodeGroup;
+import BP.NodeGroup.NodeGroupAttr;
+import BP.NodeGroup.NodeGroups;
 import BP.Sys.EnCfg;
 import BP.WF.Flow;
 import BP.WF.Flows;
@@ -104,6 +107,8 @@ public class NLPModelController {
     public Object getNearestDoc(String doc){
         return queryWord2Document(doc);
     }
+
+
 
     /**
     *@Description: 根据abstracts查询相似文档，并返回list<JSONObject</>>
@@ -409,6 +414,13 @@ public class NLPModelController {
     }
 
 
+    /**
+    *@Description: 语义检索流程模板
+    *@Param:
+    *@return:
+    *@Author: Mr.kong
+    *@Date: 2020/9/16
+    */
     @RequestMapping("getWFMultiType")
     @ResponseBody
     public void getWFbyWord2(HttpServletRequest request,HttpServletResponse response){
@@ -457,6 +469,57 @@ public class NLPModelController {
             logger.error(e.getMessage());
         }
     }
-    
 
+
+    /**
+    *@Description: 语义检索 流程片段（支持两种方式）
+    *@Param:
+    *@return:
+    *@Author: Mr.kong
+    *@Date: 2020/9/16
+    */
+    @RequestMapping("getNodeGroupMultiType")
+    @ResponseBody
+    public void getNodeGroupMultiType(HttpServletRequest request,HttpServletResponse response){
+        /*String type=request.getParameter("type");
+        try {
+            if (type.equals("1"))
+                FeignTool.esQuery("http://112.125.90.132:8082/es/getWFDsl",request,response);
+            else
+                queryNodeGroupByWord2(request,response);
+
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }*/
+    }
+
+    /**
+    *@Description: word2检索节点组
+    *@Param:
+    *@return:
+    *@Author: Mr.kong
+    *@Date: 2020/9/16
+    */
+    public List<JSONObject> queryNodeGroupByWord2(String abstracts){
+        List<JSONObject> data=queryWord2Document(abstracts);
+        List<JSONObject> result=new ArrayList<>();
+        //查询流程信息
+        try {
+            NodeGroups groups = new NodeGroups();
+            for (JSONObject item : data) {
+                String doc = item.getString("abstracts");
+                groups.Retrieve(FlowAttr.Note, doc);
+                if (groups.size() > 0) {
+                    NodeGroup group = (NodeGroup) groups.get(0);
+                    item.put("group", group);
+                    item.put("score",item.getFloat("score"));
+                    result.add(item);
+                }
+
+            }
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+        return result;
+    }
 }

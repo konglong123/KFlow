@@ -2,6 +2,7 @@ package BP.Task;
 
 import BP.DA.DataRow;
 import BP.DA.DataTable;
+import BP.NodeGroup.*;
 import BP.Resource.*;
 import BP.WF.Nodes;
 import BP.springCloud.dao.ResourceTaskMDao;
@@ -858,6 +859,41 @@ public class NodeTaskService {
     */
     public JSONObject getGroupData(List<NodeTaskM> taskMList) throws Exception{
         JSONObject data=new JSONObject();
+        //<groupNo,>
+        Map<String, NodeGroup> map=new HashMap<>();
+        List<JSONObject> taskGroupList=new ArrayList<>();
+        NodeGroupItems items=new NodeGroupItems();
+        for (NodeTaskM taskM:taskMList){
+            String nodeNo=taskM.getNodeId();
+            items.Retrieve(NodeGroupItemAttr.node_no,nodeNo);
+            List<NodeGroupItem> itemList=items.toList();
+            for (NodeGroupItem item:itemList){
+                String groupNo=item.GetValStrByKey(NodeGroupItemAttr.group_no);
+                NodeGroup group=map.get(groupNo);
+                if (group==null){
+                    group=new NodeGroup(groupNo);
+                    map.put(groupNo,group);
+                }
+                //模块分组不在统计范围内
+                if (group.GetValIntByKey(NodeGroupAttr.type)==2)
+                    continue;
+                JSONObject temp=new JSONObject();
+                temp.put("taskGroupUid",item.getNo());
+                temp.put("taskGroupTaskUid",taskM.getNo());
+                temp.put("taskGroupGroupUid",groupNo);
+                taskGroupList.add(temp);
+            }
+        }
+
+        List<JSONObject> groupList=new ArrayList<>();
+        for (String groupNo:map.keySet()){
+            JSONObject temp=new JSONObject();
+            temp.put("groupUid",groupNo);
+            groupList.add(temp);
+        }
+
+        data.put("taskGroup",taskGroupList);
+        data.put("group",groupList);
         return data;
     }
 

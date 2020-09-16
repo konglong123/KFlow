@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="../../Scripts/easyUI/themes/default/easyui.css" rel="stylesheet" type="text/css" />
+    <script src="../../Scripts/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="../../Scripts/easyUI/jquery.easyui.min.js" type="text/javascript"></script>
+    <script src="../../Scripts/QueryString.js" type="text/javascript"></script>
+    <script src="../../Scripts/EasyUIUtility.js" type="text/javascript"></script>
+</head>
+<body>
+<div>
+    <fieldset>
+        <table cellpadding="5">
+            <tr>
+                <td>种群数：</td>
+                <td><input id="groupNum" class="easyui-textbox" type="text"></td>
+                <td>进化代数：</td>
+                <td><input class="easyui-textbox" type="text" id="generateNum"></td>
+            </tr>
+            <tr>
+                <td>变异率：</td>
+                <td><input class="easyui-textbox" type="text" id="variationPro"></td>
+                <td>交叉率：</td>
+                <td><input class="easyui-textbox" type="text" id="nameQuery"></td>
+                <td>精英选择比：</td>
+                <td><input class="easyui-textbox" type="text" id="elitePro"></td>
+            </tr>
+        </table>
+    </fieldset>
+    <div style="text-align:right;padding:5px">
+        <button class="easyui-linkbutton" onclick="" >同步分组数据</button>
+        <button class="easyui-linkbutton" onclick="getCompose()" >智能推荐</button>
+    </div>
+</div>
+<div id="composeResult">
+    <table id="dgComposeResults" title="推荐列表">
+    </table>
+</div>
+<div id="composeHistory">
+    <table id="dgComposeHistory" title="推荐记录">
+    </table>
+</div>
+<script type="text/javascript">
+    $(function(){
+        var flowNo=GetQueryString("FK_Flow");
+        initComposeHistory(flowNo);
+    });
+    
+    function initComposeHistory(flowNo) {
+        $('#dgComposeHistory').datagrid({
+            singleSelect:true,
+            autoRowHeight:false,
+            pagination:true,
+            pageSize: 10,
+            pageList:[10,25,50,100],
+            nowrap:false,//数据多行显示
+            fitColumns:true,//表头与数据对齐
+            url:"/WF/composeGroup/getComposeGroups",
+            queryParams: {
+                flowNo:flowNo
+            },
+            columns:[[
+                {field:'No',title: '编号',align: 'center',width:10},
+                {field:'score',title: '相似度值',align: 'center',width:10},
+                {field:'newFlowNo',title: '组合流程编码',align: 'center',width:10},
+                {field:'groupNum',title: '种群数',align: 'center',width:10},
+                {field:'variationPro',title: '变异率',align: 'center',width:10},
+                {field:'acrossPro',title: '交叉率',align: 'center',width:10},
+                {field:'elitePro',title: '精英比例',align: 'center',width:10},
+                {field:'generateNum',title: '进化代数',align: 'center',width:10},
+                {field:'action',title: '操作',align: 'center',width:20,
+                    formatter:function(val,rec){
+                        var str="<input type='button' value='流程详情'  onclick='gotoComposeFlowDetail(\""+rec.newFlowNo+"\")'/>";
+                        return str;
+                    }},
+            ]]
+        });
+    }
+
+    function gotoComposeFlowDetail(flowNo) {
+        var url="/WF/WF/Admin/CCBPMDesigner/Designer.htm?GenerFlowNo="+no+"&type=2";
+        var self = window.open(url);
+    }
+
+    function getCompose() {
+
+    }
+</script>
+</body>
+</html>

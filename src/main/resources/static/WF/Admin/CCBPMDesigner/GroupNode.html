@@ -20,6 +20,7 @@
             <div id="nodes">
                 <fieldset>
                     <div style="width:95%;border-top: 0px solid #C0C0C0;">
+                        <input type="button" value="初始化分组摘要" onclick="initGroupInfo()" style="float:right"/>
                         <input type="button" value="创建分组" onclick="addNodeGroup()" style="float:right"/>
                         <input type="button" value="查询节点" onclick="queryNode()" style="float:right"/>
                         节点编码：<input id="nodeNoQuery" type="text">
@@ -77,6 +78,8 @@
                         str="模块分组";
                     return str;
                 }},
+                {field:'inNodeNo',title: '入口节点编码',align: 'center',width:10},
+                {field:'outNodeNo',title: '出口节点编码',align: 'center',width:10},
                 {field:'detail',title: '备注',align: 'center',width:10},
                 {field:'operation',title: '操作',align: 'center',width:50,
                     formatter:function(val,rec){
@@ -221,11 +224,24 @@
     }
 
     function queryNode() {
-        debugger
         var queryParams = $('#dgNodes').datagrid('options').queryParams;
         queryParams.flowNo = GetQueryString("FK_Flow");;
         queryParams.nodeNo=$("#nodeNoQuery").val();
         $("#dgNodes").datagrid('reload');
+
+    }
+
+    function initGroupInfo() {
+        $.ajax({
+            url: "/WF/composeGroup/initNodeGroup",
+            type: 'POST',
+            success: function (data) {
+                alert("初始化结束！");
+            },
+            error: function (data) {
+                console.log("error"+data);
+            }
+        });
     }
 </script>
 

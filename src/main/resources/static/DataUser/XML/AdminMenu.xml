@@ -63,6 +63,7 @@
   <Item No="503" GroupNo="Org" Name="人员台帐" For="" Url="../../Comm/SearchBS.htm?EnsName=BP.WF.Port.SubInc.Emps"  />
   <Item No="504" GroupNo="Org" Name="组织结构维护" For="" Url="../../Comm/SearchBS.htm?EnsName=BP.WF.Port.SubInc.AdminEmps"  />-->
   <Item No="1008" GroupNo="RES" Name="项目管理" For="" Url="../../Comm/SearchBS.htm?EnsName=BP.Project.ProjectTrees"  />
+  <Item No="1009" GroupNo="RES" Name="分组管理" For="" Url="../../Comm/SearchBS.htm?EnsName=BP.NodeGroup.NodeGroups"  />
 
 
 </NewDataSet>

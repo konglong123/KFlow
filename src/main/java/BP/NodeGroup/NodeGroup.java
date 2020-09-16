@@ -44,8 +44,12 @@ public class NodeGroup extends EntityNo{
         Map map = new Map("k_node_group", "分组");
         map.AddTBStringPK(NodeGroupAttr.No, null, "编号", true, true,1, 40, 100);
         map.AddTBString(NodeGroupAttr.name, null, "分组名", true, false, 1, 40, 100);
-        map.AddTBString(NodeGroupAttr.flow_no, null, "流程编码", true, false, 0, 100, 100);
-        map.AddTBString(NodeGroupAttr.flow_name, null, "流程名", true, false, 0, 100, 100);
+        map.AddTBString(NodeGroupAttr.flow_no, null, "流程编码", true, true, 0, 100, 100);
+        map.AddTBString(NodeGroupAttr.flow_name, null, "流程名", true, true, 0, 100, 100);
+        map.AddTBInt(NodeGroupAttr.nodeNum, 0, "节点数", true, true);
+        map.AddTBString(NodeGroupAttr.inNodeNo, null, "入口节点编码", true, false, 0, 100, 100);
+        map.AddTBString(NodeGroupAttr.outNodeNo, null, "出口节点编码", true, false, 0, 100, 100);
+
         map.AddDDLSysEnum(NodeGroupAttr.type, 2, "类型", true, true, NodeGroupAttr.type,
                 "@1=可调换分组@2=模块分组");
         map.AddTBString(NodeGroupAttr.detail, null, "详情", true, false, 0, 100, 100);

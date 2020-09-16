@@ -144,6 +144,10 @@ html,body{height:100%;}
   background:url('../../../Img/judge.svg') no-repeat center center;
 }
 
+.icon-mohu{
+  background:url('../../../Img/question.svg') no-repeat center center;
+}
+
 .icon-heliu{
   background:url('../../../Img/huihe.svg') no-repeat center center;
 }

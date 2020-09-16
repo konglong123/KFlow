@@ -287,7 +287,7 @@ public class NodeAttr
 	 
 	/** 
 	 运行模式
-	 0 普通;1 合流;2 分流,4,子流程，9 决策
+	 0 普通;1 合流;2 分流,4,子流程，9 决策,10模糊
 	 
 	*/
 	public static final String RunModel = "RunModel";

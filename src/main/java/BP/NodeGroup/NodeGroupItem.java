@@ -50,6 +50,29 @@ public class NodeGroupItem extends EntityNo {
     protected boolean beforeInsert() throws Exception {
         Long id= FeignTool.getSerialNumber("BP.NodeGroup.NodeGroupItem");
         this.setNo(id+"");
+
+        //更新分组信息
+        String groupNo=this.GetValStrByKey(NodeGroupItemAttr.group_no);
+        NodeGroup group=new NodeGroup(groupNo);
+        NodeGroupItems items=new NodeGroupItems();
+        items.Retrieve(NodeGroupItemAttr.group_no,groupNo);
+        group.SetValByKey(NodeGroupAttr.nodeNum,items.size()+1);
+        group.Update();
+
         return super.beforeInsert();
+    }
+
+    @Override
+    protected boolean beforeDelete() throws Exception {
+
+        //更新分组信息
+        String groupNO=this.GetValStrByKey(NodeGroupItemAttr.group_no);
+        NodeGroup group=new NodeGroup(groupNO);
+        NodeGroupItems items=new NodeGroupItems();
+        items.Retrieve(NodeGroupItemAttr.group_no,groupNO);
+        group.SetValByKey(NodeGroupAttr.nodeNum,items.size()-1);
+        group.Update();
+
+        return super.beforeDelete();
     }
 }

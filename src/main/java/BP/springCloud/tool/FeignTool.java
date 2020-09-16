@@ -56,6 +56,13 @@ public class FeignTool {
         return -1L;
     }
 
+    /**
+    *@Description:  请求目标url，返回相应
+    *@Param:
+    *@return:
+    *@Author: Mr.kong
+    *@Date: 2020/9/16
+    */
     private static Object callFeign(String url,Map<String,Object> postBody){
         try{
             HttpEntity<Map> requestEntity = new HttpEntity<>(postBody, null);
@@ -124,7 +131,6 @@ public class FeignTool {
         Map<String, String> bodys = new HashMap<String, String>();
 
         try {
-
             HttpResponse response = HttpUtils.doPost(host, path, method, headers, querys, bodys);
             return EntityUtils.toString(response.getEntity());
         } catch (Exception e) {
