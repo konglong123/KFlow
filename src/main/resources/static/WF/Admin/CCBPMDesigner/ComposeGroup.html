@@ -14,23 +14,25 @@
         <table cellpadding="5">
             <tr>
                 <td>种群数：</td>
-                <td><input id="groupNum" class="easyui-textbox" type="text"></td>
+                <td><input id="groupNum" value="10" class="easyui-textbox" type="text" placeholder="默认100"></td>
                 <td>进化代数：</td>
-                <td><input class="easyui-textbox" type="text" id="generateNum"></td>
+                <td><input class="easyui-textbox" type="text" id="generateNum" value="50" placeholder="默认50"></td>
+                <td>推荐结果保存数：</td>
+                <td><input class="easyui-textbox" type="text" id="saveNum" value="1" placeholder="默认3"></td>
             </tr>
             <tr>
                 <td>变异率：</td>
-                <td><input class="easyui-textbox" type="text" id="variationPro"></td>
+                <td><input class="easyui-textbox" type="text" id="variationPro" value="0.5" placeholder="默认0.5"></td>
                 <td>交叉率：</td>
-                <td><input class="easyui-textbox" type="text" id="nameQuery"></td>
+                <td><input class="easyui-textbox" type="text" id="acrossPro" value="0.7" placeholder="默认0.7"></td>
                 <td>精英选择比：</td>
-                <td><input class="easyui-textbox" type="text" id="elitePro"></td>
+                <td><input class="easyui-textbox" type="text" id="elitePro" value="0.1" placeholder="默认0.1"></td>
             </tr>
         </table>
     </fieldset>
     <div style="text-align:right;padding:5px">
-        <button class="easyui-linkbutton" onclick="" >同步分组数据</button>
         <button class="easyui-linkbutton" onclick="getCompose()" >智能推荐</button>
+        <button class="easyui-linkbutton" onclick="updateWord2Document()" >同步W2V数据</button>
     </div>
 </div>
 <div id="composeResult">
@@ -72,6 +74,8 @@
                 {field:'action',title: '操作',align: 'center',width:20,
                     formatter:function(val,rec){
                         var str="<input type='button' value='流程详情'  onclick='gotoComposeFlowDetail(\""+rec.newFlowNo+"\")'/>";
+                        str+="<input type='button' value='进化过程'  />";
+                        str+="<input type='button' value='详情'  />";
                         return str;
                     }},
             ]]
@@ -79,11 +83,46 @@
     }
 
     function gotoComposeFlowDetail(flowNo) {
-        var url="/WF/WF/Admin/CCBPMDesigner/Designer.htm?GenerFlowNo="+no+"&type=2";
+
+        var url="/WF/WF/Admin/CCBPMDesigner/Designer.htm?FK_Flow="+flowNo+"&UserNo=admin";
         var self = window.open(url);
     }
 
     function getCompose() {
+        var flowNo=GetQueryString("FK_Flow");
+        $.ajax({
+            type: 'POST',
+            url: "/WF/composeGroup/composeNodeGroup",
+            data: {
+                flowNo:flowNo,
+                groupNum:$("#groupNum").val().trim(),
+                generateNum:$("#generateNum").val().trim(),
+                variationPro:$("#variationPro").val().trim(),
+                acrossPro:$("#acrossPro").val().trim(),
+                elitePro:$("#elitePro").val().trim(),
+                saveNum:$("#saveNum").val().trim()
+            },
+            success: function (data) {
+                $("#dgComposeHistory").datagrid('reload');
+            },
+            error: function (data) {
+                alert("推荐异常"+data);
+            }
+        });
+    }
+
+    function updateWord2Document() {
+        $.ajax({
+            type: 'get',
+            async: false,
+            url: "/WF/NLPModel/updateW2VDocument",
+            success: function (data) {
+                alert("同步成功！");
+            },
+            error: function (data) {
+                alert("同步异常"+data);
+            }
+        });
 
     }
 </script>

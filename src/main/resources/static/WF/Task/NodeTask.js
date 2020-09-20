@@ -399,3 +399,18 @@ function getTaskInfoOneStatus(status) {
     });
     return data;
 }
+
+function planTask() {
+    var con={};
+    $.ajax({
+        url: "/WF/feign/planAllTask",
+        type: 'POST',
+        dataType: 'json',
+        async:false,
+        contentType:'application/json',
+        data: JSON.stringify(con),
+        success: function (dataTemp) {
+            data= dataTemp;
+        }
+    });
+}

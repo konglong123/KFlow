@@ -190,8 +190,18 @@
 					        }
 					        else if (node.RunModel == 4) {
 					            $('#pmfun span').text("子流程:" + nodeID.value);
-					        }else if (node.RunModel == 9) {
+					        }
+                            else if (node.RunModel == 5) {
+                                $('#pmfun span').text("开始:" + nodeID.value);
+                            }
+                            else if (node.RunModel == 6) {
+                                $('#pmfun span').text("结束:" + nodeID.value);
+                            }
+					        else if (node.RunModel == 9) {
                                 $('#pmfun span').text("决策:" + nodeID.value);
+                            }
+                            else if (node.RunModel == 10) {
+                                $('#pmfun span').text("模糊:" + nodeID.value);
                             }
 					        $(this).contextMenu('processMenu', contextmenu);
 					        ////$(this).contextMenu('processMenu3', contextmenu);

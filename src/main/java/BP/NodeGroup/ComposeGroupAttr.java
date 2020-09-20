@@ -19,4 +19,5 @@ public class ComposeGroupAttr {
     public static final String newFlowNo = "newFlowNo";
     public static final String history = "history";
     public static final String createTime = "createTime";
+    public static final String maxSaveNum = "maxSaveNum";
 }

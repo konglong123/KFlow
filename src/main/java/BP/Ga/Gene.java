@@ -3,6 +3,7 @@ package BP.Ga;
 public class Gene implements Cloneable{
 	private String nodeGroupNo;//节点分组编码
 	private int nodeNum;//分组中节点数目
+	private String nodeNo;//模糊节点编码
 	private double iFitness;//数值越大，适应度越大
 	public Gene(String nodeGroupNo,int nodeNum){
 		this.nodeGroupNo=nodeGroupNo;
@@ -31,5 +32,13 @@ public class Gene implements Cloneable{
 
 	public void setIFitness(double iFitness) {
 		this.iFitness = iFitness;
+	}
+
+	public String getNodeNo() {
+		return nodeNo;
+	}
+
+	public void setNodeNo(String nodeNo) {
+		this.nodeNo = nodeNo;
 	}
 }

@@ -15,7 +15,7 @@
     </table>
 </div>
 <div>
-    <table>
+    <table style="width: 100%;">
         <tr>
             <div id="nodes">
                 <fieldset>
@@ -28,14 +28,15 @@
                 </fieldset>
             </div>
         </tr>
-        <tr>
-           <td valign="top">
+        <tr style="width: 100%;">
+           <td valign="top" style="width: 50%;">
                <div>
                <table id="dgNodes" title="节点列表">
                </table>
            </div>
            </td>
-            <td valign="top"><div id="nodeGroupItems">
+            <td valign="top" style="width: 100%;">
+                <div id="nodeGroupItems">
                 <table id="dgNodeGroupItems" title="分组内节点">
                 </table>
             </div>
@@ -69,6 +70,7 @@
             columns:[[
                 {field:'No',title: '分组编码',align: 'center',width:10},
                 {field:'flow_no',title: '流程编码',align: 'center',width:10},
+                {field:'flow_name',title: '流程名',align: 'center',width:15},
                 {field:'type',title: '分类',align: 'center',width:10,
                 formatter:function (val,rec) {
                     var str="";

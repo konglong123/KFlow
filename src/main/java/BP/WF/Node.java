@@ -9,6 +9,7 @@ import BP.WF.Template.FrmSubFlow;
 import BP.WF.Template.FrmSubFlowAttr;
 import BP.WF.Template.FrmWorkCheckAttr;
 import BP.WF.Template.FrmWorkCheckSta;
+import BP.springCloud.tool.FeignTool;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -680,7 +681,9 @@ public class Node extends Entity {
 	 */
 	public final String getNo() {
 		try {
-			return String.valueOf(this.getNodeID()).substring(String.valueOf(this.getNodeID()).length() - 2);
+			//return String.valueOf(this.getNodeID()).substring(String.valueOf(this.getNodeID()).length() - 2);
+			return this.getNodeID()+"";
+
 		} catch (RuntimeException ex) {
 			Log.DefaultLogWriteLineInfo(ex.getMessage() + " - " + this.getNodeID());
 			throw new RuntimeException("@没有获取到它的NodeID = " + this.getNodeID());
@@ -2247,6 +2250,9 @@ public class Node extends Entity {
 		map.put("nodeNum",projectNum+"");
 		enCfg.setMap(map);
 		enCfg.Update();
+
+		String nodeId = FeignTool.getSerialNumber("BP.WF.Node")+"";
+		this.setNodeID(Integer.valueOf(nodeId));
 
 		return super.beforeInsert();
 	}

@@ -77,17 +77,3 @@ function getWorkflowData() {
 }
 
 
-function updateWord2Document() {
-    $.ajax({
-        type: 'get',
-        async: false,
-        url: "/WF/NLPModel/updateW2VDocument",
-        success: function (data) {
-            alert("同步成功！");
-        },
-        error: function (data) {
-            alert("同步异常"+data);
-        }
-    });
-
-}

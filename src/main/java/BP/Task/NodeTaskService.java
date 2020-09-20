@@ -663,7 +663,7 @@ public class NodeTaskService {
             item.put("taskProjUid",task.getWorkGroupId());
             item.put("taskPriority",task.getTaskPriority());
             //转换成汉卿中默认单位（天，每天10小时）
-            item.put("taskPlanDur",(task.getTotalTime()+0.1)/10);
+            item.put("taskPlanDur",(task.getTotalTime()+0.0)/10);
             item.put("taskEarlyStartDateTime",task.getEarlyStartTime().getTime());
             item.put("taskLateFinishDateTime",task.getOldestFinishTime().getTime());
             item.put("taskWorkModel",task.getTaskWorkModel());
@@ -885,15 +885,15 @@ public class NodeTaskService {
             }
         }
 
-        List<JSONObject> groupList=new ArrayList<>();
+       /* List<JSONObject> groupList=new ArrayList<>();
         for (String groupNo:map.keySet()){
             JSONObject temp=new JSONObject();
             temp.put("groupUid",groupNo);
             groupList.add(temp);
-        }
+        }*/
 
         data.put("taskGroup",taskGroupList);
-        data.put("group",groupList);
+        //data.put("group",groupList);
         return data;
     }
 

@@ -9,10 +9,14 @@ import BP.Resource.Resources;
 import BP.Task.NodeTaskService;
 import BP.springCloud.entity.NodeTaskM;
 import BP.springCloud.tool.FeignTool;
+import BP.springCloud.tool.Page;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -21,10 +25,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @program: kflow-web
@@ -132,7 +133,6 @@ public class FeignController {
 
         try {
             //封装项目信息
-            JSONObject projects=new JSONObject();
             ProjectTrees projectList=new ProjectTrees();
             projectList.Retrieve(ProjectTreeAttr.Status,1);
             JSONObject projectData=projectList.getPlanData();
@@ -165,6 +165,15 @@ public class FeignController {
             //封装资源，资源任务
             JSONObject resource=nodeTaskService.getResourcePlanData(tasks);
             data.putAll(resource);
+
+            LinkedMultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+            headers.put("Content-Type", Collections.singletonList("application/json;charset=UTF-8"));
+
+            String url="http://192.168.12.3:8082/pms/projOpt/testOptResult";
+            HttpEntity<Map> requestEntity = new HttpEntity<>(data, headers);
+            ResponseEntity<String> resTemp = FeignTool.template.postForEntity(url, requestEntity, String.class);
+            String pageResult=resTemp.getBody();
+
 
         }catch (Exception e){
             logger.error(e.getMessage());

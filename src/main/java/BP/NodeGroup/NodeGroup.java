@@ -5,7 +5,9 @@ import BP.En.Map;
 import BP.springCloud.tool.FeignTool;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @program: kflow-web
@@ -71,4 +73,18 @@ public class NodeGroup extends EntityNo{
         this.SetValByKey(NodeGroupAttr.create_time,sdf.format(date));
         return super.beforeInsert();
     }
+
+    public static String[] getItems(String groupNo) throws Exception{
+        NodeGroupItems items=new NodeGroupItems();
+        items.Retrieve(NodeGroupItemAttr.group_no,groupNo);
+        List<NodeGroupItem> itemList=items.toList();
+        String[] nodeNos=new String[itemList.size()];
+        int index=0;
+        for (NodeGroupItem item:itemList) {
+            nodeNos[index]=item.GetValStrByKey(NodeGroupItemAttr.node_no);
+            index++;
+        }
+        return nodeNos;
+    }
+
 }

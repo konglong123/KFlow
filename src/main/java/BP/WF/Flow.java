@@ -6,7 +6,6 @@ import java.util.*;
 
 import BP.DA.*;
 import BP.Sys.*;
-import BP.Tools.EntityIdUtil;
 import BP.WF.Template.FrmWorkCheck;
 import BP.springCloud.tool.FeignTool;
 import org.apache.commons.lang.StringUtils;
@@ -3510,6 +3509,7 @@ public class Flow extends BP.En.EntityNoName {
 	 */
 	private Nodes _HisNodes = null;
 
+
 	/**
 	 * 他的节点集合.
 	 * 
@@ -3522,6 +3522,7 @@ public class Flow extends BP.En.EntityNoName {
 		}
 		return _HisNodes;
 	}
+
 
 	public final void setHisNodes(Nodes value) {
 		_HisNodes = value;
@@ -5221,28 +5222,18 @@ public class Flow extends BP.En.EntityNoName {
 
 	public final Node DoNewNode(int x, int y) throws Exception {
 		Node nd = new Node();
-		int idx = this.getHisNodes().size();
-		if (idx == 0) {
-			idx++;
-		}
 
-		while (true) {
-			String strID = this.getNo() + StringHelper.padLeft(String.valueOf(idx), 2, '0');
-			nd.setNodeID(Integer.parseInt(strID));
-			if (!nd.getIsExits()) {
-				break;
-			}
-			idx++;
-		}
+
+		String strID = FeignTool.getSerialNumber("BP.WF.Node")+"";
+		nd.setNodeID(Integer.valueOf(strID));
 
 		nd.setHisNodeWorkType(NodeWorkType.Work);
-		nd.setName("节点" + idx);
+		nd.setName("节点" + strID);
 		nd.setHisNodePosType(NodePosType.Mid);
 		nd.setFK_Flow(this.getNo());
 		nd.setFlowName(this.getName());
 		nd.setX(x);
 		nd.setY(y);
-		nd.setStep(idx);
 
 		nd.setHisDeliveryWay(DeliveryWay.BySelected); // 上一步发送人来选择.
 		nd.setFormType(NodeFormType.FoolForm); // 表单类型.
@@ -5287,7 +5278,6 @@ public class Flow extends BP.En.EntityNoName {
 		String flowNo=this.getNo();
 		int len=nodeIds.length;
 		//获取新建节点的id，顺序对应nodeIds中数据
-		List<String> nodeIdsNew=EntityIdUtil.getNodeIds(this.getHisNodes().toList(),this.getNo(),len);
 		//将要新建的节点
 		List<Node> nodesNew=new ArrayList<>(len);
 
@@ -5312,16 +5302,11 @@ public class Flow extends BP.En.EntityNoName {
 			node.setY(node.getY() + dy);
 			node.setX(node.getX() + dx);
 
-			String nodeId=nodeIdsNew.get(i);
-			node.setNodeID(Integer.parseInt(nodeId));
-			node.setStep(Integer.parseInt(nodeId.substring(nodeId.length()-2)));
-			//node.setName(node.getName()+"(复制)");
-			node.setFK_Flow(flowNo);//复制节点表单时需要flow信息
-			Node nodeNew = BP.WF.Template.TemplateGlo.CopyNode(node,nodeIds[i]);
+			Node nodeNew = BP.WF.Template.TemplateGlo.CopyNode(this.getNo(),node);
 
 			nodesNew.add(nodeNew);
 
-			nodeIdMap.put(nodeIds[i],nodeIdsNew.get(i));
+			nodeIdMap.put(nodeIds[i],nodeNew.getNodeID()+"");
         }
 
        	//查询原始flowNo
@@ -5350,6 +5335,12 @@ public class Flow extends BP.En.EntityNoName {
 		return nodesNew;
 	}
 
+	//复制单个节点,返回新NodeNo
+	public final String copyNode(Node node) throws Exception{
+
+		Node newNode=BP.WF.Template.TemplateGlo.CopyNode(this.getNo(),node);
+		return newNode.getNodeID()+"";
+	}
 
 
 	private Node createNode(String nodeIdStr) throws Exception{
@@ -5481,94 +5472,74 @@ public class Flow extends BP.En.EntityNoName {
 			this.setParas("@StartNodeX=200@StartNodeY=50@EndNodeX=200@EndNodeY=350");
 			this.Save();
 
-			/// #region 删除有可能存在的历史数据.
-			Flow fl = new Flow(this.getNo());
-			fl.DoDelData();
-			fl.DoDelete();
-
-			fl.setVer("原始版");
-
-			this.Save();
-
 			/// #endregion 删除有可能存在的历史数据.
 
-			Node nd = new Node();
-			nd.setNodeID(Integer.parseInt(this.getNo() + "01"));
-			nd.setName("开始节点"); // "开始节点";
-			nd.setStep(1);
-			nd.setFK_Flow(this.getNo());
-			nd.setFlowName(this.getName());
-			nd.setHisNodePosType(NodePosType.Start);
-			nd.setHisNodeWorkType(NodeWorkType.Work);
-			nd.setX(200);
-			nd.setY(150);
-			nd.setICON("前台");
-
-			// 增加了两个默认值值 . 目的是让创建的节点，就可以使用.
-			nd.setHisDeliveryWay(DeliveryWay.BySelected); // 上一步发送人来选择.
-			nd.setFormType(NodeFormType.FoolForm); // 表单类型.
-			nd.Insert();
-			nd.CreateMap();
-			// nd.getHisWork().CheckPhysicsTable();
-
-			//CreatePushMsg(nd);
-			// 通用的人员选择器.
-			BP.WF.Template.Selector select = new Selector(nd.getNodeID());
-			select.setSelectorModel(BP.WF.Template.SelectorModel.GenerUserSelecter);
-			select.Update();
-
-			nd = new Node();
-			nd.setNodeID(Integer.parseInt(this.getNo() + "02"));
-			nd.setName("节点2"); // "结束节点";
-			nd.setStep(2);
-			nd.setFK_Flow(this.getNo());
-			nd.setFlowName(this.getName());
-			nd.setHisNodePosType(NodePosType.End);
-			nd.setHisNodeWorkType(NodeWorkType.Work);
-			nd.setX(200);
-			nd.setY(250);
-			nd.setICON("审核");
-
-			nd.setHisDeliveryWay(DeliveryWay.BySelected); // 上一步发送人来选择.
-			nd.setFormType(NodeFormType.FoolForm); // 表单类型.
-
-			/*// 为创建节点设置默认值.
-			String fileNewNode = SystemConfig.getPathOfDataUser() + "XML/DefaultNewNodeAttr.xml";
-			if ((new java.io.File(fileNewNode)).isFile()) {
-				DataSet ds_NodeDef = new DataSet();
-				ds_NodeDef.readXml(fileNewNode);
-
-				DataTable dt = ds_NodeDef.Tables.get(0);
-				for (DataColumn dc : dt.Columns) {
-					nd.SetValByKey(dc.ColumnName, dt.Rows.get(0).getValue(dc.ColumnName));
-				}
-			}*/
-
-			nd.Insert();
-			nd.CreateMap();
-			// nd.getHisWork().CheckPhysicsTable();
-			//CreatePushMsg(nd);
-
-			// 通用的人员选择器.
-			select = new Selector(nd.getNodeID());
-			select.setSelectorModel(BP.WF.Template.SelectorModel.GenerUserSelecter);
-			select.Update();
+//			Node nd = new Node();
+//			nd.setNodeID(Integer.parseInt(this.getNo() + "01"));
+//			nd.setName("开始节点"); // "开始节点";
+//			nd.setStep(1);
+//			nd.setFK_Flow(this.getNo());
+//			nd.setFlowName(this.getName());
+//			nd.setHisNodePosType(NodePosType.Start);
+//			nd.setHisNodeWorkType(NodeWorkType.Work);
+//			nd.setX(200);
+//			nd.setY(150);
+//			nd.setICON("前台");
+//
+//			// 增加了两个默认值值 . 目的是让创建的节点，就可以使用.
+//			nd.setHisDeliveryWay(DeliveryWay.BySelected); // 上一步发送人来选择.
+//			nd.setFormType(NodeFormType.FoolForm); // 表单类型.
+//			nd.Insert();
+//			nd.CreateMap();
+//			// nd.getHisWork().CheckPhysicsTable();
+//
+//			//CreatePushMsg(nd);
+//			// 通用的人员选择器.
+//			BP.WF.Template.Selector select = new Selector(nd.getNodeID());
+//			select.setSelectorModel(BP.WF.Template.SelectorModel.GenerUserSelecter);
+//			select.Update();
+//
+//			nd = new Node();
+//			nd.setNodeID(Integer.parseInt(this.getNo() + "02"));
+//			nd.setName("节点2"); // "结束节点";
+//			nd.setStep(2);
+//			nd.setFK_Flow(this.getNo());
+//			nd.setFlowName(this.getName());
+//			nd.setHisNodePosType(NodePosType.End);
+//			nd.setHisNodeWorkType(NodeWorkType.Work);
+//			nd.setX(200);
+//			nd.setY(250);
+//			nd.setICON("审核");
+//
+//			nd.setHisDeliveryWay(DeliveryWay.BySelected); // 上一步发送人来选择.
+//			nd.setFormType(NodeFormType.FoolForm); // 表单类型.
+//
+//			/*// 为创建节点设置默认值.
+//			String fileNewNode = SystemConfig.getPathOfDataUser() + "XML/DefaultNewNodeAttr.xml";
+//			if ((new java.io.File(fileNewNode)).isFile()) {
+//				DataSet ds_NodeDef = new DataSet();
+//				ds_NodeDef.readXml(fileNewNode);
+//
+//				DataTable dt = ds_NodeDef.Tables.get(0);
+//				for (DataColumn dc : dt.Columns) {
+//					nd.SetValByKey(dc.ColumnName, dt.Rows.get(0).getValue(dc.ColumnName));
+//				}
+//			}*/
+//
+//			nd.Insert();
+//			nd.CreateMap();
+//			// nd.getHisWork().CheckPhysicsTable();
+//			//CreatePushMsg(nd);
+//
+//			// 通用的人员选择器.
+//			select = new Selector(nd.getNodeID());
+//			select.setSelectorModel(BP.WF.Template.SelectorModel.GenerUserSelecter);
+//			select.Update();
 
 			BP.Sys.MapData md = new BP.Sys.MapData();
 			md.setNo("ND" + Integer.parseInt(this.getNo()) + "Rpt");
 			md.setName(this.getName());
 			md.Save();
-
-			// 装载模版.
-			String file = BP.Sys.SystemConfig.getPathOfDataUser() + "XML/TempleteSheetOfStartNode.xml";
-			if (new File(file).exists() == true) {
-				// 如果存在开始节点表单模版
-				DataSet ds = new DataSet();
-				ds.readXml(file);
-
-				String nodeID = "ND" + Integer.parseInt(this.getNo() + "01");
-				BP.Sys.MapData.ImpMapData(nodeID, ds);
-			}
 
 			return this.getNo();
 		} catch (RuntimeException ex) {

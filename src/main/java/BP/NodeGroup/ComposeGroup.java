@@ -48,6 +48,7 @@ public class ComposeGroup extends EntityNo {
         map.AddTBFloat(ComposeGroupAttr.elitePro, 0.1f, "精英比例", true, false);
 
         map.AddTBInt(ComposeGroupAttr.generateNum, 0, "进化代数", true, false);
+        map.AddTBInt(ComposeGroupAttr.maxSaveNum, 0, "推荐结果保存数", true, false);
         map.AddTBDecimal(ComposeGroupAttr.score, 0.1f, "相似度值", true, false);
         map.AddTBStringDoc(ComposeGroupAttr.abstracts, null, "概要", true, false);
         map.AddTBString(ComposeGroupAttr.flowNo, null, "流程编码", true, false, 0, 100, 100);
@@ -67,114 +68,100 @@ public class ComposeGroup extends EntityNo {
         return super.beforeInsert();
     }
 
-    private String No;
-    private int groupNum;
-    private float variationPro;
-    private float acrossPro;
-    private float elitePro;
-    private int generateNum;
-    private double score;
-    private String abstracts;
-    private String flowNo;
-    private String newFlowNo;
-    private String history;
-    private Date createTime;
-
-    @Override
-    public String getNo() {
-        return No;
-    }
-
-    @Override
-    public void setNo(String no) {
-        No = no;
-    }
 
     public int getGroupNum() {
-        return groupNum;
+        return this.GetValIntByKey(ComposeGroupAttr.groupNum);
     }
 
     public void setGroupNum(int groupNum) {
-        this.groupNum = groupNum;
+        this.SetValByKey(ComposeGroupAttr.groupNum,groupNum);
     }
 
     public float getVariationPro() {
-        return variationPro;
+        return this.GetValFloatByKey(ComposeGroupAttr.variationPro);
     }
 
     public void setVariationPro(float variationPro) {
-        this.variationPro = variationPro;
+        this.SetValByKey(ComposeGroupAttr.variationPro,variationPro);
     }
 
     public float getAcrossPro() {
-        return acrossPro;
+        return this.GetValFloatByKey(ComposeGroupAttr.acrossPro);
     }
 
     public void setAcrossPro(float acrossPro) {
-        this.acrossPro = acrossPro;
+        this.SetValByKey(ComposeGroupAttr.acrossPro,acrossPro);
     }
 
     public float getElitePro() {
-        return elitePro;
+        return this.GetValFloatByKey(ComposeGroupAttr.elitePro);
     }
 
     public void setElitePro(float elitePro) {
-        this.elitePro = elitePro;
+        this.SetValByKey(ComposeGroupAttr.elitePro,elitePro);
     }
 
     public int getGenerateNum() {
-        return generateNum;
+        return this.GetValIntByKey(ComposeGroupAttr.generateNum);
     }
 
     public void setGenerateNum(int generateNum) {
-        this.generateNum = generateNum;
+        this.SetValByKey(ComposeGroupAttr.generateNum,generateNum);
+    }
+
+    public int getMaxSaveNum() {
+        return this.GetValIntByKey(ComposeGroupAttr.maxSaveNum);
+    }
+
+    public void setMaxSaveNum(int maxSaveNum) {
+        this.SetValByKey(ComposeGroupAttr.maxSaveNum,maxSaveNum);
     }
 
     public double getScore() {
-        return score;
+        return this.GetValDoubleByKey(ComposeGroupAttr.score);
     }
 
     public void setScore(double score) {
-        this.score = score;
+        this.SetValByKey(ComposeGroupAttr.score,score);
     }
 
     public String getAbstracts() {
-        return abstracts;
+        return this.GetValStrByKey(ComposeGroupAttr.abstracts);
     }
 
     public void setAbstracts(String abstracts) {
-        this.abstracts = abstracts;
+        this.SetValByKey(ComposeGroupAttr.abstracts,abstracts);
     }
 
     public String getFlowNo() {
-        return flowNo;
+        return this.GetValStrByKey(ComposeGroupAttr.flowNo);
     }
 
     public void setFlowNo(String flowNo) {
-        this.flowNo = flowNo;
+        this.SetValByKey(ComposeGroupAttr.flowNo,flowNo);
     }
 
     public String getNewFlowNo() {
-        return newFlowNo;
+        return this.GetValStrByKey(ComposeGroupAttr.newFlowNo);
     }
 
     public void setNewFlowNo(String newFlowNo) {
-        this.newFlowNo = newFlowNo;
+        this.SetValByKey(ComposeGroupAttr.newFlowNo,newFlowNo);
     }
 
     public String getHistory() {
-        return history;
+        return this.GetValStrByKey(ComposeGroupAttr.history);
     }
 
     public void setHistory(String history) {
-        this.history = history;
+        this.SetValByKey(ComposeGroupAttr.history,history);
     }
 
     public Date getCreateTime() {
-        return createTime;
+        return this.GetValDateTime(ComposeGroupAttr.createTime);
     }
 
     public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
+        this.SetValByKey(ComposeGroupAttr.createTime,createTime);
     }
 }

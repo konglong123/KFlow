@@ -218,6 +218,8 @@
                 <li id="Node_SubThread1"><i class="icon-tag"></i>&nbsp;<span class="_label">异表单子线程</span></li>
             -->
                 <li id="Node_ZLC"><i class="icon-tags"></i>&nbsp;<span class="_label">子流程</span></li>
+                <li id="Node_KS"><i class="icon-tags"></i>&nbsp;<span class="_label">开始</span></li>
+                <li id="Node_JS"><i class="icon-tags"></i>&nbsp;<span class="_label">结束</span></li>
                 <li id="Node_JC"><i class="icon-tags"></i>&nbsp;<span class="_label">决策</span></li>
                 <li id="Node_MH"><i class="icon-tags"></i>&nbsp;<span class="_label">模糊</span></li>
             </ul>
@@ -318,6 +320,16 @@
         $('#Node_HL').on('click', function () {
             var nodeID = document.getElementById("leipi_active_id");
             SetNodeRunModel(nodeID.value, 1);
+        });
+        //节点类型--开始
+        $('#Node_KS').on('click', function () {
+            var nodeID = document.getElementById("leipi_active_id");
+            SetNodeRunModel(nodeID.value, 5);
+        });
+        //节点类型--结束
+        $('#Node_JS').on('click', function () {
+            var nodeID = document.getElementById("leipi_active_id");
+            SetNodeRunModel(nodeID.value, 6);
         });
         //节点类型--决策
         $('#Node_JC').on('click', function () {
@@ -987,38 +999,37 @@
                             strs+="'active':true,";
                     }
                 }
-                //判断是否是开始节点?(此处限制一个流程中节点数目不超过99，否则此处代码有bug)
-                var nodeID = "" + node.NodeID;
-                var str = nodeID.substring(nodeID.length - 2);
 
                 //不同节点类型，采用不同icon
-                if (str == "01") {
-                    strs += "'icon':'icon-play',";
-                } else if (toNodes == "") {
-                    strs += "'icon':'icon-ok',";
-                } else {
-                    /* 如果是其他的情况,就要考虑分合流 */
-                    switch (node.RunModel) {
-                        case 0:
-                            strs+="'icon':'icon-star',";
-                            break;
-                        case 1:
-                            strs+="'icon':'icon-heliu',";
-                            break;
-                        case 2:
-                            strs+="'icon':'icon-fenliu',";
-                            break;
-                        case 4:
-                            strs+="'icon':'icon-subflow',";
-                            break;
-                        case 9:
-                            strs+="'icon':'icon-judge',";
-                            break;
-                        case 10:
-                            strs+="'icon':'icon-mohu',";
-                            break;
-                    }
+
+                /* 如果是其他的情况,就要考虑分合流 */
+                switch (node.RunModel) {
+                    case 0:
+                        strs+="'icon':'icon-star',";
+                        break;
+                    case 1:
+                        strs+="'icon':'icon-heliu',";
+                        break;
+                    case 2:
+                        strs+="'icon':'icon-fenliu',";
+                        break;
+                    case 4:
+                        strs+="'icon':'icon-subflow',";
+                        break;
+                    case 5:
+                        strs+="'icon':'icon-play',";
+                        break;
+                    case 6:
+                        strs+="'icon':'icon-ok',";
+                        break;
+                    case 9:
+                        strs+="'icon':'icon-judge',";
+                        break;
+                    case 10:
+                        strs+="'icon':'icon-mohu',";
+                        break;
                 }
+
 
                 strs += "'style':'width:auto;minWidth:121px;height:41px;line-height:41px;color:#0e76a8;left:" + node.X + "px" + ";top:" + node.Y + "px;'";
 

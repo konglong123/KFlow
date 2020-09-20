@@ -10,8 +10,6 @@ public class Chromosome {
 	private List<List<Gene>> groupGeneAll=new ArrayList<>();
 	private ArrayList<Gene> chromosome =new ArrayList<>();
 	double iFitness=-1d;
-	public float variaStep=0.2f;//基因变异的幅度
-	private float geneVPro=0.8f;//染色体突变的比率
 
 	public Chromosome(List<List<Gene>> groupGeneAll){
 		this.groupGeneAll=groupGeneAll;
@@ -50,7 +48,7 @@ public class Chromosome {
 	}
 
 	//对染色体进行随机变异
-	public  Chromosome chroVar(){
+	public  Chromosome chroVar(float geneVPro){
 		int geneNum=chromosome.size();
 		//需要变异的基因数量
 		int selGeneNum=(int)Math.floor(geneNum*geneVPro);
@@ -74,7 +72,7 @@ public class Chromosome {
 	private Gene variation(Gene gene,int id){
 		int newPos=0;
 		do {
-			newPos=(int)Math.ceil(Math.random()*groupGeneAll.get(id).size());
+			newPos=(int)Math.floor(Math.random()*groupGeneAll.get(id).size());
 		}while (!groupGeneAll.get(id).get(newPos).getNodeGroupNo().equals(gene.getNodeGroupNo()));
 		return groupGeneAll.get(id).get(newPos);
 	}
@@ -87,21 +85,6 @@ public class Chromosome {
 		this.chromosome = chromosome;
 	}
 
-	public float getVariaStep() {
-		return variaStep;
-	}
-
-	public void setVariaStep(float variaStep) {
-		this.variaStep = variaStep;
-	}
-
-	public float getGeneVPro() {
-		return geneVPro;
-	}
-
-	public void setGeneVPro(float geneVPro) {
-		this.geneVPro = geneVPro;
-	}
 
 	public List<List<Gene>> getGroupGeneAll() {
 		return groupGeneAll;

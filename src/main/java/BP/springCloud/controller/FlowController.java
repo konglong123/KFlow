@@ -357,8 +357,10 @@ public class FlowController {
     public void addNodeGroup(HttpServletRequest request, HttpServletResponse response) {
         try {
             String flowNo = request.getParameter("flowNo");
+            Flow flow=new Flow(flowNo);
             NodeGroup group = new NodeGroup();
             group.SetValByKey(NodeGroupAttr.flow_no, flowNo);
+            group.SetValByKey(NodeGroupAttr.flow_name,flow.getName());
             group.Insert();
         } catch (Exception e) {
             logger.error(e.getMessage());

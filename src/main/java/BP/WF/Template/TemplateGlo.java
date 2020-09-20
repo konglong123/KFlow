@@ -31,26 +31,20 @@ public class TemplateGlo
 		//fl.DType = string.IsNullOrEmpty(flowVer) ? 1 : Int32.Parse(flowVer);
 
 		fl.setDType(CCBPM_DType.CCBPM.getValue());
-
+		dsm = DataStoreModel.forValue(0);
 		String flowNo = fl.DoNewFlow(flowSort, flowName, dsm, ptable, flowMark);
 		fl.setNo(flowNo);
 
-		//如果为CCFlow模式则不进行写入Json串
-		if (flowVer.equals("0"))
-		{
-			return flowNo;
-		}
-
-	  
-		//创建连线
+		/*//创建连线
 		Direction drToNode = new Direction();
 		drToNode.setFK_Flow(flowNo);
 		drToNode.setNode(Integer.parseInt(Integer.parseInt(flowNo) + "01"));
 		drToNode.setToNode(Integer.parseInt(Integer.parseInt(flowNo) + "02"));
-		drToNode.Insert();
+		drToNode.Insert();*/
 
 		return flowNo;
 	}
+
 	/** 
 	 创建一个节点
 	 
@@ -76,14 +70,15 @@ public class TemplateGlo
 	*@Author: Mr.kong
 	*@Date: 2020/4/5
 	*/
-	public static Node CopyNode(Node node,String oldNodeId) throws Exception{
+	public static Node CopyNode(String flowNo,Node node) throws Exception{
 		Node nodeNew=new Node();
 		//复制基本属性
 		nodeNew.setRow(node.getRow());
+		nodeNew.setFK_Flow(flowNo);
 		nodeNew.Insert();
 
-		String mapDataKeyOld="ND"+oldNodeId;
-		String mapDateKeyNew="ND"+node.getNodeID();
+		String mapDataKeyOld="ND"+node.getNodeID();
+		String mapDateKeyNew="ND"+nodeNew.getNodeID();
 
 		//复制表单信息
 		MapData mapData=new MapData();

@@ -398,19 +398,36 @@ public class NLPModelController {
         Page pageResult=resTemp.getBody();
         Map<String, Object> jsonMap = new HashMap<>();//定义map
         List<Map> esData= pageResult.getData();
-        if (esData.size()!=0){
-            List<String> fileList=new ArrayList<>(esData.size());
-            for (Map item: esData){
-                fileList.add((String) item.get("abstracts"));
-            }
-            try {
-                NLPTool.updateDocumentFile(docFile,fileList);
-            }catch (Exception e){
-                logger.error(e.getMessage());
-            }
+        List<String> fileList=new ArrayList<>();
+
+        //添加流程模板信息
+        for (Map item: esData){
+            fileList.add((String) item.get("abstracts"));
         }
 
-        return null;
+        //添加节点分组信息
+        try {
+            NodeGroups groups = new NodeGroups();
+            groups.RetrieveAll();
+            List<NodeGroup> groupList = groups.toList();
+            for (NodeGroup group : groupList) {
+                //模块分组
+                if (group.GetValIntByKey(NodeGroupAttr.type) == 2) {
+                    fileList.add(group.GetValStrByKey(NodeGroupAttr.abstracts));
+                }
+            }
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+
+        //同步数据到docFile中
+        try {
+            NLPTool.updateDocumentFile(docFile,fileList);
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+        jsonMap.put("total",fileList.size());
+        return jsonMap;
     }
 
 
@@ -508,7 +525,7 @@ public class NLPModelController {
             NodeGroups groups = new NodeGroups();
             for (JSONObject item : data) {
                 String doc = item.getString("abstracts");
-                groups.Retrieve(FlowAttr.Note, doc);
+                groups.Retrieve(NodeGroupAttr.abstracts, doc);
                 if (groups.size() > 0) {
                     NodeGroup group = (NodeGroup) groups.get(0);
                     item.put("group", group);
