@@ -52,6 +52,14 @@ public class NodeTask extends EntityNo {
         map.AddTBString(NodeTaskAttr.Executor, null, "执行人", true, true, 0, 100, 100);
        /* map.AddDDLSysEnum(NodeTaskAttr.Yn, 0, "删除标志", true, false, NodeTaskAttr.Yn,
                 "@0=未删除@1=删除");*/
+        map.AddDDLSysEnum(NodeTaskAttr.TaskPriority, 0, "任务优先级", true, false, NodeTaskAttr.TaskPriority,
+                "@1=普通@2=重要@4=重大");
+        map.AddDDLSysEnum(NodeTaskAttr.TaskWorkModel, 0, "任务执行模式",
+                true, true, NodeTaskAttr.TaskWorkModel, "@0=普通（朝8晚6）@1=连续（24h）");
+        map.AddDDLSysEnum(NodeTaskAttr.TaskType, 0, "任务类型", true, false, NodeTaskAttr.TaskType,
+                "@0=主线任务@1=辅线任务@2=质量控制@3=安全控制@4=分合节点@5=黑盒任务");
+
+
 
         RefMethod rm = new RefMethod();
         rm.Title = "节点详细";

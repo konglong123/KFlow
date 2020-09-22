@@ -76,9 +76,10 @@ public class ComposeGroupController {
             composeGroup.setAcrossPro(Float.valueOf(request.getParameter("acrossPro")));
             composeGroup.setElitePro(Float.valueOf(request.getParameter("elitePro")));
             composeGroup.setMaxSaveNum(Integer.valueOf(request.getParameter("saveNum")));
+            composeGroup.setThreshold(Float.valueOf(request.getParameter("threshold")));
 
-            GeneticAth geneticAth = new GeneticAth(flowNo);
-            JSONObject data = geneticAth.run(composeGroup);
+            GeneticAth geneticAth = new GeneticAth(flowNo,composeGroup);
+            JSONObject data = geneticAth.run();
             JSONArray flows=data.getJSONArray("flows");
             Iterator it=flows.iterator();
             while (it.hasNext()){

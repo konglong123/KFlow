@@ -20,7 +20,7 @@ public class ResourceTask extends EntityNo {
 
         Map map = new Map("k_resource_task", "资源任务");
         map.AddTBIntPK(ResourceTaskAttr.No,0,"id",false,true);
-        map.AddTBInt(ResourceTaskAttr.ResourceId, 0, "资源id", false, true);
+        map.AddTBString(ResourceTaskAttr.ResourceId, null, "资源实例id", true, true, 0, 100, 100);
         map.AddTBString(ResourceTaskAttr.ResourceNo, null, "资源编码", true, true, 0, 100, 100);
         map.AddTBString(ResourceTaskAttr.PlanId, null, "资源方案编码", true, true, 0, 100, 100);
         map.AddTBInt(ResourceTaskAttr.NodeId, 0, "节点编码",true, true);
@@ -39,4 +39,22 @@ public class ResourceTask extends EntityNo {
         this.set_enMap(map);
         return this.get_enMap();
     }
+    public ResourceTask(String _no) throws Exception{
+        if (_no == null || _no.equals(""))
+        {
+            throw new RuntimeException(this.getEnDesc() + "@对表["
+                    + this.getEnDesc() + "]进行查询前必须指定编号。");
+        }
+
+        this.setNo(_no);
+        if (this.Retrieve() == 0)
+        {
+            throw new RuntimeException("@没有"
+                    + this.get_enMap().getPhysicsTable() + ", No = " + getNo()
+                    + "的记录。");
+        }
+
+    }
+    public ResourceTask(){}
+
 }

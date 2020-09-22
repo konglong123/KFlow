@@ -20,4 +20,5 @@ public class ComposeGroupAttr {
     public static final String history = "history";
     public static final String createTime = "createTime";
     public static final String maxSaveNum = "maxSaveNum";
+    public static final String threshold = "threshold";
 }

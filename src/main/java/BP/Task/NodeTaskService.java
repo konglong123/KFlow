@@ -20,6 +20,7 @@ import BP.Web.WebUser;
 import BP.springCloud.entity.GenerFlow;
 import BP.springCloud.entity.NodeTaskM;
 import BP.springCloud.entity.ResourceTaskM;
+import BP.springCloud.tool.FeignTool;
 import com.google.common.collect.Lists;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
@@ -742,7 +743,7 @@ public class NodeTaskService {
     }
 
     /**
-    *@Description: 获取资源方案信息
+    *@Description: 获取资源方案信息(认为资源方案是定义到资源实例)
     *@Param:
     *@return:
     *@Author: Mr.kong
@@ -781,9 +782,9 @@ public class NodeTaskService {
                     resourceTaskItem.put("resReqResPlanUid",plan.getNo());
                     resourceTaskItem.put("resReqResType",resource.GetValIntByKey(ResourceAttr.Kind));
                     resourceTaskItem.put("resReqResUid",resource.getNo());
-                    resourceTaskItem.put("resReqResWork",temp.GetValIntByKey(ResourceTaskAttr.UseTime));
+                    resourceTaskItem.put("resReqResWork",(temp.GetValIntByKey(ResourceTaskAttr.UseTime)+0.0)/10);
                     resourceTaskItem.put("resReqResAmount",temp.GetValIntByKey(ResourceTaskAttr.UseNum));
-                    //计划数量
+                    resourceTaskItem.put("resReqResWorkModel",task.getTaskWorkModel());
                     resourceNeedList.add(resourceTaskItem);
                 }
             }
@@ -847,6 +848,141 @@ public class NodeTaskService {
         data.put("place",resourcePlaceList);
         data.put("knowledge",resourceKnowledgeList);
         return data;
+    }
+
+
+    /**
+    *@Description: 认为资源方案定义到资源类别
+    *@Param:
+    *@return:
+    *@Author: Mr.kong
+    *@Date: 2020/9/22
+    */
+    public JSONObject getResourcePlanData2(List<NodeTaskM> taskMList) throws Exception{
+        JSONObject data=new JSONObject();
+        List<JSONObject> resourcePlanList=new ArrayList<>();
+        List<JSONObject> resourceNeedList=new ArrayList<>();
+        Map<String, ResourceItem> resourceMap=new HashMap<>();
+
+        for (NodeTaskM task:taskMList){
+            ResourcePlans plans=new ResourcePlans();
+            plans.Retrieve(ResourcePlanAttr.NodeId,task.getNodeId());
+            List<ResourcePlan> planBeforeList=plans.toList();
+            for (ResourcePlan plan:planBeforeList){
+
+                ResourceTasks resourceTasks=new ResourceTasks();
+                resourceTasks.Retrieve(ResourceTaskAttr.PlanId,plan.getNo());
+                List<ResourceTask> resourceTaskList=resourceTasks.toList();
+                List<List<ResourceItem>> resourceItemList=new ArrayList<>();
+                for (ResourceTask resourceTask:resourceTaskList){
+
+                    String resourceNo=resourceTask.GetValStrByKey(ResourceTaskAttr.ResourceNo);
+                    ResourceItems items=new ResourceItems();
+                    items.Retrieve(ResourceItemAttr.Kind,resourceNo);
+                    List<ResourceItem> itemList=items.toList();
+                    resourceItemList.add(itemList);
+                }
+                //转换后的资源计划
+                List<List<ResourceItem>> planAfterList=new ArrayList<>();
+                getResourceItemPlan(resourceItemList,planAfterList,0);
+                for (List<ResourceItem> tempPlan:planAfterList){
+                    JSONObject item=new JSONObject();
+                    long planId=FeignTool.getSerialNumber("BP.Resource.PlanTemp");
+                    item.put("resPlanUid", planId);
+                    item.put("resPlanTaskUid",task.getNo());
+                    resourcePlanList.add(item);
+
+                    for (ResourceItem temp:tempPlan){
+
+                        String resourceItemNo=temp.getNo();
+                        ResourceItem resourceItem=resourceMap.get(resourceItemNo);
+                        if (resourceItem==null) {
+                            resourceItem = new ResourceItem(resourceItemNo);
+                            resourceMap.put(resourceItemNo,resourceItem);
+                        }
+
+                        JSONObject resourceTaskItem=new JSONObject();
+                        resourceTaskItem.put("resReqUid",FeignTool.getSerialNumber("BP.Resource.TaskTemp"));
+                        resourceTaskItem.put("resReqResPlanUid",planId);
+                        BP.Resource.Resource resource=new BP.Resource.Resource(temp.GetValStrByKey(ResourceItemAttr.Kind));
+                        resourceTaskItem.put("resReqResType",resource.GetValIntByKey(ResourceAttr.Kind));
+                        resourceTaskItem.put("resReqResUid",temp.getNo());
+                        ResourceTasks resourceTasksTemp=new ResourceTasks();
+                        resourceTasksTemp.Retrieve(ResourceTaskAttr.PlanId,plan.getNo(),ResourceTaskAttr.ResourceNo,resource.getNo());
+                        ResourceTask resourceTemp=(ResourceTask) resourceTasksTemp.get(0);
+                        resourceTaskItem.put("resReqResWork",resourceTemp.GetValIntByKey(ResourceTaskAttr.UseTime));
+                        resourceTaskItem.put("resReqResAmount",resourceTemp.GetValIntByKey(ResourceTaskAttr.UseNum));
+                        resourceTaskItem.put("resReqResWorkModel",task.getTaskWorkModel());
+                        resourceNeedList.add(resourceTaskItem);
+                    }
+                }
+
+            }
+        }
+        data.put("taskResPlan",resourcePlanList);
+        data.put("taskResReq",resourceNeedList);
+
+        //资源基本信息
+        List<JSONObject> resourceHumanList=new ArrayList<>();
+        List<JSONObject> resourceEquipmentList=new ArrayList<>();
+        List<JSONObject> resourcePlaceList=new ArrayList<>();
+        List<JSONObject> resourceKnowledgeList=new ArrayList<>();
+
+        //资源已用
+        List<JSONObject> resourceLoadList=new ArrayList<>();
+        for (Map.Entry<String, ResourceItem> resourceEntry:resourceMap.entrySet()){
+            ResourceTasks tasks=new ResourceTasks();
+            tasks.Retrieve(ResourceTaskAttr.ResourceId,resourceEntry.getValue().GetValStrByKey(ResourceItemAttr.Kind),ResourceTaskAttr.IsPlan,1);//已经计划的资源任务
+            List<ResourceTask> list=tasks.toList();
+
+            for (ResourceTask task:list){
+                JSONObject item=new JSONObject();
+                item.put("arUid",task.getNo());
+                item.put("arResUid",task.GetValStrByKey(ResourceTaskAttr.ResourceId));
+                item.put("arResStartDateTime",task.GetValDateTime(ResourceTaskAttr.PlanStart).getTime());
+                item.put("arResFinishDateTime",task.GetValDateTime(ResourceTaskAttr.PlanEnd).getTime());
+                item.put("arResWork",(task.GetValIntByKey(ResourceTaskAttr.UseTime)+0.0)/10);
+                item.put("arResAmount",task.GetValIntByKey(ResourceTaskAttr.UseNum));
+                resourceLoadList.add(item);
+            }
+
+            ResourceItem resourceItem=resourceEntry.getValue();
+            BP.Resource.Resource resource=new BP.Resource.Resource(resourceItem.GetValStrByKey(ResourceItemAttr.Kind));
+            int type=resource.GetValIntByKey(ResourceAttr.Kind);//0=人力@1=设备@2=环境@3=知识"
+            JSONObject item=new JSONObject();
+            switch (type){
+                case 0:
+                    item.put("humUid",resourceItem.getNo());
+                    resourceHumanList.add(item);
+                    break;
+                case 1:
+                    item.put("equipUid",resourceItem.getNo());
+                    resourceEquipmentList.add(item);
+                    break;
+                case 2:
+                    item.put("placeUid",resourceItem.getNo());
+                    item.put("placeArea",resource.GetValIntByKey(ResourceAttr.Num));
+                    resourcePlaceList.add(item);
+                    break;
+                case 3:
+                    item.put("knowlUid",resourceItem.getNo());
+                    item.put("knowlAmount",resource.GetValIntByKey(ResourceAttr.Num));
+                    resourceKnowledgeList.add(item);
+                    break;
+            }
+
+        }
+
+        data.put("allocateResource",resourceLoadList);
+        data.put("human",resourceHumanList);
+        data.put("equipment",resourceEquipmentList);
+        data.put("place",resourcePlaceList);
+        data.put("knowledge",resourceKnowledgeList);
+        return data;
+    }
+
+    private void getResourceItemPlan(List<List<ResourceItem>> items,List<List<ResourceItem>> plans,int pos){
+
     }
 
 

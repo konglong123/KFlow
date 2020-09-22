@@ -19,6 +19,8 @@
                 <td><input class="easyui-textbox" type="text" id="generateNum" value="50" placeholder="默认50"></td>
                 <td>推荐结果保存数：</td>
                 <td><input class="easyui-textbox" type="text" id="saveNum" value="1" placeholder="默认3"></td>
+                <td>模块相似度阈值：</td>
+                <td><input class="easyui-textbox" type="text" id="threshold" value="0.6" placeholder="默认0.6"></td>
             </tr>
             <tr>
                 <td>变异率：</td>
@@ -100,7 +102,8 @@
                 variationPro:$("#variationPro").val().trim(),
                 acrossPro:$("#acrossPro").val().trim(),
                 elitePro:$("#elitePro").val().trim(),
-                saveNum:$("#saveNum").val().trim()
+                saveNum:$("#saveNum").val().trim(),
+                threshold:$("#threshold").val().trim()
             },
             success: function (data) {
                 $("#dgComposeHistory").datagrid('reload');

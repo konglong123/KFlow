@@ -28,5 +28,7 @@ public class NodeTaskAttr {
     public static final String Executor = "executor";
     public static final String Status = "status";
     public static final String Yn="yn";
-
+    public static final String TaskWorkModel="task_work_model";
+    public static final String TaskType="task_type";
+    public static final String TaskPriority="task_priority";
 }

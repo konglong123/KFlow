@@ -47,7 +47,8 @@ public class GeneticAth {
 
 	//初始化种群所有基因可能
 	//基因编码
-	public GeneticAth(String newFlowNo) throws Exception{
+	public GeneticAth(String newFlowNo,ComposeGroup composeGroup) throws Exception{
+		this.composeGroup=composeGroup;
 		flow=new Flow(newFlowNo);
 		Nodes nodes=flow.getHisNodes();
 		List<Node> nodeList=nodes.toList();
@@ -68,6 +69,9 @@ public class GeneticAth {
 				List<Gene> genes=new ArrayList<>();
 				int count=0;
 				f1:for(JSONObject nodeGroup:nodeGroups){
+					//过滤分值过低选择
+					if (nodeGroup.getFloat("score")<composeGroup.getThreshold())
+						continue ;
 					NodeGroup group=(NodeGroup)nodeGroup.get("group");
 					Gene gene=new Gene(group.getNo(),group.GetValIntByKey(NodeGroupAttr.nodeNum));
 					gene.setIFitness(nodeGroup.getFloat("score"));
@@ -211,8 +215,7 @@ public class GeneticAth {
 	}
 
 	//进行进化
-	public JSONObject run(ComposeGroup composeGroup) throws Exception{
-		this.composeGroup=composeGroup;
+	public JSONObject run() throws Exception{
 
 		initGroup();//初始化种群
 		int count=0;//进化代数

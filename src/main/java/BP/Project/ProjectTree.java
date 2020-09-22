@@ -56,7 +56,7 @@ public class ProjectTree extends EntityNo {
 		map.AddTBString(ProjectTreeAttr.FlowNo, null, "流程编码", true, false, 0, 50, 50);
 		map.AddTBString(ProjectTreeAttr.FlowName, null, "流程名", true, false, 0, 50, 50);
 		map.AddTBString(ProjectTreeAttr.Detail, null, "项目树详情", true, false, 0, 50, 50);
-		map.AddDDLSysEnum(ProjectTreeAttr.Status, 0, "项目状态", true, false, ProjectTreeAttr.Status, "@0=新建@1=流程运行中@2=流程终止@3=项目结束");
+		map.AddDDLSysEnum(ProjectTreeAttr.Status, 0, "项目状态", true, true, ProjectTreeAttr.Status, "@0=新建@1=流程运行中@2=流程终止@3=项目结束");
 		map.AddTBDateTime(ProjectTreeAttr.EarlyStart, "2000-01-01 00:00:00", "最早开始时间", true, false);
 		map.AddTBDateTime(ProjectTreeAttr.LateFinish,  "2000-01-01 00:00:00","最晚完成时间", true, false);
 		map.AddTBDateTime(ProjectTreeAttr.PlanStart, "2000-01-01 00:00:00", "计划开始时间", true, false);

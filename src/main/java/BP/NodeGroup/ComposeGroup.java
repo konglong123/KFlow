@@ -46,6 +46,7 @@ public class ComposeGroup extends EntityNo {
         map.AddTBFloat(ComposeGroupAttr.variationPro, 0.5f, "变异率", true, false);
         map.AddTBFloat(ComposeGroupAttr.acrossPro, 0.7f, "交叉率", true, false);
         map.AddTBFloat(ComposeGroupAttr.elitePro, 0.1f, "精英比例", true, false);
+        map.AddTBFloat(ComposeGroupAttr.threshold, 0.1f, "模块相似度阈值", true, false);
 
         map.AddTBInt(ComposeGroupAttr.generateNum, 0, "进化代数", true, false);
         map.AddTBInt(ComposeGroupAttr.maxSaveNum, 0, "推荐结果保存数", true, false);
@@ -99,6 +100,14 @@ public class ComposeGroup extends EntityNo {
 
     public void setElitePro(float elitePro) {
         this.SetValByKey(ComposeGroupAttr.elitePro,elitePro);
+    }
+
+    public float getThreshold() {
+        return this.GetValFloatByKey(ComposeGroupAttr.threshold);
+    }
+
+    public void setThreshold(float threshold) {
+        this.SetValByKey(ComposeGroupAttr.threshold,threshold);
     }
 
     public int getGenerateNum() {

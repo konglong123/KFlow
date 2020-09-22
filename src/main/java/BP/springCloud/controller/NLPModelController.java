@@ -125,7 +125,7 @@ public class NLPModelController {
             } else if (docVectorModel.size() == 0) {
                 NLPTool.initDocVectorModelDocument(docFile);
             }
-            List<Map.Entry<Integer, Float>> list=docVectorModel.nearest(doc);
+            List<Map.Entry<Integer, Float>> list=docVectorModel.nearest(doc,100);//查找相近的doc（默认10个，后期增加可选数量）
             List result= NLPTool.transToJson(list,docFile);
             return result;
         }catch (Exception e){

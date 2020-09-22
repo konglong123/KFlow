@@ -10,10 +10,10 @@ public class ResourceTaskAttr {
     //主键
     public static final String No = "No";
 
-    //资源id
+    //资源id(资源实例编码)
     public static final String ResourceId = "resource_id";
 
-    //资源编码
+    //资源编码(资源类别编码)
     public static final String ResourceNo = "resource_no";
 
     //节点id（节点编码）

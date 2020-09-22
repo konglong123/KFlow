@@ -4,12 +4,14 @@ package BP.springCloud.controller;
 import BP.Project.ProjectTree;
 import BP.Project.ProjectTreeAttr;
 import BP.Project.ProjectTrees;
-import BP.Resource.ResourceAttr;
-import BP.Resource.Resources;
+import BP.Resource.*;
+import BP.Task.NodeTask;
+import BP.Task.NodeTaskAttr;
 import BP.Task.NodeTaskService;
 import BP.springCloud.entity.NodeTaskM;
 import BP.springCloud.tool.FeignTool;
 import BP.springCloud.tool.Page;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +27,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -129,9 +132,10 @@ public class FeignController {
     @ResponseBody
     @RequestMapping("planAllTask")
     public JSONObject planAllTask(@RequestBody JSONObject con){
-        JSONObject data=new JSONObject();
+        JSONObject resultMes=new JSONObject();
 
         try {
+            JSONObject data=new JSONObject();
             //封装项目信息
             ProjectTrees projectList=new ProjectTrees();
             projectList.Retrieve(ProjectTreeAttr.Status,1);
@@ -171,15 +175,46 @@ public class FeignController {
 
             String url="http://192.168.12.3:8082/pms/projOpt/testOptResult";
             HttpEntity<Map> requestEntity = new HttpEntity<>(data, headers);
-            ResponseEntity<String> resTemp = FeignTool.template.postForEntity(url, requestEntity, String.class);
-            String pageResult=resTemp.getBody();
+            ResponseEntity<JSONObject> resTemp = FeignTool.template.postForEntity(url, requestEntity, JSONObject.class);
+            JSONObject result=resTemp.getBody();
 
+            //处理返回的数据
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            JSONArray newTasks=result.getJSONArray("nodeTask");
+            for (int i=0;i<newTasks.size();i++){
+                JSONObject task=(JSONObject) newTasks.get(i);
+                String taskNo=task.getString("taskNo");
+                long planStart=task.getLong("planStart");
+                long planEnd=task.getLong("planEnd");
+                String planNo=task.getString("planNo");
+                NodeTask nodeTask=new NodeTask(taskNo);
+                nodeTask.SetValByKey(NodeTaskAttr.PlanStartTime,formatter.format(new Date(planStart)));
+                nodeTask.SetValByKey(NodeTaskAttr.PlanEndTime,formatter.format(new Date(planEnd)));
+                nodeTask.Update();
+
+                JSONArray resources=task.getJSONArray("resList");
+                for (int index=0;index<resources.size();index++){
+                    JSONObject resTask=(JSONObject) resources.get(index);
+                    String resNo=resTask.getString("resNo");
+                    long planStartRes=task.getLong("planStart");
+                    long planEndRes=task.getLong("planEnd");
+                    ResourceTasks resourceTasks=new ResourceTasks();
+                    resourceTasks.Retrieve(ResourceTaskAttr.ResourceNo,resNo,ResourceTaskAttr.PlanId,planNo);
+                    ResourceTask resourceTask=(ResourceTask) resourceTasks.get(0);
+                    resourceTask.SetValByKey(ResourceTaskAttr.PlanStart,formatter.format(new Date(planStartRes)));
+                    resourceTask.SetValByKey(ResourceTaskAttr.PlanEnd,formatter.format(new Date(planEndRes)));
+                    resourceTask.Update();
+                }
+            }
 
         }catch (Exception e){
             logger.error(e.getMessage());
+            resultMes.put("meg",e.getMessage());
+            return resultMes;
         }
 
-        return data;
+        resultMes.put("meg","计划成功！");
+        return resultMes;
     }
 
     @ResponseBody

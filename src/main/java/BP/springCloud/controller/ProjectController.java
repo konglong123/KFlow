@@ -66,7 +66,7 @@ public class ProjectController {
                 if (generList.size()>0)
                     subData=getTreeData(subFlow,generList.get(0).getNo());
                 else
-                    subData=getTreeData(subFlow,null);
+                    subData=getTreeData(subFlow,"");
                 subData.put("name",temp.getNo()+"_"+subData.get("name"));
                 children.add(subData);
             }

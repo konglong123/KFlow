@@ -2,6 +2,8 @@ package BP.Resource;
 
 import BP.En.EntityNoName;
 import BP.En.Map;
+import BP.En.RefMethod;
+import BP.En.RefMethodType;
 import BP.springCloud.tool.FeignTool;
 
 import java.util.HashMap;
@@ -51,6 +53,16 @@ public class Resource extends EntityNoName {
         map.AddTBStringDoc(ResourceAttr.Abstracts, null, "性能参数", true, false);
         map.AddTBInt(ResourceAttr.Num, 1, "数量", true, false);
         map.AddSearchAttr(ResourceAttr.Kind);
+
+        RefMethod rm = null;
+        rm = new RefMethod();
+        rm.Title = "所属资源";
+        rm.ClassMethodName = this.toString() + ".getResourceItem";
+        rm.Icon = "../../WF/Img/Event.png";
+        rm.refMethodType= RefMethodType.LinkModel;
+        map.AddRefMethod(rm);
+
+
         this.set_enMap(map);
         return this.get_enMap();
     }
@@ -90,5 +102,8 @@ public class Resource extends EntityNoName {
         super.afterDelete();
     }
 
+    public final String getResourceItem(){
+        return "/WF/WF/Comm/SearchBS.htm?EnsName=BP.Resource.ResourceItems&Key=" + this.getNo();
+    }
 
 }
