@@ -372,12 +372,11 @@ public class NodeTaskService {
     */
     public int getTaskStatus(NodeTaskM nt){
         int isReadyNt=nt.getIsReady();
-        if (isReadyNt!=20&&isReadyNt!=3) {//可以开始并且未完成状态下检查(计划完成后，)
+        if (isReadyNt==9||isReadyNt==1||isReadyNt==2) {//可以开始并且未完成状态下检查(计划完成后，)
                     //判断是否逾期
             Date planStart = nt.getPlanStartTime();
             Date planEnd = nt.getPlanEndTime();
             Date current = new Date();
-            Calendar calendar = Calendar.getInstance();
             int rat = 1000 * 60 * 60 * 24;
 
             if (isReadyNt==1) {//未开始，

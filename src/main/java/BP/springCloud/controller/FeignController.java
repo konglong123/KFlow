@@ -190,6 +190,7 @@ public class FeignController {
                 NodeTask nodeTask=new NodeTask(taskNo);
                 nodeTask.SetValByKey(NodeTaskAttr.PlanStartTime,formatter.format(new Date(planStart)));
                 nodeTask.SetValByKey(NodeTaskAttr.PlanEndTime,formatter.format(new Date(planEnd)));
+                nodeTask.SetValByKey(NodeTaskAttr.IsReady,9);//设置状态为“已经计划”
                 nodeTask.Update();
 
                 JSONArray resources=task.getJSONArray("resList");
@@ -203,6 +204,7 @@ public class FeignController {
                     ResourceTask resourceTask=(ResourceTask) resourceTasks.get(0);
                     resourceTask.SetValByKey(ResourceTaskAttr.PlanStart,formatter.format(new Date(planStartRes)));
                     resourceTask.SetValByKey(ResourceTaskAttr.PlanEnd,formatter.format(new Date(planEndRes)));
+                    resourceTask.SetValByKey(ResourceTaskAttr.IsPlan,1);//更新状态为“已计划”（后续需要建立枚举）
                     resourceTask.Update();
                 }
             }

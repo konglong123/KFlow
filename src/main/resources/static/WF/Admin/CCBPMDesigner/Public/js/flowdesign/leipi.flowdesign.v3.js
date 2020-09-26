@@ -157,10 +157,8 @@
         if (processData.list) {
             $.each(processData.list, function (i, row) {
                 var nodeDiv = document.createElement('div');
-                var nodeId = "window" + row.id, badge = 'badge-inverse', icon = 'icon-star';
-                if (row.icon) {
-                    icon = row.icon;
-                }
+                var nodeId = "window" + row.id, badge = 'badge-inverse', icon = row.icon;
+
                 var classN="process-step btn btn-small";
                 if (row.active){
                     classN="process-step  btn-small activeNode";
@@ -201,7 +199,7 @@
                                 $('#pmfun span').text("决策:" + nodeID.value);
                             }
                             else if (node.RunModel == 10) {
-                                $('#pmfun span').text("模糊:" + nodeID.value);
+                                $('#pmfun span').text("宏节点:" + nodeID.value);
                             }
 					        $(this).contextMenu('processMenu', contextmenu);
 					        ////$(this).contextMenu('processMenu3', contextmenu);

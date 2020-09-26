@@ -33,8 +33,10 @@ public class ResourceTask extends EntityNo {
         map.AddTBDateTime(ResourceTaskAttr.BookEnd,null,"预定结束时间",true,true);
         map.AddTBDateTime(ResourceTaskAttr.PlanStart,null,"计划开始时间",true,true);
         map.AddTBDateTime(ResourceTaskAttr.PlanEnd,null,"计划结束时间",true,true);
-        map.AddTBInt(ResourceTaskAttr.IsPlan,0,"是否计划",true,true);
-        map.AddTBInt(ResourceTaskAttr.IsFinish,0,"是否完成",true,true);
+        map.AddDDLSysEnum(ResourceTaskAttr.IsPlan, 2, "是否计划", true, false,ResourceTaskAttr.IsPlan,
+                "@1=已经计划@2=未计划");
+        map.AddDDLSysEnum(ResourceTaskAttr.IsFinish, 2, "是否完成", true, false,ResourceTaskAttr.IsFinish,
+                "@1=完成@2=未完成");
         //addTBData精确到日，addTBDataTime精确到时分
         this.set_enMap(map);
         return this.get_enMap();
