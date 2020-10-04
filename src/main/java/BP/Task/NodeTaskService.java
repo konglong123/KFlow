@@ -762,6 +762,7 @@ public class NodeTaskService {
                 JSONObject item=new JSONObject();
                 item.put("resPlanUid",plan.getNo());
                 item.put("resPlanTaskUid",task.getNo());
+                item.put("resPlanPriority",1);//更改优先级
                 resourcePlanList.add(item);
 
                 ResourceTasks resourceTasks=new ResourceTasks();

@@ -68,7 +68,7 @@ public class JudgeController {
     */
     @RequestMapping("testExpression")
     @ResponseBody
-    public Map testExpression(@RequestParam int no){
+    public Map  testExpression(@RequestParam int no){
         JudgeRuleM rule=judgeRuleService.getJudgeRule(no);
         Map map= JudgeTool.testExpression(rule.getExpression());
         if ((boolean)map.get("success")) {

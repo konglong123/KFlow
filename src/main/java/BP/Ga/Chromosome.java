@@ -48,20 +48,12 @@ public class Chromosome {
 	}
 
 	//对染色体进行随机变异
-	public  Chromosome chroVar(float geneVPro){
+	public  Chromosome chroVar(double geneVPro){
 		int geneNum=chromosome.size();
-		//需要变异的基因数量
-		int selGeneNum=(int)Math.floor(geneNum*geneVPro);
-		Gene gene;
-		Set<Integer> set=new HashSet<>();
-		do{
-			set.add((int)Math.floor(Math.random()*geneNum));//选定变异基因位置
-		}while(set.size()<selGeneNum);
-
 		Chromosome child=new Chromosome(this.groupGeneAll);//变异产生的新子代
 		for(int i=0;i<geneNum;i++){
-			gene =chromosome.get(i);
-			if(set.contains(i))
+			Gene gene =chromosome.get(i);
+			if(Math.random()<=geneVPro)
 				child.add(variation(gene,i));
 			else
 				child.add(gene);

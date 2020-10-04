@@ -35,7 +35,7 @@ hanlp:
   #trainingFile: /opt/nlp/training/pku98/199801-train.txt
   #modelFile: /opt/nlp/model/cws.bin
   #testFile: /opt/nlp/training/pku98/199801-test.txt
-  segmentTrainingFile: D:/Springboot/nlp/segment-mini.txt
+  segmentTrainingFile: D:/Springboot/nlp/sogo.txt
   segmentModelFile: D:/Springboot/nlp/cws.bin
   #word2vecModelFile: D:/Springboot/nlp/word2.txt
   #演示用下面的模型（该模型数据量大，加载慢）

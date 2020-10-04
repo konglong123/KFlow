@@ -24,7 +24,7 @@ public class ResourcePlan extends EntityNo {
         Map map = new Map("k_resource_plan", "资源方案");
         map.AddTBStringPK(ResourcePlanAttr.No, null, "编号", true, true,1, 40, 100);
         map.AddTBString(ResourcePlanAttr.NodeId, null, "节点编码", true, true, 0, 100, 100);
-        map.AddTBInt(ResourcePlanAttr.Priority, 0, "优先级", true, false);
+        map.AddTBInt(ResourcePlanAttr.Priority, 1, "优先级", true, false);
         map.AddTBString(ResourcePlanAttr.Creator, null, "创建者", true, false,1, 40, 100);
         map.AddTBStringDoc(ResourcePlanAttr.Detail, null, "备注", true, false);
 

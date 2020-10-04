@@ -2,6 +2,7 @@ package BP.NodeGroup;
 
 import BP.En.EntityNo;
 import BP.En.Map;
+import BP.Ga.Historys;
 import BP.springCloud.tool.FeignTool;
 
 import java.util.Date;
@@ -67,6 +68,15 @@ public class ComposeGroup extends EntityNo {
         Long id= FeignTool.getSerialNumber("BP.NodeGroup.ComposeGroup");
         this.setNo(id+"");
         return super.beforeInsert();
+    }
+
+    @Override
+    protected boolean beforeDelete() throws Exception {
+        String[] historyNo =this.getHistory().split("_");
+        Historys historys=new Historys();
+        historys.Delete("history_no",historyNo[0]);
+        historys.Delete("history_no",historyNo[1]);
+        return super.beforeDelete();
     }
 
 

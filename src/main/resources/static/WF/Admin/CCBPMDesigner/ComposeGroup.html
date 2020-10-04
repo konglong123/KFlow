@@ -5,6 +5,8 @@
     <link href="../../Scripts/easyUI/themes/default/easyui.css" rel="stylesheet" type="text/css" />
     <script src="../../Scripts/jquery-1.7.2.min.js" type="text/javascript"></script>
     <script src="../../Scripts/easyUI/jquery.easyui.min.js" type="text/javascript"></script>
+    <script src="../../Scripts/highcharts/highcharts.js"></script>
+    <script src="../../Scripts/highcharts/exporting.js"></script>
     <script src="../../Scripts/QueryString.js" type="text/javascript"></script>
     <script src="../../Scripts/EasyUIUtility.js" type="text/javascript"></script>
 </head>
@@ -14,7 +16,7 @@
         <table cellpadding="5">
             <tr>
                 <td>种群数：</td>
-                <td><input id="groupNum" value="10" class="easyui-textbox" type="text" placeholder="默认100"></td>
+                <td><input id="groupNum" value="100" class="easyui-textbox" type="text" placeholder="默认100"></td>
                 <td>进化代数：</td>
                 <td><input class="easyui-textbox" type="text" id="generateNum" value="50" placeholder="默认50"></td>
                 <td>推荐结果保存数：</td>
@@ -37,13 +39,12 @@
         <button class="easyui-linkbutton" onclick="updateWord2Document()" >同步W2V数据</button>
     </div>
 </div>
-<div id="composeResult">
-    <table id="dgComposeResults" title="推荐列表">
-    </table>
-</div>
 <div id="composeHistory">
     <table id="dgComposeHistory" title="推荐记录">
     </table>
+</div>
+<div>
+    <div id="container"></div>
 </div>
 <script type="text/javascript">
     $(function(){
@@ -73,11 +74,12 @@
                 {field:'acrossPro',title: '交叉率',align: 'center',width:10},
                 {field:'elitePro',title: '精英比例',align: 'center',width:10},
                 {field:'generateNum',title: '进化代数',align: 'center',width:10},
+                {field:'history',title: '进化过程编码',align: 'center',width:10},
                 {field:'action',title: '操作',align: 'center',width:20,
                     formatter:function(val,rec){
                         var str="<input type='button' value='流程详情'  onclick='gotoComposeFlowDetail(\""+rec.newFlowNo+"\")'/>";
-                        str+="<input type='button' value='进化过程'  />";
-                        str+="<input type='button' value='详情'  />";
+                        str+="<input type='button' value='进化过程'  onclick='gotoGAHistory(\""+rec.No+"\")'/>";
+                        str+="<input type='button' value='详情' onclick='gotoComposeGroupDetail(\""+rec.No+"\")' />";
                         return str;
                     }},
             ]]
@@ -89,12 +91,76 @@
         var url="/WF/WF/Admin/CCBPMDesigner/Designer.htm?FK_Flow="+flowNo+"&UserNo=admin";
         var self = window.open(url);
     }
+    function gotoComposeGroupDetail(no) {
+        var enName = "BP.NodeGroup.ComposeGroup";
+        var url = "/WF/WF/Comm/En.htm?EnName=" + enName + "&PKVal=" + no;
+        OpenEasyUiDialogExt(url,"流程实例", 800, 450, true);
+    }
 
+    function gotoGAHistory(no) {
+        $.ajax({
+            url: "/WF/composeGroup/getComposeHistory",
+            type: 'GET',
+            data: {
+                no:no
+            },
+            success: function (data) {
+                var chart = Highcharts.chart('container', {
+                    chart: {
+                        type: 'line'
+                    },
+                    title: {
+                        text: '适应度'
+                    },
+                    scrollbar: {
+                        enabled: true
+                    },
+                    plotOptions: {
+                        series: {
+                            label: {
+                                connectorAllowed: false
+                            },
+                            pointStart: 1
+                        }
+                    },
+                    credits: {
+                        enabled: false//除去highcharts.com
+                    },
+                    xAxis:{
+                        title: {
+                            text: '迭代次数'
+                        },
+                        min:0,
+                        max:data.aveHistory.length
+                    },
+                    yAxis: {
+                        title: {
+                            text: '适应度'
+                        }
+                    },
+                    series: [{
+                        name: '普通',
+                        data: data.maxHistory
+                    },{
+                        name: '自适应',
+                        data: data.aveHistory
+                    }]
+                });
+                chart.series[0].update({
+                    data:''
+                });
+            },
+            error:function (data) {
+                alert("训练失败");
+            }
+        });
+
+    }
     function getCompose() {
         var flowNo=GetQueryString("FK_Flow");
         $.ajax({
             type: 'POST',
-            url: "/WF/composeGroup/composeNodeGroup",
+            url: "/WF/composeGroup/analyseGA",
             data: {
                 flowNo:flowNo,
                 groupNum:$("#groupNum").val().trim(),

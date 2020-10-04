@@ -1,10 +1,9 @@
 package BP.springCloud.controller;
 
-import BP.Ga.Chromosome;
-import BP.Ga.Gene;
-import BP.Ga.GeneticAth;
+import BP.Ga.*;
 import BP.NodeGroup.*;
 import BP.Tools.Json;
+import BP.springCloud.tool.FeignTool;
 import BP.springCloud.tool.PageTool;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -63,6 +62,56 @@ public class ComposeGroupController {
     *@Author: Mr.kong
     *@Date: 2020/9/16
     */
+    @RequestMapping("composeNodeGroupRand")
+    @ResponseBody
+    public JSONObject composeNodeGroupRand(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            String flowNo=request.getParameter("flowNo");
+            ComposeGroup composeGroup=new ComposeGroup();
+            composeGroup.setFlowNo(flowNo);
+            composeGroup.setGroupNum(Integer.valueOf(request.getParameter("groupNum")));
+            composeGroup.setGenerateNum(Integer.valueOf(request.getParameter("generateNum")));
+            composeGroup.setVariationPro(Float.valueOf(request.getParameter("variationPro")));
+            composeGroup.setAcrossPro(Float.valueOf(request.getParameter("acrossPro")));
+            composeGroup.setElitePro(Float.valueOf(request.getParameter("elitePro")));
+            composeGroup.setMaxSaveNum(Integer.valueOf(request.getParameter("saveNum")));
+            composeGroup.setThreshold(Float.valueOf(request.getParameter("threshold")));
+
+
+            GeneticAthRand geneticAth = new GeneticAthRand(composeGroup);
+            JSONObject history = geneticAth.run(1);
+
+            //持久化训练过程数据
+            JSONArray aveHistory=history.getJSONArray("aveHistory");
+            JSONArray maxHistory=history.getJSONArray("maxHistory");
+            String aveNo= FeignTool.getSerialNumber("BP.History")+"";
+            String maxNo=FeignTool.getSerialNumber("BP.History")+"";
+
+            insertHistory(aveHistory.iterator(),aveNo);
+            insertHistory(maxHistory.iterator(),maxNo);
+
+            //保存该次训练结果
+            composeGroup.setHistory(aveNo+"_"+maxNo);
+            composeGroup.Insert();
+
+
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+
+        JSONObject result=new JSONObject();
+        return result;
+    }
+
+
+
+    /**
+    *@Description: 随机生成组合数据，测试算法
+    *@Param:
+    *@return:
+    *@Author: Mr.kong
+    *@Date: 2020/10/4
+    */
     @RequestMapping("composeNodeGroup")
     @ResponseBody
     public JSONObject composeNodeGroup(HttpServletRequest request, HttpServletResponse response) {
@@ -93,7 +142,8 @@ public class ComposeGroupController {
             logger.error(e.getMessage());
         }
 
-        return null;
+        JSONObject result=new JSONObject();
+        return result;
     }
 
 
@@ -130,13 +180,92 @@ public class ComposeGroupController {
                         group.SetValByKey(NodeGroupAttr.abstracts, sb.toString());
                         group.Update();
                     }
-
                 }
-
             }
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
         return null;
     }
+
+    @RequestMapping("getComposeHistory")
+    @ResponseBody
+    public JSONObject getComposeHistory(HttpServletRequest request){
+        try {
+            String no = request.getParameter("no");
+            ComposeGroup composeGroup = new ComposeGroup(no);
+            String history=composeGroup.getHistory();
+            String[] nos=history.split("_");
+            Historys historys=new Historys();
+            historys.Retrieve("history_no",nos[0]);
+            List<History> historyList=historys.toList();
+            List<Double> aveHistory=new ArrayList<>();
+            for (History temp:historyList){
+                aveHistory.add(temp.getScore());
+            }
+
+            historys.Retrieve("history_no",nos[1]);
+            historyList=historys.toList();
+            List<Double> maxHistory=new ArrayList<>();
+            for (History temp:historyList){
+                maxHistory.add(temp.getScore());
+            }
+
+            JSONObject result=new JSONObject();
+            result.put("maxHistory",maxHistory);
+            result.put("aveHistory",aveHistory);
+            return result;
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+        return null;
+    }
+
+    //对比算法效果
+    @RequestMapping("analyseGA")
+    @ResponseBody
+    public JSONObject composeNodeGroupRand(HttpServletRequest request) {
+        try {
+            String flowNo=request.getParameter("flowNo");
+            ComposeGroup composeGroup=new ComposeGroup();
+            composeGroup.setFlowNo(flowNo);
+            composeGroup.setGroupNum(Integer.valueOf(request.getParameter("groupNum")));
+            composeGroup.setGenerateNum(Integer.valueOf(request.getParameter("generateNum")));
+
+
+            GeneticAthRand geneticAth1 = new GeneticAthRand(composeGroup);
+            JSONObject history = geneticAth1.run(1);
+            //持久化训练过程数据
+            String aveNo= FeignTool.getSerialNumber("BP.History")+"";
+            String maxNo=FeignTool.getSerialNumber("BP.History")+"";
+            insertHistory(history.getJSONArray("aveHistory").iterator(),aveNo);
+
+            GeneticAthRand geneticAth2 = new GeneticAthRand(composeGroup);
+            geneticAth2.groupGeneAll=geneticAth1.groupGeneAll;
+            history=geneticAth2.run(2);
+            insertHistory(history.getJSONArray("aveHistory").iterator(),maxNo);
+
+            //保存该次训练结果
+            composeGroup.setHistory(aveNo+"_"+maxNo);
+            composeGroup.Insert();
+
+
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+        return null;
+    }
+
+    public void insertHistory(Iterator it,String historyNo) throws Exception{
+        int i=Integer.parseInt(historyNo)*500+1;
+        while (it.hasNext()){
+            History historyTemp=new History();
+            historyTemp.setScore((Double) it.next());
+            historyTemp.setHistoryNo(historyNo);
+            historyTemp.setNo(i+"");
+            historyTemp.Insert();
+            i++;
+        }
+    }
+
 }

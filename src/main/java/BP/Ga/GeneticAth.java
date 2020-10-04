@@ -1,6 +1,5 @@
 package BP.Ga;
 
-import BP.GPM.Group;
 import BP.NodeGroup.ComposeGroup;
 import BP.NodeGroup.NodeGroup;
 import BP.NodeGroup.NodeGroupAttr;
@@ -138,8 +137,8 @@ public class GeneticAth {
 
 		//交叉中间部分
 		for(int i=pos1;i<=pos2;i++){
-			child1.add(parent1.get(i));
-			child2.add(parent2.get(i));
+			child1.add(parent2.get(i));
+			child2.add(parent1.get(i));
 		}
 		//复制pos2-最后
 		for(int i=pos2+1;i<mohuNum;i++){
@@ -177,7 +176,7 @@ public class GeneticAth {
 		}while(set.size()<num);
 		for (Integer pos:set){
 			Chromosome chr=group.get(pos);
-			Chromosome newChr=chr.chroVar(composeGroup.getVariationPro());
+			Chromosome newChr=chr.chroVar((double) composeGroup.getVariationPro());
 			groupNew.add(newChr);
 		}
 	}
