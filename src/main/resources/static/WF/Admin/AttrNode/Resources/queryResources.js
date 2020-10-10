@@ -1,11 +1,12 @@
 var rows = [];
 $(function(){
     var nodeId=GetQueryString("FK_Node");
+    var nodeName=GetQueryString("NodeName");
     initDgResourcePlan(nodeId);
-    initDgSearchResource();
+    initDgSearchResource(nodeName);
 
 });
-function initDgSearchResource() {
+function initDgSearchResource(abstracts) {
     $('#dgSearchResource').datagrid({
         singleSelect:true,
         autoRowHeight:false,
@@ -16,7 +17,7 @@ function initDgSearchResource() {
         fitColumns:true,//表头与数据对齐
         url:"/WF/feign/getResources",
         queryParams: {
-            abstracts: "",
+            abstracts: abstracts,
             resourceNo:""
         },
         columns:[[
@@ -123,8 +124,8 @@ function resourceLoad(no) {
     OpenEasyUiDialogExt(url,"资源负载", 1200, 700, false);
 }
 
-function resourceGant() {
-    var url="../../../Admin/AttrNode/Resources/ResourceLoad.html?resourceNo="+no;
+function resourceGant(no) {
+    var url="../../../Admin/AttrNode/Resources/ResourceLoadGant.html?resourceNo="+no;
     OpenEasyUiDialogExt(url,"资源负载", 1200, 700, false);
 }
 function deleteResource(no) {

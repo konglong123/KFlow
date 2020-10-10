@@ -3,6 +3,9 @@ package BP.springCloud.controller;
 import BP.NodeGroup.*;
 import BP.Project.ProjectTree;
 import BP.Project.ProjectTreeAttr;
+import BP.Resource.ResourceTask;
+import BP.Resource.ResourceTaskAttr;
+import BP.Resource.ResourceTasks;
 import BP.Sys.EnCfg;
 import BP.Task.GenerFlowService;
 import BP.Task.NodeTaskService;
@@ -218,6 +221,15 @@ public class FlowController {
                 Flow f = new Flow(childFlowNo);
                 startFlow(workGroupID, workId, nodeTaskId, f);
             }
+        }
+
+        //更新资源任务
+        ResourceTasks resourceTasks=new ResourceTasks();
+        resourceTasks.Retrieve(ResourceTaskAttr.NodeId,nodeId+"");
+        List<ResourceTask> resourceTaskList=resourceTasks.toList();
+        for (ResourceTask resourceTask:resourceTaskList){
+            resourceTask.SetValByKey(ResourceTaskAttr.TaskId,nodeTask.getNo());
+            resourceTask.Update();
         }
     }
 

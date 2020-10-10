@@ -410,7 +410,7 @@ function planTask() {
         contentType:'application/json',
         data: JSON.stringify(con),
         success: function (dataTemp) {
-            alert(dataTemp);
+            alert(dataTemp.meg);
         }
     });
 }

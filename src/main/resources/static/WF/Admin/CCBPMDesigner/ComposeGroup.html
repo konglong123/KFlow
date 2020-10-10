@@ -77,7 +77,7 @@
                 {field:'history',title: '进化过程编码',align: 'center',width:10},
                 {field:'action',title: '操作',align: 'center',width:20,
                     formatter:function(val,rec){
-                        var str="<input type='button' value='流程详情'  onclick='gotoComposeFlowDetail(\""+rec.newFlowNo+"\")'/>";
+                        var str="<input type='button' value='查看流程'  onclick='gotoComposeFlowDetail(\""+rec.newFlowNo+"\")'/>";
                         str+="<input type='button' value='进化过程'  onclick='gotoGAHistory(\""+rec.No+"\")'/>";
                         str+="<input type='button' value='详情' onclick='gotoComposeGroupDetail(\""+rec.No+"\")' />";
                         return str;
@@ -129,9 +129,7 @@
                     xAxis:{
                         title: {
                             text: '迭代次数'
-                        },
-                        min:0,
-                        max:data.aveHistory.length
+                        }
                     },
                     yAxis: {
                         title: {
@@ -139,11 +137,17 @@
                         }
                     },
                     series: [{
-                        name: '普通',
-                        data: data.maxHistory
+                        name: '自适应平均',
+                        data: data.history1
                     },{
-                        name: '自适应',
-                        data: data.aveHistory
+                        name: '自适应最大',
+                        data: data.history2
+                    },{
+                        name: '普通平均',
+                        data: data.history3
+                    },{
+                        name: '普通最大',
+                        data: data.history4
                     }]
                 });
                 chart.series[0].update({

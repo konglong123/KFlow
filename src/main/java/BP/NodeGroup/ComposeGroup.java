@@ -74,8 +74,9 @@ public class ComposeGroup extends EntityNo {
     protected boolean beforeDelete() throws Exception {
         String[] historyNo =this.getHistory().split("_");
         Historys historys=new Historys();
-        historys.Delete("history_no",historyNo[0]);
-        historys.Delete("history_no",historyNo[1]);
+        for(String tempNo:historyNo) {
+            historys.Delete("history_no", tempNo);
+        }
         return super.beforeDelete();
     }
 

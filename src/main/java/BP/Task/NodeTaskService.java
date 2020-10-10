@@ -884,12 +884,14 @@ public class NodeTaskService {
                 }
                 //转换后的资源计划
                 List<List<ResourceItem>> planAfterList=new ArrayList<>();
-                getResourceItemPlan(resourceItemList,planAfterList,0);
+                getResourceItemPlan(resourceItemList,planAfterList,new ArrayList<>(),0);
+
                 for (List<ResourceItem> tempPlan:planAfterList){
                     JSONObject item=new JSONObject();
-                    long planId=FeignTool.getSerialNumber("BP.Resource.PlanTemp");
+                    String planId=FeignTool.getSerialNumber("BP.Resource.PlanTemp")+"_"+plan.getNo();
                     item.put("resPlanUid", planId);
                     item.put("resPlanTaskUid",task.getNo());
+                    item.put("resPlanPriority",1);
                     resourcePlanList.add(item);
 
                     for (ResourceItem temp:tempPlan){
@@ -981,7 +983,18 @@ public class NodeTaskService {
         return data;
     }
 
-    private void getResourceItemPlan(List<List<ResourceItem>> items,List<List<ResourceItem>> plans,int pos){
+    private void getResourceItemPlan(List<List<ResourceItem>> items,List<List<ResourceItem>> plans,List<ResourceItem> temp,int pos){
+        if (pos==items.size()) {
+            plans.add(temp);
+            return;
+        }
+        for (ResourceItem item:items.get(pos)){
+            List<ResourceItem> nextList=new ArrayList<>();
+            nextList.addAll(temp);
+            nextList.add(item);
+            getResourceItemPlan(items,plans,nextList,pos+1);
+        }
+
 
     }
 

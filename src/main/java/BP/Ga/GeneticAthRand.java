@@ -30,7 +30,7 @@ public class GeneticAthRand {
 
     //流程编码
     private Flow flow;
-    private int mohuNum=30;//模糊节点数
+    private int mohuNum=50;//模糊节点数
     public List<List<Gene>> groupGeneAll=new ArrayList<>(mohuNum);//所有基因（genesAll(i)表示第i个模糊节点，所有可选基因）
     public int geneKindMaxNum=100;//每个模糊节点，可选择的最大方案数
     ComposeGroup composeGroup =null;
@@ -38,7 +38,7 @@ public class GeneticAthRand {
     double aveFitness;
     float pc1=0.9f;
     float pc2=0.6f;
-    float pm1=0.1f;
+    float pm1=0.2f;
     float pm2=0.001f;
     int type=1;
 

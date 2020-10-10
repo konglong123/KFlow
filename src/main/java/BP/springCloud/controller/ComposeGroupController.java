@@ -197,23 +197,21 @@ public class ComposeGroupController {
             String history=composeGroup.getHistory();
             String[] nos=history.split("_");
             Historys historys=new Historys();
-            historys.Retrieve("history_no",nos[0]);
-            List<History> historyList=historys.toList();
-            List<Double> aveHistory=new ArrayList<>();
-            for (History temp:historyList){
-                aveHistory.add(temp.getScore());
-            }
-
-            historys.Retrieve("history_no",nos[1]);
-            historyList=historys.toList();
-            List<Double> maxHistory=new ArrayList<>();
-            for (History temp:historyList){
-                maxHistory.add(temp.getScore());
-            }
-
             JSONObject result=new JSONObject();
-            result.put("maxHistory",maxHistory);
-            result.put("aveHistory",aveHistory);
+
+            int i=0;
+            for (String historyNo:nos) {
+                historys.Retrieve("history_no", historyNo);
+                List<History> historyList = historys.toList();
+                List<Double> aveHistory = new ArrayList<>();
+                for (History temp : historyList) {
+                    aveHistory.add(temp.getScore());
+                }
+                i++;
+                result.put("history"+i,aveHistory);
+
+            }
+
             return result;
         }catch (Exception e){
             logger.error(e.getMessage());
@@ -236,17 +234,21 @@ public class ComposeGroupController {
             GeneticAthRand geneticAth1 = new GeneticAthRand(composeGroup);
             JSONObject history = geneticAth1.run(1);
             //持久化训练过程数据
-            String aveNo= FeignTool.getSerialNumber("BP.History")+"";
-            String maxNo=FeignTool.getSerialNumber("BP.History")+"";
-            insertHistory(history.getJSONArray("aveHistory").iterator(),aveNo);
+            String aveNo1= FeignTool.getSerialNumber("BP.History")+"";
+            String maxNo1=FeignTool.getSerialNumber("BP.History")+"";
+            insertHistory(history.getJSONArray("aveHistory").iterator(),aveNo1);
+            insertHistory(history.getJSONArray("maxHistory").iterator(),maxNo1);
 
+            String aveNo2= FeignTool.getSerialNumber("BP.History")+"";
+            String maxNo2=FeignTool.getSerialNumber("BP.History")+"";
             GeneticAthRand geneticAth2 = new GeneticAthRand(composeGroup);
             geneticAth2.groupGeneAll=geneticAth1.groupGeneAll;
             history=geneticAth2.run(2);
-            insertHistory(history.getJSONArray("aveHistory").iterator(),maxNo);
+            insertHistory(history.getJSONArray("aveHistory").iterator(),aveNo2);
+            insertHistory(history.getJSONArray("maxHistory").iterator(),maxNo2);
 
             //保存该次训练结果
-            composeGroup.setHistory(aveNo+"_"+maxNo);
+            composeGroup.setHistory(aveNo1+"_"+maxNo1+"_"+aveNo2+"_"+maxNo2);
             composeGroup.Insert();
 
 

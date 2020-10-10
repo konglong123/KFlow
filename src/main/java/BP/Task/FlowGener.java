@@ -1,8 +1,13 @@
 package BP.Task;
 
 import BP.En.*;
+import BP.Resource.ResourceTask;
+import BP.Resource.ResourceTaskAttr;
+import BP.Resource.ResourceTasks;
 import BP.Sys.EnCfg;
 import BP.Web.WebUser;
+
+import java.util.List;
 
 /**
  * @program: kflow-web
@@ -120,6 +125,23 @@ public class FlowGener extends EntityNo {
         map.put("generNum",projectNum+"");
         enCfg.setMap(map);
         enCfg.Update();
+
+        //删除对应的节点任务
+        NodeTasks tasks=new NodeTasks();
+        tasks.Retrieve(NodeTaskAttr.WorkId,this.GetValStrByKey(FlowGenerAttr.WorkId));
+        List<NodeTask> list=tasks.toList();
+        tasks.Delete(NodeTaskAttr.WorkId,this.GetValStrByKey(FlowGenerAttr.WorkId));
+
+        //重置相应的资源任务
+        for (NodeTask temp:list){
+            ResourceTasks resourceTasks=new ResourceTasks();
+            resourceTasks.Retrieve(ResourceTaskAttr.TaskId,temp.getNo());
+            List<ResourceTask> resourceTaskList=resourceTasks.toList();
+            for (ResourceTask rTask:resourceTaskList){
+                rTask.SetValByKey(ResourceTaskAttr.IsPlan,2);
+                rTask.Update();
+            }
+        }
 
         return super.beforeDelete();
     }

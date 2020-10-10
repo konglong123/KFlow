@@ -12,7 +12,7 @@ public class ResourceTaskM {
 
     private Long no;
     private String resourceNo;
-    private Long resourceId;
+    private String resourceId;
     private Long nodeId;
     private Date planEnd;
     private Date planStart;
@@ -23,7 +23,7 @@ public class ResourceTaskM {
     private int isFinish;
     private int isPlan;
     private int useTime;
-    private Long workId;
+    private String taskId;
     private String planId;
 
     public Long getNo() {
@@ -42,11 +42,11 @@ public class ResourceTaskM {
         this.resourceNo = resourceNo;
     }
 
-    public Long getResourceId() {
+    public String getResourceId() {
         return resourceId;
     }
 
-    public void setResourceId(Long resourceId) {
+    public void setResourceId(String resourceId) {
         this.resourceId = resourceId;
     }
 
@@ -130,12 +130,12 @@ public class ResourceTaskM {
         this.useTime = useTime;
     }
 
-    public Long getWorkId() {
-        return workId;
+    public String getWorkId() {
+        return taskId;
     }
 
-    public void setWorkId(Long workId) {
-        this.workId = workId;
+    public void setWorkId(String taskId) {
+        this.taskId = taskId;
     }
 
     public String getPlanId() {

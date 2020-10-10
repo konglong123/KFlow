@@ -167,7 +167,8 @@ public class FeignController {
 
 
             //封装资源，资源任务
-            JSONObject resource=nodeTaskService.getResourcePlanData(tasks);
+            //JSONObject resource=nodeTaskService.getResourcePlanData(tasks);
+            JSONObject resource=nodeTaskService.getResourcePlanData2(tasks);
             data.putAll(resource);
 
             LinkedMultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
@@ -186,7 +187,7 @@ public class FeignController {
                 String taskNo=task.getString("taskNo");
                 long planStart=task.getLong("planStart");
                 long planEnd=task.getLong("planEnd");
-                String planNo=task.getString("planNo");
+                String planNo=task.getString("planNo").split("_")[1];
                 NodeTask nodeTask=new NodeTask(taskNo);
                 nodeTask.SetValByKey(NodeTaskAttr.PlanStartTime,formatter.format(new Date(planStart)));
                 nodeTask.SetValByKey(NodeTaskAttr.PlanEndTime,formatter.format(new Date(planEnd)));
@@ -196,15 +197,20 @@ public class FeignController {
                 JSONArray resources=task.getJSONArray("resList");
                 for (int index=0;index<resources.size();index++){
                     JSONObject resTask=(JSONObject) resources.get(index);
-                    String resNo=resTask.getString("resNo");
+                    String resItemNo=resTask.getString("resNo");
                     long planStartRes=task.getLong("planStart");
                     long planEndRes=task.getLong("planEnd");
+
+                    ResourceItem item=new ResourceItem(resItemNo);
+                    String resNo=item.GetValStrByKey(ResourceItemAttr.Kind);
+
                     ResourceTasks resourceTasks=new ResourceTasks();
                     resourceTasks.Retrieve(ResourceTaskAttr.ResourceNo,resNo,ResourceTaskAttr.PlanId,planNo);
                     ResourceTask resourceTask=(ResourceTask) resourceTasks.get(0);
                     resourceTask.SetValByKey(ResourceTaskAttr.PlanStart,formatter.format(new Date(planStartRes)));
                     resourceTask.SetValByKey(ResourceTaskAttr.PlanEnd,formatter.format(new Date(planEndRes)));
                     resourceTask.SetValByKey(ResourceTaskAttr.IsPlan,1);//更新状态为“已计划”（后续需要建立枚举）
+                    resourceTask.SetValByKey(ResourceTaskAttr.ResourceId,resItemNo);
                     resourceTask.Update();
                 }
             }

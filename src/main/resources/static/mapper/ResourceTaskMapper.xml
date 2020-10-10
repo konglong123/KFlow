@@ -6,9 +6,9 @@
     <resultMap id="baseResultMap" type="ResourceTaskM">
         <id column="no" jdbcType="BIGINT" property="no" />
         <result column="resource_no" jdbcType="VARCHAR" property="resourceNo" />
-        <result column="resource_id" jdbcType="BIGINT" property="resourceId" />
+        <result column="resource_id" jdbcType="VARCHAR" property="resourceId" />
         <result column="node_id" jdbcType="BIGINT" property="nodeId" />
-        <result column="work_id" jdbcType="BIGINT" property="workId" />
+        <result column="task_id" jdbcType="VARCHAR" property="taskId" />
         <result column="use_time" jdbcType="INTEGER" property="useTime" />
         <result column="use_num" jdbcType="INTEGER" property="useNum" />
         <result column="plan_end" jdbcType="TIMESTAMP" property="planEnd" />
@@ -21,17 +21,26 @@
         <result column="is_plan" jdbcType="TINYINT" property="isPlan" />
         <result column="plan_id" jdbcType="VARCHAR" property="planId" />
     </resultMap>
-    <select id="getResourceTaskByPlanTime" resultMap="baseResultMap" parameterType="java.lang.String">
-        select * from k_resource_task where plan_start &gt;= #{startTime} and plan_start &lt;= #{endTime}
-        and resource_no=#{resTask.resourceNo,jdbcType=VARCHAR}
-        <trim>
-            <if test="resTask.isPlan != 0">
-                and is_plan=#{resTask.isPlan,jdbcType=TINYINT}
-            </if>
-            <if test="resTask.isFinish != 0">
-                and is_finish=#{resTask.isFinish,jdbcType=TINYINT}
-            </if>
-        </trim>
+    <select id="findResourceTaskList" resultMap="baseResultMap" parameterType="ResourceTaskM">
+        select * from k_resource_task
+        <where>
+            1=1
+            <trim>
+                <if test="resTask.resourceNo != null ">
+                  AND resource_no=#{resTask.resourceNo,jdbcType=VARCHAR}
+                </if>
+                <if test="resTask.resourceId != null ">
+                    AND resource_id=#{resTask.resourceId,jdbcType=VARCHAR}
+                </if>
+                <if test="resTask.isPlan != 0">
+                    AND is_plan=#{resTask.isPlan,jdbcType=TINYINT}
+                </if>
+                <if test="resTask.isFinish != 0">
+                    AND is_finish=#{resTask.isFinish,jdbcType=TINYINT}
+                </if>
+            </trim>
+        </where>
+
     </select>
 
     <update id="updateResourceTask" parameterType="ResourceTaskM">
@@ -94,7 +103,7 @@
             <if test="resTask.useNum != 0">
                 use_num,
             </if>
-            <if test="resTask.workId != null">
+            <if test="resTask.taskId != null">
                 work_id,
             </if>
             <if test="resTask.planId != null">
@@ -142,8 +151,8 @@
             <if test="resTask.useNum != 0">
                 #{resTask.useNum,jdbcType=INTEGER},
             </if>
-            <if test="resTask.workId != null">
-                #{resTask.workId,jdbcType=BIGINT},
+            <if test="resTask.taskId != null">
+                #{resTask.taskId,jdbcType=VARCHAR},
             </if>
             <if test="resTask.planId != null">
                 #{resTask.planId,jdbcType=VARCHAR},

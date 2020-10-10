@@ -34,7 +34,7 @@ function initNlpModels() {
                     var str="<input type='button' value='启用'  onclick='loadModel(\""+rec.id+"\")'/>";
                     str+="<input type='button' value='删除'  onclick='deleteModel(\""+rec.id+"\")'/>";
                     if (rec.modelType==2)
-                        str+="<input type='button' value='详情'  onclick='gotoModelDetail(\""+rec.id+"\")'/>";
+                        str+="<input type='button' value='训练过程'  onclick='gotoModelDetail(\""+rec.id+"\")'/>";
                     return str;
                 }},
 

@@ -16,7 +16,7 @@ import java.util.List;
 @Repository
 public interface ResourceTaskMDao {
 
-    List getResourceTaskByPlanTime(@Param("resTask")ResourceTaskM resourceTaskM,String startTime,String endTime);
+    List findResourceTaskList(@Param("resTask")ResourceTaskM resourceTaskM);
 
     void updateResourceTask(@Param("resTask") ResourceTaskM resourceTaskM);
 

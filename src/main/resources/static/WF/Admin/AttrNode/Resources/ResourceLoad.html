@@ -5,13 +5,6 @@
     <link rel="icon" href="https://jscdn.com.cn/highcharts/images/favicon.ico">
     <link rel="stylesheet" type="text/css" href="../../../Scripts/easyUI/themes/gray/easyui.css" />
     <link rel="stylesheet" type="text/css" href="../../Scripts/easyUI/themes/icon.css" />
-    <style>#container {
-        min-width: 300px;
-        max-width: 800px;
-        height: 300px;
-        margin: 1em auto;
-    }
-    </style>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="../../../Scripts/jquery-1.7.2.min.js" type="text/javascript"></script>
     <script src="../../../Scripts/easyUI/jquery.easyui.min.js" type="text/javascript"></script>
@@ -25,13 +18,11 @@
 </head>
 <body>
 <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-<div style="float:left ">
-    <label>开始时间：</label>
-    <input id="startTime" type="text" class="easyui-datebox" required="required">
-    <label>--结束时间：</label>
-    <input id="endTime" type="text" class="easyui-datebox" required="required">
-    <input id="btnQueryLoad" type="button" value="查询">
-</div>
-
+<script>
+    $(function(){
+        var resourceNo=GetQueryString("resourceNo");
+        initResourceLoad(resourceNo);
+    });
+</script>
 </body>
 </html>

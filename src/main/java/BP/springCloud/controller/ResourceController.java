@@ -135,7 +135,7 @@ public class ResourceController {
     }
 
     /**
-    *@Description:  查询资源对使用情况（）
+    *@Description:  查询资源对使用情况（根据资源类别）
     *@Param:  
     *@return:  
     *@Author: Mr.kong
@@ -145,10 +145,8 @@ public class ResourceController {
     @ResponseBody
     public Object getResourceLoad(HttpServletRequest request, HttpServletResponse response){
         String resourceNo=request.getParameter("resourceNo");
-        String startTime=request.getParameter("startTime");
-        String endTime=request.getParameter("endTime");
         if (resourceNo!=null) {
-            return resourceService.getResourceLoadForHighcharts(resourceNo,startTime,endTime);
+            return resourceService.getResourceLoad(resourceNo);
         }
         return null;
     }
@@ -183,9 +181,23 @@ public class ResourceController {
         return null;
     }
 
-    @RequestMapping("/getResourceGant")
+    @RequestMapping("/getResourceKindGant")
     @ResponseBody
-    public JSONObject getResourceGant(@RequestBody Map<String,String> map){
+    public JSONObject getResourceKindGant(HttpServletRequest request){
+        String resourceNo=request.getParameter("resourceNo");
+        if (resourceNo!=null) {
+            return resourceService.getResourceKindGant(resourceNo);
+        }
+        return null;
+    }
+
+    @RequestMapping("/getResourceItemGant")
+    @ResponseBody
+    public JSONObject getResourceItemGant(HttpServletRequest request){
+        String resourceNo=request.getParameter("resourceNo");
+        if (resourceNo!=null) {
+            return resourceService.getResourceKindGant(resourceNo);
+        }
         return null;
     }
 

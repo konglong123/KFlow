@@ -1,90 +1,162 @@
-$(function(){
-    var chart = Highcharts.chart('container',{
-        chart: {
-            type: 'xrange'
+function initResourceKindGant(resourceNo) {
+    $.ajax({
+        url: "/WF/resource/getResourceKindGant",
+        type: 'POST',
+        data: {
+            resourceNo: resourceNo
         },
-        title: {
-            text: '资源负载图'
+        success: function (resData) {
+            map = Highcharts.map;
+            series = resData.series.map(function (car, i) {
+                var data = car.deals.map(function (deal) {
+                    debugger
+                    return {
+                        id: deal.id,
+                        start: deal.start,
+                        end: deal.end,
+                        y: i
+                    };
+                });
+                debugger
+                return {
+                    name: car.model,
+                    data: data,
+                    current: car.deals[car.current]
+                };
+            });
+            Highcharts.ganttChart('containerKind', {
+                series: series,
+                title: {
+                    text: 'Car Rental Schedule'
+                },
+                scrollbar: {
+                    enabled: true
+                },
+                tooltip: {
+                    pointFormat: '<span>Rented To: {point.rentedTo}</span><br/><span>From: {point.start:%e. %b}</span><br/><span>To: {point.end:%e. %b}</span>'
+                },
+                xAxis: {
+                    currentDateIndicator: true
+                },
+                yAxis: {
+                    type: 'category',
+                    grid: {
+                        columns: [{
+                            title: {
+                                text: '资源实例'
+                            },
+                            categories: map(series, function (s) {
+                                return s.name;
+                            })
+                        }]
+                    }
+                }
+
+            });
         },
-        scrollbar:{
-            enabled:true //是否产生滚动条
-        },
-        animation: true,
-        xAxis: {
-            title: {
-                text: '每日工作分布'
-            },
-            min:0,
-            max:24,
-            tickInterval:1
-        },
-        yAxis: {
-            title: {
-                text: '日期'
-            },
-            reversed: true,
-            categories: []
-        },
-        tooltip: {
-            valueSuffix: '时'
-        },
-        credits: {
-            enabled: false//除去highcharts.com
-        },
-        series: [
-            {
-                name: '已预定',
-                borderColor: 'blue',
-                pointWidth: 20,
-                data: []
-            },
-            {
-                name: '计划中',
-                borderColor: 'yellow',
-                pointWidth: 20,
-                data: []
-            },
-            {
-                name: '计划完成',
-                borderColor: 'red',
-                pointWidth: 20,
-                data: [],
-            }]
-    });
-    $('#btnQueryLoad').click(function () {
-        var startTime=$('#startTime').datebox('getValue');
-        var endTime=$('#endTime').datebox('getValue');
-        if (startTime==null||startTime==""||endTime==null||endTime==""){
-            return;
+        error: function (data) {
+            console.log("error" + data);
         }
-        var resourceNo=GetQueryString("resourceNo");
-        $.ajax({
-            url: "/WF/resource/getResourceLoad",
-            type: 'POST',
-            data: {
-                startTime:startTime,
-                endTime:endTime,
-                resourceNo:resourceNo
-            },
-            success: function (data) {
-                chart.yAxis[0].update({
-                    categories: data.categories
-                });
-                chart.series[0].update({
-                    data:data.bookPlan
-                });
-                chart.series[1].update({
-                    data:data.book
-                });
-                chart.series[2].update({
-                    data:data.finishPlan
-                });
-            },
-            error: function (data) {
-                console.log("error"+data);
-            }
-        });
-    });
-});
+    })
+}
+function initResourceItemGant(resourceId) {
+    $.ajax({
+        url: "/WF/resource/getResourceItemGant",
+        type: 'POST',
+        data: {
+            resourceNo: resourceNo
+        },
+        success: function (data) {
+            debugger
+            Highcharts.ganttChart('containerKind', {
+                title: {
+                    text: '资源甘特图'
+                },
+                yAxis: {
+                    uniqueNames: true
+                },
+                credits: {
+                    enabled: false
+                },
+                navigator: {
+                    enabled: true,
+                    series: {
+                        type: 'gantt',
+                        pointPlacement: 0.5,
+                        pointPadding: 0.25
+                    },
+                    yAxis: {
+                        min: 0,
+                        max: 3,
+                        reversed: true,
+                        categories: []
+                    }
+                },
+                scrollbar: {
+                    enabled: true
+                },
+                rangeSelector: {
+                    enabled: true,
+                    selected: 0
+                },
+                series: [
+                    {
+                        name: "资源实例甘特图",
+                        data: data,
+                        events: {
+                            click: function (e) {
+                                var id = e.point.options.id;
+                                initResourceItemGant(id);
+                            }
+                        }
+                    }
+                ],
+                tooltip: {
+                    pointFormatter: function () {
+                        var point = this,
+                            format = '%Y-%m-%d %H',
+                            options = point.options,
+                            completed = options.completed,
+                            amount = isObject(completed) ? completed.amount : completed,
+                            status = ((amount || 0) * 100) + '%',
+                            lines;
+                        lines = [{
+                            value: point.name,
+                            style: 'font-weight: bold;'
+                        }, {
+                            title: 'Start',
+                            value: dateFormat(format, point.start)
+                        }, {
+                            visible: !options.milestone,
+                            title: 'End',
+                            value: dateFormat(format, point.end)
+                        }, {
+                            title: 'Owner',
+                            value: options.owner || 'unassigned'
+                        }];
+                        return reduce(lines, function (str, line) {
+                            var s = '',
+                                style = (
+                                    defined(line.style) ? line.style : 'font-size: 0.8em;'
+                                );
+                            if (line.visible !== false) {
+                                s = (
+                                    '<span style="' + style + '">' +
+                                    (defined(line.title) ? line.title + ': ' : '') +
+                                    (defined(line.value) ? line.value : '') +
+                                    '</span><br/>'
+                                );
+                            }
+                            return str + s;
+                        }, '');
+                    }
+                },
+            });
+        },
+        error: function (data) {
+            console.log("error" + data);
+        }
+    })
+}
 
 

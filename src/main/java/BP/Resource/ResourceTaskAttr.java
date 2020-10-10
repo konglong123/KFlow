@@ -23,7 +23,7 @@ public class ResourceTaskAttr {
     public static final String PlanId="plan_id";
 
     //工作id（工作编码）
-    public static final String WorkId = "work_id";
+    public static final String TaskId = "task_id";
 
     public static final String UseTime = "use_time";
 
