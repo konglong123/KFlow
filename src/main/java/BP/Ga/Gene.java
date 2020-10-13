@@ -5,9 +5,11 @@ public class Gene implements Cloneable{
 	private int nodeNum;//分组中节点数目
 	private String nodeNo;//模糊节点编码
 	private double iFitness;//数值越大，适应度越大
-	public Gene(String nodeGroupNo,int nodeNum){
+	public int pos;//维度值
+	public Gene(String nodeGroupNo,int nodeNum,int pos){
 		this.nodeGroupNo=nodeGroupNo;
 		this.nodeNum=nodeNum;
+		this.pos=pos;
 	}
 
 	public String getNodeGroupNo() {

@@ -72,7 +72,7 @@ public class GeneticAth {
 					if (nodeGroup.getFloat("score")<composeGroup.getThreshold())
 						continue ;
 					NodeGroup group=(NodeGroup)nodeGroup.get("group");
-					Gene gene=new Gene(group.getNo(),group.GetValIntByKey(NodeGroupAttr.nodeNum));
+					Gene gene=new Gene(group.getNo(),group.GetValIntByKey(NodeGroupAttr.nodeNum),count);
 					gene.setIFitness(nodeGroup.getFloat("score"));
 					gene.setNodeNo(temp[0]);
 					genes.add(gene);

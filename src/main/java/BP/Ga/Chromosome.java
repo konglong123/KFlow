@@ -1,14 +1,11 @@
 package BP.Ga;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Chromosome {
 	//种群所有基因选择可能
-	private List<List<Gene>> groupGeneAll=new ArrayList<>();
-	private ArrayList<Gene> chromosome =new ArrayList<>();
+	public List<List<Gene>> groupGeneAll=new ArrayList<>();
+	public ArrayList<Gene> chromosome =new ArrayList<>();
 	double iFitness=-1d;
 
 	public Chromosome(List<List<Gene>> groupGeneAll){
@@ -50,16 +47,23 @@ public class Chromosome {
 	//对染色体进行随机变异
 	public  Chromosome chroVar(double geneVPro){
 		int geneNum=chromosome.size();
-		Chromosome child=new Chromosome(this.groupGeneAll);//变异产生的新子代
-		for(int i=0;i<geneNum;i++){
-			Gene gene =chromosome.get(i);
-			if(Math.random()<=geneVPro)
-				child.add(variation(gene,i));
-			else
-				child.add(gene);
+		boolean mark=true;
+		while (mark) {
+			Chromosome child = new Chromosome(this.groupGeneAll);//变异产生的新子代
+			for (int i = 0; i < geneNum; i++) {
+				Gene gene = chromosome.get(i);
+				if (Math.random() <= geneVPro) {
+					child.add(variation(gene, i));
+					mark=false;
+				}else
+					child.add(gene);
+			}
+			if (!mark)
+				return child;
 		}
-		return child;
+		return null;
 	}
+
 	//对单个基因进行变异
 	private Gene variation(Gene gene,int id){
 		int newPos=0;

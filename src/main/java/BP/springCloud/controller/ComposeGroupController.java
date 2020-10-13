@@ -236,16 +236,18 @@ public class ComposeGroupController {
             //持久化训练过程数据
             String aveNo1= FeignTool.getSerialNumber("BP.History")+"";
             String maxNo1=FeignTool.getSerialNumber("BP.History")+"";
-            insertHistory(history.getJSONArray("aveHistory").iterator(),aveNo1);
-            insertHistory(history.getJSONArray("maxHistory").iterator(),maxNo1);
 
             String aveNo2= FeignTool.getSerialNumber("BP.History")+"";
             String maxNo2=FeignTool.getSerialNumber("BP.History")+"";
             GeneticAthRand geneticAth2 = new GeneticAthRand(composeGroup);
             geneticAth2.groupGeneAll=geneticAth1.groupGeneAll;
-            history=geneticAth2.run(2);
-            insertHistory(history.getJSONArray("aveHistory").iterator(),aveNo2);
-            insertHistory(history.getJSONArray("maxHistory").iterator(),maxNo2);
+            JSONObject history2=geneticAth2.run(2);
+            insertHistory(history.getJSONArray("aveHistory").iterator(),aveNo1);
+            insertHistory(history.getJSONArray("maxHistory").iterator(),maxNo1);
+
+            insertHistory(history2.getJSONArray("aveHistory").iterator(),aveNo2);
+            insertHistory(history2.getJSONArray("maxHistory").iterator(),maxNo2);
+
 
             //保存该次训练结果
             composeGroup.setHistory(aveNo1+"_"+maxNo1+"_"+aveNo2+"_"+maxNo2);

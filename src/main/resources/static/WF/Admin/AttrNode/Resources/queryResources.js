@@ -99,7 +99,7 @@ function bookResource(no) {
     }
     var nodeId=GetQueryString("FK_Node");
     var url="../../../Admin/AttrNode/Resources/ResourceBook.html?resourceNo="+no+"&nodeId="+nodeId+"&planId="+row.No ;
-    OpenEasyUiDialogExt(url,"资源预定", 400, 350, true);
+    OpenEasyUiDialogExt(url,"资源预定", 400, 350, false);
 }
 
 function gotoResourceDetail(pkVal) {
