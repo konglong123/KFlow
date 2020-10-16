@@ -3,6 +3,7 @@ package BP.NodeGroup;
 import BP.En.EntityNo;
 import BP.En.Map;
 import BP.Ga.Historys;
+import BP.WF.Flow;
 import BP.springCloud.tool.FeignTool;
 
 import java.util.Date;
@@ -44,8 +45,10 @@ public class ComposeGroup extends EntityNo {
         map.AddTBStringPK(ComposeGroupAttr.No, null, "编号", true, true,1, 40, 100);
         map.AddTBInt(ComposeGroupAttr.groupNum, 0, "种群数", true, false);
 
-        map.AddTBFloat(ComposeGroupAttr.variationPro, 0.5f, "变异率", true, false);
-        map.AddTBFloat(ComposeGroupAttr.acrossPro, 0.7f, "交叉率", true, false);
+        map.AddTBFloat(ComposeGroupAttr.variationPro1, 0.2f, "变异率Pm1", true, false);
+        map.AddTBFloat(ComposeGroupAttr.variationPro2, 0.01f, "变异率Pm2", true, false);
+        map.AddTBFloat(ComposeGroupAttr.acrossPro1, 0.9f, "交叉率Pc1", true, false);
+        map.AddTBFloat(ComposeGroupAttr.acrossPro2, 0.6f, "交叉率Pc2", true, false);
         map.AddTBFloat(ComposeGroupAttr.elitePro, 0.1f, "精英比例", true, false);
         map.AddTBFloat(ComposeGroupAttr.threshold, 0.1f, "模块相似度阈值", true, false);
 
@@ -72,11 +75,16 @@ public class ComposeGroup extends EntityNo {
 
     @Override
     protected boolean beforeDelete() throws Exception {
+        //删除迭代记录
         String[] historyNo =this.getHistory().split("_");
         Historys historys=new Historys();
         for(String tempNo:historyNo) {
             historys.Delete("history_no", tempNo);
         }
+        //删除流程
+        String flowNo=this.getNewFlowNo();
+        Flow flow=new Flow(flowNo);
+        flow.Delete();
         return super.beforeDelete();
     }
 
@@ -89,22 +97,35 @@ public class ComposeGroup extends EntityNo {
         this.SetValByKey(ComposeGroupAttr.groupNum,groupNum);
     }
 
-    public float getVariationPro() {
-        return this.GetValFloatByKey(ComposeGroupAttr.variationPro);
+    public float getVariationPro1() {
+        return this.GetValFloatByKey(ComposeGroupAttr.variationPro1);
     }
 
-    public void setVariationPro(float variationPro) {
-        this.SetValByKey(ComposeGroupAttr.variationPro,variationPro);
+    public void setVariationPro1(float variationPro) {
+        this.SetValByKey(ComposeGroupAttr.variationPro1,variationPro);
     }
 
-    public float getAcrossPro() {
-        return this.GetValFloatByKey(ComposeGroupAttr.acrossPro);
+    public float getVariationPro2() {
+        return this.GetValFloatByKey(ComposeGroupAttr.variationPro2);
     }
 
-    public void setAcrossPro(float acrossPro) {
-        this.SetValByKey(ComposeGroupAttr.acrossPro,acrossPro);
+    public void setVariationPro2(float variationPro) {
+        this.SetValByKey(ComposeGroupAttr.variationPro2,variationPro);
+    }
+    public float getAcrossPro1() {
+        return this.GetValFloatByKey(ComposeGroupAttr.acrossPro1);
     }
 
+    public void setAcrossPro1(float acrossPro) {
+        this.SetValByKey(ComposeGroupAttr.acrossPro1,acrossPro);
+    }
+    public float getAcrossPro2() {
+        return this.GetValFloatByKey(ComposeGroupAttr.acrossPro2);
+    }
+
+    public void setAcrossPro2(float acrossPro) {
+        this.SetValByKey(ComposeGroupAttr.acrossPro2,acrossPro);
+    }
     public float getElitePro() {
         return this.GetValFloatByKey(ComposeGroupAttr.elitePro);
     }

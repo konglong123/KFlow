@@ -25,7 +25,7 @@ public class ResourcePlan extends EntityNo {
         map.AddTBStringPK(ResourcePlanAttr.No, null, "编号", true, true,1, 40, 100);
         map.AddTBString(ResourcePlanAttr.NodeId, null, "节点编码", true, true, 0, 100, 100);
         map.AddTBInt(ResourcePlanAttr.Priority, 1, "优先级", true, false);
-        map.AddTBString(ResourcePlanAttr.Creator, null, "创建者", true, false,1, 40, 100);
+        map.AddTBString(ResourcePlanAttr.Creator, "admin", "创建者", true, false,1, 40, 100);
         map.AddTBStringDoc(ResourcePlanAttr.Detail, null, "备注", true, false);
 
         map.AddSearchAttr(ResourcePlanAttr.NodeId);
@@ -54,6 +54,7 @@ public class ResourcePlan extends EntityNo {
     protected boolean beforeInsert() throws Exception {
         Long id= FeignTool.getSerialNumber("BP.Resource.ResourcePlan");
         this.SetValByKey(ResourcePlanAttr.No,id);
+        this.SetValByKey(ResourcePlanAttr.Priority,1);
         this.SetValByKey(ResourcePlanAttr.Creator, WebUser.getNo());
         return super.beforeInsert();
     }

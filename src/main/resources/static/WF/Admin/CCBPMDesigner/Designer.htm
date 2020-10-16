@@ -199,7 +199,7 @@
                 <li id="pmFrmSln"><i class="icon-th"></i>&nbsp;<span class="_label">表单方案</span></li>
                 <li id="pmFrmD"><i class="icon-comment"></i>&nbsp;<span class="_label">设计节点表单</span></li>
                 <li id="pmfun"><i class="icon-wrench"></i>&nbsp;<span class="_label">节点类型</span><i class="icon-chevron-right"></i></li>
-                <li id="pmNodeAccepterRole"><i class="icon-user"></i>&nbsp;<span class="_label">接收人规则</span></li>
+                <li id="pmResource"><i class="icon-user"></i>&nbsp;<span class="_label">节点资源</span></li>
                 <li id="pmDelete"><i class="icon-trash"></i>&nbsp;<span class="_label">删除节点</span></li>
                 <li id="pmCopy"><i class="icon-trash"></i>&nbsp;<span class="_label">复制节点</span></li>
                 <li id="pmCondDir"><i class="icon-share"></i>&nbsp;<span class="_label">方向条件</span></li>
@@ -633,6 +633,10 @@
                         var activeId = _canvas.getActiveId(); //右键当前的ID
                         NodeFrmFree(activeId); cAlert
                     },
+                    "pmResource": function (t) {
+                        var activeId = _canvas.getActiveId(); //右键当前的ID
+                        nodeResource(activeId);
+                     },
                     "pmNodeAccepterRole": function (t) {
                         var activeId = _canvas.getActiveId(); //右键当前的ID
                         NodeAccepterRole(activeId);

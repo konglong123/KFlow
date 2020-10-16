@@ -55,58 +55,9 @@ public class ComposeGroupController {
 
     }
 
-    /**
-    *@Description:  推荐分组组合
-    *@Param:
-    *@return:
-    *@Author: Mr.kong
-    *@Date: 2020/9/16
-    */
-    @RequestMapping("composeNodeGroupRand")
-    @ResponseBody
-    public JSONObject composeNodeGroupRand(HttpServletRequest request, HttpServletResponse response) {
-        try {
-            String flowNo=request.getParameter("flowNo");
-            ComposeGroup composeGroup=new ComposeGroup();
-            composeGroup.setFlowNo(flowNo);
-            composeGroup.setGroupNum(Integer.valueOf(request.getParameter("groupNum")));
-            composeGroup.setGenerateNum(Integer.valueOf(request.getParameter("generateNum")));
-            composeGroup.setVariationPro(Float.valueOf(request.getParameter("variationPro")));
-            composeGroup.setAcrossPro(Float.valueOf(request.getParameter("acrossPro")));
-            composeGroup.setElitePro(Float.valueOf(request.getParameter("elitePro")));
-            composeGroup.setMaxSaveNum(Integer.valueOf(request.getParameter("saveNum")));
-            composeGroup.setThreshold(Float.valueOf(request.getParameter("threshold")));
-
-
-            GeneticAthRand geneticAth = new GeneticAthRand(composeGroup);
-            JSONObject history = geneticAth.run(1);
-
-            //持久化训练过程数据
-            JSONArray aveHistory=history.getJSONArray("aveHistory");
-            JSONArray maxHistory=history.getJSONArray("maxHistory");
-            String aveNo= FeignTool.getSerialNumber("BP.History")+"";
-            String maxNo=FeignTool.getSerialNumber("BP.History")+"";
-
-            insertHistory(aveHistory.iterator(),aveNo);
-            insertHistory(maxHistory.iterator(),maxNo);
-
-            //保存该次训练结果
-            composeGroup.setHistory(aveNo+"_"+maxNo);
-            composeGroup.Insert();
-
-
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-        }
-
-        JSONObject result=new JSONObject();
-        return result;
-    }
-
-
 
     /**
-    *@Description: 随机生成组合数据，测试算法
+    *@Description: 流程推荐（生成新流程）
     *@Param:
     *@return:
     *@Author: Mr.kong
@@ -121,20 +72,31 @@ public class ComposeGroupController {
             composeGroup.setFlowNo(flowNo);
             composeGroup.setGroupNum(Integer.valueOf(request.getParameter("groupNum")));
             composeGroup.setGenerateNum(Integer.valueOf(request.getParameter("generateNum")));
-            composeGroup.setVariationPro(Float.valueOf(request.getParameter("variationPro")));
-            composeGroup.setAcrossPro(Float.valueOf(request.getParameter("acrossPro")));
+            composeGroup.setVariationPro1(Float.valueOf(request.getParameter("variationPro1")));
+            composeGroup.setVariationPro2(Float.valueOf(request.getParameter("variationPro2")));
+            composeGroup.setAcrossPro2(Float.valueOf(request.getParameter("acrossPro2")));
+            composeGroup.setAcrossPro1(Float.valueOf(request.getParameter("acrossPro1")));
             composeGroup.setElitePro(Float.valueOf(request.getParameter("elitePro")));
             composeGroup.setMaxSaveNum(Integer.valueOf(request.getParameter("saveNum")));
             composeGroup.setThreshold(Float.valueOf(request.getParameter("threshold")));
 
             GeneticAth geneticAth = new GeneticAth(flowNo,composeGroup);
-            JSONObject data = geneticAth.run();
-            JSONArray flows=data.getJSONArray("flows");
+            JSONObject history = geneticAth.run(2);
+
+            //持久化训练过程数据
+            String aveNo2= FeignTool.getSerialNumber("BP.History")+"";
+            String maxNo2=FeignTool.getSerialNumber("BP.History")+"";
+            insertHistory(history.getJSONArray("aveHistory").iterator(),aveNo2);
+            insertHistory(history.getJSONArray("maxHistory").iterator(),maxNo2);
+
+            JSONArray flows=history.getJSONArray("flows");
             Iterator it=flows.iterator();
             while (it.hasNext()){
                 JSONObject item=(JSONObject)it.next();
                 composeGroup.setNewFlowNo(item.getString("flowNo"));
                 composeGroup.setScore(item.getDouble("score"));
+                //保存该次训练结果
+                composeGroup.setHistory(aveNo2+"_"+maxNo2);
                 composeGroup.Insert();
             }
 

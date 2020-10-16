@@ -6,6 +6,7 @@ import java.util.*;
 
 import BP.DA.*;
 import BP.Sys.*;
+import BP.Task.NodeTaskAttr;
 import BP.WF.Template.FrmWorkCheck;
 import BP.springCloud.tool.FeignTool;
 import org.apache.commons.lang.StringUtils;
@@ -1774,6 +1775,14 @@ public class Flow extends BP.En.EntityNoName {
             msg.append("@流程的基础信息: ------ ");
             msg.append("@编号:  " + this.getNo() + " 名称:" + this.getName() + " , 存储表:" + this.getPTable());
 
+			nds.Retrieve(NodeAttr.FK_Flow,this.getNo(),NodeAttr.RunModel,5);
+			if (nds.size()!=1)
+				msg.append("@错误:未配置“开始节点”或配置多个“开始节点”");
+
+			nds.Retrieve(NodeAttr.FK_Flow,this.getNo(),NodeAttr.RunModel,6);
+			if (nds.size()!=1)
+				msg.append("@错误:未配置“结束节点”或配置多个“结束节点”");
+
             //流程功能性描述
 			if (StringUtils.isEmpty(this.getNote()))
 				msg.append("@警告:缺乏流程的功能性描述，将无法被检索！");
@@ -3265,8 +3274,18 @@ public class Flow extends BP.En.EntityNoName {
 		this.SetValByKey(FlowAttr.AvgDay, value);
 	}
 
-	public final int getStartNodeID() {
-		return Integer.parseInt(this.getNo() + "01");
+	public final int getStartNodeID() throws Exception{
+		Nodes nodes=new Nodes();
+		nodes.Retrieve(NodeAttr.FK_Flow,this.getNo(),NodeAttr.RunModel,5);
+		Node start=(Node)nodes.get(0);
+		return start.getNodeID();
+		// return this.GetValIntByKey(FlowAttr.StartNodeID);
+	}
+	public final Node getStartNode() throws Exception{
+		Nodes nodes=new Nodes();
+		nodes.Retrieve(NodeAttr.FK_Flow,this.getNo(),NodeAttr.RunModel,5);
+		Node start=(Node)nodes.get(0);
+		return start;
 		// return this.GetValIntByKey(FlowAttr.StartNodeID);
 	}
 
@@ -5879,6 +5898,11 @@ public class Flow extends BP.En.EntityNoName {
 	}
 
 	/// #endregion
+
+	public void autoLayout(){
+
+	}
+
 
 
 }

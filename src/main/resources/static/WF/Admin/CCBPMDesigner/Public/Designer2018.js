@@ -159,6 +159,10 @@ function NodeFrmFree(nodeID) {
     ///CCFormDesigner/FormDesigner.htm?FK_Node=9502&FK_MapData=ND9502&FK_Flow=095&UserNo=admin&SID=c3466cb7-edbe-4cdc-92df-674482182d01
     //WinOpen(url);
 }
+function nodeResource(nodeID) {
+    var url = "../AttrNode/Resources/Resources.htm?FK_Node=" + nodeID;
+    window.parent.addTab(nodeID +"_JDZY", "节点资源" + nodeID, url);
+}
 
 //接受人规则.
 function NodeAccepterRole(nodeID) {

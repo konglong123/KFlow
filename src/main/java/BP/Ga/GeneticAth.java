@@ -39,6 +39,13 @@ public class GeneticAth {
 	int category=2;//1为关键字检索策略，2为word2vec策略
 	List<String[]> nodeInfoList=new ArrayList<>();//[0]nodeNo,[1]abstracts
 	ComposeGroup composeGroup =null;
+	double maxFitness;
+	double aveFitness;
+	int type=1;
+	float pc1=0.9f;
+	float pc2=0.6f;
+	float pm1=0.2f;
+	float pm2=0.01f;
 
 	public GeneticAth(){
 
@@ -48,6 +55,11 @@ public class GeneticAth {
 	//基因编码
 	public GeneticAth(String newFlowNo,ComposeGroup composeGroup) throws Exception{
 		this.composeGroup=composeGroup;
+		this.pc1=composeGroup.getAcrossPro1();
+		this.pc2=composeGroup.getAcrossPro2();
+		this.pm1=composeGroup.getVariationPro1();
+		this.pm2=composeGroup.getVariationPro2();
+
 		flow=new Flow(newFlowNo);
 		Nodes nodes=flow.getHisNodes();
 		List<Node> nodeList=nodes.toList();
@@ -104,12 +116,25 @@ public class GeneticAth {
 
 	//种群繁殖，染色体进行交叉，采用双点交叉
 	private void crossOver(){
-		int pos[]=new int[4];
-		int num=(int)Math.floor(composeGroup.getGroupNum()*composeGroup.getAcrossPro());//需要交叉的染色体数量
-		for(int i=2;i<=num;i+=2){
-			pos=getOperationPos();
+		for (int i=1;i<group.size();i+=2){
+			double tempPc=getPc(Math.max(group.get(i).getIFitness(),group.get(i-1).getIFitness()));
+			if (Math.random()>=tempPc)
+				continue;
+			int[] pos=getOperationPos();
 			doublePointAcross(pos);
 		}
+	}
+	private double getPc(double fitness){
+		if (type==1&&fitness>aveFitness)//自适应变异
+			return this.pc1-((pc1-pc2)*(fitness-aveFitness))/(maxFitness-aveFitness);
+		else
+			return pc1;
+	}
+	private double getPm(double fitness){
+		if (type==1&&fitness>aveFitness)
+			return this.pm1-((pm1-pm2)*(fitness-aveFitness))*(maxFitness-aveFitness);
+		else
+			return pm1;
 	}
 	private  void doublePointAcross(int[] pos){
 		int ch1,ch2,pos1,pos2;
@@ -168,15 +193,11 @@ public class GeneticAth {
 	}
 
 	//种群突变，染色体中基因发生突变
+	//种群突变，染色体中基因发生突变
 	private void mutation(){
-		Set<Integer> set=new HashSet();
-		int num=(int)Math.floor(composeGroup.getGroupNum()*composeGroup.getVariationPro());//突变染色体数目
-		do{
-			set.add((int)Math.floor(Math.random()*composeGroup.getGroupNum()));//选定变异染色体
-		}while(set.size()<num);
-		for (Integer pos:set){
-			Chromosome chr=group.get(pos);
-			Chromosome newChr=chr.chroVar((double) composeGroup.getVariationPro());
+
+		for (Chromosome chromosome:group){
+			Chromosome newChr = chromosome.chroVar(getPm(chromosome.getIFitness()));
 			groupNew.add(newChr);
 		}
 	}
@@ -202,26 +223,29 @@ public class GeneticAth {
 		groupNew.clear();
 	}
 
-	//计算种群的适应度
-	private  double calculateGroup(){
-		double fitness=0d;
-		Chromosome s;
-		for(int i=0;i<group.size();i++){
-			s=group.get(i);
-			fitness+=s.getIFitness();
+	private void initGroupPossible(){
+		//初始化交叉率，变异率相关参数
+		double sumAveFitness=0d;
+		maxFitness=0d;
+		for (Chromosome chromosome:group){
+			sumAveFitness+=chromosome.getIFitness();
+			maxFitness=Math.max(maxFitness,chromosome.getIFitness());
 		}
-		return fitness;
+		aveFitness=sumAveFitness/group.size();
 	}
 
 	//进行进化
-	public JSONObject run() throws Exception{
+	public JSONObject run(int type) throws Exception{
+		this.type=type;
 
 		initGroup();//初始化种群
 		int count=0;//进化代数
-		List<Double> history=new ArrayList<>();
+		List<Double> maxHistory=new ArrayList<>();
+		List<Double> aveHistory=new ArrayList<>();
 		while(count<composeGroup.getGenerateNum()){
-			double fitness=calculateGroup();
-			history.add(fitness);
+			initGroupPossible();
+			maxHistory.add(maxFitness);
+			aveHistory.add(aveFitness);
 			crossOver();//交叉
 			mutation();//变异
 			select();
@@ -238,7 +262,8 @@ public class GeneticAth {
 			flows.add(item);
 		}
 		JSONObject data=new JSONObject();
-		data.put("history",history);
+		data.put("aveHistory",aveHistory);
+		data.put("maxHistory",maxHistory);
 		data.put("flows",flows);
 		return data;
 

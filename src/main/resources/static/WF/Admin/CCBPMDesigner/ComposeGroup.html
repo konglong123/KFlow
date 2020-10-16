@@ -25,10 +25,14 @@
                 <td><input class="easyui-textbox" type="text" id="threshold" value="0.6" placeholder="默认0.6"></td>
             </tr>
             <tr>
-                <td>变异率：</td>
-                <td><input class="easyui-textbox" type="text" id="variationPro" value="0.5" placeholder="默认0.5"></td>
-                <td>交叉率：</td>
-                <td><input class="easyui-textbox" type="text" id="acrossPro" value="0.7" placeholder="默认0.7"></td>
+                <td>变异率Pm1：</td>
+                <td><input class="easyui-textbox" type="text" id="variationPro1" value="0.2" ></td>
+                <td>变异率Pm2：</td>
+                <td><input class="easyui-textbox" type="text" id="variationPro2" value="0.001" ></td>
+                <td>交叉率Pc1：</td>
+                <td><input class="easyui-textbox" type="text" id="acrossPro1" value="0.9" ></td>
+                <td>交叉率Pc2：</td>
+                <td><input class="easyui-textbox" type="text" id="acrossPro2" value="0.6"></td>
                 <td>精英选择比：</td>
                 <td><input class="easyui-textbox" type="text" id="elitePro" value="0.1" placeholder="默认0.1"></td>
             </tr>
@@ -70,8 +74,6 @@
                 {field:'score',title: '相似度值',align: 'center',width:10},
                 {field:'newFlowNo',title: '组合流程编码',align: 'center',width:10},
                 {field:'groupNum',title: '种群数',align: 'center',width:10},
-                {field:'variationPro',title: '变异率',align: 'center',width:10},
-                {field:'acrossPro',title: '交叉率',align: 'center',width:10},
                 {field:'elitePro',title: '精英比例',align: 'center',width:10},
                 {field:'generateNum',title: '进化代数',align: 'center',width:10},
                 {field:'history',title: '进化过程编码',align: 'center',width:10},
@@ -142,12 +144,6 @@
                     },{
                         name: '自适应最大',
                         data: data.history2
-                    },{
-                        name: '普通平均',
-                        data: data.history3
-                    },{
-                        name: '普通最大',
-                        data: data.history4
                     }]
                 });
                 chart.series[0].update({
@@ -164,18 +160,21 @@
         var flowNo=GetQueryString("FK_Flow");
         $.ajax({
             type: 'POST',
-            url: "/WF/composeGroup/analyseGA",
+            url: "/WF/composeGroup/composeNodeGroup",
             data: {
                 flowNo:flowNo,
                 groupNum:$("#groupNum").val().trim(),
                 generateNum:$("#generateNum").val().trim(),
-                variationPro:$("#variationPro").val().trim(),
-                acrossPro:$("#acrossPro").val().trim(),
+                variationPro1:$("#variationPro1").val().trim(),
+                variationPro2:$("#variationPro2").val().trim(),
+                acrossPro2:$("#acrossPro2").val().trim(),
+                acrossPro1:$("#acrossPro1").val().trim(),
                 elitePro:$("#elitePro").val().trim(),
                 saveNum:$("#saveNum").val().trim(),
                 threshold:$("#threshold").val().trim()
             },
             success: function (data) {
+                alert("结果见推荐记录表！");
                 $("#dgComposeHistory").datagrid('reload');
             },
             error: function (data) {

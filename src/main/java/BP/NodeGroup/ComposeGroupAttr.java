@@ -9,8 +9,10 @@ package BP.NodeGroup;
 public class ComposeGroupAttr {
     public static final String No = "No";
     public static final String groupNum = "groupNum";
-    public static final String variationPro = "variationPro";
-    public static final String acrossPro = "acrossPro";
+    public static final String variationPro1 = "variationPro1";
+    public static final String variationPro2 = "variationPro2";
+    public static final String acrossPro1 = "acrossPro1";
+    public static final String acrossPro2 = "acrossPro2";
     public static final String generateNum = "generateNum";
     public static final String elitePro = "elitePro";
     public static final String score = "score";

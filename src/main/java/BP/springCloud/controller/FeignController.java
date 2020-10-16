@@ -165,6 +165,9 @@ public class FeignController {
             JSONObject groupData=nodeTaskService.getGroupData(tasks);
             data.putAll(groupData);
 
+            String[] holiday={"2020-01-01", "2020-01-24", "2020-01-25", "2020-01-26", "2020-01-27", "2020-01-28", "2020-01-29", "2020-01-30", "2020-04-04", "2020-04-05", "2020-04-06", "2020-05-01", "2020-05-02", "2020-05-03", "2020-05-04", "2020-05-05", "2020-06-25", "2020-06-26", "2020-06-27", "2020-10-01", "2020-10-02", "2020-10-03", "2020-10-04", "2020-10-05", "2020-10-06", "2020-10-07", "2020-10-08"};
+            data.put("holiday",holiday);
+
 
             //封装资源，资源任务
             //JSONObject resource=nodeTaskService.getResourcePlanData(tasks);
@@ -211,6 +214,7 @@ public class FeignController {
                     resourceTask.SetValByKey(ResourceTaskAttr.PlanEnd,formatter.format(new Date(planEndRes)));
                     resourceTask.SetValByKey(ResourceTaskAttr.IsPlan,1);//更新状态为“已计划”（后续需要建立枚举）
                     resourceTask.SetValByKey(ResourceTaskAttr.ResourceId,resItemNo);
+                    resourceTask.SetValByKey(ResourceTaskAttr.TaskId,taskNo);
                     resourceTask.Update();
                 }
             }

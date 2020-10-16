@@ -38,8 +38,7 @@ function initDgSearchResource(abstracts) {
             {field:'score',title: '推荐值',align: 'center',width:10},
             {field:'action',title: '操作',align: 'center',width:50,
                 formatter:function(val,rec){
-                    var str="<input type='button' value='资源每日负载' onclick='resourceLoad(\""+rec.no+"\")'/>";
-                    str+="<input type='button' value='资源甘特图' onclick='resourceGant(\""+rec.no+"\")'/>";
+                    var str="<input type='button' value='资源甘特图' onclick='resourceGant(\""+rec.no+"\")'/>";
                     str+="<input type='button' value='预定' onclick='bookResource(\""+rec.no+"\")'/>";
                     str+="<input type='button' value='性能详情' onclick='gotoResourceDetail(\""+rec.no+"\")'/>";
                     return str;
@@ -83,7 +82,7 @@ function initDgNodeResource(nodeId,planId) {
             {field:'end_time',title: '实际结束时间',align: 'center',width:15},
             {field:'action',title: '操作',align: 'center',width:50,
                 formatter:function(val,rec){
-                    var str="<input type='button' value='资源负载' onclick='resourceLoad(\""+rec.resource_no+"\")'/>";
+                    var str="<input type='button' value='资源负载' onclick='resourceGant(\""+rec.resource_no+"\")'/>";
                     str+="<input type='button' value='性能详情' onclick='gotoResourceDetail(\""+rec.resource_no+"\")'/>";
                     str+="<input type='button' value='放弃资源' onclick='deleteResource(\""+rec.No+"\")'/>";
                     return str;
@@ -105,7 +104,7 @@ function bookResource(no) {
 function gotoResourceDetail(pkVal) {
     var enName = "BP.Resource.Resource";
     var url = "../../../Comm/En.htm?EnName=" + enName + "&PKVal=" + pkVal;
-    OpenEasyUiDialogExt(url,"资源性能", 800, 450, false);
+    OpenEasyUiDialogExt(url,"资源性能", 1200, 700, false);
 }
 function queryResources() {
     //(后台代码中)优先采用编码查询
@@ -119,14 +118,10 @@ function resetText() {
     $("#resourceNoQuery").val("");
     $("#resourceNameQuery").val("");
 }
-function resourceLoad(no) {
-    var url="../../../Admin/AttrNode/Resources/ResourceLoad.html?resourceNo="+no;
-    OpenEasyUiDialogExt(url,"资源负载", 1200, 700, false);
-}
 
 function resourceGant(no) {
     var url="../../../Admin/AttrNode/Resources/ResourceLoadGant.html?resourceNo="+no;
-    OpenEasyUiDialogExt(url,"资源负载", 1200, 700, false);
+    var self = window.open(url);
 }
 function deleteResource(no) {
     $.ajax({
