@@ -130,11 +130,11 @@ public class ResourceTaskM {
         this.useTime = useTime;
     }
 
-    public String getWorkId() {
+    public String getTaskId() {
         return taskId;
     }
 
-    public void setWorkId(String taskId) {
+    public void setTaskId(String taskId) {
         this.taskId = taskId;
     }
 

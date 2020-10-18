@@ -1,6 +1,7 @@
 package BP.springCloud.controller;
 
 import BP.Resource.*;
+import BP.Task.NodeTask;
 import BP.Task.NodeTaskAttr;
 import BP.Task.NodeTaskService;
 import BP.Task.NodeTasks;
@@ -58,6 +59,16 @@ public class TestController {
                     ResourceItem item=(ResourceItem) items.get(pos);
                     task.SetValByKey(ResourceTaskAttr.ResourceId,item.getNo());
                     task.Update();
+                }
+                String taskId=task.GetValStrByKey(ResourceTaskAttr.TaskId);
+                if (StringUtils.isEmpty(taskId)){
+                    NodeTasks nodeTasks=new NodeTasks();
+                    nodeTasks.Retrieve(NodeTaskAttr.NodeId,task.GetValStrByKey(ResourceTaskAttr.NodeId));
+                    if (nodeTasks.size()>0){
+                        NodeTask nodeTask=(NodeTask)nodeTasks.get(0);
+                        task.SetValByKey(ResourceTaskAttr.TaskId,nodeTask.getNo());
+                        task.Update();
+                    }
                 }
             }
 

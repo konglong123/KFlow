@@ -1,5 +1,7 @@
 package BP.Resource;
 
+import BP.Task.NodeTask;
+import BP.Task.NodeTaskAttr;
 import BP.springCloud.dao.ResourceTaskMDao;
 import BP.springCloud.entity.NodeTaskM;
 import BP.springCloud.entity.ResourceTaskM;
@@ -61,6 +63,7 @@ public class ResourceService {
                 temp.put("id",taskM.getNo());
                 temp.put("start",taskM.getPlanStart().getTime()+shiCha);
                 temp.put("end",taskM.getPlanEnd().getTime()+shiCha);
+                temp.put("resId",resourceId);
                 listTemp.add(temp);
             }
 
@@ -83,6 +86,53 @@ public class ResourceService {
     }
 
     public JSONObject getResourceItemGant(String resourceItemNo){
+        try{
+
+            ResourceTaskM resourceTaskM=new ResourceTaskM();
+            resourceTaskM.setResourceId(resourceItemNo);
+
+            //计划完成(已经计划)
+            resourceTaskM.setIsPlan(1);
+            List<ResourceTaskM> planList=resourceTaskMDao.findResourceTaskList(resourceTaskM);
+
+            Map<String,List<JSONObject>> map=new HashMap<>();
+
+            int shiCha=8 * 60 * 60 * 1000;
+            for (ResourceTaskM taskM:planList){
+                String taskId=taskM.getTaskId();
+                if (StringUtils.isEmpty(taskId))
+                    continue;
+                NodeTask task=new NodeTask(taskId);
+                String projectNo=task.GetValStrByKey(NodeTaskAttr.WorkGroupId);
+                List<JSONObject> listTemp=map.get(projectNo);
+                if (listTemp==null) {
+                    listTemp = new ArrayList<>();
+                    map.put(projectNo,listTemp);
+                }
+                JSONObject temp=new JSONObject();
+                temp.put("id",taskM.getNo());
+                temp.put("start",taskM.getPlanStart().getTime()+shiCha);
+                temp.put("end",taskM.getPlanEnd().getTime()+shiCha);
+                temp.put("nTaskId",taskM.getTaskId());
+                temp.put("projectId",projectNo);
+                listTemp.add(temp);
+            }
+
+            JSONObject result=new JSONObject();
+            List<JSONObject> data=new ArrayList<>();
+            for (Map.Entry<String,List<JSONObject>> entry:map.entrySet()){
+                JSONObject temp=new JSONObject();
+                temp.put("model",entry.getKey());
+                temp.put("current",0);
+                temp.put("deals",entry.getValue());
+                data.add(temp);
+            }
+            result.put("series",data);
+            return result;
+
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
         return null;
     }
 
