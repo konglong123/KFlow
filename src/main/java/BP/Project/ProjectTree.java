@@ -66,7 +66,7 @@ public class ProjectTree extends EntityNo {
 		map.AddTBInt(ProjectTreeAttr.ActualDuring, 0, "持续时间", true, false);
 		map.AddTBInt(ProjectTreeAttr.PlanDuring, 0, "预计工期", true, false);
 		map.AddTBString(ProjectTreeAttr.Manage,  "admin","负责人", true, false,0,50,50);
-		map.AddTBString(ProjectTreeAttr.Manage,  "admin","负责人", true, false,0,50,50);
+		map.AddTBString(ProjectTreeAttr.GenerFlowNo,  "","流程实例", true, false,0,50,50);
 
 
 		RefMethod rm = new RefMethod();

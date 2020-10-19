@@ -410,6 +410,68 @@ public class NodeTaskController {
         return data;
     }
 
+    @RequestMapping("getTaskInfoOneStatusMulti")
+    @ResponseBody
+    public JSONObject getTaskInfoOneStatusMulti(@RequestBody NodeTaskM con){
+        JSONObject data=new JSONObject();
+        try{
+            String userNo=WebUser.getNo();
+            con.setExecutor(userNo);
+            List<NodeTaskM> list=nodeTaskService.findNodeTaskList(con);
+            Map<String,List<JSONObject>> map=new HashMap<>();
+            List<String> workIdList=new ArrayList<>();
+            for (NodeTaskM nodeTaskM:list){
+                List<JSONObject> temp=map.get(nodeTaskM.getWorkId());
+                if (temp==null){
+                    temp=new ArrayList<JSONObject>();
+                    map.put(nodeTaskM.getWorkId(),temp);
+                    workIdList.add(nodeTaskM.getWorkId());
+                }
+                JSONObject barItem=new JSONObject();
+                barItem.put("value",nodeTaskM.getTotalTime());
+                barItem.put("taskId",nodeTaskM.getNo());
+                temp.add(barItem);
+            }
+
+            JSONObject zero=new JSONObject();
+            zero.put("value",0);
+            JSONObject label=new JSONObject();
+            label.put("show",true);
+            label.put("position","insideRight");
+
+            //组装eChart数据
+            List<JSONObject> bar=new ArrayList<>(map.size());
+            boolean mark=true;
+            int count=0;
+            while (mark){
+                mark=false;
+                JSONObject level=new JSONObject();
+                List<JSONObject> levelData=new ArrayList<>(workIdList.size());
+                for (String workId:workIdList){
+                    List<JSONObject> tempList=map.get(workId);
+                    if (tempList.size()>count){
+                        levelData.add(tempList.get(count));
+                        mark=true;
+                    }else
+                        levelData.add(zero);
+                }
+                count++;
+                level.put("data",levelData);
+                level.put("type","bar");
+                level.put("label",label);
+                level.put("stack","总量");
+                bar.add(level);
+            }
+
+            data.put("series",JSONArray.fromObject(bar));
+            data.put("xAxis",JSONArray.fromObject(workIdList));
+
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+        return data;
+    }
+
     @RequestMapping("getTaskInfoForStatus")
     @ResponseBody
     public JSONObject getTaskInfoForStatus(@RequestBody NodeTaskM con){

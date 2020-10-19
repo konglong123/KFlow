@@ -8,10 +8,7 @@ import BP.Resource.ResourceTask;
 import BP.Resource.ResourceTaskAttr;
 import BP.Resource.ResourceTasks;
 import BP.Sys.EnCfg;
-import BP.Task.FlowGeners;
-import BP.Task.GenerFlowService;
-import BP.Task.NodeTaskService;
-import BP.Task.NodeTasks;
+import BP.Task.*;
 import BP.WF.*;
 import BP.WF.Template.NodeAttr;
 import BP.Web.WebUser;
@@ -112,6 +109,11 @@ public class FlowController {
                 startTask.setStatus(1);
                 nodeTaskService.updateNodeTask(startTask);
             }
+            //更新实例中运行节点
+            FlowGener flowGener = new FlowGener(workId+"");
+            flowGener.SetValByKey(FlowGenerAttr.ActivatedNodes,flow.getStartNodeID()+",");
+            flowGener.Update();
+
             result.put("success", true);
 
         } catch (Exception e) {
@@ -153,7 +155,6 @@ public class FlowController {
         generFlow.setFlowId(Integer.valueOf(flow.getNo()));
         generFlow.setStatus(1);
         generFlow.setCreator(WebUser.getNo());
-        generFlow.setActivatedNodes(flow.getStartNodeID() + ",");
         generFlow.setTotalTime(sumTime);
         generFlowService.insertGenerFlow(generFlow);
 

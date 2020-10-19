@@ -53,10 +53,130 @@
     <table id="dgNodeTasksAll" title="节点任务">
     </table>
 </div>
+<fieldset>
+    <legend>任务状态统计</legend>
+    <div id="mainTaskShow" style="width: 100%;height:500px;"></div>
+</fieldset>
 <script type="text/javascript">
     $(function(){
         initDgNodeTasksAll();
+        initTaskInfoChart();
     });
+    function initTaskInfoChart() {
+        var dom = document.getElementById("mainTaskShow");
+        var myChart = echarts.init(dom);
+        var dataChart={
+            pieData:[],
+            barData:[],
+            lineData:[],
+            xAxis:[]
+        };
+        var dataTemp=getTaskInfoOneStatus();
+        dataChart.xAxis=dataTemp.xAxisData;
+        dataChart.lineData=dataTemp.lineData;
+        dataChart.barData=dataTemp.barData;
+
+        dataTemp=getTaskInfoForStatus();
+        dataChart.pieData=dataTemp.pieData;
+
+        option = {
+            title: {
+                text: '任务状态统计图',
+                left: 'center'
+            },
+
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross',
+                    crossStyle: {
+                        color: '#999'
+                    }
+                }
+            },
+            toolbox: {
+                feature: {
+                    dataView: {show: true, readOnly: false},
+                    magicType: {show: true, type: ['line', 'bar']},
+                    restore: {show: true},
+                    saveAsImage: {show: true}
+                }
+            },
+            legend: {
+                x: '70%',
+                y: '68%',
+                data: ['总工时', '任务数量']
+            },
+            grid: [
+                {x: '45%', y: '15%', width: '50%', height: '48%'},//折线图位置控制
+            ],
+            xAxis: [
+                {
+                    type: 'category',
+                    name:'流程实例',
+                    data: dataChart.xAxis,
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    name: '工时',
+                    interval: 50,
+                    axisLabel: {
+                        formatter: '{value} h'
+                    }
+                },
+                {
+                    type: 'value',
+                    name: '数量',
+                    interval: 5,
+                    axisLabel: {
+                        formatter: '{value}'
+                    }
+                }
+            ],
+            series: [
+                {
+                    name: '任务各状态',
+                    type: 'pie',
+                    radius: [30, 100],
+                    center: ['20%', '40%'],
+                    roseType: 'area',
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: " <br/>{b} : {c} ({d}%)"
+                    },
+                    data: dataChart.pieData
+                },
+                {
+                    name: '总工时',
+                    type: 'bar',
+                    data: dataChart.barData
+                },
+                {
+                    name: '任务数量',
+                    type: 'line',
+                    yAxisIndex: 1,
+                    data: dataChart.lineData
+                },
+            ]
+        };
+        myChart.setOption(option);
+        myChart.on("click",function (param) {
+            //饼图联动
+            if (param.seriesType=='pie'){
+                var status=param.data.status;
+                var data =getTaskInfoOneStatus(status);
+                option.xAxis[0].data=data.xAxisData;
+                option.series[2].data=data.lineData;
+                option.series[1].data=data.barData;
+                myChart.setOption(option);
+            };
+        });
+    }
 </script>
 </body>
 </html>

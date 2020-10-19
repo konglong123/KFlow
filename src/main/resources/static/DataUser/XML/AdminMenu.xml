@@ -34,9 +34,8 @@
   
 
   <Item No="504" GroupNo="Org" Name="组织结构" For="admin" Url="../../../GPM/Organization.htm"  />
-  <Item No="501" GroupNo="Org" Name="独立组织" For="admin" Url="../../Comm/SearchBS.htm?EnsName=BP.WF.Port.Incs"  />
 
-  
+
 
   <Group No="GPM" Name="菜单权限" />
   <Item No="901" GroupNo="GPM" Name="系统类别" For="" Url="../../Comm/Ens.htm?EnsName=BP.GPM.AppSorts"  />
@@ -49,6 +48,8 @@
 
   <Group No="RES" Name="资源管理" />
   <Item No="1001" GroupNo="RES" Name="资源" For="" Url="../../Comm/SearchBS.htm?EnsName=BP.Resource.Resources"  />
+  <Item No="2007" GroupNo="RES" Name="部门资源树" For="admin" Url="../../Comm/TreeEns.htm?TreeEnsName=BP.GPM.Depts&amp;EnsName=BP.Resource.Resources&amp;RefPK=DeptId"  />
+
   <Item No="1002" GroupNo="RES" Name="资源任务" For="" Url="../../Comm/SearchBS.htm?EnsName=BP.Resource.ResourceTasks"  />
   <Item No="1003" GroupNo="RES" Name="节点任务" For="" Url="../../Comm/SearchBS.htm?EnsName=BP.Task.NodeTasks"  />
   <Item No="1005" GroupNo="RES" Name="决策规则" For="" Url="../../Comm/SearchBS.htm?EnsName=BP.Judge.JudgeRules"  />

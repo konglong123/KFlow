@@ -378,7 +378,7 @@ function getTaskInfoForStatus() {
     return data;
 }
 
-//查询单个状态下任务统计信息
+//查询单个状态下任务统计信息(柱状图)
 function getTaskInfoOneStatus(status) {
     if (status==null)
         status=0;
@@ -388,6 +388,28 @@ function getTaskInfoOneStatus(status) {
     var data;
     $.ajax({
         url: "/WF/nodeTask/getTaskInfoOneStatus",
+        type: 'POST',
+        dataType: 'json',
+        async:false,
+        contentType:'application/json',
+        data: JSON.stringify(con),
+        success: function (dataTemp) {
+            data= dataTemp;
+        }
+    });
+    return data;
+}
+
+//查询单个状态下任务统计信息(层叠柱状图)
+function getTaskInfoOneStatusMulti(status) {
+    if (status==null)
+        status=0;
+    var  con={
+        status:status
+    };
+    var data;
+    $.ajax({
+        url: "/WF/nodeTask/getTaskInfoOneStatusMulti",
         type: 'POST',
         dataType: 'json',
         async:false,
