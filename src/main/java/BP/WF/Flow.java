@@ -3636,15 +3636,6 @@ public class Flow extends BP.En.EntityNoName {
 	@Override
 	protected boolean beforeInsert() throws Exception {
 
-
-		//更新系统FlowInfo
-		EnCfg enCfg=new EnCfg("System.FlowInfo");
-		java.util.Map<String,String> map=enCfg.getMap();
-		int projectNum=Integer.valueOf(map.get("flowNum"))+1;
-		map.put("flowNum",projectNum+"");
-		enCfg.setMap(map);
-		enCfg.Update();
-
 		return super.beforeInsert();
 	}
 
@@ -5769,13 +5760,6 @@ public class Flow extends BP.En.EntityNoName {
 		String url="http://112.125.90.132:8082/es/delEsById";
 		FeignTool.updateToES(url,postBody);
 
-		//更新系统FlowInfo
-		EnCfg enCfg=new EnCfg("System.FlowInfo");
-		java.util.Map<String,String> map=enCfg.getMap();
-		int projectNum=Integer.valueOf(map.get("flowNum"))-1;
-		map.put("flowNum",projectNum+"");
-		enCfg.setMap(map);
-		enCfg.Update();
 
 		// 检查流程有没有版本管理？
 		if (this.getFK_FlowSort().length() > 1) {

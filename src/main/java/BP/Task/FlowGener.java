@@ -104,27 +104,11 @@ public class FlowGener extends EntityNo {
     @Override
     protected boolean beforeInsert() throws Exception {
 
-        //更新系统FlowInfo
-        EnCfg enCfg=new EnCfg("System.FlowInfo");
-        java.util.Map<String,String> map=enCfg.getMap();
-        int projectNum=Integer.valueOf(map.get("generNum"))+1;
-        map.put("generNum",projectNum+"");
-        enCfg.setMap(map);
-        enCfg.Update();
-
         return super.beforeInsert();
     }
 
     @Override
     protected boolean beforeDelete() throws Exception {
-
-        //更新系统FlowInfo
-        EnCfg enCfg=new EnCfg("System.FlowInfo");
-        java.util.Map<String,String> map=enCfg.getMap();
-        int projectNum=Integer.valueOf(map.get("generNum"))-1;
-        map.put("generNum",projectNum+"");
-        enCfg.setMap(map);
-        enCfg.Update();
 
         //删除对应的节点任务
         NodeTasks tasks=new NodeTasks();

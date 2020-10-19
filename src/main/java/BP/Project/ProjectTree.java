@@ -129,13 +129,6 @@ public class ProjectTree extends EntityNo {
 			this.SetValByKey(ProjectTreeAttr.FlowName,flow.getName());
 		}
 
-		/*//更新系统FlowInfo
-		EnCfg enCfg=new EnCfg("System.FlowInfo");
-		java.util.Map<String,String> map=enCfg.getMap();
-		int projectNum=Integer.valueOf(map.get("projectNum"))+1;
-		map.put("projectNum",projectNum+"");
-		enCfg.setMap(map);
-		enCfg.Update();*/
 
 		return super.beforeInsert();
 	}
@@ -143,14 +136,6 @@ public class ProjectTree extends EntityNo {
 
 	@Override
 	protected void afterDelete() throws Exception {
-
-		/*//更新系统FlowInfo
-		EnCfg enCfg=new EnCfg("System.FlowInfo");
-		java.util.Map<String,String> map=enCfg.getMap();
-		int projectNum=Integer.valueOf(map.get("projectNum"))-1;
-		map.put("projectNum",projectNum+"");
-		enCfg.setMap(map);
-		enCfg.Update();*/
 
 		super.afterDelete();
 	}

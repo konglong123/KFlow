@@ -157,8 +157,26 @@ public class TestController {
         }
         return null;
     }
-
-    private void initNodeTime(Date startTime,Date endTime,Node node){
+    //更新节点任务时间信息
+    @RequestMapping("updateNodeTask")
+    public void updateNodeTask(String workGroupNo){
+        NodeTasks tasks=new NodeTasks();
+        try {
+            tasks.Retrieve(NodeTaskAttr.WorkGroupId, workGroupNo);
+            List<NodeTask> taskList=tasks.toList();
+            for (NodeTask task:taskList){
+                Node node=new Node(task.getNodeId());
+                String start=node.GetValStringByKey(NodeAttr.EarlyStart);
+                String end=node.GetValStringByKey(NodeAttr.LaterFinish);
+                task.SetValByKey(NodeTaskAttr.PlanStartTime,start);
+                task.SetValByKey(NodeTaskAttr.PlanEndTime,end);
+                task.SetValByKey(NodeTaskAttr.StartTime,start);
+                task.SetValByKey(NodeTaskAttr.EndTime,end);
+                task.Update();
+            }
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
 
     }
 

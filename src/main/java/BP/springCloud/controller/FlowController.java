@@ -3,16 +3,16 @@ package BP.springCloud.controller;
 import BP.NodeGroup.*;
 import BP.Project.ProjectTree;
 import BP.Project.ProjectTreeAttr;
+import BP.Project.ProjectTrees;
 import BP.Resource.ResourceTask;
 import BP.Resource.ResourceTaskAttr;
 import BP.Resource.ResourceTasks;
 import BP.Sys.EnCfg;
+import BP.Task.FlowGeners;
 import BP.Task.GenerFlowService;
 import BP.Task.NodeTaskService;
-import BP.WF.Dev2Interface;
-import BP.WF.Flow;
-import BP.WF.Node;
-import BP.WF.Nodes;
+import BP.Task.NodeTasks;
+import BP.WF.*;
 import BP.WF.Template.NodeAttr;
 import BP.Web.WebUser;
 import BP.springCloud.entity.GenerFlow;
@@ -284,9 +284,18 @@ public class FlowController {
     public JSONObject getSystemFlowInfo() {
         JSONObject data = new JSONObject();
         try {
-            EnCfg enCfg = new EnCfg("System.FlowInfo");
-            Map<String, String> map = enCfg.getMap();
-            data.putAll(map);
+            Flows flows=new Flows();
+            data.put("flowNum",flows.RetrieveAll());
+
+            ProjectTrees projectTrees=new ProjectTrees();
+            data.put("projectNum",projectTrees.RetrieveAll());
+
+            FlowGeners flowGeners=new FlowGeners();
+            data.put("generNum",flowGeners.RetrieveAll());
+
+            NodeTasks nodeTasks=new NodeTasks();
+            data.put("nodeTaskNum",nodeTasks.RetrieveAll());
+
         } catch (Exception e) {
             logger.error(e.getMessage());
         }

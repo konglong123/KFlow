@@ -62,6 +62,13 @@ public class Resource extends EntityNoName {
         rm.refMethodType= RefMethodType.LinkModel;
         map.AddRefMethod(rm);
 
+        rm = new RefMethod();
+        rm.Title = "资源负载";
+        rm.ClassMethodName = this.toString() + ".getResourceLoad";
+        rm.Icon = "../../WF/Img/Event.png";
+        rm.refMethodType= RefMethodType.LinkModel;
+        map.AddRefMethod(rm);
+
 
         this.set_enMap(map);
         return this.get_enMap();
@@ -104,6 +111,10 @@ public class Resource extends EntityNoName {
 
     public final String getResourceItem(){
         return "/WF/WF/Comm/SearchBS.htm?EnsName=BP.Resource.ResourceItems&Key=" + this.getNo();
+    }
+
+    public final String getResourceLoad(){
+        return "/WF/WF/Admin/AttrNode/Resources/ResourceLoadGant.html?resourceNo=" + this.getNo();
     }
 
 }

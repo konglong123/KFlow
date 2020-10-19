@@ -1,6 +1,9 @@
 package BP.springCloud.controller;
 
 import BP.DA.DataTable;
+import BP.Port.Dept;
+import BP.Port.DeptAttr;
+import BP.Port.Depts;
 import BP.Resource.*;
 import BP.springCloud.entity.ResourceTaskM;
 import BP.springCloud.tool.PageTool;
@@ -319,5 +322,64 @@ public class ResourceController {
 
         return result;
     }
+
+    /**
+    *@Description: 获取资源树信息（资源分布在部门树之下）
+    *@Param:
+    *@return:
+    *@Author: Mr.kong
+    *@Date: 2020/10/19
+    */
+    @RequestMapping("/getResourceTreeData")
+    @ResponseBody
+    public JSONObject getResourceTreeData(){
+        JSONObject data=new JSONObject();
+        try{
+            Depts depts=new Depts();
+            depts.Retrieve(DeptAttr.ParentNo,0);//根目录
+            data=getChildTree((Dept) depts.get(0));
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+        return data;
+    }
+
+    private JSONObject getChildTree(Dept dept) throws Exception{
+        JSONObject data=new JSONObject();
+        List<JSONObject> children=new ArrayList<>();
+        data.put("name",dept.getName());
+        data.put("deptNo",dept.getNo());
+        Depts depts=new Depts();
+        depts.Retrieve(DeptAttr.ParentNo,dept.getNo());
+        if (depts.size()>0) {
+            List<Dept> deptList = depts.toList();
+            for (Dept temp : deptList) {
+                children.add(getChildTree(temp));
+            }
+        }else {//增加资源节点
+            Resources resources=new Resources();
+            resources.Retrieve(ResourceAttr.DeptId,dept.getNo());
+            List<BP.Resource.Resource> resourceList=resources.toList();
+            for (BP.Resource.Resource temp:resourceList){
+                JSONObject resData=new JSONObject();
+                resData.put("name",temp.getName()+"_"+temp.getNo());
+                resData.put("resourceNo",temp.getNo());
+                List<JSONObject> resChild=new ArrayList<>();
+                ResourceItems resourceItems=new ResourceItems();
+                resourceItems.Retrieve(ResourceItemAttr.Kind,temp.getNo());
+                List<ResourceItem> resourceItemList=resourceItems.toList();
+                for (ResourceItem resItem:resourceItemList){
+                    JSONObject resItemData=new JSONObject();
+                    resItemData.put("name",resItem.getNo());
+                    resChild.add(resItemData);
+                }
+                resData.put("children",resChild);
+                children.add(resData);
+            }
+        }
+        data.put("children",children);
+        return data;
+    }
+
 
 }

@@ -22,7 +22,7 @@
                         </div>
                         <div class="comments-info likes-info">
                             <h3><label id="flowNum"></label></h3>
-                            <a href="#">流程模板</a>
+                            <a href="../Start.htm">流程模板</a>
                         </div>
                         <div class="clearfix"> </div>
                     </div>
@@ -33,8 +33,8 @@
                             <i class="fa fa-comments"></i>
                         </div>
                         <div class="comments-info">
-                            <h3><label id="nodeNum"></label></h3>
-                            <a href="#">节点数</a>
+                            <h3><label id="projectNum"></label></h3>
+                            <a href="../Comm/SearchBS.htm?EnsName=BP.Project.ProjectTrees">项目数</a>
                         </div>
                         <div class="clearfix"> </div>
                     </div>
@@ -46,7 +46,7 @@
                         </div>
                         <div class="comments-info tweets-info">
                             <h3><label id="generNum"></label></h3>
-                            <a href="#">流程实例</a>
+                            <a href="../Task/FlowGenerList.html">流程实例</a>
                         </div>
                         <div class="clearfix"> </div>
                     </div>
@@ -58,7 +58,7 @@
                         </div>
                         <div class="comments-info views-info">
                             <h3><label id="nodeTaskNum"></label></h3>
-                            <a href="#">节点任务数</a>
+                            <a href="../Task/NodeTaskList.html">节点任务数</a>
                         </div>
                         <div class="clearfix"> </div>
                     </div>
@@ -91,7 +91,7 @@
             success: function (data) {
                 $("#nodeTaskNum").html(data.nodeTaskNum);
                 $("#generNum").html(data.generNum);
-                $("#nodeNum").html(data.nodeNum);
+                $("#projectNum").html(data.projectNum);
                 $("#flowNum").html(data.flowNum);
             }
         });
