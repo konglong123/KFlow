@@ -39,18 +39,9 @@
     $.get('http://localhost:8081/WF/resource/getResourceTreeData?', function (data) {
         resChart.hideLoading();
         resChart.on('dblclick', function (params) {
-            var deptNo=params.data.deptNo;
             var resourceNo=params.data.resourceNo;
             var url;
-            debugger
-            if (deptNo!=null&&deptNo!=''){
-                /*var enName = "BP.GPM.Dept";
-                url = "/WF/WF/Comm/En.htm?EnName=" + enName + "&PKVal=" + deptNo;
-                OpenEasyUiDialogExt(url,"部门详情", 800, 450, false);*/
-                var enName = "BP.Task.NodeTask";
-                var url = "/WF/WF/Comm/En.htm?EnName=" + enName + "&PKVal=1746";
-                OpenEasyUiDialogExt(url,"任务详情", 800, 450, false);
-            }else if (resourceNo!=null&&resourceNo!='') {
+            if (resourceNo!=null&&resourceNo!='') {
                 url = "ResourceLoadGant.html?resourceNo="+resourceNo;
                 window.open(url);
             }

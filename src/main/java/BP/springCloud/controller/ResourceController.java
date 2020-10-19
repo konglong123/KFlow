@@ -371,6 +371,7 @@ public class ResourceController {
                 for (ResourceItem resItem:resourceItemList){
                     JSONObject resItemData=new JSONObject();
                     resItemData.put("name",resItem.getNo());
+                    resData.put("resourceNo",temp.getNo());
                     resChild.add(resItemData);
                 }
                 resData.put("children",resChild);
