@@ -13,7 +13,7 @@ public class ProjectTreeAttr {
     public static final String FlowNo = "flow_no";
     public static final String FlowName = "flow_name";
     public static final String Detail = "detail";
-    public static final String Status = "status";
+    public static final String Status = "status";//@0=新建@1=流程运行中@2=流程终止@3=项目结束
     public static final String EarlyStart = "early_start";
     public static final String LateFinish = "late_finish";
     public static final String ActualStart = "actual_start";
@@ -26,4 +26,5 @@ public class ProjectTreeAttr {
     public static final String ParentProject = "parent_project";
     public static final String Manage = "manage";
     public static final String GenerFlowNo = "gener_flow_no";
+    public static final String Activates = "activates";
 }

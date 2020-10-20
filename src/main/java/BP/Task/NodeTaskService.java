@@ -3,6 +3,9 @@ package BP.Task;
 import BP.DA.DataRow;
 import BP.DA.DataTable;
 import BP.NodeGroup.*;
+import BP.Project.ProjectTree;
+import BP.Project.ProjectTreeAttr;
+import BP.Project.ProjectTrees;
 import BP.Resource.*;
 import BP.WF.Nodes;
 import BP.springCloud.dao.ResourceTaskMDao;
@@ -123,16 +126,9 @@ public class NodeTaskService {
             //该部分流程已经没有后续节点，结束流程（结束子流程、父流程）
             finishWork(currentTask);
         }else {
-            //更新GenerFlow状态
-            GenerFlow generFlow=generFlowManager.getGenerFlowById(Long.parseLong(currentTask.getWorkId()));
-            String activatedNodes=generFlow.getActivatedNodes();
-            activatedNodes=activatedNodes.replace(currentTask.getNodeId()+",","");
             for (NodeTaskM next:nextTasks){
-                flag=flag&startNodeTask(next);
-                activatedNodes+=next.getNodeId()+",";
+                flag=flag&startNodeTask(next,currentTask);
             }
-            generFlow.setActivatedNodes(activatedNodes);
-            generFlowManager.updateGenerFlow(generFlow);
         }
         if (flag)
             return "发送成功，后续节点任务已经启动！";
@@ -148,7 +144,7 @@ public class NodeTaskService {
     *@Date: 2020/3/17
     */
 
-    public  boolean finishWork(NodeTaskM currentTask){
+    public  boolean finishWork(NodeTaskM currentTask) throws Exception{
         String workId=currentTask.getWorkId();
 
         NodeTaskM con=new NodeTaskM();
@@ -163,6 +159,18 @@ public class NodeTaskService {
             currentWork.setActivatedNodes("");
             currentWork.setUseTime(currentWork.getUseTime()+currentTask.getUseTime());
             generFlowManager.updateGenerFlow(currentWork);
+
+            //更新该流程实例对应项目信息
+            ProjectTrees trees=new ProjectTrees();
+            trees.Retrieve(ProjectTreeAttr.GenerFlowNo,workId);
+            if (trees.size()>0){
+                ProjectTree tree=(ProjectTree)trees.get(0);
+                tree.SetValByKey(ProjectTreeAttr.Activates,"");
+                tree.SetValByKey(ProjectTreeAttr.Status,2);//流程终止
+                tree.SetValByKey(ProjectTreeAttr.ActualFinish,new Date());
+                tree.Update();
+            }
+
         }
         return true;
     }
@@ -214,7 +222,7 @@ public class NodeTaskService {
      *@Author: Mr.kong
      *@Date: 2020/3/17
      */
-    public boolean startNodeTask(NodeTaskM nodeTaskM){
+    public boolean startNodeTask(NodeTaskM nodeTaskM,NodeTaskM currentTaskM){
         //启动节点任务前，判断能否启动（所有前置节点任务是否均完成）
         if (!beforeStartNodeTask(nodeTaskM))
             return false;
@@ -233,9 +241,20 @@ public class NodeTaskService {
         List<NodeTaskM> subStartTasks=getSubFlowStartNodeTask(nodeTaskM);
         if (subStartTasks!=null) {
             for (NodeTaskM sub:subStartTasks) {
-                this.startNodeTask(sub);
+                this.startNodeTask(sub,null);
             }
         }
+
+            //更新GenerFlow状态
+        GenerFlow generFlow = generFlowManager.getGenerFlowById(Long.parseLong(currentTaskM.getWorkId()));
+        String activatedNodes = generFlow.getActivatedNodes();
+        if (currentTaskM!=null)
+            activatedNodes = activatedNodes.replace(currentTaskM.getNodeId() + ",", "");
+        activatedNodes += nodeTaskM.getNodeId() + ",";
+        generFlow.setActivatedNodes(activatedNodes);
+        generFlow.setStatus(1);
+        generFlowManager.updateGenerFlow(generFlow);
+
         return true;
     }
 
@@ -379,7 +398,7 @@ public class NodeTaskService {
             Date current = new Date();
             int rat = 1000 * 60 * 60 * 24;
 
-            if (isReadyNt==1) {//未开始，
+            if (isReadyNt==1||isReadyNt==9) {//未开始，
                 int dayNumS = (int) ((planStart.getTime() - current.getTime()) / rat);
                 if (dayNumS < 0)
                     return 4;//逾期开始

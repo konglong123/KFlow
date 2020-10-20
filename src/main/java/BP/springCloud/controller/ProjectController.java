@@ -3,6 +3,7 @@ package BP.springCloud.controller;
 import BP.Project.ProjectNodeService;
 import BP.Project.ProjectTree;
 import BP.Project.ProjectTreeAttr;
+import BP.Project.ProjectTrees;
 import BP.Task.FlowGener;
 import BP.Task.FlowGenerAttr;
 import BP.Task.FlowGeners;
@@ -10,16 +11,20 @@ import BP.WF.Flow;
 import BP.WF.Node;
 import BP.WF.Nodes;
 import BP.springCloud.entity.ProjectNode;
+import BP.springCloud.tool.PageTool;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,6 +80,10 @@ public class ProjectController {
         data.put("name",flow.getName());
         data.put("value",flow.getNo());
         data.put("generNo",generNo);
+        if (!StringUtils.isEmpty(generNo)) {
+            FlowGener flowGener=new FlowGener(generNo);
+            data.put("flag", flowGener.GetValByKey(FlowGenerAttr.Status));//@1=开始@2=完成@3=准备
+        }
         data.put("children",children);
         return data;
     }
@@ -91,15 +100,18 @@ public class ProjectController {
         return null;
     }
 
-    @RequestMapping("deleteProjectTreeNode")
+    @RequestMapping("getProjectList")
     @ResponseBody
-    public JSONObject deleteProjectTreeNode(int projectTreeNodeNo){
+    public JSONObject getProjectList(HttpServletRequest request, HttpServletResponse response){
+        try {
+            ProjectTrees trees = new ProjectTrees();
+            trees.RetrieveAll();
+            PageTool.TransToResult(trees,request,response);
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
         return null;
     }
 
-    @RequestMapping("addProjectTreeNode")
-    @ResponseBody
-    public JSONObject addProjectTreeNode(@RequestBody ProjectNode projectNode){
-        return null;
-    }
+
 }

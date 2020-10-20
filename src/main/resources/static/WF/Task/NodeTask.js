@@ -423,7 +423,9 @@ function getTaskInfoOneStatusMulti(status) {
 }
 
 function planTask() {
-    var con={};
+    var con={
+        flag:false
+    };
     $.ajax({
         url: "/WF/feign/planAllTask",
         type: 'POST',

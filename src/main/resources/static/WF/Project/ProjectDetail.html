@@ -75,16 +75,25 @@
                         align: 'right',
                         fontSize: 10,
                         formatter: function (param) {
+                            debugger
                             if (param.name.match(match)) {
                                 return '{a|' + param.name + '}'
                             } else {
+                                if (param.data.flag==1) {
+                                    return '{b|' + param.name + '}'
+                                }
                                 return param.name;
                             }
+
                         },
                         rich: {
                             a: {
                                 color: 'red',
-                                lineHeight: 10
+                                lineHeight: 12
+                            },
+                            b:{
+                                color: 'blue',
+                                lineHeight: 12
                             }
                         }
                     },

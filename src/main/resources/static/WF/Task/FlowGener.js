@@ -32,8 +32,10 @@ function initDgGenerFlows() {
                 formatter:function (val,rec) {
                     if(val==1)
                         return "<font color=green>运行中</font>";
-                    else
-                        return "已完成";
+                    else if (val==3)
+                        return "准备";
+                    else if (val==2)
+                        return "完成";
                 }},
             {field:'action',title: '操作',align: 'center',width:50,
                 formatter:function(val,rec){

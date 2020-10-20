@@ -98,6 +98,7 @@ public class FlowController {
             project.SetValByKey(ProjectTreeAttr.Status, 1);//流程启动
             project.SetValByKey(ProjectTreeAttr.GenerFlowNo, workId);
             project.Update();
+
             //起始节点任务状态更新为可开始
             NodeTaskM con = new NodeTaskM();
             con.setWorkGroupId(workGroupId + "");
@@ -105,14 +106,8 @@ public class FlowController {
             List<NodeTaskM> list = nodeTaskService.findNodeTaskList(con);
             if (list != null && list.size() == 1) {
                 NodeTaskM startTask = list.get(0);
-                startTask.setIsReady(1);
-                startTask.setStatus(1);
-                nodeTaskService.updateNodeTask(startTask);
+                nodeTaskService.startNodeTask(startTask,null);
             }
-            //更新实例中运行节点
-            FlowGener flowGener = new FlowGener(workId+"");
-            flowGener.SetValByKey(FlowGenerAttr.ActivatedNodes,flow.getStartNodeID()+",");
-            flowGener.Update();
 
             result.put("success", true);
 
@@ -153,7 +148,7 @@ public class FlowController {
         generFlow.setWorkGroupId(workGroupId);
         generFlow.setParentWorkId(parentWorkId);
         generFlow.setFlowId(Integer.valueOf(flow.getNo()));
-        generFlow.setStatus(1);
+        generFlow.setStatus(3);
         generFlow.setCreator(WebUser.getNo());
         generFlow.setTotalTime(sumTime);
         generFlowService.insertGenerFlow(generFlow);

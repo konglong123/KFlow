@@ -5,6 +5,9 @@ import BP.En.Map;
 import BP.En.RefMethod;
 import BP.En.RefMethodType;
 import BP.Sys.EnCfg;
+import BP.Task.FlowGener;
+import BP.Task.FlowGenerAttr;
+import BP.Task.FlowGeners;
 import BP.Task.NodeTaskAttr;
 import BP.Tools.BeanTool;
 import BP.WF.Flow;
@@ -67,6 +70,7 @@ public class ProjectTree extends EntityNo {
 		map.AddTBInt(ProjectTreeAttr.PlanDuring, 0, "预计工期", true, false);
 		map.AddTBString(ProjectTreeAttr.Manage,  "admin","负责人", true, false,0,50,50);
 		map.AddTBString(ProjectTreeAttr.GenerFlowNo,  "","流程实例", true, false,0,50,50);
+		map.AddTBString(ProjectTreeAttr.Activates,  "","激活节点", true, false,0,50,50);
 
 
 		RefMethod rm = new RefMethod();
@@ -123,12 +127,12 @@ public class ProjectTree extends EntityNo {
 		long id= FeignTool.getSerialNumber("BP.WF.Work");
 		this.SetValByKey(ProjectTreeAttr.No,id);
 		this.SetValByKey(ProjectTreeAttr.ProjectNo,id);
+		this.SetValByKey(ProjectTreeAttr.Status,0);//新建
 		String flowNo=this.GetValStrByKey(ProjectTreeAttr.FlowNo);
 		if (!StringUtils.isEmpty(flowNo)){
 			Flow flow=new Flow(flowNo);
 			this.SetValByKey(ProjectTreeAttr.FlowName,flow.getName());
 		}
-
 
 		return super.beforeInsert();
 	}
@@ -136,7 +140,12 @@ public class ProjectTree extends EntityNo {
 
 	@Override
 	protected void afterDelete() throws Exception {
-
+		//删除项目后，删除对应的流程实例
+		String workId=this.GetValStrByKey(ProjectTreeAttr.GenerFlowNo);
+		FlowGener flowGener=new FlowGener(workId);
+		String groupId=flowGener.GetValStrByKey(FlowGenerAttr.WorkGroupId);
+		FlowGeners geners=new FlowGeners();
+		geners.Delete(FlowGenerAttr.WorkGroupId,groupId);
 		super.afterDelete();
 	}
 }
