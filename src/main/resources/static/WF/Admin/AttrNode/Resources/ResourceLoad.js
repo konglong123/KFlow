@@ -35,7 +35,7 @@ function initResourceKindGant(resourceNo) {
             Highcharts.ganttChart('containerKind', {
                 series: series,
                 title: {
-                    text: '资源甘特图（资源实例角度）'
+                    text: '资源甘特图（资源实例维度）'
                 },
                 //导航栏
                 navigator: {

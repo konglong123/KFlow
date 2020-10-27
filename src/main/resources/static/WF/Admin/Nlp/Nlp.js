@@ -80,11 +80,11 @@ function deleteModel(id) {
 
 function learnOnLine() {
     var url="/WF/WF/Admin/Nlp/SegmentModelLearn.html?"
-    OpenEasyUiDialogExt(url,"在线学习", 800, 450, true);
+    OpenEasyUiDialogExt(url,"在线学习", 800, 450, false);
 }
 function gotoModelDetail(id) {
     var url="/WF/WF/Comm/HighChart.html?modelId="+id;
-    OpenEasyUiDialogExt(url,"准确度曲线", 800, 450, true);
+    OpenEasyUiDialogExt(url,"准确度曲线", 800, 450, false);
 }
 
 function startTrain(type) {

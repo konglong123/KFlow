@@ -55,6 +55,11 @@
                 trigger: 'item',
                 triggerOn: 'mousemove'
             },
+            toolbox:{
+                feature:{
+                    saveAsImage:{}
+                }
+            },
             series: [
                 {
                     type: 'tree',
@@ -73,7 +78,7 @@
                         position: 'left',
                         verticalAlign: 'middle',
                         align: 'right',
-                        fontSize: 10,
+                        fontSize: 16,
                         formatter: function (param) {
                             debugger
                             if (param.name.match(match)) {
