@@ -201,7 +201,7 @@ function queryGenerFlowByCondition() {
 function gotoGenerFlowDetail(no) {
     var enName = "BP.Task.FlowGener";
     var url = "/WF/WF/Comm/En.htm?EnName=" + enName + "&PKVal=" + no;
-    OpenEasyUiDialogExt(url,"流程实例", 800, 450, true);
+    OpenEasyUiDialogExt(url,"流程实例", 800, 450, false);
 }
 
 function getActiveNodes() {

@@ -97,6 +97,8 @@ public class FlowController {
             //更新项目信息
             project.SetValByKey(ProjectTreeAttr.Status, 1);//流程启动
             project.SetValByKey(ProjectTreeAttr.GenerFlowNo, workId);
+            FlowGener gener=new FlowGener(workId+"");
+            project.SetValByKey(ProjectTreeAttr.PlanDuring,gener.GetValStrByKey(FlowGenerAttr.TotalTime));
             project.Update();
 
             //起始节点任务状态更新为可开始

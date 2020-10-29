@@ -26,7 +26,7 @@ public class ResourceTask extends EntityNo {
         map.AddTBInt(ResourceTaskAttr.NodeId, 0, "节点编码",true, true);
         map.AddTBString(ResourceTaskAttr.TaskId, null, "节点任务编码",true, true, 0, 100, 100);
         map.AddTBInt(ResourceTaskAttr.UseTime, 0, "占用时间",true, true);
-        map.AddTBInt(ResourceTaskAttr.UseNum, 1, "占用数量",true, true);
+        map.AddTBInt(ResourceTaskAttr.UseNum, 0, "占用数量",true, true);
         map.AddTBDateTime(ResourceTaskAttr.StartTime,null,"开始时间",true,true);
         map.AddTBDateTime(ResourceTaskAttr.EndTime,null,"结束时间",true,true);
         map.AddTBDateTime(ResourceTaskAttr.BookStart,null,"预定开始时间",true,true);
@@ -59,4 +59,15 @@ public class ResourceTask extends EntityNo {
     }
     public ResourceTask(){}
 
+    @Override
+    protected boolean beforeInsert() throws Exception {
+        String resourceNo=this.GetValStrByKey(ResourceTaskAttr.ResourceNo);
+        Resource resource=new Resource(resourceNo);
+        int type=resource.GetValIntByKey(ResourceAttr.Kind);
+        //环境或者知识资源需要设置数量，设备人员数量为0
+        if (type==2||type==3){
+            this.SetValByKey(ResourceTaskAttr.UseNum,1);
+        }
+        return super.beforeInsert();
+    }
 }

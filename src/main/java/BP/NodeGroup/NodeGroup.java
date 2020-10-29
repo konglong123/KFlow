@@ -74,6 +74,14 @@ public class NodeGroup extends EntityNo{
         return super.beforeInsert();
     }
 
+    @Override
+    protected boolean beforeDelete() throws Exception {
+        String groupNo=this.getNo();
+        NodeGroupItems items=new NodeGroupItems();
+        items.Delete(NodeGroupItemAttr.group_no,groupNo);
+        return super.beforeInsert();
+    }
+
     public static String[] getItems(String groupNo) throws Exception{
         NodeGroupItems items=new NodeGroupItems();
         items.Retrieve(NodeGroupItemAttr.group_no,groupNo);

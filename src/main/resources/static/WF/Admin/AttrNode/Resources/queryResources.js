@@ -85,10 +85,17 @@ function initDgNodeResource(nodeId,planId) {
                     var str="<input type='button' value='资源负载' onclick='resourceGant(\""+rec.resource_no+"\")'/>";
                     str+="<input type='button' value='性能详情' onclick='gotoResourceDetail(\""+rec.resource_no+"\")'/>";
                     str+="<input type='button' value='放弃资源' onclick='deleteResource(\""+rec.No+"\")'/>";
+                    str+="<input type='button' value='详情' onclick='gotoDetail(\""+rec.No+"\")'/>";
                     return str;
                 }},
         ]]
     });
+}
+
+function gotoDetail(no) {
+    var enName = "BP.Resource.ResourceTask";
+    var url = "../../../Comm/En.htm?EnName=" + enName + "&PKVal=" + no;
+    OpenEasyUiDialogExt(url,"资源任务", 800, 450, false);
 }
 function bookResource(no) {
     var row = $('#dgNodeResourcePlans').datagrid('getSelected');

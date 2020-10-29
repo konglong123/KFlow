@@ -1,5 +1,8 @@
 package BP.springCloud.controller;
 
+import BP.Project.ProjectTree;
+import BP.Project.ProjectTreeAttr;
+import BP.Project.ProjectTrees;
 import BP.Resource.*;
 import BP.Task.NodeTask;
 import BP.Task.NodeTaskAttr;
@@ -19,8 +22,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
+import java.util.ArrayDeque;
 import java.util.Date;
 import java.util.List;
+import java.util.Queue;
 
 /**
  * @program: kflow-web
@@ -88,12 +93,20 @@ public class TestController {
     */
     @RequestMapping("createResourcePlan")
     public JSONObject createResourcePlan(@RequestBody String flow){
+        updateResourcePlan(flow);
+        return null;
+    }
+
+    private void updateResourcePlan(String flowId){
         try {
             String[] resList={"R_adams_1","S_LX_16T_1","P_L1_admin","S_R_A","S_J5_A1","HJ_RM_C"};
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            List<Node> nodeList=new Nodes(flow).toList();
+            List<Node> nodeList=new Nodes(flowId).toList();
             int count=0;
             for (Node node:nodeList){
+                ResourcePlans plans=new ResourcePlans();
+                plans.Delete(ResourcePlanAttr.NodeId,node.getNodeID());
+
                 ResourcePlan plan=new ResourcePlan();
                 plan.SetValByKey(ResourcePlanAttr.NodeId,node.getNodeID());
                 plan.Insert();
@@ -115,7 +128,7 @@ public class TestController {
                     resTask.SetValByKey(ResourceTaskAttr.PlanEnd, end);
                     resTask.SetValByKey(ResourceTaskAttr.UseTime, node.getDoc());
                     resTask.SetValByKey(ResourceTaskAttr.PlanId, plan.getNo());
-                    resTask.SetValByKey(ResourceTaskAttr.IsPlan, 1);
+                    resTask.SetValByKey(ResourceTaskAttr.IsPlan, 2);
                     resTask.SetValByKey(ResourceTaskAttr.IsFinish, 2);
                     resTask.Insert();
                     count++;
@@ -126,7 +139,6 @@ public class TestController {
         }catch (Exception e){
             logger.error(e.getMessage());
         }
-        return null;
     }
 
     /**
@@ -136,27 +148,66 @@ public class TestController {
     *@Author: Mr.kong
     *@Date: 2020/10/16
     */
-    @RequestMapping("initNodeInfo")
-    public JSONObject initNodeInfo(@RequestBody String flowId){
+    @RequestMapping("initFlowNodeInfo")
+    public JSONObject initFlowNode(String startTime,String flowId){
         try {
-            String startTime="2020-01-01 00:00:00";
-            String endTime="2021-12-30 00:00:00";
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date start=formatter.parse(startTime);
-            Date end=formatter.parse(endTime);
-            int hourTime= 60 * 60 * 1000;
-
-
-            Flow flow=new Flow(flowId);
-            Node startNode=flow.getStartNode();
-
-            List<Node> nextList=startNode.getHisToNodes().toList();
-
+            long start=formatter.parse(startTime).getTime();
+            initFlowNodeInfo(start,flowId);
         }catch (Exception e){
             logger.error(e.getMessage());
         }
         return null;
     }
+
+    @RequestMapping("initProjectInfo")
+    public JSONObject initProjectInfo(String startTime){
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            long start=formatter.parse(startTime).getTime();
+            ProjectTrees trees=new ProjectTrees();
+            trees.Retrieve(ProjectTreeAttr.Status,1);
+            List<ProjectTree> projectList=trees.toList();
+            for(ProjectTree tree:projectList){
+                String flowId=tree.GetValStrByKey(ProjectTreeAttr.FlowNo);
+                start=initFlowNodeInfo(start,flowId);
+            }
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+        return null;
+    }
+
+    private long initFlowNodeInfo(long start,String flowId) throws Exception{
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        int dayTime= 24*60 * 60 * 1000;
+        Flow flow=new Flow(flowId);
+        Node startNode=flow.getStartNode();
+        startNode.SetValByKey(NodeAttr.EarlyStart,formatter.format(start));
+        long totalTime=((int)Math.floor(Math.random()*3)+2)*dayTime;
+        startNode.SetValByKey(NodeAttr.LaterFinish,formatter.format(start+2*totalTime));
+        startNode.SetValByKey(NodeAttr.Doc,totalTime/dayTime*8);
+        startNode.Update();
+        start=start+totalTime/2;
+
+        Queue<Node> nextQueue=new ArrayDeque<>();
+        nextQueue.addAll(startNode.getHisToNodes().toList());
+        while (nextQueue.size()!=0){
+            Node temp=nextQueue.poll();
+            temp.SetValByKey(NodeAttr.EarlyStart,formatter.format(start));
+            totalTime=((int)Math.floor(Math.random()*3)+2)*dayTime;
+            temp.SetValByKey(NodeAttr.LaterFinish,formatter.format(start+2*totalTime));
+            temp.SetValByKey(NodeAttr.Doc,totalTime/dayTime*8);
+            temp.Update();
+            start+=totalTime*2;
+            nextQueue.addAll(temp.getHisToNodes().toList());
+        }
+
+        updateResourcePlan(flowId);
+        return start;
+    }
+
+
     //更新节点任务时间信息
     @RequestMapping("updateNodeTask")
     public void updateNodeTask(String workGroupNo){
@@ -172,6 +223,31 @@ public class TestController {
                 task.SetValByKey(NodeTaskAttr.PlanEndTime,end);
                 task.SetValByKey(NodeTaskAttr.StartTime,start);
                 task.SetValByKey(NodeTaskAttr.EndTime,end);
+                task.Update();
+            }
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+
+    }
+
+    //纠正资源需求中资源数量错误（设备和人力数量为0，环境知识为1）
+    @RequestMapping("initResourceTaskInfo")
+    public void initResourceTaskInfo(){
+        try {
+            ResourceTasks tasks=new ResourceTasks();
+            tasks.RetrieveAll();
+            List<ResourceTask> taskList=tasks.toList();
+            for(ResourceTask task:taskList){
+                String resourceNo=task.GetValStrByKey(ResourceTaskAttr.ResourceNo);
+                BP.Resource.Resource resource=new BP.Resource.Resource(resourceNo);
+                int type=resource.GetValIntByKey(ResourceAttr.Kind);
+                //环境或者知识资源需要设置数量，设备人员数量为0
+                if (type==0||type==1){
+                    task.SetValByKey(ResourceTaskAttr.UseNum,0);
+                }else {
+                    task.SetValByKey(ResourceTaskAttr.UseNum,1);
+                }
                 task.Update();
             }
         }catch (Exception e){
