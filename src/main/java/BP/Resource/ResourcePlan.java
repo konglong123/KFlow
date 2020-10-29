@@ -58,4 +58,11 @@ public class ResourcePlan extends EntityNo {
         this.SetValByKey(ResourcePlanAttr.Creator, WebUser.getNo());
         return super.beforeInsert();
     }
+
+    @Override
+    protected boolean beforeDelete() throws Exception {
+        ResourceTasks resourceTasks=new ResourceTasks();
+        resourceTasks.Delete(ResourceTaskAttr.PlanId,this.getNo());
+        return super.beforeDelete();
+    }
 }

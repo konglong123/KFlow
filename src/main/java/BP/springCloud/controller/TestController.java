@@ -106,6 +106,8 @@ public class TestController {
             for (Node node:nodeList){
                 ResourcePlans plans=new ResourcePlans();
                 plans.Delete(ResourcePlanAttr.NodeId,node.getNodeID());
+                ResourceTasks resourceTasks=new ResourceTasks();
+                resourceTasks.Delete(ResourceTaskAttr.NodeId,node.getNodeID());
 
                 ResourcePlan plan=new ResourcePlan();
                 plan.SetValByKey(ResourcePlanAttr.NodeId,node.getNodeID());
@@ -170,7 +172,12 @@ public class TestController {
             List<ProjectTree> projectList=trees.toList();
             for(ProjectTree tree:projectList){
                 String flowId=tree.GetValStrByKey(ProjectTreeAttr.FlowNo);
+                tree.SetValByKey(ProjectTreeAttr.EarlyStart,formatter.format(start));
                 start=initFlowNodeInfo(start,flowId);
+                Flow flow=new Flow(flowId);
+                Node endNode=flow.getEndNode();
+                tree.SetValByKey(ProjectTreeAttr.LateFinish,formatter.format(endNode.GetValDateTime(NodeAttr.LaterFinish)));
+                tree.Update();
             }
         }catch (Exception e){
             logger.error(e.getMessage());

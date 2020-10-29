@@ -3289,6 +3289,14 @@ public class Flow extends BP.En.EntityNoName {
 		// return this.GetValIntByKey(FlowAttr.StartNodeID);
 	}
 
+	public final Node getEndNode() throws Exception{
+		Nodes nodes=new Nodes();
+		nodes.Retrieve(NodeAttr.FK_Flow,this.getNo(),NodeAttr.RunModel,6);
+		Node start=(Node)nodes.get(0);
+		return start;
+		// return this.GetValIntByKey(FlowAttr.StartNodeID);
+	}
+
 	/**
 	 * add 2013-01-01. 业务主表(默认为NDxxRpt)
 	 * 
