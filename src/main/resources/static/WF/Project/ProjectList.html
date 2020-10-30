@@ -31,6 +31,7 @@
     </table>
     <div style="text-align:right;padding:5px">
         <button class="easyui-linkbutton" onclick="queryProjectByCondition()" >查询</button>
+        <button class="easyui-linkbutton" onclick="planProject()" >计划项目</button>
     </div>
 </div>
 <div id="projects">
@@ -44,7 +45,7 @@
     });
     function initDgProjects() {
         $('#dgProjects').datagrid({
-            singleSelect:true,
+            singleSelect:false,
             autoRowHeight:false,
             pagination:true,
             pageSize: 10,
@@ -59,6 +60,7 @@
                 creator:"",
             },
             columns:[[
+                {field: 'ck',title: '选则', checkbox : true},
                 {field:'No',title: '项目编码',align: 'center',width:10},
                 {field:'project_name',title: '项目名',align: 'center',width:10,
                     formatter:function (val) { return "<span title='" + val + "'>" + val + "</span>" }},
@@ -66,8 +68,8 @@
                 {field:'flow_no',title: '流程编码',align: 'center',width:10},
                 {field:'flow_name',title: '流程名',align: 'center',width:10,
                     formatter:function (val) { return "<span title='" + val + "'>" + val + "</span>" }},
-                {field:'actual_during',title: '已完成工作量',align: 'center',width:10},
-                {field:'plan_during',title: '总工作量',align: 'center',width:10},
+                {field:'actual_during',title: '已完成工作量(/h)',align: 'center',width:10},
+                {field:'plan_during',title: '总工作量(/h)',align: 'center',width:10},
                 {field:'manage',title: '发起人',align: 'center',width:10},
                 {field:'project_status',title: '状态',align: 'center',width:10,
                     formatter:function (val,rec) {
@@ -81,6 +83,8 @@
                             return "新建";
                         else if (val==4)
                             return "<font color=red>异常</font>";
+                        else if (val ==5)
+                            return "已计划";
                     }},
                 {field:'action',title: '操作',align: 'center',width:50,
                     formatter:function(val,rec){
@@ -95,6 +99,7 @@
 
             ]]
         });
+
     }
     function startProject(no) {
         $.ajax({
@@ -119,6 +124,24 @@
         var enName = "BP.Project.ProjectTree";
         var url = "/WF/WF/Comm/En.htm?EnName=" + enName + "&PKVal=" + no;
         OpenEasyUiDialogExt(url,"项目信息", 800, 450, true);
+    }
+    function planProject() {
+        var rows = $('#dgProjects').datagrid('getSelections');
+        var projectNos=[];
+        $(rows).each(function(){
+            projectNos.push(this.No);
+        });
+        $.ajax({
+            url: "/WF/feign/planProjects",
+            type: 'POST',
+            dataType: 'json',
+            async:false,
+            contentType:'application/json',
+            data: JSON.stringify(projectNos),
+            success: function (dataTemp) {
+                alert(dataTemp.meg);
+            }
+        });
     }
 </script>
 </body>

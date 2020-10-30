@@ -131,14 +131,47 @@ public class FeignController {
     */
     @ResponseBody
     @RequestMapping("planAllTask")
-    public JSONObject planAllTask(@RequestBody JSONObject con){
+    public JSONObject planAllTask(@RequestBody JSONObject con) {
+        try {
+            ProjectTrees projectList=new ProjectTrees();
+            projectList.Retrieve(ProjectTreeAttr.Status,1);
+            JSONObject data= planProjects(projectList);
+            List<ProjectTree> treeList=projectList.toList();
+            for (ProjectTree tree:treeList){
+                tree.SetValByKey(ProjectTreeAttr.Status,5);//更新为已经计划
+                tree.Update();
+            }
+            return data;
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+       return null;
+    }
+
+    @ResponseBody
+    @RequestMapping("planProjects")
+    public JSONObject planProjects(@RequestBody List<String> projectNos) {
+        try {
+            ProjectTrees projectList=new ProjectTrees();
+            for (String projectNo:projectNos){
+                ProjectTree tree=new ProjectTree(projectNo);
+                projectList.add(tree);
+                tree.SetValByKey(ProjectTreeAttr.Status,5);//更新为已经计划
+                tree.Update();
+            }
+            return planProjects(projectList);
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+        return null;
+    }
+
+    private JSONObject planProjects(ProjectTrees projectList){
         JSONObject resultMes=new JSONObject();
 
         try {
             JSONObject data=new JSONObject();
             //封装项目信息
-            ProjectTrees projectList=new ProjectTrees();
-            projectList.Retrieve(ProjectTreeAttr.Status,1);
             JSONObject projectData=projectList.getPlanData();
             data.putAll(projectData);
             List<ProjectTree> projectTreeList=projectList.toList();
@@ -228,6 +261,7 @@ public class FeignController {
         resultMes.put("meg","计划成功！");
         return resultMes;
     }
+
 
     @ResponseBody
     @RequestMapping("analysePlanData")

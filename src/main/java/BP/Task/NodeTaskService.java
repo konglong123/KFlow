@@ -871,7 +871,7 @@ public class NodeTaskService {
 
 
     /**
-    *@Description: 认为资源方案定义到资源类别
+    *@Description: 认为资源方案定义到资源类别,
     *@Param:
     *@return:
     *@Author: Mr.kong
@@ -884,6 +884,16 @@ public class NodeTaskService {
         Map<String, ResourceItem> resourceMap=new HashMap<>();
 
         for (NodeTaskM task:taskMList){
+
+            //需要释放本次计划范围内的相关资源占用
+            ResourceTasks resTasks=new ResourceTasks();
+            resTasks.Retrieve(ResourceTaskAttr.NodeId,task.getNodeId());
+            List<ResourceTask> resTaskList=resTasks.toList();
+            for (ResourceTask resTask:resTaskList){
+                resTask.SetValByKey(ResourceTaskAttr.IsPlan,2);
+                resTask.Update();
+            }
+
             ResourcePlans plans=new ResourcePlans();
             plans.Retrieve(ResourcePlanAttr.NodeId,task.getNodeId());
             List<ResourcePlan> planBeforeList=plans.toList();
@@ -949,7 +959,7 @@ public class NodeTaskService {
         List<JSONObject> resourcePlaceList=new ArrayList<>();
         List<JSONObject> resourceKnowledgeList=new ArrayList<>();
 
-        //资源已用
+        //资源已用,
         List<JSONObject> resourceLoadList=new ArrayList<>();
         for (Map.Entry<String, ResourceItem> resourceEntry:resourceMap.entrySet()){
             ResourceTasks tasks=new ResourceTasks();
