@@ -3292,8 +3292,8 @@ public class Flow extends BP.En.EntityNoName {
 	public final Node getEndNode() throws Exception{
 		Nodes nodes=new Nodes();
 		nodes.Retrieve(NodeAttr.FK_Flow,this.getNo(),NodeAttr.RunModel,6);
-		Node start=(Node)nodes.get(0);
-		return start;
+		Node end=(Node)nodes.get(0);
+		return end;
 		// return this.GetValIntByKey(FlowAttr.StartNodeID);
 	}
 

@@ -121,13 +121,13 @@ public class TestController {
                     Date start=node.GetValDateTime(NodeAttr.EarlyStart);
                     String startStr=formatter.format(start);
                     resTask.SetValByKey(ResourceTaskAttr.BookStart,startStr);
-                    int duringTime=Integer.valueOf(node.getDoc());
-                    String end=formatter.format(new Date(start.getTime()+duringTime*3*60*60*1000));
-                    resTask.SetValByKey(ResourceTaskAttr.BookEnd, end);
+                    Date end=node.GetValDateTime(NodeAttr.LaterFinish);
+                    String endStr=formatter.format(end);
+                    resTask.SetValByKey(ResourceTaskAttr.BookEnd, endStr);
                     resTask.SetValByKey(ResourceTaskAttr.StartTime, startStr);
-                    resTask.SetValByKey(ResourceTaskAttr.EndTime, end);
+                    resTask.SetValByKey(ResourceTaskAttr.EndTime, endStr);
                     resTask.SetValByKey(ResourceTaskAttr.PlanStart, startStr);
-                    resTask.SetValByKey(ResourceTaskAttr.PlanEnd, end);
+                    resTask.SetValByKey(ResourceTaskAttr.PlanEnd, endStr);
                     resTask.SetValByKey(ResourceTaskAttr.UseTime, node.getDoc());
                     resTask.SetValByKey(ResourceTaskAttr.PlanId, plan.getNo());
                     resTask.SetValByKey(ResourceTaskAttr.IsPlan, 2);
@@ -167,16 +167,18 @@ public class TestController {
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             long start=formatter.parse(startTime).getTime();
+            long week=7*24*60*60*1000L;
+            long mouth=30*24*60*60*1000L;
             ProjectTrees trees=new ProjectTrees();
             trees.Retrieve(ProjectTreeAttr.Status,1);
             List<ProjectTree> projectList=trees.toList();
             for(ProjectTree tree:projectList){
                 String flowId=tree.GetValStrByKey(ProjectTreeAttr.FlowNo);
-                tree.SetValByKey(ProjectTreeAttr.EarlyStart,formatter.format(start));
-                start=initFlowNodeInfo(start,flowId);
+                initFlowNodeInfo(start,flowId);
+                start+=mouth;
                 Flow flow=new Flow(flowId);
-                Node endNode=flow.getEndNode();
-                tree.SetValByKey(ProjectTreeAttr.LateFinish,formatter.format(endNode.GetValDateTime(NodeAttr.LaterFinish)));
+                tree.SetValByKey(ProjectTreeAttr.EarlyStart,formatter.format(flow.getStartNode().GetValDateTime(NodeAttr.EarlyStart).getTime()-week));
+                tree.SetValByKey(ProjectTreeAttr.LateFinish,formatter.format(flow.getEndNode().GetValDateTime(NodeAttr.LaterFinish).getTime()+week));
                 tree.Update();
             }
         }catch (Exception e){
@@ -187,26 +189,26 @@ public class TestController {
 
     private long initFlowNodeInfo(long start,String flowId) throws Exception{
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        int dayTime= 24*60 * 60 * 1000;
+        long dayTime= 24*60 * 60 * 1000L;
         Flow flow=new Flow(flowId);
         Node startNode=flow.getStartNode();
         startNode.SetValByKey(NodeAttr.EarlyStart,formatter.format(start));
-        long totalTime=((int)Math.floor(Math.random()*3)+2)*dayTime;
-        startNode.SetValByKey(NodeAttr.LaterFinish,formatter.format(start+2*totalTime));
+        long totalTime=((int)Math.floor(Math.random()*3)+7)*dayTime;
+        startNode.SetValByKey(NodeAttr.LaterFinish,formatter.format(start+totalTime+totalTime/2));
         startNode.SetValByKey(NodeAttr.Doc,totalTime/dayTime*8);
         startNode.Update();
-        start=start+totalTime/2;
+        start=start+4*dayTime;
 
         Queue<Node> nextQueue=new ArrayDeque<>();
         nextQueue.addAll(startNode.getHisToNodes().toList());
         while (nextQueue.size()!=0){
             Node temp=nextQueue.poll();
             temp.SetValByKey(NodeAttr.EarlyStart,formatter.format(start));
-            totalTime=((int)Math.floor(Math.random()*3)+2)*dayTime;
-            temp.SetValByKey(NodeAttr.LaterFinish,formatter.format(start+2*totalTime));
+            totalTime=((int)Math.floor(Math.random()*3)+7)*dayTime;
+            temp.SetValByKey(NodeAttr.LaterFinish,formatter.format(start+totalTime+totalTime/2));
             temp.SetValByKey(NodeAttr.Doc,totalTime/dayTime*8);
             temp.Update();
-            start+=totalTime*2;
+            start=start+4*dayTime;
             nextQueue.addAll(temp.getHisToNodes().toList());
         }
 

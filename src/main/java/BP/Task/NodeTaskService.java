@@ -681,8 +681,8 @@ public class NodeTaskService {
             item.put("taskType",task.getTaskType());
             item.put("taskProjUid",task.getWorkGroupId());
             item.put("taskPriority",task.getTaskPriority());
-            //转换成汉卿中默认单位（天，每天10小时）
-            item.put("taskPlanDur",(task.getTotalTime()+0.0)/10);
+            //转换成汉卿中默认单位（天，每天8小时）
+            item.put("taskPlanDur",(task.getTotalTime()+0.0)/8);
             item.put("taskEarlyStartDateTime",task.getEarlyStartTime().getTime());
             item.put("taskLateFinishDateTime",task.getOldestFinishTime().getTime());
             item.put("taskWorkModel",task.getTaskWorkModel());
@@ -931,7 +931,7 @@ public class NodeTaskService {
                         ResourceTasks resourceTasksTemp=new ResourceTasks();
                         resourceTasksTemp.Retrieve(ResourceTaskAttr.PlanId,plan.getNo(),ResourceTaskAttr.ResourceNo,resource.getNo());
                         ResourceTask resourceTemp=(ResourceTask) resourceTasksTemp.get(0);
-                        resourceTaskItem.put("resReqResWork",resourceTemp.GetValIntByKey(ResourceTaskAttr.UseTime));
+                        resourceTaskItem.put("resReqResWork",resourceTemp.GetValIntByKey(ResourceTaskAttr.UseTime)/8);
                         resourceTaskItem.put("resReqResAmount",resourceTemp.GetValIntByKey(ResourceTaskAttr.UseNum));
                         resourceTaskItem.put("resReqResWorkModel",task.getTaskWorkModel());
                         resourceNeedList.add(resourceTaskItem);
