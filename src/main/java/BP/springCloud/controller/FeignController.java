@@ -8,6 +8,7 @@ import BP.Resource.*;
 import BP.Task.NodeTask;
 import BP.Task.NodeTaskAttr;
 import BP.Task.NodeTaskService;
+import BP.WF.Flow;
 import BP.springCloud.entity.NodeTaskM;
 import BP.springCloud.tool.FeignTool;
 import BP.springCloud.tool.Page;
@@ -132,44 +133,64 @@ public class FeignController {
     @ResponseBody
     @RequestMapping("planAllTask")
     public JSONObject planAllTask(@RequestBody JSONObject con) {
+        JSONObject resultMes=new JSONObject();
         try {
             ProjectTrees projectList=new ProjectTrees();
             projectList.Retrieve(ProjectTreeAttr.Status,1);
-            JSONObject data= planProjects(projectList);
-            List<ProjectTree> treeList=projectList.toList();
-            for (ProjectTree tree:treeList){
-                tree.SetValByKey(ProjectTreeAttr.Status,5);//更新为已经计划
-                tree.Update();
-            }
-            return data;
+            planProjects(projectList);
+            updateProject(projectList);
+
         }catch (Exception e){
             logger.error(e.getMessage());
+            resultMes.put("meg",e.getMessage());
+            return resultMes;
         }
-       return null;
+        resultMes.put("meg","计划成功！");
+        return resultMes;
+    }
+
+    private void updateProject(ProjectTrees projectList) throws Exception{
+        List<ProjectTree> treeList=projectList.toList();
+        for (ProjectTree tree:treeList){
+            tree.SetValByKey(ProjectTreeAttr.Status,5);//更新为已经计划
+            tree.Update();
+
+            //起始节点任务状态更新为可开始
+            Flow flow=new Flow(tree.GetValStrByKey(ProjectTreeAttr.FlowNo));
+            NodeTaskM NodeTaskCon = new NodeTaskM();
+            NodeTaskCon.setWorkGroupId(tree.getNo() + "");
+            NodeTaskCon.setNodeId(flow.getStartNodeID() + "");
+            List<NodeTaskM> list = nodeTaskService.findNodeTaskList(NodeTaskCon);
+            if (list != null && list.size() == 1) {
+                NodeTaskM startTask = list.get(0);
+                nodeTaskService.startNodeTask(startTask,null);
+            }
+        }
     }
 
     @ResponseBody
     @RequestMapping("planProjects")
     public JSONObject planProjects(@RequestBody List<String> projectNos) {
+        JSONObject resultMes=new JSONObject();
         try {
             ProjectTrees projectList=new ProjectTrees();
             for (String projectNo:projectNos){
                 ProjectTree tree=new ProjectTree(projectNo);
                 projectList.add(tree);
-                tree.SetValByKey(ProjectTreeAttr.Status,5);//更新为已经计划
-                tree.Update();
             }
-            return planProjects(projectList);
+            planProjects(projectList);
+            updateProject(projectList);
         }catch (Exception e){
             logger.error(e.getMessage());
+            resultMes.put("meg",e.getMessage());
+            return resultMes;
         }
-        return null;
+        resultMes.put("meg","计划成功！");
+        return resultMes;
     }
 
-    private JSONObject planProjects(ProjectTrees projectList){
-        JSONObject resultMes=new JSONObject();
+    private void planProjects(ProjectTrees projectList) throws Exception{
 
-        try {
             JSONObject data=new JSONObject();
             //封装项目信息
             JSONObject projectData=projectList.getPlanData();
@@ -252,14 +273,7 @@ public class FeignController {
                 }
             }
 
-        }catch (Exception e){
-            logger.error(e.getMessage());
-            resultMes.put("meg",e.getMessage());
-            return resultMes;
-        }
 
-        resultMes.put("meg","计划成功！");
-        return resultMes;
     }
 
 

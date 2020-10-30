@@ -101,16 +101,6 @@ public class FlowController {
             project.SetValByKey(ProjectTreeAttr.PlanDuring,gener.GetValStrByKey(FlowGenerAttr.TotalTime));
             project.Update();
 
-            //起始节点任务状态更新为可开始
-            NodeTaskM con = new NodeTaskM();
-            con.setWorkGroupId(workGroupId + "");
-            con.setNodeId(flow.getStartNodeID() + "");
-            List<NodeTaskM> list = nodeTaskService.findNodeTaskList(con);
-            if (list != null && list.size() == 1) {
-                NodeTaskM startTask = list.get(0);
-                nodeTaskService.startNodeTask(startTask,null);
-            }
-
             result.put("success", true);
 
         } catch (Exception e) {

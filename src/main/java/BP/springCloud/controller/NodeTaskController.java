@@ -77,6 +77,9 @@ public class NodeTaskController {
             String status=request.getParameter("status");
             if (!StringUtils.isEmpty(status))
                 con.setStatus(Integer.parseInt(status));
+            else {
+                con.setIsReady(1);
+            }
 
             List nodeTaskMList=nodeTaskService.findNodeTaskAllList(con);
             PageTool.TransToResultList(nodeTaskMList,request,response);
