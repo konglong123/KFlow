@@ -178,7 +178,7 @@ public class FeignController {
                 ProjectTree tree=new ProjectTree(projectNo);
                 projectList.add(tree);
             }
-            planProjects(projectList);
+            //planProjects(projectList);
             updateProject(projectList);
         }catch (Exception e){
             logger.error(e.getMessage());

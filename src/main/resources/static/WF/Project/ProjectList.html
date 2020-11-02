@@ -15,13 +15,13 @@
     <table cellpadding="5">
         <tr>
             <td>项目编码：</td>
-            <td><input class="easyui-textbox" type="text" id="generFlowNoQuery"></td>
+            <td><input class="easyui-textbox" type="text" id="projectNoQuery"></td>
             <td>负责人：</td>
             <td><input class="easyui-textbox" type="text" id="creatorQuery"></td>
             <td>流程编码：</td>
             <td><input class="easyui-textbox" type="text" id="flowNoQuery"></td>
             <td>状态：</td>
-            <td><select id="ynQuery">
+            <td><select id="statusQuery">
                 <option value="0">运行中</option>
                 <option value="1">已完成</option>
                 <option value="">所有</option>
@@ -74,7 +74,7 @@
                 {field:'project_status',title: '状态',align: 'center',width:10,
                     formatter:function (val,rec) {
                         if(val==1)
-                            return "<font color=green>运行中</font>";
+                            return "未计划";
                         else if (val==3)
                             return "结束";
                         else if (val==2)
@@ -84,7 +84,7 @@
                         else if (val==4)
                             return "<font color=red>异常</font>";
                         else if (val ==5)
-                            return "已计划";
+                            return "<font color=green>运行中</font>";
                     }},
                 {field:'action',title: '操作',align: 'center',width:50,
                     formatter:function(val,rec){
@@ -142,6 +142,20 @@
                 alert(dataTemp.meg);
             }
         });
+    }
+    function queryProjectByCondition() {
+        var projectNo=$("#projectNoQuery").val().trim();
+        var creator=$("#creatorQuery").val().trim();
+        var flowNo=$("#flowNoQuery").val().trim();
+        var status=$("#statusQuery").val().trim();
+
+        var queryParams = $('#dgProjects').datagrid('options').queryParams;
+        queryParams.projectNo = projectNo;
+        queryParams.flowNo = flowNo;
+        queryParams.status = status;
+        queryParams.creator = creator;
+        $("#dgProjects").datagrid('reload');
+
     }
 </script>
 </body>

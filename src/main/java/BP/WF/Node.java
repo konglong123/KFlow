@@ -2243,9 +2243,6 @@ public class Node extends Entity {
 	@Override
 	protected boolean beforeInsert() throws Exception {
 
-		String nodeId = FeignTool.getSerialNumber("BP.WF.Node")+"";
-		this.setNodeID(Integer.valueOf(nodeId));
-
 		return super.beforeInsert();
 	}
 

@@ -185,9 +185,8 @@ public class NodeTaskService {
     public List getCanStartNodeTask(NodeTaskM nodeTaskM){
         try{
             Node node=new Node(nodeTaskM.getNodeId());
-            int runModel=node.GetValIntByKey(NodeAttr.RunModel);
-            switch (runModel){
-                case 9:
+            switch (node.getHisRunModel()){
+                case Judge:
                     //如果存在judgeNodeId=当前节点，则说明该决策节点是匹配前置决策节点，不增加JudgeRoute信息
                     JudgeRoute con=new JudgeRoute();
                     con.setWorkId(nodeTaskM.getWorkId());
@@ -246,7 +245,7 @@ public class NodeTaskService {
         }
 
             //更新GenerFlow状态
-        GenerFlow generFlow = generFlowManager.getGenerFlowById(Long.parseLong(currentTaskM.getWorkId()));
+        GenerFlow generFlow = generFlowManager.getGenerFlowById(Long.parseLong(nodeTaskM.getWorkId()));
         String activatedNodes = generFlow.getActivatedNodes();
         if (currentTaskM!=null)
             activatedNodes = activatedNodes.replace(currentTaskM.getNodeId() + ",", "");

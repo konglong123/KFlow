@@ -1658,8 +1658,12 @@ public class Flow extends BP.En.EntityNoName {
                 //检查节点关键字段（预计总工作量、）
                 msg.append("@信息:检查节点关键信息");
                 String totalTime=nd.GetValStrByKey(NodeAttr.Doc);
-                if (totalTime==null||totalTime.equals(""))
+                long duringTime=0L;
+                if (totalTime==null||totalTime.equals("")||totalTime.equals("0"))
                     msg.append("@错误:工作量没有指定");
+                else {
+					duringTime=Integer.valueOf(totalTime)/8*24*60L*60*1000;
+				}
 
                 Date earlyStart=nd.GetValDateTime(NodeAttr.EarlyStart);
                 if (earlyStart==null)
@@ -1668,6 +1672,9 @@ public class Flow extends BP.En.EntityNoName {
 				Date laterFinish=nd.GetValDateTime(NodeAttr.LaterFinish);
 				if (laterFinish==null)
 					msg.append("@错误:最晚结束没有指定");
+
+				if (laterFinish.getTime()<earlyStart.getTime()+duringTime)
+					msg.append("@错误:可选时间范围内，总工时不够");
 
 				//可回退节点，检查回退是否满足规则
 				if (nd.getHisReturnRole()==ReturnRole.ReturnSpecifiedNodes){

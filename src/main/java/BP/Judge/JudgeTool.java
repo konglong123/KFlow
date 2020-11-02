@@ -8,6 +8,7 @@ import BP.Sys.MapData;
 import BP.Tools.BeanTool;
 import BP.WF.GEWork;
 import BP.WF.Node;
+import BP.WF.Nodes;
 import BP.WF.Work;
 import BP.springCloud.entity.NodeTaskM;
 import org.springframework.context.ApplicationContext;
@@ -109,9 +110,9 @@ public class JudgeTool {
     }
 
     /**
-    *@Description: 决策下发节点id列表
+    *@Description: 决策下发节点id列表,没有配置决策规则的流出方向，默认流通,
     *@Param:
-    *@return:
+    *@return:返回流通的节点id
     *@Author: Mr.kong
     *@Date: 2020/4/25
     */
@@ -122,14 +123,15 @@ public class JudgeTool {
         List<String> nextNodeIds=new ArrayList<>();
         List<NodeRule> nodeRuleList=nodeRules.toList();
 
+        Set<String> nodeSet=new HashSet<>();
         //规则列表
         List<JudgeRule> ruleList=new ArrayList<>(nodeRuleList.size());
         for (NodeRule nodeRule:nodeRuleList){
             JudgeRule judgeRule=new JudgeRule(nodeRule.GetValStrByKey(NodeRuleAttr.RuleNo));
             ruleList.add(judgeRule);
+            nodeSet.add(nodeRule.GetValStrByKey(NodeRuleAttr.NextNodeId));
         }
 
-        int index=0;
         //获取节点表单数据
         Node node=new Node(nodeTaskM.getNodeId());
         Work wk = node.getHisWork();
@@ -138,6 +140,7 @@ public class JudgeTool {
         wk.ResetDefaultVal();
         Row row=wk.getRow();
 
+        int index=0;
         for (JudgeRule rule:ruleList){
             int type=rule.GetValIntByKey(JudgeRuleAttr.Type);
             switch (type){
@@ -154,6 +157,12 @@ public class JudgeTool {
             index++;
         }
 
+        //没有配置规则的默认流通
+        List<Node> nextNodes=node.getHisToNodes().toList();
+        for (Node temp:nextNodes){
+            if (!nodeSet.contains(temp.getNo()))
+                nextNodeIds.add(temp.getNo());
+        }
         return nextNodeIds;
     }
 
