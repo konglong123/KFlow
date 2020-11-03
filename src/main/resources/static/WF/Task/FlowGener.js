@@ -15,7 +15,7 @@ function initDgGenerFlows() {
             workGroupId:"",
             parentWorkId:"",
             creator:"",
-            yn:""
+            status:"1"
         },
         columns:[[
             {field:'no',title: '实例编码',align: 'center',width:10},
@@ -52,7 +52,7 @@ function initDgGenerFlows() {
     });
 }
 //初始化甘特图
-function initGantt(generFlowNo) {
+function initFlowGenerGantt(generFlowNo,elementId) {
 
     var gantData;
     $.ajax({
@@ -70,7 +70,7 @@ function initGantt(generFlowNo) {
                 isObject = Highcharts.isObject,
                 reduce = Highcharts.reduce;
 
-            Highcharts.ganttChart('container', {
+            Highcharts.ganttChart(elementId, {
                 title: {
                     text: '流程实例甘特图'
                 },
@@ -183,7 +183,7 @@ function queryGenerFlowByCondition() {
     var workGroupId=$("#workGroupIdQuery").val().trim();
     var parentWorkId=$("#parentWorkIdQuery").val().trim();
     var creator=$("#creatorQuery").val().trim();
-    var yn=$("#ynQuery").val().trim();
+    var status=$("#statusQuery").val().trim();
     var queryParams = $('#dgGenerFlows').datagrid('options').queryParams;
     queryParams.generFlowNo = generFlowNo;
     queryParams.workId = workId;
@@ -191,7 +191,7 @@ function queryGenerFlowByCondition() {
     queryParams.workGroupId = workGroupId;
     queryParams.parentWorkId = parentWorkId;
     queryParams.creator = creator;
-    queryParams.yn = yn;
+    queryParams.status = status;
     $("#dgGenerFlows").datagrid('reload');
 
     initGenerFlow(queryParams);
@@ -314,7 +314,6 @@ function initGenerFlow(con) {
             {
                 type: 'value',
                 name: '工时',
-                interval: 50,
                 axisLabel: {
                     formatter: '{value} h'
                 }
@@ -322,7 +321,6 @@ function initGenerFlow(con) {
             {
                 type: 'value',
                 name: '完成进度',
-                interval: 0.05,
                 axisLabel: {
                     formatter: '{value}'
                 }
@@ -363,7 +361,6 @@ function initGenerFlow(con) {
     myChart.on("click",function (param) {
         //饼图联动
         if (param.seriesType=='bar'){
-            debugger
             var generNo=param.name;
             var data =getGenerInfoForOne(generNo);
             option.series[0].data=data.pieData;

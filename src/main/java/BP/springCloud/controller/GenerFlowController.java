@@ -76,9 +76,9 @@ public class GenerFlowController {
             if (!StringUtils.isEmpty(creator))
                 con.setCreator(creator);
 
-            String yn=request.getParameter("yn");
-            if (!StringUtils.isEmpty(yn))
-                con.setYn(Integer.parseInt(yn));
+            String status=request.getParameter("status");
+            if (!StringUtils.isEmpty(status))
+                con.setStatus(Integer.parseInt(status));
 
             List generFlowList=generFlowService.findGenerFlowList(con);
             PageTool.TransToResultList(generFlowList,request,response);
@@ -101,20 +101,6 @@ public class GenerFlowController {
     }
 
     /**
-    *@Description:  返回generFlowNo的实时进展数据，并封装成Gant可以读取的json格式
-    *@Param:
-    *@return:
-    *@Author: Mr.kong
-    *@Date: 2020/4/6
-    */
-    @RequestMapping("getGantData")
-    @ResponseBody
-    public JSONObject getGantData(Long generFlowNo,int depth){
-        JSONObject result=generFlowService.getGantData(generFlowNo,depth);
-        return result;
-    }
-
-    /**
     *@Description: 查询多个流程实例的完成进度
     *@Param:
     *@return:
@@ -125,33 +111,7 @@ public class GenerFlowController {
     @ResponseBody
     public JSONObject getDataForGeners(@RequestBody GenerFlow generFlow){
         List<GenerFlow> list=generFlowService.findGenerFlowList(generFlow);
-        list.sort(new Comparator<GenerFlow>() {
-            @Override
-            public int compare(GenerFlow o1, GenerFlow o2) {
-                if (o1.getWorkId()-o2.getWorkId()>0)
-                    return 1;
-                else if (o1.getWorkId()-o2.getWorkId()<0)
-                    return -1;
-                return 0;
-            }
-        });
-        JSONObject data=new JSONObject();
-        int size=list.size();
-        List<Long> xAxis=new ArrayList<>(size);
-        List<Integer> barDataUse=new ArrayList<>(size);
-        List<Integer> barDataAll=new ArrayList<>(size);
-        List<Float> lineData=new ArrayList<>(size);
-        for (GenerFlow gener:list){
-            xAxis.add(gener.getWorkId());
-            barDataAll.add(gener.getTotalTime());
-            barDataUse.add(gener.getUseTime());
-            lineData.add((gener.getUseTime()+0.0f)/gener.getTotalTime());
-        }
-
-        data.put("xAxis",xAxis);
-        data.put("barDataUse",barDataUse);
-        data.put("barDataAll",barDataAll);
-        data.put("lineData",lineData);
+        JSONObject data=generFlowService.getShowData(list);
         return data;
     }
 

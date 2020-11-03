@@ -7,9 +7,11 @@ import BP.Project.ProjectTrees;
 import BP.Task.FlowGener;
 import BP.Task.FlowGenerAttr;
 import BP.Task.FlowGeners;
+import BP.Task.GenerFlowService;
 import BP.WF.Flow;
 import BP.WF.Node;
 import BP.WF.Nodes;
+import BP.springCloud.entity.GenerFlow;
 import BP.springCloud.tool.PageTool;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
@@ -23,6 +25,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -38,6 +41,9 @@ public class ProjectController {
 
     @Resource
     private ProjectNodeService projectNodeService;
+
+    @Resource
+    private GenerFlowService generFlowService;
 
     @RequestMapping("getProjectTreeData")
     @ResponseBody
@@ -116,20 +122,23 @@ public class ProjectController {
     public JSONObject getProjectInfo(){
         try {
             JSONObject result=new JSONObject();
-            int[] nums=new int[5];
+            int len=6;
+            int[] nums=new int[len];
             ProjectTrees trees = new ProjectTrees();
             trees.RetrieveAll();
             List<ProjectTree> projectList=trees.toList();
             for (ProjectTree project:projectList){
                 int status=project.GetValIntByKey(ProjectTreeAttr.Status);
-                nums[status]++;
+                if (status<nums.length)
+                    nums[status]++;
             }
-            List<JSONObject> data=new ArrayList<>(5);
-            String[] names={"新建","运行中","挂起","结束","异常"};
-            for (int i=0;i<5;i++){
+            List<JSONObject> data=new ArrayList<>(len);
+            String[] names={"新建","未计划","挂起","结束","异常","运行中"};
+            for (int i=0;i<len;i++){
                 JSONObject item=new JSONObject();
                 item.put("value",nums[i]);
                 item.put("name",names[i]);
+                item.put("status",i);
                 data.add(item);
             }
             result.put("seriesData",data);
@@ -144,17 +153,39 @@ public class ProjectController {
     //获取项目信息（某个状态下的项目统计）
     @RequestMapping("getProjectInfoForStatus")
     @ResponseBody
-    public JSONObject getProjectInfoForStatus(String status){
+    public com.alibaba.fastjson.JSONObject getProjectInfoForStatus(String status){
         try {
             if (!StringUtils.isEmpty(status)) {
-                JSONObject result = new JSONObject();
                 ProjectTrees trees = new ProjectTrees();
                 trees.Retrieve(ProjectTreeAttr.Status, status);
                 List<ProjectTree> projectList = trees.toList();
-                for (ProjectTree project : projectList) {
+                com.alibaba.fastjson.JSONObject data=new com.alibaba.fastjson.JSONObject();
+                List<String> xAxis=new ArrayList<>();
+                List<Integer> barDataUse=new ArrayList<>();
+                List<Integer> barDataAll=new ArrayList<>();
+                List<Float> lineData=new ArrayList<>();
 
+                for (ProjectTree project : projectList) {
+                    String geneFlowNo=project.GetValStrByKey(ProjectTreeAttr.GenerFlowNo);
+                    if (StringUtils.isEmpty(geneFlowNo))
+                        continue;
+                    GenerFlow generFlow=generFlowService.getGenerFlow(Long.valueOf(geneFlowNo));
+                    xAxis.add(project.getNo()+"_"+project.GetValStrByKey(ProjectTreeAttr.ProjectName));
+                    barDataAll.add(generFlow.getTotalTime());
+                    if (generFlow.getStatus()==2) {//已经完成
+                        lineData.add(1f);
+                        barDataUse.add(generFlow.getTotalTime());
+                    }else {
+                        lineData.add((generFlow.getUseTime() + 0.0f) / generFlow.getTotalTime());
+                        barDataUse.add(generFlow.getUseTime());
+                    }
                 }
-                return result;
+
+                data.put("xAxis",xAxis);
+                data.put("barDataUse",barDataUse);
+                data.put("barDataAll",barDataAll);
+                data.put("lineData",lineData);
+                return data;
             }
         }catch (Exception e){
             logger.error(e.getMessage());

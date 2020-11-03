@@ -33,6 +33,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -100,7 +101,7 @@ public class NodeTaskService {
     }
     
     /**
-    *@Description: 完成节点任务，并激活下一节点任务
+    *@Description: 完成节点任务，并激活下一节点任务，释放资源占用
     *@Param:  
     *@return:  
     *@Author: Mr.kong
@@ -115,9 +116,28 @@ public class NodeTaskService {
         currentTask.setIsReady(3);
         currentTask.setStatus(3);
         //设置节点任务为删除状态（）
-        currentTask.setYn(1);
+        //currentTask.setYn(1);
         currentTask.setEndTime(new Date());
         nodeTaskManage.updateNodeTask(currentTask);
+
+        //更新流程实例
+        GenerFlow generFlow = generFlowManager.getGenerFlowById(Long.parseLong(currentTask.getWorkId()));
+        String activatedNodes = generFlow.getActivatedNodes();
+        if (StringUtils.isEmpty(activatedNodes))
+            activatedNodes="";
+        activatedNodes = activatedNodes.replace(currentTask.getNodeId() + ",", "");
+        generFlow.setActivatedNodes(activatedNodes);
+        generFlowManager.updateGenerFlow(generFlow);
+
+        //释放资源占用
+        ResourceTasks resourceTasks=new ResourceTasks();
+        resourceTasks.Retrieve(ResourceTaskAttr.NodeId,currentTask.getNodeId());
+        List<ResourceTask> resTaskList=resourceTasks.toList();
+        for (ResourceTask resTask:resTaskList){
+            resTask.SetValByKey(ResourceTaskAttr.IsFinish,1);
+            resTask.SetValByKey(ResourceTaskAttr.IsPlan,0);
+            resTask.Update();
+        }
 
         //开启next节点任务
         List<NodeTaskM> nextTasks=getCanStartNodeTask(currentTask);
@@ -131,9 +151,9 @@ public class NodeTaskService {
             }
         }
         if (flag)
-            return "发送成功，后续节点任务已经启动！";
+            return "发送成功！";
         else 
-            return "发送成功，后续节点任务未启动！";
+            return "发送成功！";
     }
 
     /**
@@ -150,10 +170,16 @@ public class NodeTaskService {
         NodeTaskM con=new NodeTaskM();
         con.setWorkId(workId);
         List<NodeTaskM> list=nodeTaskManage.findNodeTaskList(con);
-        if (list==null||list.size()==0){
+        boolean flag=true;
+        for (NodeTaskM taskM:list){
+            if (taskM.getIsReady()==3)
+                continue;
+            flag=false;
+        }
+        if (flag){
             //该work下没有未完成任务，结束该流程,
             GenerFlow currentWork=generFlowManager.getGenerFlowById(Long.parseLong(workId));
-            currentWork.setYn(1);
+            //currentWork.setYn(1);
             currentWork.setStatus(2);
             currentWork.setFinishTime(new Date());
             currentWork.setActivatedNodes("");
@@ -166,8 +192,9 @@ public class NodeTaskService {
             if (trees.size()>0){
                 ProjectTree tree=(ProjectTree)trees.get(0);
                 tree.SetValByKey(ProjectTreeAttr.Activates,"");
-                tree.SetValByKey(ProjectTreeAttr.Status,2);//流程终止
-                tree.SetValByKey(ProjectTreeAttr.ActualFinish,new Date());
+                tree.SetValByKey(ProjectTreeAttr.Status,3);//流程完成
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                tree.SetValByKey(ProjectTreeAttr.ActualFinish,formatter.format(new Date()));
                 tree.Update();
             }
 
@@ -244,11 +271,12 @@ public class NodeTaskService {
             }
         }
 
-            //更新GenerFlow状态
+        //更新GenerFlow状态
         GenerFlow generFlow = generFlowManager.getGenerFlowById(Long.parseLong(nodeTaskM.getWorkId()));
         String activatedNodes = generFlow.getActivatedNodes();
-        if (currentTaskM!=null)
-            activatedNodes = activatedNodes.replace(currentTaskM.getNodeId() + ",", "");
+        if (StringUtils.isEmpty(activatedNodes))
+            activatedNodes="";
+
         activatedNodes += nodeTaskM.getNodeId() + ",";
         generFlow.setActivatedNodes(activatedNodes);
         generFlow.setStatus(1);
@@ -962,7 +990,8 @@ public class NodeTaskService {
         List<JSONObject> resourceLoadList=new ArrayList<>();
         for (Map.Entry<String, ResourceItem> resourceEntry:resourceMap.entrySet()){
             ResourceTasks tasks=new ResourceTasks();
-            tasks.Retrieve(ResourceTaskAttr.ResourceId,resourceEntry.getValue().GetValStrByKey(ResourceItemAttr.Kind),ResourceTaskAttr.IsPlan,1);//已经计划的资源任务
+            //已经计划,没有完成的资源任务,
+            tasks.Retrieve(ResourceTaskAttr.ResourceId,resourceEntry.getValue().GetValStrByKey(ResourceItemAttr.Kind),ResourceTaskAttr.IsPlan,1,ResourceTaskAttr.IsFinish,2);
             List<ResourceTask> list=tasks.toList();
 
             for (ResourceTask task:list){

@@ -6,6 +6,8 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -63,25 +65,42 @@ public class GenerFlowService {
 		return generFlowManager.findGenerFlowListAll(generFlowCondition);
 	}
 	
-	/**
-	*@Description: 查找子流程实例 
-	*@Param:  
-	*@return:  
-	*@Author: Mr.kong
-	*@Date: 2020/4/6 
-	*/
-	public List getChildGenerFlow(GenerFlow parent){
-		GenerFlow con=new GenerFlow();
-		con.setParentWorkId(parent.getWorkId());
-		return generFlowManager.findGenerFlowListAll(con);
-	}
 
+	//组装成流程统计图数据
+	public JSONObject getShowData(List<GenerFlow> list){
+		list.sort(new Comparator<GenerFlow>() {
+			@Override
+			public int compare(GenerFlow o1, GenerFlow o2) {
+				if (o1.getWorkId()-o2.getWorkId()>0)
+					return 1;
+				else if (o1.getWorkId()-o2.getWorkId()<0)
+					return -1;
+				return 0;
+			}
+		});
+		JSONObject data=new JSONObject();
+		int size=list.size();
+		List<Long> xAxis=new ArrayList<>(size);
+		List<Integer> barDataUse=new ArrayList<>(size);
+		List<Integer> barDataAll=new ArrayList<>(size);
+		List<Float> lineData=new ArrayList<>(size);
+		for (GenerFlow gener:list){
+			xAxis.add(gener.getWorkId());
+			barDataAll.add(gener.getTotalTime());
+			if (gener.getStatus()==2) {//已经完成
+				lineData.add(1f);
+				barDataUse.add(gener.getTotalTime());
+			}else {
+				lineData.add((gener.getUseTime() + 0.0f) / gener.getTotalTime());
+				barDataUse.add(gener.getUseTime());
+			}
+		}
 
-	public JSONObject getGantData(Long generFlowNo,int depth){
-		GenerFlow generFlow=generFlowManager.getGenerFlowById(generFlowNo);
-		
-		
-		return null;
+		data.put("xAxis",xAxis);
+		data.put("barDataUse",barDataUse);
+		data.put("barDataAll",barDataAll);
+		data.put("lineData",lineData);
+		return data;
 	}
 
 	public JSONObject getGantPointData(GenerFlow parent,GenerFlow generFlow){

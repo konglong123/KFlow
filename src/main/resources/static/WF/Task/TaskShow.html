@@ -10,8 +10,15 @@
     <script type="text/javascript" src="../Scripts/echarts/echarts.min.js"></script>
     <script type="text/javascript" src="../Scripts/echarts/echarts-gl.min.js"></script>
     <script type="text/javascript" src="../Scripts/echarts/ecStat.min.js"></script>
+    <script src="../Scripts/highcharts-gantt.js"></script>
+    <script src="../Scripts/exporting.js"></script>
     <script src="../Scripts/EasyUIUtility.js" type="text/javascript"></script>
+    <script src="../Scripts/config.js" type="text/javascript"></script>
+    <script src="../Comm/Gener.js" type="text/javascript"></script>
+    <script src="../Scripts/QueryString.js" type="text/javascript"></script>
     <script src="../Task/NodeTask.js" type="text/javascript"></script>
+    <script src="../Task/FlowGener.js" type="text/javascript"></script>
+    <script src="../Project/Project.js" type="text/javascript"></script>
 </head>
 <body class="dashboard-page">
 <section class="wrapper scrollable">
@@ -70,7 +77,7 @@
             </div>
         </div>
         <fieldset>
-            <legend>任务维度</legend>
+            <legend><span style="font-weight:bold">任务维度</span></legend>
             <div id="mainTaskShow" >
                 <table style="width: 100%">
                     <tr style="width: 100%">
@@ -85,9 +92,9 @@
             </div>
         </fieldset>
         <fieldset>
-            <legend>项目维度</legend>
+            <legend><span style="font-weight:bold">项目维度</span></legend>
             <div id="projectInfoShow" style="width: 100%;height:600px;">
-                <table style="width: 100%">
+                <table style="width: 100%;table-layout: fixed">
                     <tr style="width: 100%">
                         <td style="width: 20%">
                             <div id="projectInfo1" style="width: 100%;height:600px;"></div>
@@ -99,13 +106,10 @@
                             <div id="projectInfo3" style="width: 100%;height:600px;"></div>
                         </td>
                     </tr>
-                    <tr style="width: 100%">
-                        <td style="width: 100%" >
-                            <div id="projectInfo4" style="width: 100%;height:600px;"></div>
-                        </td>
-                    </tr>
                 </table>
             </div>
+
+            <div id="projectInfo4" style="width: 100%;"></div>
         </fieldset>
     </div>
 </section>
@@ -127,6 +131,10 @@
                     tooltip: {
                         trigger: 'item',
                         formatter: '{a} <br/>{b}: {c} ({d}%)'
+                    },
+                    title: {
+                        text: '项目状态分布图',
+                        left: 'center'
                     },
                     legend: {
                         orient: 'vertical',
@@ -158,8 +166,131 @@
                     ]
                 };
                 projectChart.setOption(option);
+                projectChart.on("click",function (param) {
+                    //饼图联动
+                    var status=param.data.status;
+                    initProjectProgress(status);
+                });
             }
         });
+    }
+
+    function initProjectProgress(status) {
+        var dom = document.getElementById("projectInfo2");
+        var myChart = echarts.init(dom);
+        var dataChart={
+            pieData:[],
+            barDataAll:[],
+            barDataUse:[],
+            lineData:[],
+            xAxis:[]
+        };
+
+        var toUrl='/WF/Project/getProjectInfoForStatus';
+        $.ajax({
+            url: toUrl,
+            type: 'GET',
+            async:false,
+            data: {
+                status:status
+            },
+            success: function (dataTemp) {
+                dataChart.xAxis=dataTemp.xAxis;
+                dataChart.lineData=dataTemp.lineData;
+                dataChart.barDataAll=dataTemp.barDataAll;
+                dataChart.barDataUse=dataTemp.barDataUse;
+
+                option = {
+                    title: {
+                        text: '项目进度统计图',
+                        left: 'center'
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'cross',
+                            crossStyle: {
+                                color: '#999'
+                            }
+                        }
+                    },
+                    toolbox: {
+                        feature: {
+                            magicType: {show: true, type: ['line', 'bar']},
+                            restore: {show: true},
+                            saveAsImage: {show: true}
+                        }
+                    },
+                    legend: {
+                        x: '30%',
+                        y: '10%',
+                        data: ['总工时', '已用工时','完成进度']
+
+                    },
+                    xAxis: [
+                        {
+                            type: 'category',
+                            name:'项目编码',
+                            data: dataChart.xAxis,
+                            axisPointer: {
+                                type: 'shadow'
+                            }
+                        }
+                    ],
+                    yAxis: [
+                        {
+                            type: 'value',
+                            name: '工时',
+                            axisLabel: {
+                                formatter: '{value} h'
+                            }
+                        },
+                        {
+                            type: 'value',
+                            name: '完成进度',
+                            axisLabel: {
+                                formatter: '{value}'
+                            }
+                        }
+                    ],
+                    series: [
+                        {
+                            name: '总工时',
+                            type: 'bar',
+                            data: dataChart.barDataAll
+                        },
+                        {
+                            name: '已用工时',
+                            type: 'bar',
+                            data: dataChart.barDataUse
+                        },
+                        {
+                            name: '完成进度',
+                            type: 'line',
+                            yAxisIndex: 1,
+                            data: dataChart.lineData
+                        },
+                    ]
+                };
+                myChart.setOption(option);
+                myChart.on("click",function (param) {
+                    //饼图联动
+                    if (param.seriesType=='bar'){
+                        var treeNo=param.name.split("_")[0];
+                        debugger
+                        initProjectTree("projectInfo3",treeNo);
+                        initProgressGant(treeNo);
+                    };
+                });
+            }
+        });
+
+    }
+
+    function initProgressGant(treeNo) {
+        var project = new Entity("BP.Project.ProjectTree",treeNo);
+        if (project.gener_flow_no!=null&&project.gener_flow_no!="")
+            initFlowGenerGantt(project.gener_flow_no,"projectInfo4");
     }
 
     //初始化系统信息（流程数，节点数，流程实例等）

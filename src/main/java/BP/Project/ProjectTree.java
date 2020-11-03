@@ -18,6 +18,7 @@ import org.springframework.util.StringUtils;
 
 import java.beans.beancontext.BeanContext;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 项目
@@ -59,7 +60,7 @@ public class ProjectTree extends EntityNo {
 		map.AddTBString(ProjectTreeAttr.FlowNo, null, "流程编码", true, false, 0, 50, 50);
 		map.AddTBString(ProjectTreeAttr.FlowName, null, "流程名", true, false, 0, 50, 50);
 		map.AddTBString(ProjectTreeAttr.Detail, null, "项目树详情", true, false, 0, 50, 50);
-		map.AddDDLSysEnum(ProjectTreeAttr.Status, 0, "状态", true, true, ProjectTreeAttr.Status, "@0=新建@1=流程运行中@2=流程挂起@3=项目结束@4=项目异常");
+		map.AddDDLSysEnum(ProjectTreeAttr.Status, 0, "状态", true, true, ProjectTreeAttr.Status, "@0=新建@1=未计划@2=挂起@3=结束@4=异常@5=运行中");
 		map.AddTBDateTime(ProjectTreeAttr.EarlyStart, "2000-01-01 00:00:00", "最早开始时间", true, false);
 		map.AddTBDateTime(ProjectTreeAttr.LateFinish,  "2000-01-01 00:00:00","最晚完成时间", true, false);
 		map.AddTBDateTime(ProjectTreeAttr.PlanStart, "2000-01-01 00:00:00", "计划开始时间", true, false);
@@ -146,7 +147,10 @@ public class ProjectTree extends EntityNo {
 		String groupId=flowGener.GetValStrByKey(FlowGenerAttr.WorkGroupId);
 		if (!StringUtils.isEmpty(groupId)) {
 			FlowGeners geners = new FlowGeners();
-			geners.Delete(FlowGenerAttr.WorkGroupId, groupId);
+			geners.Retrieve(FlowGenerAttr.WorkGroupId, groupId);
+			List<FlowGener> flowGenerList=geners.toList();
+			for (FlowGener temp:flowGenerList)
+				temp.Delete();
 		}
 		super.afterDelete();
 	}

@@ -49,7 +49,7 @@ public class FlowGener extends EntityNo {
         map.AddTBString(FlowGenerAttr.ParentWorkId, null, "父工作", true, true, 0, 50, 50);
         map.AddTBString(FlowGenerAttr.WorkGroupId, null, "工作组", true, true, 0, 50, 50);
         map.AddDDLSysEnum(FlowGenerAttr.Status, 3, "状态", true, false, FlowGenerAttr.Status,
-                "@1=运行中@2=已完成@3=准备");
+                "@1=运行中@2=已完成@3=准备@4=异常");
         map.AddTBString(FlowGenerAttr.FlowId, null, "流程编码", true, true, 0, 50, 50);
         map.AddTBInt(FlowGenerAttr.TotalTime, 0, "预计总用时(h)", true, true);
         map.AddTBInt(FlowGenerAttr.UseTime, 0, "已经用时(h)", true, true);
