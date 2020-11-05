@@ -2,6 +2,9 @@ package BP.springCloud.controller;
 
 import BP.En.Row;
 import BP.Port.Emp;
+import BP.Project.ProjectTree;
+import BP.Project.ProjectTreeAttr;
+import BP.Project.ProjectTrees;
 import BP.Task.*;
 import BP.Tools.StringUtils;
 import BP.WF.*;
@@ -191,11 +194,49 @@ public class NodeTaskController {
             if (type==1)
                 con.setExecutor(WebUser.getNo());//更新所执行任务
             List<NodeTaskM> nodeTaskMList=nodeTaskService.findNodeTaskList(con);
+            Set<String> flowGenerSet=new HashSet<>();
             for (NodeTaskM temp:nodeTaskMList){
                 int status=nodeTaskService.getTaskStatus(temp);
+                if (status==4||status==7){//逾期开始、逾期结束
+                    flowGenerSet.add(temp.getWorkId());
+                }
                 temp.setStatus(status);
                 nodeTaskService.updateNodeTask(temp);
             }
+
+            //更新流程实例、项目状态
+            FlowGeners geners=new FlowGeners();
+            geners.RetrieveAll();
+            List<FlowGener> generList=geners.toList();
+            Set<String> projectSet=new HashSet<>();
+            for (FlowGener gener:generList){
+                int status=gener.GetValIntByKey(FlowGenerAttr.Status);
+                if (status==1||status==4){//正在运行
+                    if (flowGenerSet.contains(gener.getNo())){
+                        gener.SetValByKey(FlowGenerAttr.Status,4);//异常
+                        projectSet.add(gener.GetValStrByKey(FlowGenerAttr.WorkGroupId));
+                    }else{
+                        gener.SetValByKey(FlowGenerAttr.Status,1);//运行中
+                    }
+                    gener.Update();
+                }
+            }
+
+            ProjectTrees projectTrees=new ProjectTrees();
+            projectTrees.RetrieveAll();
+            List<ProjectTree> treeList=projectTrees.toList();
+            for (ProjectTree tree:treeList){
+                int status=tree.GetValIntByKey(ProjectTreeAttr.Status);
+                if (status==4||status==5){
+                    if (projectSet.contains(tree.getNo())){
+                        tree.SetValByKey(ProjectTreeAttr.Status,4);
+                    }else {
+                        tree.SetValByKey(ProjectTreeAttr.Status,5);
+                    }
+                    tree.Update();
+                }
+            }
+
         }catch (Exception e){
             logger.error(e.getMessage());
         }
@@ -467,7 +508,12 @@ public class NodeTaskController {
             }
 
             data.put("series",JSONArray.fromObject(bar));
-            data.put("xAxis",JSONArray.fromObject(workIdList));
+            List<String> xAxis=new ArrayList<>();
+            for (String workId:workIdList){
+                FlowGener gener=new FlowGener(workId);
+                xAxis.add(workId+"_"+gener.GetValStrByKey(FlowGenerAttr.FlowId));
+            }
+            data.put("xAxis",JSONArray.fromObject(xAxis));
 
         }catch (Exception e){
             logger.error(e.getMessage());

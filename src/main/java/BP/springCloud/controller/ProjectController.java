@@ -85,7 +85,7 @@ public class ProjectController {
         data.put("generNo",generNo);
         if (!StringUtils.isEmpty(generNo)) {
             FlowGener flowGener=new FlowGener(generNo);
-            data.put("flag", flowGener.GetValByKey(FlowGenerAttr.Status));//@1=开始@2=完成@3=准备
+            data.put("flag", flowGener.GetValByKey(FlowGenerAttr.Status));//@1=开始@2=完成@3=准备@4=异常
         }
         data.put("children",children);
         return data;
