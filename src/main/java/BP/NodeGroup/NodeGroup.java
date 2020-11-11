@@ -51,6 +51,7 @@ public class NodeGroup extends EntityNo{
         map.AddTBInt(NodeGroupAttr.nodeNum, 0, "节点数", true, true);
         map.AddTBString(NodeGroupAttr.inNodeNo, null, "入口节点编码", true, false, 0, 100, 100);
         map.AddTBString(NodeGroupAttr.outNodeNo, null, "出口节点编码", true, false, 0, 100, 100);
+        map.AddTBInt(NodeGroupAttr.sumTime, 0, "总工时", true, true);
 
         map.AddDDLSysEnum(NodeGroupAttr.type, 2, "类型", true, true, NodeGroupAttr.type,
                 "@1=可调换分组@2=模块分组");

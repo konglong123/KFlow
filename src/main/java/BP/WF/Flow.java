@@ -1662,7 +1662,7 @@ public class Flow extends BP.En.EntityNoName {
                 if (totalTime==null||totalTime.equals("")||totalTime.equals("0"))
                     msg.append("@错误:工作量没有指定");
                 else {
-					duringTime=Integer.valueOf(totalTime)/8*24*60L*60*1000;
+					duringTime=Integer.valueOf(totalTime)*3*60L*60*1000;
 				}
 
                 Date earlyStart=nd.GetValDateTime(NodeAttr.EarlyStart);
@@ -1673,8 +1673,11 @@ public class Flow extends BP.En.EntityNoName {
 				if (laterFinish==null)
 					msg.append("@错误:最晚结束没有指定");
 
-				if (laterFinish.getTime()<earlyStart.getTime()+duringTime)
-					msg.append("@错误:可选时间范围内，总工时不够");
+				if (laterFinish!=null&&earlyStart!=null) {
+					long allTime=laterFinish.getTime()-earlyStart.getTime();
+					if (allTime<duringTime)
+						msg.append("@错误:可选时间范围内，总工时不够");
+				}
 
 				//可回退节点，检查回退是否满足规则
 				if (nd.getHisReturnRole()==ReturnRole.ReturnSpecifiedNodes){

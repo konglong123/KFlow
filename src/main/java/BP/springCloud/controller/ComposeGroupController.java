@@ -3,6 +3,12 @@ package BP.springCloud.controller;
 import BP.Ga.*;
 import BP.NodeGroup.*;
 import BP.Tools.Json;
+import BP.WF.Flow;
+import BP.WF.Node;
+import BP.WF.Nodes;
+import BP.WF.Template.Direction;
+import BP.WF.Template.DirectionAttr;
+import BP.WF.Template.Directions;
 import BP.springCloud.tool.FeignTool;
 import BP.springCloud.tool.PageTool;
 import com.alibaba.fastjson.JSON;
@@ -18,9 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * @program: kflow-web
@@ -126,11 +130,11 @@ public class ComposeGroupController {
             for (NodeGroup group:groupList){
                 //模块分组
                 if (group.GetValIntByKey(NodeGroupAttr.type)!=1){
-                    //只初始化没有进行总结的分组
+                    NodeGroupItems items = new NodeGroupItems();
+                    items.Retrieve(NodeGroupItemAttr.group_no, group.getNo());
+                    List<NodeGroupItem> itemList = items.toList();
+                    //只初始化没有进行摘要总结的分组
                     if (StringUtils.isEmpty(group.GetValStrByKey(NodeGroupAttr.abstracts))) {
-                        NodeGroupItems items = new NodeGroupItems();
-                        items.Retrieve(NodeGroupItemAttr.group_no, group.getNo());
-                        List<NodeGroupItem> itemList = items.toList();
                         StringBuilder sb = new StringBuilder();
                         String flowName = group.GetValStrByKey(NodeGroupAttr.flow_name);
                         if (!StringUtils.isEmpty(flowName))
@@ -140,14 +144,92 @@ public class ComposeGroupController {
                             sb.append("，");
                         }
                         group.SetValByKey(NodeGroupAttr.abstracts, sb.toString());
-                        group.Update();
                     }
+                    //检查模块是否符合“一输入、一输出结构”
+                    if (!checkGroup(group)){
+                        group.SetValByKey(NodeGroupAttr.type,0);
+                    }else {
+                        group.SetValByKey(NodeGroupAttr.type,2);
+                    }
+                    //更新总工时、节点数
+                    group.SetValByKey(NodeGroupAttr.nodeNum,itemList.size());
+                    int sumTime=0;
+                    for (NodeGroupItem item:itemList) {
+                        Node node=new Node(item.GetValStrByKey(NodeGroupItemAttr.node_no));
+                        sumTime += node.getDoc();
+                    }
+                    group.SetValByKey(NodeGroupAttr.sumTime,sumTime);
+                    group.Update();
                 }
             }
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
         return null;
+    }
+
+    //初始化模块的输入输出节点编码
+    private boolean checkGroup(NodeGroup group){
+        try {
+            NodeGroupItems items = new NodeGroupItems();
+            items.Retrieve(NodeGroupItemAttr.group_no, group.getNo());
+            Map<String,int[]> map=new HashMap<>();//int[0]进度，int[1]出度
+            List<NodeGroupItem> itemList=items.toList();
+            for (NodeGroupItem item:itemList){
+                map.put(item.GetValStrByKey(NodeGroupItemAttr.node_no),new int[2]);
+            }
+
+            for (NodeGroupItem item:itemList){
+                String nodeId=item.GetValStrByKey(NodeGroupItemAttr.node_no);
+                Directions directions=new Directions();
+                directions.Retrieve(DirectionAttr.ToNode,nodeId);
+                List<Direction> list=directions.toList();
+                for (Direction direction:list){
+                    int[] mark=map.get(nodeId);
+                    if (map.containsKey(direction.getNode()+"")){
+                        //进度加1
+                        mark[0]++;
+                    }
+                }
+
+                directions.Retrieve(DirectionAttr.Node,nodeId);
+                list=directions.toList();
+                for (Direction direction:list){
+                    int[] mark=map.get(nodeId);
+                    if (map.containsKey(direction.getToNode()+"")){
+                        //出度加1
+                        mark[1]++;
+                    }
+                }
+            }
+            String in0="";
+            String out0="";
+            //判断出度为0的节点数为1，入度为0的节点数为1，则符合模块要求
+            for (Map.Entry<String ,int[]> entry:map.entrySet()){
+                int[] mark=entry.getValue();
+                if (mark[0]==0){
+                    if (in0.equals(""))
+                        in0=entry.getKey();
+                    else
+                        return false;
+                }
+
+                if (mark[1]==0){
+                    if (out0.equals(""))
+                        out0=entry.getKey();
+                    else
+                        return false;
+                }
+
+            }
+            group.SetValByKey(NodeGroupAttr.inNodeNo,in0);
+            group.SetValByKey(NodeGroupAttr.outNodeNo,out0);
+            group.Update();
+            return true;
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+        return false;
     }
 
     @RequestMapping("getComposeHistory")
@@ -232,6 +314,61 @@ public class ComposeGroupController {
             historyTemp.Insert();
             i++;
         }
+    }
+
+    @RequestMapping("autoLayout")
+    @ResponseBody
+    public JSONObject autoLayout(String flowNo) {
+        try {
+            Flow flow=new Flow(flowNo);
+            List<Node> nodeList=flow.getHisNodes().toList();
+            Node start=flow.getStartNode();
+            //初始化节点所在图的最大深度
+            Map<String,Integer> map=new HashMap<>();
+            map.put(start.getNo(),1);
+            initNodeX(map,start);
+
+            //依据degree层次遍历,自动布局
+            map=new HashMap<>();
+            map.put(start.getNo(),start.getY());
+            initNodeY(map,start);
+
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+        return null;
+    }
+
+    private void initNodeX(Map<String,Integer> map,Node node ) throws Exception{
+        int X=200;//布局横向间隔
+        List<Node> nodeList=node.getHisToNodes().toList();
+        int beforeDegree=map.get(node.getNo());
+        for (Node next:nodeList){
+            //没有被遍历，或者遍历的深度小于现在探索的深度
+            if (!map.containsKey(next.getNo())||map.get(next.getNo())<beforeDegree+1){
+                map.put(next.getNo(),beforeDegree+1);
+                next.setX(node.getX()+X);
+                next.Update();
+                initNodeX(map,next);
+            }
+        }
+    }
+
+    private int initNodeY(Map<String,Integer> map,Node node) throws Exception{
+        int height=80;//竖向间隔
+        List<Node> nodeList=node.getHisToNodes().toList();
+        int count=0;
+        for (Node next:nodeList){
+            if (!map.containsKey(next.getNo())||map.get(next.getNo())<node.getY()-height*count){
+                next.setY(node.getY()-height*count);
+                map.put(next.getNo(),next.getY());
+                next.Update();
+            }
+            count+=initNodeY(map,next);
+        }
+        if (nodeList.size()>0)
+            return count;
+        return count+1;
     }
 
 }

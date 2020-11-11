@@ -1270,11 +1270,11 @@ public class Node extends Entity {
 	/**
 	 * Doc
 	 */
-	public final String getDoc() {
-		return this.GetValStrByKey(NodeAttr.Doc);
+	public final int getDoc() {
+		return this.GetValIntByKey(NodeAttr.Doc);
 	}
 
-	public final void setDoc(String value) {
+	public final void setDoc(int value) {
 		SetValByKey(NodeAttr.Doc, value);
 	}
 
@@ -2104,7 +2104,6 @@ public class Node extends Entity {
 		// #endregion 考核属性.
 
 		map.AddTBString(FrmWorkCheckAttr.FWCNodeName, null, "节点意见名称", true, false, 0, 100, 10);
-		map.AddTBString(NodeAttr.Doc, null, "描述", true, false, 0, 100, 10);
 		map.AddBoolean(NodeAttr.IsTask, true, "允许分配工作否?", true, true);
 
 		// 退回相关.

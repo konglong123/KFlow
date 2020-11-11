@@ -18,6 +18,7 @@ public class NodeGroupAttr {
     public static final String abstracts = "abstracts";
     public static final String type = "type";
     public static final String nodeNum = "nodeNum";
+    public static final String sumTime = "sumTime";
     public static final String  inNodeNo= "inNodeNo";
     public static final String outNodeNo = "outNodeNo";
 }

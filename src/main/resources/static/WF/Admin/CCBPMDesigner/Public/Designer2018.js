@@ -296,3 +296,20 @@ function composeGroup() {
     window.parent.addTab(flowNo, "智能推荐" + flowNo, url);
 }
 
+function autoLayout() {
+    var flowNo=GetQueryString("FK_Flow");
+    $.ajax({
+        url: "/WF/composeGroup/autoLayout",
+        type: 'POST',
+        data: {
+            flowNo:flowNo
+        },
+        success: function (data) {
+            Reload();
+        },
+        error: function (data) {
+            alert("暂不支持该结构流程布局，自动布局失败！");
+        }
+    });
+}
+
