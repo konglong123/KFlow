@@ -379,32 +379,32 @@ public class NodeExt extends Entity
                 "@@0=不启用@1=按照[退回信息填写字段]作为退回意见直接退回@2=按照[审核组件]填写的信息作为退回意见直接退回",true);
 
 
-        map.AddTBString(BtnAttr.CCLab, "抄送", "抄送按钮标签", true, false, 0, 50, 10);
+     /*   map.AddTBString(BtnAttr.CCLab, "抄送", "抄送按钮标签", true, false, 0, 50, 10);
         map.AddDDLSysEnum(NodeAttr.CCRole, 0, "抄送规则", true, true, NodeAttr.CCRole,
             "@@0=不能抄送@1=手工抄送@2=自动抄送@3=手工与自动@4=按表单SysCCEmps字段计算@5=在发送前打开抄送窗口");
-       // map.SetHelperUrl(BtnAttr.CCLab, "http://ccbpm.mydoc.io/?v=5404&t=16259"); //增加帮助.
+      */ // map.SetHelperUrl(BtnAttr.CCLab, "http://ccbpm.mydoc.io/?v=5404&t=16259"); //增加帮助.
 
         // add
-        map.AddDDLSysEnum(NodeAttr.CCWriteTo, 0, "抄送写入规则",
+      /*  map.AddDDLSysEnum(NodeAttr.CCWriteTo, 0, "抄送写入规则",
      true, true, NodeAttr.CCWriteTo, "@0=写入抄送列表@1=写入待办@2=写入待办与抄送列表", true);
-       // map.SetHelperUrl(NodeAttr.CCWriteTo, "http://ccbpm.mydoc.io/?v=5404&t=17976"); //增加帮助.
+      */ // map.SetHelperUrl(NodeAttr.CCWriteTo, "http://ccbpm.mydoc.io/?v=5404&t=17976"); //增加帮助.
 
-        map.AddTBString(BtnAttr.ShiftLab, "移交", "移交按钮标签", true, false, 0, 50, 10);
+      /*  map.AddTBString(BtnAttr.ShiftLab, "移交", "移交按钮标签", true, false, 0, 50, 10);
         map.AddBoolean(BtnAttr.ShiftEnable, false, "是否启用", true, true);
        // map.SetHelperUrl(BtnAttr.ShiftLab, "http://ccbpm.mydoc.io/?v=5404&t=16257"); //增加帮助.note:none
 
         map.AddTBString(BtnAttr.DelLab, "删除", "删除按钮标签", true, false, 0, 50, 10);
         map.AddDDLSysEnum(BtnAttr.DelEnable, 0, "删除规则", true, true, BtnAttr.DelEnable);
       //  map.SetHelperUrl(BtnAttr.DelLab, "http://ccbpm.mydoc.io/?v=5404&t=17992"); //增加帮助.
-
-        map.AddTBString(BtnAttr.EndFlowLab, "结束流程", "结束流程按钮标签", true, false, 0, 50, 10);
+*/
+       /* map.AddTBString(BtnAttr.EndFlowLab, "结束流程", "结束流程按钮标签", true, false, 0, 50, 10);
         map.AddBoolean(BtnAttr.EndFlowEnable, false, "是否启用", true, true);
-       // map.SetHelperUrl(BtnAttr.EndFlowLab, "http://ccbpm.mydoc.io/?v=5404&t=17989"); //增加帮助
+      */ // map.SetHelperUrl(BtnAttr.EndFlowLab, "http://ccbpm.mydoc.io/?v=5404&t=17989"); //增加帮助
 
         // add
-        map.AddTBString(BtnAttr.OfficeBtnLab, "打开公文", "公文按钮标签", true, false, 0, 50, 10);
+       /* map.AddTBString(BtnAttr.OfficeBtnLab, "打开公文", "公文按钮标签", true, false, 0, 50, 10);
         map.AddBoolean(BtnAttr.OfficeBtnEnable, false, "是否启用", true, true);
-
+*/
 
         // add
         map.AddTBString(BtnAttr.PrintHtmlLab, "打印Html", "打印Html标签", true, false, 0, 50, 10);
@@ -426,12 +426,12 @@ public class NodeExt extends Entity
             true, BtnAttr.PrintDocEnable, "@0=不打印@1=打印网页@2=打印RTF模板@3=打印Word模版");
         map.SetHelperUrl(BtnAttr.PrintDocEnable, "http://ccbpm.mydoc.io/?v=5404&t=17979"); //增加帮助
         */
-        map.AddTBString(BtnAttr.ThreadLab, "子线程", "子线程按钮标签", true, false, 0, 50, 10);
+      /*  map.AddTBString(BtnAttr.ThreadLab, "子线程", "子线程按钮标签", true, false, 0, 50, 10);
         map.AddBoolean(BtnAttr.ThreadEnable, false, "是否启用", true, true);
         // map.SetHelperUrl(BtnAttr.ThreadLab, "http://ccbpm.mydoc.io/?v=5404&t=16263"); //增加帮助
         map.AddDDLSysEnum(NodeAttr.ThreadKillRole,0, "子线程删除方式", true, true,
                 NodeAttr.ThreadKillRole, "@0=不能删除@1=手工删除@2=自动删除", true);
-
+*/
         map.AddTBString(BtnAttr.HungLab, "挂起", "挂起按钮标签", true, false, 0, 50, 10);
         map.AddBoolean(BtnAttr.HungEnable, false, "是否启用", true, true);
        // map.SetHelperUrl(BtnAttr.HungLab, "http://ccbpm.mydoc.io/?v=5404&t=16267"); //增加帮助.
@@ -450,12 +450,14 @@ public class NodeExt extends Entity
         map.AddBoolean(BtnAttr.AskforEnable, false, "是否启用", true, true);
         map.SetHelperUrl(BtnAttr.AskforLab, "http://ccbpm.mydoc.io/?v=5404&t=16258");
         */
+/*
 
         map.AddTBString(BtnAttr.HuiQianLab, "会签", "会签标签", true, false, 0, 50, 10);
         map.AddDDLSysEnum(BtnAttr.HuiQianRole, 0, "会签模式", true, true, BtnAttr.HuiQianRole, "@0=不启用@1=协作(同事)模式@4=组长(领导)模式");
 
+*/
 
-        // add  让用户可以自己定义流转.
+       /* // add  让用户可以自己定义流转.
         map.AddTBString(BtnAttr.TCLab, "流转自定义", "流转自定义", true, false, 0, 50, 10);
         map.AddBoolean(BtnAttr.TCEnable, false, "是否启用", true, true);
         //map.SetHelperUrl(BtnAttr.TCEnable, "http://ccbpm.mydoc.io/?v=5404&t=17978");
@@ -467,16 +469,16 @@ public class NodeExt extends Entity
         // add . 重要性.
         map.AddTBString(BtnAttr.PRILab, "重要性", "重要性", true, false, 0, 50, 10);
         map.AddBoolean(BtnAttr.PRIEnable, false, "是否启用", true, true);
+*/
 
-
-        // add  邀请其他人参与当前的工作.
+        /*// add  邀请其他人参与当前的工作.
         map.AddTBString(BtnAttr.AllotLab, "分配", "分配按钮标签", true, false, 0, 50, 10);
         map.AddBoolean(BtnAttr.AllotEnable, false, "是否启用", true, true);
 
         // add  节点时限.
         map.AddTBString(BtnAttr.FocusLab, "关注", "关注", true, false, 0, 50, 10);
         map.AddBoolean(BtnAttr.FocusEnable, false, "是否启用", true, true);
-
+*/
         // add  确认就是告诉发送人，我接受这件工作了.
         map.AddTBString(BtnAttr.ConfirmLab, "确认", "确认按钮标签", true, false, 0, 50, 10);
         map.AddBoolean(BtnAttr.ConfirmEnable, false, "是否启用", true, true);
@@ -517,18 +519,18 @@ public class NodeExt extends Entity
         map.AddRefMethod(rm);
 
         rm = new RefMethod();
-        rm.Title = "节点流转规则";
+        rm.Title = "节点流出规则";
         rm.Icon = "../../WF/Img/Guide.png";
         rm.ClassMethodName = this.toString() + ".RunModel";
         rm.refMethodType=  RefMethodType.RightFrameOpen ;
         map.AddRefMethod(rm);
 
-        rm = new RefMethod();
+       /* rm = new RefMethod();
         rm.Title = "节点事件"; // "调用事件接口";
         rm.ClassMethodName = this.toString() + ".DoAction";
         rm.Icon = "../../WF/Img/Event.png";
         rm.refMethodType= RefMethodType.RightFrameOpen;
-        map.AddRefMethod(rm);
+        map.AddRefMethod(rm);*/
 
         rm = new RefMethod();
         rm.Title = "节点消息"; // "调用事件接口";
@@ -539,21 +541,21 @@ public class NodeExt extends Entity
 
 
 
-        rm = new RefMethod();
+     /*   rm = new RefMethod();
         rm.Title = "流程完成条件"; // "流程完成条件";
         rm.ClassMethodName = this.toString() + ".DoCond";
         rm.Icon = "../../WF/Admin/AttrNode/Img/Cond.png";
         rm.refMethodType = RefMethodType.RightFrameOpen;
-        map.AddRefMethod(rm);
+        map.AddRefMethod(rm);*/
 
-        rm = new RefMethod();
+        /*rm = new RefMethod();
         rm.Title = "发送后转向"; // "调用事件接口";
         rm.ClassMethodName = this.toString() + ".DoTurnToDeal";
         rm.Icon = "../../WF/Admin/CCBPMDesigner/Img/Turnto.png";
         rm.refMethodType = RefMethodType.RightFrameOpen;
-        map.AddRefMethod(rm);
+        map.AddRefMethod(rm);*/
 
-        rm = new RefMethod();
+      /*  rm = new RefMethod();
         rm.Title = "发送阻塞规则";
         rm.ClassMethodName = this.toString() + ".DoBlockModel";
         rm.Icon = "../../WF/Admin/CCBPMDesigner/Img/BlockModel.png";
@@ -565,7 +567,7 @@ public class NodeExt extends Entity
         rm.ClassMethodName = this.toString() + ".DoTodolistModel";
         rm.Icon = "../../WF/Img/Multiplayer.png";
         rm.refMethodType = RefMethodType.RightFrameOpen;
-        map.AddRefMethod(rm);
+        map.AddRefMethod(rm);*/
 
 
       //  #endregion 基础功能.
@@ -583,7 +585,7 @@ public class NodeExt extends Entity
         rm.Target = "_blank";
         map.AddRefMethod(rm);
 
-        rm = new RefMethod();
+       /* rm = new RefMethod();
         rm.Title = "可撤销的节点"; // "可撤销发送的节点";
         rm.ClassMethodName = this.toString() + ".DoCanCancelNodes";
         rm.Icon = "../../WF/Img/Btn/DTS.gif";
@@ -594,7 +596,7 @@ public class NodeExt extends Entity
         rm.RefAttrKey = NodeAttr.CancelRole;
         rm.RefAttrLinkLabel = "";
         rm.Target = "_blank";
-        map.AddRefMethod(rm);
+        map.AddRefMethod(rm);*/
 
 
         rm = new RefMethod();
@@ -610,7 +612,7 @@ public class NodeExt extends Entity
         //map.AddRefMethod(rm);
         
 
-        rm = new RefMethod();
+        /*rm = new RefMethod();
         rm.Title = "设置自动抄送规则(当节点为自动抄送时,该设置有效.)"; // "抄送规则";
         rm.ClassMethodName = this.toString() + ".DoCCRole";
         rm.Icon = "../../WF/Img/Btn/DTS.gif";
@@ -619,7 +621,7 @@ public class NodeExt extends Entity
         rm.RefAttrLinkLabel = "自动抄送设置";
         rm.refMethodType = RefMethodType.LinkeWinOpen;
         rm.Target = "_blank";
-        map.AddRefMethod(rm);
+        map.AddRefMethod(rm);*/
        // #endregion 字段相关功能（不显示在菜单里）
 
        // #region 表单设置.
@@ -648,13 +650,13 @@ public class NodeExt extends Entity
         map.AddRefMethod(rm);
 
 
-        rm = new RefMethod();
+       /* rm = new RefMethod();
         rm.Title = "特别控件特别用户权限";
         rm.Icon = "../../WF/Admin/CCFormDesigner/Img/SpecUserSpecFields.png";
         rm.ClassMethodName = this.toString() + ".DoSpecFieldsSpecUsers()";
         rm.refMethodType = RefMethodType.RightFrameOpen;
         rm.GroupName = "表单设置";
-        map.AddRefMethod(rm);
+        map.AddRefMethod(rm);*/
       //  #endregion 表单设置.
 
        // #region 父子流程.
@@ -675,31 +677,31 @@ public class NodeExt extends Entity
         rm.GroupName = "父子流程";
         map.AddRefMethod(rm);
 
-        rm = new RefMethod();
+     /*   rm = new RefMethod();
         rm.Title = "延续子流程"; // "调用事件接口";
         rm.ClassMethodName = this.toString() + ".DoYGFlows";
         rm.refMethodType = RefMethodType.RightFrameOpen;
         rm.GroupName = "父子流程";
-        map.AddRefMethod(rm);
+        map.AddRefMethod(rm);*/
        // #endregion 父子流程.
 
        // #region 考核.
 
-        rm = new RefMethod();
+        /*rm = new RefMethod();
         rm.Title = "设置考核规则";
         rm.Icon = "../../WF/Admin/CCFormDesigner/Img/CH.png";
         rm.ClassMethodName = this.toString() + ".DoCHRole";
         rm.refMethodType = RefMethodType.RightFrameOpen;
         rm.GroupName = "考核规则";
-        map.AddRefMethod(rm);
+        map.AddRefMethod(rm);*/
 
-        rm = new RefMethod();
+       /* rm = new RefMethod();
         rm.Title = "超时处理规则";
         rm.Icon = "../../WF/Admin/CCFormDesigner/Img/OvertimeRole.png";
         rm.ClassMethodName = this.toString() + ".DoCHOvertimeRole";
         rm.refMethodType = RefMethodType.RightFrameOpen;
         rm.GroupName = "考核规则";
-        map.AddRefMethod(rm);
+        map.AddRefMethod(rm);*/
        // #endregion 考核.
  
      /*   //高级功能.

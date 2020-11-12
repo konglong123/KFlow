@@ -94,10 +94,7 @@ public class NodeTaskService {
         con.setParentNodeTask(nodeTaskM.getNo()+"");
         List childList=nodeTaskManage.findNodeTaskList(con);
         //所有子节点任务都已经完成
-        if (childList==null||childList.size()==0)
-            return true;
-        else
-            return false;
+        return childList == null || childList.size() == 0;
     }
     
     /**
@@ -127,7 +124,16 @@ public class NodeTaskService {
             activatedNodes="";
         activatedNodes = activatedNodes.replace(currentTask.getNodeId() + ",", "");
         generFlow.setActivatedNodes(activatedNodes);
+        generFlow.setUseTime(generFlow.getUseTime()+currentTask.getTotalTime());
         generFlowManager.updateGenerFlow(generFlow);
+
+        //更新项目进度
+        if (generFlow.getParentWorkId()<0){//表明是最顶层流程实例，则需要更新项目进度
+            ProjectTree projectTree=new ProjectTree(generFlow.getWorkGroupId()+"");
+            int useTime=projectTree.GetValIntByKey(ProjectTreeAttr.ActualDuring);
+            projectTree.SetValByKey(ProjectTreeAttr.ActualDuring,useTime+currentTask.getTotalTime());
+            projectTree.Update();
+        }
 
         //释放资源占用
         ResourceTasks resourceTasks=new ResourceTasks();
@@ -212,27 +218,24 @@ public class NodeTaskService {
     public List getCanStartNodeTask(NodeTaskM nodeTaskM){
         try{
             Node node=new Node(nodeTaskM.getNodeId());
-            switch (node.getHisRunModel()){
-                case Judge:
+            if (node.GetValIntByKey(NodeAttr.RunModel)==9){
                     //如果存在judgeNodeId=当前节点，则说明该决策节点是匹配前置决策节点，不增加JudgeRoute信息
                     JudgeRoute con=new JudgeRoute();
                     con.setWorkId(nodeTaskM.getWorkId());
                     con.setJudgeNodeId(nodeTaskM.getNodeId());
                     List list=judgeRouteManager.findJudgeRouteList(con);
-                    if (list.size()!=0){//走正常路线，获取后置连线节点
-                        break;
+                    if (list.size()==0){//否则走正常路线，获取后置连线节点
+                        List<String> nextNodes=JudgeTool.judge(nodeTaskM);
+                        //记录分支信息（决策多分支，合并时使用）
+                        JudgeRoute route=new JudgeRoute();
+                        route.setNum(nextNodes.size());
+                        route.setWorkId(nodeTaskM.getWorkId());
+                        route.setJudgeNodeId(node.getJudgeNodeId()+"");
+                        route.setRoutes(nextNodes.toString());
+                        judgeRouteManager.insertJudgeRoute(route);
+
+                        return nodeTaskManage.getNodeTaskByNodeIdsAndParentTaskId(nodeTaskM.getParentNodeTask(),nextNodes);
                     }
-
-                    List<String> nextNodes=JudgeTool.judge(nodeTaskM);
-                    //记录分支信息（决策多分支，合并时使用）
-                    JudgeRoute route=new JudgeRoute();
-                    route.setNum(nextNodes.size());
-                    route.setWorkId(nodeTaskM.getWorkId());
-                    route.setJudgeNodeId(node.getJudgeNodeId()+"");
-                    route.setRoutes(nextNodes.toString());
-                    judgeRouteManager.insertJudgeRoute(route);
-
-                    return nodeTaskManage.getNodeTaskByNodeIdsAndParentTaskId(nodeTaskM.getParentNodeTask(),nextNodes);
             }
         }catch (Exception e){
             logger.error(e.getMessage());
@@ -335,11 +338,10 @@ public class NodeTaskService {
                         JudgeRoute route=judgeRouteList.get(0);
                         route.setArriveNum(route.getArriveNum()+1);
                         judgeRouteManager.updateJudgeRoute(route);
-                        if (route.getArriveNum()==route.getNum()) //所有分支到齐
-                            return true;
-                        else
-                            return false;
+                        //所有分支到齐
+                        return route.getArriveNum() == route.getNum();
                     }
+                    break;
 
                 default:
                     List<NodeTaskM> preList=getPreNodeTask(nodeTaskM);

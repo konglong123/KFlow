@@ -1,9 +1,6 @@
 package BP.Project;
 
-import BP.En.EntityNo;
-import BP.En.Map;
-import BP.En.RefMethod;
-import BP.En.RefMethodType;
+import BP.En.*;
 import BP.Sys.EnCfg;
 import BP.Task.FlowGener;
 import BP.Task.FlowGenerAttr;
@@ -11,6 +8,7 @@ import BP.Task.FlowGeners;
 import BP.Task.NodeTaskAttr;
 import BP.Tools.BeanTool;
 import BP.WF.Flow;
+import BP.Web.WebUser;
 import BP.springCloud.controller.FlowController;
 import BP.springCloud.tool.FeignTool;
 import org.springframework.context.ApplicationContext;
@@ -153,5 +151,20 @@ public class ProjectTree extends EntityNo {
 				temp.Delete();
 		}
 		super.afterDelete();
+	}
+
+	@Override
+	public UAC getHisUAC() throws Exception {
+		if (_HisUAC == null) {
+
+			_HisUAC = new UAC();
+			_HisUAC.IsUpdate = true;
+			_HisUAC.IsView = true;
+			if (WebUser.getNo().equals("admin")){
+				_HisUAC.IsDelete=true;
+				_HisUAC.IsInsert=true;
+			}
+		}
+		return _HisUAC;
 	}
 }

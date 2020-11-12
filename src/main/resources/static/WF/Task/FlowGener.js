@@ -365,6 +365,181 @@ function initGenerFlow(con) {
             var data =getGenerInfoForOne(generNo);
             option.series[0].data=data.pieData;
             myChart.setOption(option);
-        };
+        }
     });
+}
+
+function initProjectInfo() {
+    var domProject = document.getElementById("projectInfo1");
+    var projectChart = echarts.init(domProject);
+    $.ajax({
+        url: "/WF/Project/getProjectInfo",
+        type: 'POST',
+        success: function (data) {
+            var option = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{a} <br/>{b}: {c} ({d}%)'
+                },
+                title: {
+                    text: '项目状态分布图',
+                    left: 'center'
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 10,
+                    data: data.legendData
+                },
+                series: [
+                    {
+                        name: '项目状态分布',
+                        type: 'pie',
+                        radius: ['40%', '50%'],
+                        avoidLabelOverlap: false,
+                        label: {
+                            show: false,
+                            position: 'center'
+                        },
+                        emphasis: {
+                            label: {
+                                show: true,
+                                fontSize: '30',
+                                fontWeight: 'bold'
+                            }
+                        },
+                        labelLine: {
+                            show: false
+                        },
+                        data: data.seriesData
+                    }
+                ]
+            };
+            projectChart.setOption(option);
+            projectChart.on("click",function (param) {
+                //饼图联动
+                var status=param.data.status;
+                initProjectProgress(status);
+            });
+        }
+    });
+}
+
+function initProjectProgress(status) {
+    var dom = document.getElementById("projectInfo2");
+    var myChart = echarts.init(dom);
+    var dataChart={
+        pieData:[],
+        barDataAll:[],
+        barDataUse:[],
+        lineData:[],
+        xAxis:[]
+    };
+
+    var toUrl='/WF/Project/getProjectInfoForStatus';
+    $.ajax({
+        url: toUrl,
+        type: 'GET',
+        async:false,
+        data: {
+            status:status
+        },
+        success: function (dataTemp) {
+            dataChart.xAxis=dataTemp.xAxis;
+            dataChart.lineData=dataTemp.lineData;
+            dataChart.barDataAll=dataTemp.barDataAll;
+            dataChart.barDataUse=dataTemp.barDataUse;
+
+            option = {
+                title: {
+                    text: '项目进度统计图',
+                    left: 'center'
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross',
+                        crossStyle: {
+                            color: '#999'
+                        }
+                    }
+                },
+                toolbox: {
+                    feature: {
+                        magicType: {show: true, type: ['line', 'bar']},
+                        restore: {show: true},
+                        saveAsImage: {show: true}
+                    }
+                },
+                legend: {
+                    x: '30%',
+                    y: '10%',
+                    data: ['总工时', '已用工时','完成进度']
+
+                },
+                xAxis: [
+                    {
+                        type: 'category',
+                        name:'项目编码',
+                        data: dataChart.xAxis,
+                        axisPointer: {
+                            type: 'shadow'
+                        },
+                        nameTextStyle: {
+                            padding: [50, 0, 0, -80]     // 四个数字分别为上右下左与原位置距离
+                        }
+                    }
+                ],
+                yAxis: [
+                    {
+                        type: 'value',
+                        name: '工时',
+                        axisLabel: {
+                            formatter: '{value} h'
+                        }
+                    },
+                    {
+                        type: 'value',
+                        name: '完成进度',
+                        axisLabel: {
+                            formatter: '{value}'
+                        }
+                    }
+                ],
+                series: [
+                    {
+                        name: '总工时',
+                        type: 'bar',
+                        data: dataChart.barDataAll
+                    },
+                    {
+                        name: '已用工时',
+                        type: 'bar',
+                        data: dataChart.barDataUse
+                    },
+                    {
+                        name: '完成进度',
+                        type: 'line',
+                        yAxisIndex: 1,
+                        data: dataChart.lineData
+                    },
+                ]
+            };
+            myChart.setOption(option);
+            myChart.on("click",function (param) {
+                //饼图联动
+                if (param.seriesType=='bar'){
+                    var treeNo=param.name.split("_")[0];
+                    initProjectTree("projectInfo3",treeNo);
+                    initProgressGant(treeNo);
+                }
+            });
+        }
+    });
+
+}
+
+function initProgressGant(treeNo) {
+    var project = new Entity("BP.Project.ProjectTree",treeNo);
+    if (project.gener_flow_no!=null&&project.gener_flow_no!="")
+        initFlowGenerGantt(project.gener_flow_no,"projectInfo4");
 }

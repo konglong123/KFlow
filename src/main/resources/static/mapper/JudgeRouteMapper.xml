@@ -120,10 +120,7 @@
 	</update>
 	<!-- 删除实体 -->
 	<update id="deleteJudgeRoute" parameterType="Long">
-		update k_judge_route
-		<set>
-			is_delete=1
-		</set>
+		delete from k_judge_route
 		where No = #{No,jdbcType=BIGINT}
 	</update>
 </mapper>
