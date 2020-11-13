@@ -5,6 +5,9 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import BP.DA.*;
+import BP.NodeGroup.NodeGroup;
+import BP.NodeGroup.NodeGroupAttr;
+import BP.NodeGroup.NodeGroups;
 import BP.Sys.*;
 import BP.Task.NodeTaskAttr;
 import BP.WF.Template.FrmWorkCheck;
@@ -487,8 +490,7 @@ public class Flow extends BP.En.EntityNoName {
 					String key = (String) enu.nextElement();
 					if (key == "OID" || key == "WorkID" || key == null)
 						continue;
-					if (paras.containsKey(key))
-						paras.remove(key);
+					paras.remove(key);
 
 					paras.put(key, BP.Sys.Glo.getRequest().getParameter(key));
 				}
@@ -633,7 +635,7 @@ public class Flow extends BP.En.EntityNoName {
 					rpt.setFlowEnderRDT(BP.DA.DataType.getCurrentDataTime());
 					rpt.setMyNum(0);
 
-					rpt.setTitle(BP.WF.WorkFlowBuessRole.GenerTitle(this, wk));;
+					rpt.setTitle(BP.WF.WorkFlowBuessRole.GenerTitle(this, wk));
 
 					rpt.setWFState(WFState.Blank);
 					rpt.setFlowStarter(emp.getNo());
@@ -1347,14 +1349,14 @@ public class Flow extends BP.En.EntityNoName {
 					break;
 				case Oracle:
 					if (ywDt.Columns.get(ywArr[i]).DataType == DateUtils.class) {
-						if (!StringHelper.isNullOrEmpty(lcDt.Rows.get(0).getValue(lcArr[i].toString()).toString())) {
-							values += "to_date('" + lcDt.Rows.get(0).getValue(lcArr[i].toString()) + "','YYYY-MM-DD'),";
+						if (!StringHelper.isNullOrEmpty(lcDt.Rows.get(0).getValue(lcArr[i]).toString())) {
+							values += "to_date('" + lcDt.Rows.get(0).getValue(lcArr[i]) + "','YYYY-MM-DD'),";
 						} else {
 							values += "'',";
 						}
 						continue;
 					}
-					values += "'" + lcDt.Rows.get(0).getValue(lcArr[i].toString()) + "',";
+					values += "'" + lcDt.Rows.get(0).getValue(lcArr[i]) + "',";
 					continue;
 				case MySQL:
 					break;
@@ -1370,22 +1372,22 @@ public class Flow extends BP.En.EntityNoName {
 				break;
 			case Oracle:
 				if (ywDt.Columns.get(ywArr[i]).DataType == DateUtils.class) {
-					if (!StringHelper.isNullOrEmpty(lcDt.Rows.get(0).getValue(lcArr[i].toString()).toString())) {
-						values += "to_date('" + lcDt.Rows.get(0).getValue(lcArr[i].toString()) + "','YYYY-MM-DD'),";
+					if (!StringHelper.isNullOrEmpty(lcDt.Rows.get(0).getValue(lcArr[i]).toString())) {
+						values += "to_date('" + lcDt.Rows.get(0).getValue(lcArr[i]) + "','YYYY-MM-DD'),";
 					} else {
 						values += "'',";
 					}
 					continue;
 				}
-				values += "'" + lcDt.Rows.get(0).getValue(lcArr[i].toString()) + "',";
+				values += "'" + lcDt.Rows.get(0).getValue(lcArr[i]) + "',";
 				continue;
 			default:
 				throw new RuntimeException("暂时不支您所使用的数据库类型!");
 			}
-			values += "'" + lcDt.Rows.get(0).getValue(lcArr[i].toString()) + "',";
+			values += "'" + lcDt.Rows.get(0).getValue(lcArr[i]) + "',";
 			// 获取除主键之外的其他值
 			if (i > 0) {
-				upVal = upVal + ywArr[i] + "='" + lcDt.Rows.get(0).getValue(lcArr[i].toString()) + "',";
+				upVal = upVal + ywArr[i] + "='" + lcDt.Rows.get(0).getValue(lcArr[i]) + "',";
 			}
 		}
 
@@ -1792,6 +1794,17 @@ public class Flow extends BP.En.EntityNoName {
 			nds.Retrieve(NodeAttr.FK_Flow,this.getNo(),NodeAttr.RunModel,6);
 			if (nds.size()!=1)
 				msg.append("@错误:未配置“结束节点”或配置多个“结束节点”");
+
+			//检查分组信息
+			msg.append("@信息:开始检查分组规则.");
+			NodeGroups groups=new NodeGroups();
+			groups.Retrieve(NodeGroupAttr.flow_no,this.getNo());
+			List<NodeGroup> groupList=groups.toList();
+			for (NodeGroup nodeGroup:groupList){
+				if (!nodeGroup.initInOutNode()){
+					msg.append("@错误:分组"+nodeGroup.getNo()+"不符合分组单输入、单输出规则！");
+				}
+			}
 
             //流程功能性描述
 			if (StringUtils.isEmpty(this.getNote()))
@@ -4044,7 +4057,7 @@ public class Flow extends BP.En.EntityNoName {
 				if (SpecialFlowNo.length() <= 0) {
 					throw new RuntimeException("@您是按照指定的流程编号导入的，但是您没有传入正确的流程编号。");
 				}
-				String newFlowNo = StringUtils.leftPad(String.valueOf(SpecialFlowNo), 3, '0');
+				String newFlowNo = StringUtils.leftPad(SpecialFlowNo, 3, '0');
 				fl.setNo(newFlowNo);
 				fl.DoDelData();
 				fl.DoDelete(); // 删除可能存在的垃圾.

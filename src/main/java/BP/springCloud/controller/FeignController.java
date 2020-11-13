@@ -1,6 +1,8 @@
 package BP.springCloud.controller;
 
 
+import BP.NodeGroup.NodeGroup;
+import BP.NodeGroup.NodeGroupAttr;
 import BP.Project.ProjectTree;
 import BP.Project.ProjectTreeAttr;
 import BP.Project.ProjectTrees;
@@ -9,6 +11,10 @@ import BP.Task.NodeTask;
 import BP.Task.NodeTaskAttr;
 import BP.Task.NodeTaskService;
 import BP.WF.Flow;
+import BP.WF.Node;
+import BP.WF.Template.Direction;
+import BP.WF.Template.DirectionAttr;
+import BP.WF.Template.Directions;
 import BP.springCloud.entity.NodeTaskM;
 import BP.springCloud.tool.FeignTool;
 import BP.springCloud.tool.Page;
@@ -178,7 +184,7 @@ public class FeignController {
                 ProjectTree tree=new ProjectTree(projectNo);
                 projectList.add(tree);
             }
-            //planProjects(projectList);
+            planProjects(projectList);
             updateProject(projectList);
         }catch (Exception e){
             logger.error(e.getMessage());
@@ -206,7 +212,13 @@ public class FeignController {
             for (String projectNo:projectNoList){
                 taskCon.setWorkGroupId(projectNo);
                 List<NodeTaskM> tempList=nodeTaskService.findNodeTaskList(taskCon);
-                tasks.addAll(tempList);
+                //过滤已经完成的任务
+                for(NodeTaskM temp:tempList){
+                    if (temp.getIsReady()==3){//任务已经完成，不进行计划
+                        continue;
+                    }
+                    tasks.add(temp);
+                }
             }
             JSONObject taskData=nodeTaskService.getPlanData(tasks);
             data.putAll(taskData);
@@ -231,7 +243,7 @@ public class FeignController {
             LinkedMultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
             headers.put("Content-Type", Collections.singletonList("application/json;charset=UTF-8"));
 
-            String url="http://192.168.1.1:8082/pms/projOpt/testOptResult";
+            String url="http://192.168.1.101:8082/pms/projOpt/testOptResult";
             HttpEntity<Map> requestEntity = new HttpEntity<>(data, headers);
             ResponseEntity<JSONObject> resTemp = FeignTool.template.postForEntity(url, requestEntity, JSONObject.class);
             JSONObject result=resTemp.getBody();
@@ -240,6 +252,7 @@ public class FeignController {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             JSONArray newTasks=result.getJSONArray("nodeTask");
             for (int i=0;i<newTasks.size();i++){
+                //更新资源任务信息
                 JSONObject task=(JSONObject) newTasks.get(i);
                 String taskNo=task.getString("taskNo");
                 long planStart=task.getLong("planStart");
@@ -251,6 +264,7 @@ public class FeignController {
                 nodeTask.SetValByKey(NodeTaskAttr.IsReady,9);//设置状态为“已经计划”
                 nodeTask.Update();
 
+                //更新资源占用信息
                 JSONArray resources=task.getJSONArray("resList");
                 for (int index=0;index<resources.size();index++){
                     JSONObject resTask=(JSONObject) resources.get(index);
@@ -272,6 +286,104 @@ public class FeignController {
                     resourceTask.Update();
                 }
             }
+
+            //更新分组内节点连接方向
+            updateFlowDirection(newTasks,groupData);
+
+
+    }
+
+    private void updateFlowDirection(JSONArray newTasks,JSONObject groupData) throws Exception{
+        JSONArray taskGroup=groupData.getJSONArray("taskGroup");
+        //记录任务所在分组信息
+        Map<String,String> taskGroupMap=new HashMap<>();
+        for (int i=0;i<taskGroup.size();i++){
+            JSONObject groupItem=(JSONObject)taskGroup.get(i);
+            taskGroupMap.put(groupItem.getLong("taskGroupTaskUid")+"",groupItem.getString("taskGroupGroupUid"));
+        }
+        //每个分组下的所有节点任务
+        Map<String,List<JSONObject>> groupTaskMap=new HashMap<>();
+        for (int i=0;i<newTasks.size();i++){
+            JSONObject task=(JSONObject)newTasks.get(i);
+            String taskNo=task.getString("taskNo");
+            if (taskGroupMap.containsKey(taskNo)){
+                String groupNo=taskGroupMap.get(taskNo);
+                List<JSONObject> taskList=groupTaskMap.get(groupNo);
+                if (taskList==null){
+                    taskList=new ArrayList<>();
+                    groupTaskMap.put(groupNo,taskList);
+                }
+                taskList.add(task);
+            }
+        }
+        //排序每个分组下任务
+        for (Map.Entry<String,List<JSONObject>> entry:groupTaskMap.entrySet()){
+            List<JSONObject> list=entry.getValue();
+            Collections.sort(list, new Comparator<JSONObject>() {
+                @Override
+                public int compare(JSONObject o1, JSONObject o2) {
+                    long temp= o1.getLong("planStart")-o2.getLong("planStart");
+                    if (temp<0)
+                        return -1;
+                    else if (temp>0)
+                        return 1;
+                    return 0;
+                }
+            });
+
+            List<Node> nodeList=new ArrayList<>();
+            Set<String> nodeNoSet=new HashSet<>();
+            for (JSONObject temp:list){
+                NodeTask nodeTask=new NodeTask(temp.getString("taskNo"));
+                Node node=new Node(nodeTask.GetValStrByKey(NodeTaskAttr.NodeId));
+                nodeList.add(node);
+                nodeNoSet.add(node.getNo());
+            }
+
+            Directions directions=new Directions();
+            List<Direction> directionList;
+            for (Node node:nodeList){
+                directions.Retrieve(DirectionAttr.ToNode,node.getNo());
+                directionList=directions.toList();
+                for (Direction direction:directionList){
+                    if (nodeNoSet.contains(direction.getNode()+"")){//属于分组内部连接，删除
+                        direction.Delete();
+                    }else {//属于分组前端分界点
+                        Direction newDir=new Direction();
+                        newDir.setFK_Flow(direction.getFK_Flow());
+                        newDir.setNode(direction.getNode());
+                        newDir.setToNode(Integer.valueOf(nodeList.get(0).getNo()));
+                        direction.Delete();
+                        newDir.Insert();
+                    }
+                }
+
+                directions.Retrieve(DirectionAttr.Node,node.getNo());
+                directionList=directions.toList();
+                for (Direction direction:directionList){
+                    if (nodeNoSet.contains(direction.getToNode()+"")){
+                        direction.Delete();
+                    }else {
+                        Direction newDir=new Direction();
+                        newDir.setFK_Flow(direction.getFK_Flow());
+                        newDir.setNode(Integer.valueOf(nodeList.get(nodeList.size()-1).getNo()));
+                        newDir.setToNode(direction.getToNode());
+                        direction.Delete();
+                        newDir.Insert();
+                    }
+                }
+            }
+
+            NodeGroup nodeGroup=new NodeGroup(entry.getKey());
+            //根据排序，重新组织分组内部连接方向
+            for (int i=0;i<nodeList.size()-1;i++){
+                Direction direction=new Direction();
+                direction.setNode(Integer.valueOf(nodeList.get(i).getNo()));
+                direction.setToNode(Integer.valueOf(nodeList.get(i+1).getNo()));
+                direction.setFK_Flow(nodeGroup.GetValStrByKey(NodeGroupAttr.flow_no));
+                direction.Insert();
+            }
+        }
 
 
     }

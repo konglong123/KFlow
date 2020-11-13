@@ -99,6 +99,7 @@ public class FlowController {
             project.SetValByKey(ProjectTreeAttr.GenerFlowNo, workId);
             FlowGener gener=new FlowGener(workId+"");
             project.SetValByKey(ProjectTreeAttr.PlanDuring,gener.GetValStrByKey(FlowGenerAttr.TotalTime));
+            project.SetValByKey(ProjectTreeAttr.ActualDuring,0);
             project.Update();
 
             result.put("success", true);

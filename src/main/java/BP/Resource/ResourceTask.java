@@ -29,10 +29,10 @@ public class ResourceTask extends EntityNo {
         map.AddTBInt(ResourceTaskAttr.UseNum, 0, "占用数量",true, true);
         map.AddTBDateTime(ResourceTaskAttr.StartTime,null,"开始时间",true,true);
         map.AddTBDateTime(ResourceTaskAttr.EndTime,null,"结束时间",true,true);
-        map.AddTBDateTime(ResourceTaskAttr.BookStart,null,"预定开始时间",true,true);
-        map.AddTBDateTime(ResourceTaskAttr.BookEnd,null,"预定结束时间",true,true);
-        map.AddTBDateTime(ResourceTaskAttr.PlanStart,null,"计划开始时间",true,true);
-        map.AddTBDateTime(ResourceTaskAttr.PlanEnd,null,"计划结束时间",true,true);
+        map.AddTBDateTime(ResourceTaskAttr.BookStart,null,"预定开始时间",true,false);
+        map.AddTBDateTime(ResourceTaskAttr.BookEnd,null,"预定结束时间",true,false);
+        map.AddTBDateTime(ResourceTaskAttr.PlanStart,null,"计划开始时间",true,false);
+        map.AddTBDateTime(ResourceTaskAttr.PlanEnd,null,"计划结束时间",true,false);
         map.AddDDLSysEnum(ResourceTaskAttr.IsPlan, 2, "是否计划", true, false,ResourceTaskAttr.IsPlan,
                 "@1=已经计划@2=未计划");
         map.AddDDLSysEnum(ResourceTaskAttr.IsFinish, 2, "是否完成", true, false,ResourceTaskAttr.IsFinish,

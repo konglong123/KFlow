@@ -1083,7 +1083,7 @@ public class NodeTaskService {
                     map.put(groupNo,group);
                 }
                 //模块分组不在统计范围内
-                if (group.GetValIntByKey(NodeGroupAttr.type)==2)
+                if (group.GetValIntByKey(NodeGroupAttr.type)!=1)
                     continue;
                 JSONObject temp=new JSONObject();
                 temp.put("taskGroupUid",item.getNo());
