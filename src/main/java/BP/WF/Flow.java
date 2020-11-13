@@ -1695,16 +1695,18 @@ public class Flow extends BP.En.EntityNoName {
 				}
 
 				if (nd.getHisRunModel()==RunModel.Judge) {
-					String judgeNodeId=nd.getJudgeNodeId()+"";
-					if (judgeNodeId==null||judgeNodeId.equals(""))
-						msg.append("@错误:决策节点需要制定匹配决策节点");
+					if (nd.getJudgeNodeId()==0)
+						msg.append("@错误:决策节点未设置匹配决策节点");
 					else {
 						try {
+							String judgeNodeId=nd.getJudgeNodeId()+"";
 							Node node=new Node(judgeNodeId);
 							if (!node.getFK_Flow().equals(this.getNo()))
 								msg.append("@错误:决策匹配节点不在本流程！");
 							if (node.getHisRunModel()!=RunModel.Judge)
-								msg.append("@错误:决策匹配节点不是决策节点");
+								msg.append("@错误:决策匹配节点不是决策节点！");
+							if (node.getJudgeNodeId()!=nd.getNodeID())
+								msg.append("@错误:决策匹配节点没有匹配该节点！");
 						}catch (Exception e){
 							msg.append("@错误:决策匹配节点不存在");
 						}
