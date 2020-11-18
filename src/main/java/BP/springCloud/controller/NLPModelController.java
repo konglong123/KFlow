@@ -388,25 +388,25 @@ public class NLPModelController {
     @RequestMapping("updateW2VDocument")
     @ResponseBody
     public Object updateW2VDocument(){
-
-        Map<String, Object> postBody = new HashMap<>();
-        postBody.put("startPoint", 0);
-        postBody.put("pageLength", 1000);
-        postBody.put("abstracts", "");
-        HttpEntity<Map> requestEntity = new HttpEntity<>(postBody, null);
-        ResponseEntity<Page> resTemp = FeignTool.template.postForEntity("http://112.125.90.132:8082/es/getWFDsl", requestEntity, Page.class);
-        Page pageResult=resTemp.getBody();
-        Map<String, Object> jsonMap = new HashMap<>();//定义map
-        List<Map> esData= pageResult.getData();
-        List<String> fileList=new ArrayList<>();
-
-        //添加流程模板信息
-        for (Map item: esData){
-            fileList.add((String) item.get("abstracts"));
-        }
-
-        //添加节点分组信息
         try {
+            Map<String, Object> postBody = new HashMap<>();
+            postBody.put("startPoint", 0);
+            postBody.put("pageLength", 1000);
+            postBody.put("abstracts", "");
+            HttpEntity<Map> requestEntity = new HttpEntity<>(postBody, null);
+            ResponseEntity<Page> resTemp = FeignTool.template.postForEntity("http://112.125.90.132:8082/es/getWFDsl", requestEntity, Page.class);
+            Page pageResult = resTemp.getBody();
+            Map<String, Object> jsonMap = new HashMap<>();//定义map
+            List<Map> esData = pageResult.getData();
+            List<String> fileList = new ArrayList<>();
+
+            //添加流程模板信息
+            for (Map item : esData) {
+                fileList.add((String) item.get("abstracts"));
+            }
+
+            //添加节点分组信息
+
             NodeGroups groups = new NodeGroups();
             groups.RetrieveAll();
             List<NodeGroup> groupList = groups.toList();
@@ -416,18 +416,19 @@ public class NLPModelController {
                     fileList.add(group.GetValStrByKey(NodeGroupAttr.abstracts));
                 }
             }
-        }catch (Exception e){
-            logger.error(e.getMessage());
-        }
 
-        //同步数据到docFile中
-        try {
-            NLPTool.updateDocumentFile(docFile,fileList);
+            //同步数据到docFile中
+            NLPTool.updateDocumentFile(docFile, fileList);
+
+            //重置词向量模型
+            NLPTool.createDocVectorModel(word2vecModelFile, docFile);
+
+            jsonMap.put("total", fileList.size());
+            return jsonMap;
         }catch (Exception e){
             logger.error(e.getMessage());
         }
-        jsonMap.put("total",fileList.size());
-        return jsonMap;
+        return null;
     }
 
 

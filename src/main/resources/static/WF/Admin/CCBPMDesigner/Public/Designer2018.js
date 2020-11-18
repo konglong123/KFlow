@@ -221,7 +221,7 @@ function createNode(flowNo,_canvas) {
     if (_canvas.addProcess(strs) == false) //添加
     {
         alert("添加失败");
-        return;
+
     }
 }
 
@@ -288,7 +288,7 @@ function searchFlow(){
 //划分片段，两种片段（1，可调换顺序，2可作为模块独立检索）
 function groupNode() {
     url = "../../Admin/CCBPMDesigner/GroupNode.html?FK_Flow=" + flowNo;
-    window.parent.addTab(flowNo, "划分片段" + flowNo, url);
+    window.parent.addTab(flowNo, "划分模块" + flowNo, url);
 }
 
 function composeGroup() {

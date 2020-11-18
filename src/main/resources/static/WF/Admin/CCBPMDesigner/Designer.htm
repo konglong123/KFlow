@@ -422,6 +422,7 @@
             //页面初始化
             //判断是设计流程，还是查看流程实例进度
             var activeNodes=null;
+            var nodeGroupNo=null;
             var type=GetQueryString("type");
             if (type==2){///查看流程实例进度
                 var generFlow=new Entity("BP.Task.FlowGener");
@@ -431,6 +432,9 @@
                 flowNo=generFlow.flow_id;
                 var activeNodeStr=generFlow.activated_nodes;
                 activeNodes=activeNodeStr.split(",");
+            }else if (type==3) {//查看流程模块
+                nodeGroupNo=GetQueryString("NodeGroupNo");
+                flowNo = GetQueryString("FK_Flow");
             }else {
                 flowNo = GetQueryString("FK_Flow");
             }
@@ -446,7 +450,7 @@
                 alertModal.find(".modal-body").html(messages);
                 alertModal.modal('toggle');
                 setTimeout(function () { alertModal.modal("hide") }, s);
-            }
+            };
             //消息弹出（节点）
             cAlert = function (messages, s) {
                 if (!messages) messages = "";
@@ -454,7 +458,7 @@
                 alertModal1.find(".modal-body").html(messages);
                 alertModal1.modal('toggle');
                 setTimeout(function () { alertModal1.modal("hide") }, s);
-            }
+            };
             //消息弹出（标签）
             labAlert = function (messages, s) {
                 if (!messages) messages = "";
@@ -462,7 +466,7 @@
                 alertModal3.find(".modal-body").html(messages);
                 alertModal3.modal('toggle');
                 setTimeout(function () { alertModal3.modal("hide") }, s);
-            }
+            };
             //消息弹出（线）
             fAlert = function (messages, s) {
                 if (!messages) messages = "请选择您要执行的操作";
@@ -470,7 +474,7 @@
                 $("#LineModal").find(".modal-body").html(messages);
                 $("#LineModal").modal('toggle');
                 /*setTimeout(function () { alertModal1.modal("hide") }, s);*/
-            }
+            };
             //属性设置
             attributeModal.on("hidden", function () {
                 $(this).removeData("modal"); //移除数据，防止缓存
@@ -489,10 +493,10 @@
                 if (fn) {
                     attributeModal.on('shown', fn);
                 }
-            }
+            };
 
             /*步骤数据*/
-            var processData = GenerDrowFlowData(activeNodes);
+            var processData = GenerDrowFlowData(activeNodes,nodeGroupNo);
             //标签数据
             var labNoteData = GetLabNoteData(flowNo);
             //console.log(processData);
@@ -555,7 +559,7 @@
                         if (_canvas.addLabProcess(strs) == false) //添加
                         {
                             alert("添加失败");
-                            return;
+
                         }
                     },
                     "cmPaste": function (t) {
@@ -663,7 +667,7 @@
 
                         var baocunbut = $("#alertModal3 div:eq(2) button").attr("class", "btn btn-primary savetext" + activeId);
                         var saveNodeName = $("#alertModal3 div:eq(2) button").attr("onclick", "saveLabName(\"" + activeId + "\")");
-                        var xiuNodename = '修改名称:<input id="TB_LAB_' + activeId + '" type="text" value="' + windowtext + '">'
+                        var xiuNodename = '修改名称:<input id="TB_LAB_' + activeId + '" type="text" value="' + windowtext + '">';
                         var spanaa = $("#lab" + activeId + " span").html();
 
                         labAlert(xiuNodename);
@@ -684,7 +688,7 @@
                     windowtext = windowtext.replace(/(^\s*)|(\s*$)/g, "");
 
 
-                    var xiuNodename = '修改名称：<input id="TB_' + activeId + '" type="text" value="' + windowtext + '">'
+                    var xiuNodename = '修改名称：<input id="TB_' + activeId + '" type="text" value="' + windowtext + '">';
                     var spanaa = $("#window" + activeId + " span").html();
 
                     cAlert(xiuNodename);
@@ -837,7 +841,7 @@
 
             $("#Btn_Save").attr("disabled", false);
             $("#Btn_Save").html("保存");
-            return;
+
         }
 
         //保存方法
@@ -914,7 +918,7 @@
                 var data = handler.DoMethodReturnString("Designer_Save");
                 alert(data);
             } catch (e) {
-                alert(e);;
+                alert(e);
             }
             $("#Btn_Save").attr("disabled", false);
             $("#Btn_Save").html("保存");
@@ -966,15 +970,26 @@
             $("#lab_span_" + activeId).text(text);
         }
         //获得流程数据并转化为指定格式的json.
-        function GenerDrowFlowData(activeNodes) {
-            //节点. 取出来显示
-            var nodes = new Entities("BP.WF.Nodes");
-            nodes.Retrieve("FK_Flow", flowNo);
-
+        function GenerDrowFlowData(activeNodes,nodeGroupNo) {
+            var nodes=[];
             //方向. 取出来显示
             var dirs = new Entities("BP.WF.Template.Directions");
             dirs.Retrieve("FK_Flow", flowNo);
-
+            if (nodeGroupNo==null) {
+                //节点. 取出来显示
+                nodes = new Entities("BP.WF.Nodes");
+                nodes.Retrieve("FK_Flow", flowNo);
+            }else {
+                var groupItems=new Entities("BP.NodeGroup.NodeGroupItems");
+                groupItems.Retrieve("group_no",nodeGroupNo);
+                for (var i=0;i<groupItems.length;i++){
+                    var nodeTemp = new Entity("BP.WF.Node");
+                    nodeTemp.SetPKVal(groupItems[i].node_no);
+                    nodeTemp.RetrieveFromDBSources();
+                    debugger;
+                    nodes.push(nodeTemp);
+                }
+            }
 
             var strs = "{ 'total':" + nodes.length + ", 'list':[";
             //遍历节点个数，输入节点.
@@ -1008,7 +1023,6 @@
                 }
 
                 //不同节点类型，采用不同icon
-
                 /* 如果是其他的情况,就要考虑分合流 */
                 switch (node.RunModel) {
                     case 0:
@@ -1110,7 +1124,7 @@
         </script>
         <!--canvas mousewheel&alt control-->
         <script type="text/javascript">
-            var content=document.getElementById("canvas").getContext("2d")
+            var content=document.getElementById("canvas").getContext("2d");
             //适应不同浏览器
             if (canvas.addEventListener) {
 
@@ -1129,32 +1143,32 @@
                     event.wheelDelta = event.wheelDelta ? event.wheelDelta : (event.deltalY * (-40));  //获取当前鼠标的滚动情况
                     if (event.wheelDelta > 0) {
                         //获取画布的宽和高
-                        var width = canvas.getAttribute("width")
+                        var width = canvas.getAttribute("width");
                         var height = canvas.getAttribute("height");
 
                         //获取画布的图像信息
-                        var data = content.getImageData(0, 0, width, height)
+                        var data = content.getImageData(0, 0, width, height);
 
                         //重新设置画布的大小
-                        width = parseInt(width) * 1.1
-                        height = parseInt(height) * 1.1
-                        canvas.setAttribute("width", width)
-                        canvas.setAttribute("height", height)
+                        width = parseInt(width) * 1.1;
+                        height = parseInt(height) * 1.1;
+                        canvas.setAttribute("width", width);
+                        canvas.setAttribute("height", height);
                         //重新绘制到画布,完成画布的大小改变
                         content.putImageData(data, 0, 0)
                     } else {
                         //减小
                         //document.getElementById("sub").onclick=  按钮控制预留
-                        var width = canvas.getAttribute("width")
+                        var width = canvas.getAttribute("width");
                         var height = canvas.getAttribute("height");
 
-                        var data = content.getImageData(0, 0, width, height)
+                        var data = content.getImageData(0, 0, width, height);
 
 
-                        width = parseInt(width) * 0.9
-                        height = parseInt(height) * 0.9
-                        canvas.setAttribute("width", width)
-                        canvas.setAttribute("height", height)
+                        width = parseInt(width) * 0.9;
+                        height = parseInt(height) * 0.9;
+                        canvas.setAttribute("width", width);
+                        canvas.setAttribute("height", height);
 
                         content.putImageData(data, 0, 0)
                     }

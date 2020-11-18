@@ -1000,7 +1000,7 @@ public class FlowExt extends EntityNoName
 	 
 	 @param dtFrom 日期从
 	 @param dtTo 日期到
-	 @param  1=删除当前流程, 0=删除全部流程.
+	 @param  =删除当前流程, 0=删除全部流程.
 	 @return 
 	 * @throws Exception 
 	*/
@@ -1719,131 +1719,10 @@ public class FlowExt extends EntityNoName
 		Flow.UpdateVer(this.getNo());
 
 
-		///#region 校验 flowmark 是不是唯一.
-		if (this.getFlowMark().length() > 0)
-		{
-			//如果是集团模式，则判断机构下的流程标记不可重复
-			if(Glo.getIsUnit() == true)
-			{
-				FlowSort flSort = new FlowSort(this.getFK_FlowSort());
-                FlowSorts flowSorts = new FlowSorts();
-                //同一机构下不允许标记重复
-                flowSorts.RetrieveByAttr(FlowSortAttr.OrgNo, flSort.getOrgNo());
-                for(FlowSort mySort : flowSorts.ToJavaListFs())
-                {
-					//校验该标记是否重复.
-					Flows fls = new Flows();
-					fls.Retrieve(FlowAttr.FK_FlowSort,mySort.getNo(),FlowAttr.FlowMark, this.getFlowMark());
-					for (Flow myfl : fls.ToJavaList())
-					{
-						if (!myfl.getNo().equals(this.getNo()))
-						{
-							throw new RuntimeException("@该流程标记{" + this.getFlowMark() + "}已经存在.");
-						}
-					}
-                }
-			}
-		}
-		
-		try {
-			String fee=BP.WF.Glo.GetFlowEventEntityStringByFlowMark(this.getFlowMark(), this.getNo());
-			this.setFlowEventEntity(fee);
-		} catch (java.lang.Exception e) {
-			this.setFlowEventEntity("");
-		}
-
-			///#endregion 同步事件实体.
-
 		//更新缓存数据。
 		Flow fl = new Flow(this.getNo());
 		fl.Copy(this);
 
-
-			///#region 检查数据完整性 - 同步业务表数据。
-		// 检查业务是否存在.
-		if (fl.getDTSWay() != FlowDTSWay.None)
-		{
-			//检查业务表填写的是否正确.
-			String sql = "select count(*) as Num from  " + fl.getDTSBTable() + " where 1=2";
-			try
-			{
-				DBAccess.RunSQLReturnValInt(sql, 0);
-			}
-			catch (RuntimeException e2)
-			{
-				throw new RuntimeException("@业务表配置无效，您配置业务数据表[" + fl.getDTSBTable() + "]在数据中不存在，请检查拼写错误如果是跨数据库请加上用户名比如: for sqlserver: HR.dbo.Emps, For oracle: HR.Emps");
-			}
-
-			sql = "select " + fl.getDTSBTablePK() + " from " + fl.getDTSBTable() + " where 1=2";
-			try
-			{
-				DBAccess.RunSQLReturnValInt(sql, 0);
-			}
-			catch (RuntimeException e3)
-			{
-				throw new RuntimeException("@业务表配置无效，您配置业务数据表[" + fl.getDTSBTablePK() + "]的主键不存在。");
-			}
-
-
-			//检查节点配置是否符合要求.
-			if (fl.getDTSTime() == FlowDTSTime.SpecNodeSend)
-			{
-				// 检查节点ID，是否符合格式.
-				String nodes = fl.getDTSSpecNodes();
-				nodes = nodes.replace("，", ",");
-				this.SetValByKey(FlowAttr.DTSSpecNodes, nodes);
-
-				if (StringHelper.isNullOrEmpty(nodes) == true)
-				{
-					throw new RuntimeException("@业务数据同步数据配置错误，您设置了按照指定的节点配置，但是您没有设置节点,节点的设置格式如下：101,102,103");
-				}
-
-				String[] strs = nodes.split("[,]", -1);
-				for (String str : strs)
-				{
-					if (StringHelper.isNullOrEmpty(str) == true)
-					{
-						continue;
-					}
-
-					if (BP.DA.DataType.IsNumStr(str) == false)
-					{
-						throw new RuntimeException("@业务数据同步数据配置错误，您设置了按照指定的节点配置，但是节点格式错误[" + nodes + "]。正确的格式如下：101,102,103");
-					}
-
-					Node nd = new Node();
-					nd.setNodeID(Integer.parseInt(str));
-					if (nd.getIsExits() == false)
-					{
-						throw new RuntimeException("@业务数据同步数据配置错误，您设置的节点格式错误，节点[" + str + "]不是有效的节点。");
-					}
-
-					nd.RetrieveFromDBSources();
-					if (!nd.getFK_Flow().equals(this.getNo()))
-					{
-						throw new RuntimeException("@业务数据同步数据配置错误，您设置的节点[" + str + "]不再本流程内。");
-					}
-				}
-			}
-
-			//检查流程数据存储表是否正确
-			if (!StringHelper.isNullOrEmpty(fl.getPTable()))
-			{
-				//检查流程数据存储表填写的是否正确.
-				sql = "select count(*) as Num from  " + fl.getPTable() + " where 1=2";
-				try
-				{
-					DBAccess.RunSQLReturnValInt(sql, 0);
-				}
-				catch (RuntimeException e4)
-				{
-					throw new RuntimeException("@流程数据存储表配置无效，您配置流程数据存储表[" + fl.getPTable() + "]在数据中不存在，请检查拼写错误如果是跨数据库请加上用户名比如: for sqlserver: HR.dbo.Emps, For oracle: HR.Emps");
-				}
-			}
-		}
-          //清空WF_Emp 的StartFlows
-          DBAccess.RunSQL("UPDATE  WF_Emp Set StartFlows =''");
-          
 		return super.beforeUpdate();
 	}
 	@Override
@@ -1866,27 +1745,6 @@ public class FlowExt extends EntityNoName
 			}
 		}
 
-
-	    ///#region 为systype设置，当前所在节点的第2级别目录。
-	/*	FlowSort fs = new FlowSort(fl.getFK_FlowSort());
-		if (fs.getParentNo().equals("99") || fs.getParentNo().equals("0"))
-		{
-			this.setSysType(fl.getFK_FlowSort());
-		}
-		else
-		{
-			FlowSort fsP = new FlowSort(fs.getParentNo());
-			if (fsP.getParentNo().equals("99") || fsP.getParentNo().equals("0"))
-			{
-				this.setSysType(fsP.getNo());
-			}
-			else
-			{
-				FlowSort fsPP = new FlowSort(fsP.getParentNo());
-				this.setSysType(fsPP.getNo());
-			}
-		}*/
-		
 		 fl.Update();
 		
 		super.afterInsertUpdateAction();

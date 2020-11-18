@@ -3501,11 +3501,11 @@ public class Flow extends BP.En.EntityNoName {
 	}
 
 	public final String getNote() {
-		String s = this.GetValStringByKey("Note");
-		if (s.length() == 0) {
-			return "无";
-		}
+		String s = this.GetValStringByKey(FlowAttr.Note);
 		return s;
+	}
+	public final void setNote(String note) {
+		this.SetValByKey(FlowAttr.Note,note);
 	}
 
 	public final String getNoteHtml() {
@@ -3712,7 +3712,7 @@ public class Flow extends BP.En.EntityNoName {
 		// "@0=手工启动@1=指定人员按时启动@2=数据集按时启动@3=触发式启动");
 
 		map.AddTBString(FlowAttr.RunObj, null, "运行内容", true, false, 0, 30, 10);
-		map.AddTBString(FlowAttr.Note, null, "功能性描述", true, false, 0, 100, 10);
+		map.AddTBString(FlowAttr.Note, null, "流程文本摘要", true, false, 0, 100, 10);
 		map.AddTBString(FlowAttr.RunSQL, null, "流程结束执行后执行的SQL", true, false, 0, 2000, 10);
 
 		map.AddTBInt(FlowAttr.NumOfBill, 0, "是否有单据", false, false);

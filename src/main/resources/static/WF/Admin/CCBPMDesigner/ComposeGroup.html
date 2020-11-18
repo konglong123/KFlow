@@ -40,7 +40,6 @@
     </fieldset>
     <div style="text-align:right;padding:5px">
         <button class="easyui-linkbutton" onclick="getCompose()" >智能推荐</button>
-        <button class="easyui-linkbutton" onclick="updateWord2Document()" >同步W2V数据</button>
     </div>
 </div>
 <div id="composeHistory">
@@ -183,20 +182,6 @@
         });
     }
 
-    function updateWord2Document() {
-        $.ajax({
-            type: 'get',
-            async: false,
-            url: "/WF/NLPModel/updateW2VDocument",
-            success: function (data) {
-                alert("同步成功！");
-            },
-            error: function (data) {
-                alert("同步异常"+data);
-            }
-        });
-
-    }
 </script>
 </body>
 </html>

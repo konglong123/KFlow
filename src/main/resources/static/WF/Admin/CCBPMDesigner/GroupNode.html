@@ -90,6 +90,7 @@
                 {field:'operation',title: '操作',align: 'center',width:50,
                     formatter:function(val,rec){
                         var str="<input type='button' value='删除分组' onclick='deleteNodeGroup(\""+rec.No+"\")'/>";
+                        str+="<input type='button' value='可视化查看' onclick='gotoNodeGroupView(\""+rec.No+"\")'/>";
                         str+="<input type='button' value='详情' onclick='gotoNodeGroupDetail(\""+rec.No+"\")'/>";
                         return str;}},
             ]]
@@ -140,6 +141,11 @@
         var enName = "BP.NodeGroup.NodeGroup";
         var url = "/WF/WF/Comm/En.htm?EnName=" + enName + "&PKVal=" + pkVal;
         OpenEasyUiDialogExt(url,"节点分组详情", 800, 450, false);
+    }
+    function gotoNodeGroupView(nodeGroupNo){
+        var flowNo=GetQueryString("FK_Flow");
+        var url="/WF/WF/Admin/CCBPMDesigner/Designer.htm?FK_Flow="+flowNo+"&NodeGroupNo="+nodeGroupNo+"&type=3";
+        window.parent.addTab(flowNo+"_"+nodeGroupNo, "分组"+nodeGroupNo, url);
     }
     function addNodeGroup() {
         var flowNo=GetQueryString("FK_Flow");
@@ -231,7 +237,7 @@
 
     function queryNode() {
         var queryParams = $('#dgNodes').datagrid('options').queryParams;
-        queryParams.flowNo = GetQueryString("FK_Flow");;
+        queryParams.flowNo = GetQueryString("FK_Flow");
         queryParams.nodeNo=$("#nodeNoQuery").val();
         $("#dgNodes").datagrid('reload');
 

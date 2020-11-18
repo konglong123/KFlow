@@ -3,6 +3,7 @@ package BP.Ga;
 public class Gene implements Cloneable{
 	private String nodeGroupNo;//节点分组编码
 	private int nodeNum;//分组中节点数目
+	private int totalTime;//模块总工时
 	private String nodeNo;//模糊节点编码
 	private double iFitness;//数值越大，适应度越大
 	public int pos;//维度值
@@ -42,5 +43,13 @@ public class Gene implements Cloneable{
 
 	public void setNodeNo(String nodeNo) {
 		this.nodeNo = nodeNo;
+	}
+
+	public int getTotalTime() {
+		return totalTime;
+	}
+
+	public void setTotalTime(int totalTime) {
+		this.totalTime = totalTime;
 	}
 }

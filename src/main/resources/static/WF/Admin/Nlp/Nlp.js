@@ -52,13 +52,27 @@ function queryNlpModels() {
 }
 
 function trainSegmentModel() {
-    var url="/WF/WF/Admin/Nlp/ModelTrain.html?"
+    var url="/WF/WF/Admin/Nlp/ModelTrain.html?";
     window.parent.addTab("模型训练", url);
 }
 
 function trainWord2vecModel() {
-    var url="/WF/WF/Admin/Nlp/ModelTrainWord2.html?"
+    var url="/WF/WF/Admin/Nlp/ModelTrainWord2.html?";
     window.parent.addTab("模型训练", url);
+}
+function updateWord2Document() {
+    $.ajax({
+        type: 'get',
+        async: false,
+        url: "/WF/NLPModel/updateW2VDocument",
+        success: function (data) {
+            alert("同步成功！");
+        },
+        error: function (data) {
+            alert("同步异常"+data);
+        }
+    });
+
 }
 function deleteModel(id) {
     $.ajax({
@@ -79,7 +93,7 @@ function deleteModel(id) {
 }
 
 function learnOnLine() {
-    var url="/WF/WF/Admin/Nlp/SegmentModelLearn.html?"
+    var url="/WF/WF/Admin/Nlp/SegmentModelLearn.html?";
     OpenEasyUiDialogExt(url,"在线学习", 800, 450, false);
 }
 function gotoModelDetail(id) {

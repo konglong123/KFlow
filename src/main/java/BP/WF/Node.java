@@ -506,7 +506,7 @@ public class Node extends Entity {
 			nd.DirectUpdate();
 		}
 
-		// 处理岗位分组.
+		/*// 处理岗位分组.
 		sql = "SELECT HisStas, COUNT(*) as NUM FROM WF_Node WHERE FK_Flow='" + fl.getNo() + "' GROUP BY HisStas";
 		dt = BP.DA.DBAccess.RunSQLReturnTable(sql);
 		for (DataRow dr : dt.Rows) {
@@ -526,14 +526,14 @@ public class Node extends Entity {
 				nd.setGroupStaNDs(nodes);
 				nd.DirectUpdate();
 			}
-		}
+		}*/
 
-		// 判断流程的类型
+	/*	// 判断流程的类型
 		sql = "SELECT Name FROM WF_Node WHERE (NodeWorkType=" + NodeWorkType.StartWorkFL.getValue()
 				+ " OR NodeWorkType=" + NodeWorkType.WorkFHL.getValue() + " OR NodeWorkType="
 				+ NodeWorkType.WorkFL.getValue() + " OR NodeWorkType=" + NodeWorkType.WorkHL.getValue()
 				+ ") AND (FK_Flow='" + fl.getNo() + "')";
-		dt = BP.DA.DBAccess.RunSQLReturnTable(sql);
+		dt = BP.DA.DBAccess.RunSQLReturnTable(sql);*/
 		fl.DirectUpdate();
 		return null;
 	}
@@ -770,11 +770,7 @@ public class Node extends Entity {
 	}
 
 	public final boolean getIsEnableTaskPool() {
-		if (this.getTodolistModel() == TodolistModel.Sharing) {
-			return true;
-		} else {
-			return false;
-		}
+		return this.getTodolistModel() == TodolistModel.Sharing;
 	}
 
 	/**
@@ -976,10 +972,7 @@ public class Node extends Entity {
 	 * 是否是开始节点
 	 */
 	public final boolean getIsStartNode() {
-		if (this.getNo().equals("01")) {
-			return true;
-		}
-		return false;
+		return this.getNo().equals("01");
 
 		// if (this.HisNodePosType == NodePosType.Start)
 		// return true;
@@ -1239,11 +1232,8 @@ public class Node extends Entity {
 	 * 是否是自定义的url,处理批处理.
 	 */
 	public final boolean getBatchParas_IsSelfUrl() {
-		if (this.getBatchParas().contains(".jsp") || this.getBatchParas().contains(".jsp")
-				|| this.getBatchParas().contains(".htm") || this.getBatchParas().contains("http:")) {
-			return true;
-		}
-		return false;
+		return this.getBatchParas().contains(".jsp") || this.getBatchParas().contains(".jsp")
+				|| this.getBatchParas().contains(".htm") || this.getBatchParas().contains("http:");
 	}
 
 	/**
@@ -1357,10 +1347,7 @@ public class Node extends Entity {
 	 * 
 	 */
 	public final boolean getIsMultiStations() throws Exception {
-		if (this.getNodeStations().size() > 1) {
-			return true;
-		}
-		return false;
+		return this.getNodeStations().size() > 1;
 	}
 
 	public final String getHisStationsStr() throws Exception {
@@ -1565,11 +1552,7 @@ public class Node extends Entity {
 	 * @throws Exception
 	 */
 	public final boolean getIsEndNode() throws Exception {
-		if (this.getHisNodePosType() == NodePosType.End) {
-			return true;
-		} else {
-			return false;
-		}
+		return this.getHisNodePosType() == NodePosType.End;
 	}
 
 	/**
@@ -1589,10 +1572,7 @@ public class Node extends Entity {
 	public final boolean getIsEnableSMSMessage() {
 		int i = BP.DA.DBAccess.RunSQLReturnValInt("SELECT SMSEnable FROM Sys_FrmEvent WHERE FK_MapData='ND"
 				+ this.getNodeID() + "' AND FK_Event='SendSuccess'", 0);
-		if (i == 0) {
-			return false;
-		}
-		return true;
+		return i != 0;
 	}
 
 	/**
@@ -1771,10 +1751,7 @@ public class Node extends Entity {
 	 * 是否可以退回？
 	 */
 	public final boolean getIsCanReturn() {
-		if (this.getHisReturnRole() == ReturnRole.CanNotReturn) {
-			return false;
-		}
-		return true;
+		return this.getHisReturnRole() != ReturnRole.CanNotReturn;
 	}
 
 	/**
@@ -1809,11 +1786,7 @@ public class Node extends Entity {
 	 * 
 	 */
 	public final boolean getIsMiddleNode() throws Exception {
-		if (this.getHisNodePosType() == NodePosType.Mid) {
-			return true;
-		} else {
-			return false;
-		}
+		return this.getHisNodePosType() == NodePosType.Mid;
 	}
 
 	/**

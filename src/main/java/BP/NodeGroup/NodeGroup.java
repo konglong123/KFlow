@@ -2,6 +2,7 @@ package BP.NodeGroup;
 
 import BP.En.EntityNo;
 import BP.En.Map;
+import BP.WF.Flow;
 import BP.WF.Node;
 import BP.WF.Template.Direction;
 import BP.WF.Template.DirectionAttr;
@@ -136,6 +137,10 @@ public class NodeGroup extends EntityNo{
             Node node=new Node(item.GetValStrByKey(NodeGroupItemAttr.node_no));
             sumTime += node.getDoc();
         }
+        //更新流程名
+        String flowNo=this.GetValStrByKey(NodeGroupAttr.flow_no);
+        Flow flow=new Flow(flowNo);
+        this.SetValByKey(NodeGroupAttr.flow_name,flow.getName());
         group.SetValByKey(NodeGroupAttr.sumTime,sumTime);
         group.Update();
     }

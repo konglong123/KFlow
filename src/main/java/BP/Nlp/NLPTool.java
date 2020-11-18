@@ -1,17 +1,15 @@
 package BP.Nlp;
 
 import com.alibaba.fastjson.JSONObject;
-import com.hankcs.hanlp.corpus.document.sentence.word.Word;
 import com.hankcs.hanlp.mining.word2vec.DocVectorModel;
 import com.hankcs.hanlp.mining.word2vec.WordVectorModel;
 import com.hankcs.hanlp.model.perceptron.PerceptronSegmenter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -83,7 +81,7 @@ public class NLPTool {
     //初始化文档相似度模型中文档内容
     public static void initDocVectorModelDocument(String docFile) throws Exception{
         FileInputStream fr = new FileInputStream(docFile);
-        InputStreamReader isr=new InputStreamReader(fr, "UTF-8");
+        InputStreamReader isr=new InputStreamReader(fr, StandardCharsets.UTF_8);
         BufferedReader br = new BufferedReader(isr);
         String line="";
 
@@ -109,7 +107,7 @@ public class NLPTool {
     //获取文件的特定多行信息
     public static List<String> getFileByIndex(String docFile, List<Integer> positions) throws Exception{
         FileInputStream fr = new FileInputStream(docFile);
-        InputStreamReader isr=new InputStreamReader(fr, "UTF-8");
+        InputStreamReader isr=new InputStreamReader(fr, StandardCharsets.UTF_8);
         BufferedReader br = new BufferedReader(isr);
         String line="";
         List<String> fileList=new ArrayList<>();

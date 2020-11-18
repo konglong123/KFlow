@@ -9,8 +9,12 @@ import BP.Task.NodeTaskAttr;
 import BP.Task.NodeTaskService;
 import BP.Task.NodeTasks;
 import BP.WF.Flow;
+import BP.WF.Flows;
 import BP.WF.Node;
 import BP.WF.Nodes;
+import BP.WF.Template.FlowAttr;
+import BP.WF.Template.FlowExt;
+import BP.WF.Template.FlowExts;
 import BP.WF.Template.NodeAttr;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
@@ -264,5 +268,30 @@ public class TestController {
         }
 
     }
+
+    @RequestMapping("initFlowAbstract")
+    public void initFlowAbstract(){
+        try {
+            FlowExts flows = new FlowExts();
+            flows.RetrieveAll();
+            List<FlowExt> flowList=flows.toList();
+            for (FlowExt flow:flowList){
+                StringBuilder sb=new StringBuilder();
+                Nodes nodes=new Nodes();
+                nodes.Retrieve(NodeAttr.FK_Flow,flow.getNo());
+                for (int i=0;i<nodes.size();i++){
+                    Node node=(Node) nodes.get(i);
+                    sb.append(node.getName());
+                    sb.append(",");
+                }
+                flow.SetValByKey(FlowAttr.Note,sb.toString());
+                flow.Update();
+            }
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+
+    }
+
 
 }

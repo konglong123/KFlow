@@ -34,6 +34,7 @@ public class GeneticAth {
 	//流程编码
 	private Flow flow;
 	private int mohuNum=0;//模糊节点数
+	public int totalTime=0;
 	List<List<Gene>> groupGeneAll=new ArrayList<>(mohuNum);//所有基因（genesAll(i)表示第i个模糊节点，所有可选基因）
 	public int geneKindMaxNum=100;//每个模糊节点，可选择的最大方案数
 	int category=2;//1为关键字检索策略，2为word2vec策略
@@ -63,13 +64,16 @@ public class GeneticAth {
 		flow=new Flow(newFlowNo);
 		Nodes nodes=flow.getHisNodes();
 		List<Node> nodeList=nodes.toList();
+		int sumTime=0;
 		for (Node node:nodeList){
 			int type=node.GetValIntByKey(NodeAttr.RunModel);
 			if (type==10) {//模糊节点（有时间改成枚举）
 				String[] temp=new String[]{node.getNodeID()+"",node.getTip()};
 				nodeInfoList.add(temp);
+				sumTime+=node.getDoc();
 			}
 		}
+		this.totalTime=sumTime;
 		this.mohuNum=nodeInfoList.size();
 
 		//计算各种历史模板的相似度
@@ -234,6 +238,15 @@ public class GeneticAth {
 		aveFitness=sumAveFitness/group.size();
 	}
 
+	private void initFitness(){
+		for (Chromosome temp:group){
+
+		}
+		for (Chromosome temp:groupNew){
+
+		}
+	}
+
 	//进行进化
 	public JSONObject run(int type) throws Exception{
 		this.type=type;
@@ -248,6 +261,7 @@ public class GeneticAth {
 			aveHistory.add(aveFitness);
 			crossOver();//交叉
 			mutation();//变异
+			initFitness();//计算个体适应度
 			select();
 			count++;
 		}
