@@ -76,7 +76,7 @@
                 maxConnections: -1
             });
         });
-    }
+    };
 
     /*设置隐藏域保存关系信息*/
     var aConnections = [];
@@ -126,7 +126,7 @@
             menuStyle: defaults.menuStyle,
             itemStyle: defaults.itemStyle,
             itemHoverStyle: defaults.itemHoverStyle
-        }
+        };
         $(this).contextMenu('canvasMenu', contextmenu);
 
         jsPlumb.importDefaults({
@@ -169,7 +169,7 @@
 					.attr("process_to", row.process_to)
 					.attr("process_id", row.id)
 					.addClass(classN)//给节点名称添加一个span元素(该处未来可以更改节点形状)
-					.html('<span class="process-flag badge ' + badge + '"  alt=' + nodeId + ' ><i class="' + icon + ' icon-white"></i></span>&nbsp;<span id="span_' + row.id + '"  >' + row.process_name + '</span>')
+					.html('<span class="process-flag badge ' + badge + '"  alt=' + nodeId + ' ><i class="' + icon + ' icon-white"></i></span>&nbsp;<span id="span_' + row.id + '">' + row.process_name + '</span>')
 					.mousedown(function (e) {
 					    if (e.which == 3) { //右键绑定
 					        _canvas.find('#leipi_active_id').val(row.id);
@@ -221,7 +221,7 @@
 					.attr("style", lab.style)
 					.attr("process_id", lab.id)
 					.addClass("process-lab")
-					.html('<span class="process-flag badge ' + badge + '"></span>&nbsp;<span id="lab_span_' + lab.id + '">' + lab.process_name + '</span>')
+					.html('<span class="process-flag badge ' + badge + '"></span>&nbsp;<span id="lab_span_' + lab.id + '" >' + lab.process_name + '</span>')
 					.mousedown(function (e) {
 					    if (e.which == 3) { //右键绑定
 					        _canvas.find('#leipi_active_id').val(lab.id);
@@ -348,9 +348,9 @@
                     var str = $('#' + params.sourceId).attr('process_id') + ',' + $('#' + params.targetId).attr('process_id');
                     if (str == $(this).val()) {
                         j++;
-                        return;
+
                     }
-                })
+                });
                 if (j > 0) {
                     defaults.fnRepeat();
                     return false;
@@ -392,12 +392,12 @@
                                 /* ,labelStyle : { cssClass:"component label" }
                                 ,label : id +" - "+ n*/
                             });
-                            return;
+
                         }
                     }
                 })
             });
-        } //_canvas_design end reset
+        }; //_canvas_design end reset
         _canvas_design();
 
         //-----外部调用----------------------
@@ -470,9 +470,9 @@
                             var str = $('#' + params.sourceId).attr('process_id') + ',' + $('#' + params.targetId).attr('process_id');
                             if (str == $(this).val()) {
                                 j++;
-                                return;
+
                             }
-                        })
+                        });
                         if (j > 0) {
                             defaults.fnRepeat();
                             return false;
@@ -557,7 +557,7 @@
                             }
                             aProcessData[processVal[0]]["process_to"].push(processVal[1]);
                         }
-                    })
+                    });
                     /*位置*/
                     _canvas.find("div.process-step").each(function (i) { //生成Json字符串，发送到服务器解析
                         if ($(this).attr('id')) {
@@ -571,7 +571,7 @@
                             aProcessData[pId]["left"] = pLeft;
 
                         }
-                    })
+                    });
                     return JSON.stringify(aProcessData);
                 } catch (e) {
                     return '';
@@ -594,7 +594,7 @@
                             aLabNoteData[pId]["left"] = pLeft;
 
                         }
-                    })
+                    });
                     return JSON.stringify(aLabNoteData);
                 } catch (e) {
                     return '';

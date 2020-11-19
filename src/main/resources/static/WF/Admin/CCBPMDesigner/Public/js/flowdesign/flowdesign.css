@@ -6,7 +6,7 @@ html,body{height:100%;}
     background: rgb(252, 252, 252);
 }
 
-.process-step{position: absolute; cursor: move; min-width: 100px; line-height: 28px}
+.process-step{position: absolute; cursor: move; min-width: 90px; line-height: 28px; white-space: nowrap}
 .process-step span{cursor: pointer;}
 .process-lab{position: absolute; cursor: move; min-width: 100px; line-height: 28px}
 .process-lab span{cursor: pointer;}

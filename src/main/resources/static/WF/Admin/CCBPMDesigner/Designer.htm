@@ -214,13 +214,7 @@
             z-index: 501;">
             <ul style="margin: 0px 0px;" style="white-space: nowrap">
                 <li id="Node_Ordinary"><i class="icon-tag"></i>&nbsp;<span class="_label">普通</span></li>
-                <!--<li id="Node_FL"><i class="icon-tags"></i>&nbsp;<span class="_label">分流</span></li>
-                <li id="Node_HL"><i class="icon-tags"></i>&nbsp;<span class="_label">合流</span></li>-->
-               <!-- <li id="Node_FHL"><i class="icon-tags"></i>&nbsp;<span class="_label">分合流</span></li>
-                <li id="Node_SubThread0"><i class="icon-tag"></i>&nbsp;<span class="_label">同表单子线程</span></li>
-                <li id="Node_SubThread1"><i class="icon-tag"></i>&nbsp;<span class="_label">异表单子线程</span></li>
-            -->
-                <li id="Node_ZLC"><i class="icon-tags"></i>&nbsp;<span class="_label">子流程</span></li>
+                <li id="Node_ZLC" style="white-space: nowrap"><i class="icon-tags"></i>&nbsp;<span class="_label" >子流程</span></li>
                 <li id="Node_KS"><i class="icon-tags"></i>&nbsp;<span class="_label">开始</span></li>
                 <li id="Node_JS"><i class="icon-tags"></i>&nbsp;<span class="_label">结束</span></li>
                 <li id="Node_JC"><i class="icon-tags"></i>&nbsp;<span class="_label">决策</span></li>
@@ -245,12 +239,8 @@
             </ul>
         </div>
         <!--end div-->
-        <div class="container mini-layout"  id="flowdesign_canvas">
-            <!--里面加一张大画布 -->
-            <!--<canvas id="canvas" width="2000" height="2000" style="background-color: #97CBFF" >-->
-            <canvas id="canvas" width="20000" height="20000">
-                <p>您的浏览器不支持画布!</p>
-            </canvas>
+        <div class="container mini-layout"  id="flowdesign_canvas" style="height: 4000px;width: 40000px">
+
             <!--div class="process-step btn" style="left: 189px; top: 340px;"><span class="process-num badge badge-inverse"><i class="icon-star icon-white"></i>3</span> 步骤3</div-->
         </div>
 
@@ -1051,7 +1041,7 @@
                 }
 
 
-                strs += "'style':'width:auto;minWidth:121px;height:41px;line-height:41px;color:#0e76a8;left:" + node.X + "px" + ";top:" + node.Y + "px;'";
+                strs += "'style':'display:inline;width:auto;minWidth:121px;height:41px;line-height:41px;color:#0e76a8;left:" + node.X + "px" + ";top:" + node.Y + "px;'";
 
                 if (i == nodes.length - 1)
                     strs += "}";
@@ -1120,60 +1110,6 @@
                 location.reload();
             }
 
-        </script>
-        <!--canvas mousewheel&alt control-->
-        <script type="text/javascript">
-            var content=document.getElementById("canvas").getContext("2d");
-            //适应不同浏览器
-            if (canvas.addEventListener) {
-
-                // IE9, Chrome, Safari, Opera
-                canvas.addEventListener("mousewheel", ScaleCanvas, false);
-                // Firefox
-                canvas.addEventListener("DOMMouseScroll", ScaleCanvas, false);
-            }else{
-                // IE 6/7/8
-                canvas.attachEvent("onmousewheel", ScaleCanvas);
-            }
-            //document.getElementById("add").onclick=  更改为按钮控制预留
-            function ScaleCanvas(e) {
-                // ALT+滑轮控制画布缩放
-                if(e.altKey) {
-                    event.wheelDelta = event.wheelDelta ? event.wheelDelta : (event.deltalY * (-40));  //获取当前鼠标的滚动情况
-                    if (event.wheelDelta > 0) {
-                        //获取画布的宽和高
-                        var width = canvas.getAttribute("width");
-                        var height = canvas.getAttribute("height");
-
-                        //获取画布的图像信息
-                        var data = content.getImageData(0, 0, width, height);
-
-                        //重新设置画布的大小
-                        width = parseInt(width) * 1.1;
-                        height = parseInt(height) * 1.1;
-                        canvas.setAttribute("width", width);
-                        canvas.setAttribute("height", height);
-                        //重新绘制到画布,完成画布的大小改变
-                        content.putImageData(data, 0, 0)
-                    } else {
-                        //减小
-                        //document.getElementById("sub").onclick=  按钮控制预留
-                        var width = canvas.getAttribute("width");
-                        var height = canvas.getAttribute("height");
-
-                        var data = content.getImageData(0, 0, width, height);
-
-
-                        width = parseInt(width) * 0.9;
-                        height = parseInt(height) * 0.9;
-                        canvas.setAttribute("width", width);
-                        canvas.setAttribute("height", height);
-
-                        content.putImageData(data, 0, 0)
-                    }
-                }
-
-            }
         </script>
 
 </body>
