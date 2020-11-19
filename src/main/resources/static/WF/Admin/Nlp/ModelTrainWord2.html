@@ -26,12 +26,6 @@
                     <input id="fileTrain1" type="file" name="file" />
                 </td>
                 <td>
-                    测试数据：
-                </td>
-                <td>
-                    <input id="fileTest1" type="file" name="file" placeholder="默认为训练数据"/>
-                </td>
-                <td>
                     <button onclick="fileUpload(1)">上传</button>
                 </td>
             </tr>
@@ -45,13 +39,13 @@
                     学习率：
                 </td>
                 <td>
-                    <input id="learningRate" type="text" placeholder="默认C(0.05)S(0.025)"/>
+                    <input id="learningRate" type="text" placeholder="默认C(0.05)S(0.025)" value="0.025"/>
                 </td>
                 <td>
                     训练线程数：
                 </td>
                 <td>
-                    <input id="numThread1" type="text" placeholder="默认为机器核数"/>
+                    <input id="numThread1" type="text" placeholder="默认为机器核数" value="1"/>
                 </td>
             </tr>
             <tr>
@@ -80,20 +74,20 @@
                     隐藏层神经元数量：
                 </td>
                 <td>
-                    <input id="layerSize" type="text" placeholder="默认200"/>
+                    <input id="layerSize" type="text" placeholder="默认200" value="200"/>
                 </td>
                 <td>
                     负采样数：
                 </td>
                 <td>
-                    <input id="negativeSamples" type="text" placeholder="默认25"/>
+                    <input id="negativeSamples" type="text" placeholder="默认25" value="25"/>
                 </td>
 
                 <td>采样窗口：</td>
-                <td><input id="dimensions" type="text" placeholder="默认5"/></td>
+                <td><input id="dimensions" type="text" placeholder="默认5" value="5"/></td>
             </tr>
             <tr>
-                <td>分层SoftMax：</td>
+                <td>是否归一化：</td>
                 <td><input type="checkbox" id="isSoftmax"></td>
             </tr>
         </table>

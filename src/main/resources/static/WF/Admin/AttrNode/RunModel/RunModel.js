@@ -107,7 +107,7 @@ function initDgJudgeRuleNode(nodeId) {
 function gotoJudgeDetail(No) {
     var enName = "BP.Judge.JudgeRule";
     var url = "../../../Comm/En.htm?EnName=" + enName + "&PKVal=" + No;
-    OpenEasyUiDialogExt(url,"决策规则", 800, 450, true);
+    OpenEasyUiDialogExt(url,"决策规则", 800, 450, false);
 }
 function queryJudge() {
     var queryParams = $('#dgJudgeRule').datagrid('options').queryParams;

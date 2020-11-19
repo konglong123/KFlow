@@ -54,7 +54,7 @@
   <Item No="1003" GroupNo="RES" Name="节点任务" For="" Url="../../Comm/SearchBS.htm?EnsName=BP.Task.NodeTasks"  />
   <Item No="1005" GroupNo="RES" Name="决策规则" For="" Url="../../Comm/SearchBS.htm?EnsName=BP.Judge.JudgeRules"  />
   <Item No="1005" GroupNo="RES" Name="节点决策方案" For="" Url="../../Comm/SearchBS.htm?EnsName=BP.Judge.NodeRules"  />
-  <Item No="1004" GroupNo="RES" Name="语义检索" For="" Url="../../Admin/Nlp/Nlp.html?"  />
+  <Item No="1004" GroupNo="RES" Name="语义模型" For="" Url="../../Admin/Nlp/Nlp.html?"  />
   <Item No="1006" GroupNo="RES" Name="服务管理" For="" Url="../../Admin/System/Subflow.html?"  />
   <!--<Group No="Org" Name="组织结构(多级管理员模式)" />
   <Item No="501" GroupNo="Org" Name="岗位类型维护" For="admin" Url="../../Comm/SearchBS.htm?EnsName=BP.WF.Port.SubInc.StationTypes"  />

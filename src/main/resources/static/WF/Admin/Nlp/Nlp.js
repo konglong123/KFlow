@@ -16,7 +16,7 @@ function initNlpModels() {
             type:0
         },
         columns:[[
-            {field:'id',title: '模型编码',align: 'center',width:10},
+            {field:'no',title: '模型编码',align: 'center',width:10},
             {field:'name',title: '模型名',align: 'center',width:10},
             {field:'modelType',title: '类型',align: 'center',width:10,
                 formatter:function (val) {
@@ -25,16 +25,16 @@ function initNlpModels() {
                     else if (val==2)
                         return "分词器";
                 }},
-            {field:'correctRate',title: '正确率',align: 'center',width:10},
+            {field:'iterations',title: '迭代次数',align: 'center',width:20},
             {field:'modelFile',title: '模型文件',align: 'center',width:20},
             {field:'trainFile',title: '训练数据',align: 'center',width:20},
-            {field:'compressRate',title: '特征压缩率',align: 'center',width:10},
             {field:'action',title: '操作',align: 'center',width:20,
                 formatter:function(val,rec){
-                    var str="<input type='button' value='启用'  onclick='loadModel(\""+rec.id+"\")'/>";
-                    str+="<input type='button' value='删除'  onclick='deleteModel(\""+rec.id+"\")'/>";
+                    var str="<input type='button' value='启用'  onclick='loadModel(\""+rec.no+"\")'/>";
+                    str+="<input type='button' value='删除'  onclick='deleteModel(\""+rec.no+"\")'/>";
+                    str+="<input type='button' value='详情'  onclick='gotoModelDetail(\""+rec.no+"\","+rec.modelType+")'/>";
                     if (rec.modelType==2)
-                        str+="<input type='button' value='训练过程'  onclick='gotoModelDetail(\""+rec.id+"\")'/>";
+                        str+="<input type='button' value='训练过程'  onclick='gotoModelHistory(\""+rec.historyNo+"\")'/>";
                     return str;
                 }},
 
@@ -50,7 +50,20 @@ function queryNlpModels() {
     queryParams.type =$("#typeQuery").val().trim();
     $("#dgNlpModels").datagrid('reload');
 }
+function gotoModelDetail(no,type) {
 
+    if (type==2){
+        var enName = "BP.Nlp.SegmentModel";
+        var url = "../../Comm/En.htm?EnName=" + enName + "&PKVal=" + no;
+        OpenEasyUiDialogExt(url,"分词模型", 1000, 450, false);
+    }else {
+        var enName = "BP.Nlp.Word2vecModel";
+        var url = "../../Comm/En.htm?EnName=" + enName + "&PKVal=" + no;
+        OpenEasyUiDialogExt(url,"词向量模型", 1000, 450, false);
+    }
+
+
+}
 function trainSegmentModel() {
     var url="/WF/WF/Admin/Nlp/ModelTrain.html?";
     window.parent.addTab("模型训练", url);
@@ -96,8 +109,8 @@ function learnOnLine() {
     var url="/WF/WF/Admin/Nlp/SegmentModelLearn.html?";
     OpenEasyUiDialogExt(url,"在线学习", 800, 450, false);
 }
-function gotoModelDetail(id) {
-    var url="/WF/WF/Comm/HighChart.html?modelId="+id;
+function gotoModelHistory(id) {
+    var url="/WF/WF/Comm/History.html?historyNo="+id;
     OpenEasyUiDialogExt(url,"准确度曲线", 800, 450, false);
 }
 
@@ -145,7 +158,7 @@ function startTrain(type) {
         data: JSON.stringify(nlpModel),
         success: function (data) {
             if (type==2)
-                showTrainProgress(data.progress);
+                getModelTrainData(data.historyNo);
             else
                 alert("训练成功！");
         },
@@ -178,24 +191,29 @@ function fileUpload(type) {
         $("#trainFileTemp"+type).val(res);
     }).fail(function(res) {
         messageShow("上传失败！");
+
     });
 
-    if ($("#fileTest"+type).val().trim()!="") {
-        var formData = new FormData();
-        formData.append('file', $('#fileTest'+type)[0].files[0]);
-        $.ajax({
-            url: '/WF/file/upload',
-            type: 'POST',
-            cache: false,
-            data: formData,
-            processData: false,
-            contentType: false
-        }).done(function(res) {
-            $("#testFileTemp"+type).val(res);
-        }).fail(function(res) {
-            messageShow("上传失败！");
-        });
+    if (type==2) {
+        if ($("#fileTest"+type).val().trim()!="") {
+            var formData = new FormData();
+            formData.append('file', $('#fileTest'+type)[0].files[0]);
+            $.ajax({
+                url: '/WF/file/upload',
+                type: 'POST',
+                cache: false,
+                data: formData,
+                processData: false,
+                contentType: false
+            }).done(function(res) {
+                $("#testFileTemp"+type).val(res);
+            }).fail(function(res) {
+                messageShow("上传失败！");
+
+            });
+        }
     }
+
     messageShow("上传成功！");
 }
 function showTrainProgress(context) {
@@ -326,17 +344,16 @@ function initSystemModels() {
     });
 }
 
-function getModelTrainData(id) {
+function getModelTrainData(no) {
     $.ajax({
-        url: "/WF/NLPModel/getModelTrainData",
+        url: "/WF/NLPModel/getHistory",
         type: 'POST',
         dataType: 'json',
         data: {
-            modelId:id
+            historyNo:no
         },
         success: function (data) {
-            var context=JSON.parse(data.progress);
-            showTrainProgress(context);
+            showTrainProgress(data.history);
         },
         error:function (data) {
             messageShow("获取系统模型失败！");

@@ -30,8 +30,8 @@ public class NlpmodelService {
 	 * (non-Javadoc)
 	 * @see WF.Nlp.service.NlpmodelService\#add(WF.Nlp.domain.Nlpmodel)
 	 */
-	public Long insertNlpmodel(Nlpmodel nlpmodel) {
-		nlpmodel.setId(FeignTool.getSerialNumber("BP.springCloud.entity.Nlpmodel"));
+	public int insertNlpmodel(Nlpmodel nlpmodel) {
+		//nlpmodel.setNo(FeignTool.getSerialNumber("BP.springCloud.entity.Nlpmodel"));
 		return nlpmodelManager.insertNlpmodel(nlpmodel);
 	}
 	/* 
@@ -52,7 +52,7 @@ public class NlpmodelService {
 	 * (non-Javadoc)
 	 * @see WF.Nlp.service.NlpmodelService\#getNlpmodel(Long id)
 	 */
-	public Nlpmodel getNlpmodel(Long id) {
+	public Nlpmodel getNlpmodel(int id) {
 		return nlpmodelManager.getNlpmodel(id);
 	}
 	/* 

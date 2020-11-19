@@ -17,30 +17,30 @@ public interface NlpmodelDao {
 	 * @param id
 	 * @return the Nlpmodel
 	 */
-	public Nlpmodel getNlpmodel(Long id);
+    Nlpmodel getNlpmodel(Integer id);
 
 	/**
 	 * 插入nlp训练模型
 	 * @param nlpmodel
-	 */	 
-	public int insertNlpmodel(Nlpmodel nlpmodel);
+	 */
+    int insertNlpmodel(Nlpmodel nlpmodel);
 	/**
 	 * 更新nlp训练模型
 	 * @param nlpmodel
 	 */
-	public int updateNlpmodel(Nlpmodel nlpmodel);
+    int updateNlpmodel(Nlpmodel nlpmodel);
 	/**
 	 * 删除nlp训练模型
 	 * @param id
 	 */
-	public int deleteNlpmodel(int id);
+    int deleteNlpmodel(Integer id);
 	/**  
 	* @Description: 按条件获取nlp训练模型列表
 	* @param
 	* @param
 	* @return 
 	*/
-	public List findNlpmodelList(Nlpmodel nlpmodel);
+    List findNlpmodelList(Nlpmodel nlpmodel);
 
-	public void insertNlpmodelBatch(@Param("list") List<Nlpmodel> list);
+	void insertNlpmodelBatch(@Param("list") List<Nlpmodel> list);
 }

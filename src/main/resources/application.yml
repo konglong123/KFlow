@@ -47,4 +47,5 @@ hanlp:
   dir: D:/Springboot/nlp
   docFile: D:/Springboot/nlp/document.txt
 
-
+multipart:
+  maxRequestSize=10Mb:

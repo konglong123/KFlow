@@ -21,11 +21,10 @@
         <ul>
             <li>在决策节点允许通过两个方式来决策下一步该如何流转。</li>
             <li>（1）决策表达式</li>
-            <li>    要求表达式的计算结果必须是一个字符串， 比如"{dayCount}>10",这个表达式就表示在流程实例运行到当前节点后，</li>
-            <li>    如果dayCount大于10， 那么将选择往流向节点运转</li>
+            <li>    要求表达式的计算结果必须是一个字符串， 比如"{dayCount}>10"</li>
+            <li>    表明如果dayCount大于10，则流通</li>
             <li>（2）实现类Bean</li>
-            <li>    通过指定一个实现了BP.Judge.JudgeCondition接口的类， 接口提供了handle方法，该方法将返回下一步的流转节点id,</li>
-            <li>    对于这个bean的id除了可以手工输入外，还可以通过右边的“选择”按钮连接远程实现点击选择</li>
+            <li>    通过指定一个实现了BP.Judge.JudgeCondition接口的类， 接口提供了handle方法</li>
         </ul>
     </fieldset>
     <fieldset>

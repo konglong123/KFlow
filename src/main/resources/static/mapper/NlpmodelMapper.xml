@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="BP.springCloud.dao.NlpmodelDao">
 	<resultMap id="BaseResultMap" type="Nlpmodel">
-		<id column="id" property="id" jdbcType="BIGINT" />
+		<id column="No" property="No" jdbcType="INTEGER" />
 		<result column="name" property="name" jdbcType="VARCHAR" />
 		<result column="model_file" property="modelFile" jdbcType="VARCHAR" />
 		<result column="test_file" property="testFile" jdbcType="VARCHAR" />
@@ -30,11 +30,12 @@
 		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
 		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
 		<result column="context" property="context" jdbcType="VARCHAR" />
+		<result column="history_no" property="historyNo" jdbcType="VARCHAR" />
 	</resultMap>
 	
 	<sql id="Base_Column_List">
 		<trim prefix="" suffix="" suffixOverrides=",">
-		id,
+		No,
 		name,
 		model_file,
 		test_file,
@@ -62,15 +63,16 @@
 		create_time,
 		update_time,
 		context,
+		history_no,
 		</trim>
 	</sql>
 	
 	<!-- 根据Id查询 -->
-	<select id="getNlpmodel" resultMap="BaseResultMap" parameterType="java.lang.Long">
+	<select id="getNlpmodel" resultMap="BaseResultMap" parameterType="INTEGER">
 		select
 		<include refid="Base_Column_List" />
 		from nlpmodel
-		where id = #{id,jdbcType=BIGINT}
+		where No = #{No,jdbcType=BIGINT}
 	</select>
 	
 	<!-- 根据条件查询列表 -->
@@ -81,8 +83,8 @@
 		<where>
 		 	1=1
 			<trim prefix="" suffix="" suffixOverrides=",">
-				<if test="id != null">
-					AND id = #{id,jdbcType=BIGINT}
+				<if test="No != null and No !=0 ">
+					AND No = #{No,jdbcType=INTEGER}
 				</if>
 				<if test="name != null">
 					AND name = #{name,jdbcType=VARCHAR}
@@ -132,7 +134,7 @@
 	<insert id="insertNlpmodel" parameterType="Nlpmodel" useGeneratedKeys="true" keyProperty="id">
 		insert into nlpmodel 
 		<trim prefix="(" suffix=")" suffixOverrides=",">
-		id,
+		No,
 		name,
 		model_file,
 		test_file,
@@ -160,10 +162,11 @@
 		create_time,
 		update_time,
 		context,
+		history_no,
 		</trim>
 		values 
 		<trim prefix="(" suffix=")" suffixOverrides=",">
-		#{id,jdbcType=BIGINT},
+		#{No,jdbcType=INTEGER},
 		#{name,jdbcType=VARCHAR},
 		#{modelFile,jdbcType=VARCHAR}, 
 		#{testFile,jdbcType=VARCHAR}, 
@@ -190,7 +193,8 @@
 		#{minFrequency,jdbcType=INTEGER}, 
 		#{createTime,jdbcType=TIMESTAMP}, 
 		#{updateTime,jdbcType=TIMESTAMP}, 
-		#{context,jdbcType=VARCHAR}, 
+		#{context,jdbcType=VARCHAR},
+		#{historyNo,jdbcType=VARCHAR},
 		</trim>
 	</insert>
 		<!-- 修改实体 -->
@@ -279,9 +283,12 @@
 	        <if test="context != null">
 					context = #{context,jdbcType=VARCHAR},
 	      		</if>
+			<if test="historyNo != null">
+					history_no = #{historyNo,jdbcType=VARCHAR},
+				</if>
 			</trim>
 		</set>
-		where id = #{id,jdbcType=BIGINT}
+		where No = #{No,jdbcType=INTEGER}
 	</update>
 	<!-- 删除实体 -->
 	<update id="deleteNlpmodel" parameterType="java.lang.Long">
@@ -289,7 +296,7 @@
 		<set>
 			is_delete=1
 		</set>
-		where id = #{id,jdbcType=BIGINT}
+		where No = #{No,jdbcType=INTEGER}
 	</update>
 
 </mapper>

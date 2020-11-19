@@ -46,7 +46,7 @@ public class NlpmodelManager {
 	 * @return the Nlpmodel
 	 */
 	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-	public Nlpmodel getNlpmodel(Long id) {
+	public Nlpmodel getNlpmodel(int id) {
 		Nlpmodel nlpmodel = nlpmodelDao.getNlpmodel(id);
 		return nlpmodel;
 	}
@@ -55,12 +55,12 @@ public class NlpmodelManager {
 	 * @param nlpmodel
 	 */
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
-	public Long insertNlpmodel(Nlpmodel nlpmodel) {
+	public int insertNlpmodel(Nlpmodel nlpmodel) {
 	     Date date = new Date();
 	     nlpmodel.setIsDelete(0);
 		 nlpmodel.setCreateTime(date);
 		nlpmodelDao.insertNlpmodel(nlpmodel);
-		Long id=nlpmodel.getId();
+		int id=nlpmodel.getNo();
 		return  id;
 	}
 	/**

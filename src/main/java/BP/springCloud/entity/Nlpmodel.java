@@ -15,7 +15,7 @@ public class Nlpmodel implements Serializable {
 	/**
 	 * 主键
 	 */
-	private Long id;
+	private int No;
 	
 	/**
 	 * 模型名
@@ -151,19 +151,21 @@ public class Nlpmodel implements Serializable {
 	 * 备注
 	 */
 	private String context;
+
+	private String historyNo;
 	
 	/**
 	 * @return the id
 	 */
-	public Long getId() {
-		return id;
+	public int getNo() {
+		return No;
 	}
 	
 	/**
-	 * @param id the id to set
+	 * @param No the id to set
 	 */
-	public void setId(Long id) {
-		this.id = id;
+	public void setNo(int No) {
+		this.No = No;
 	}
 	
 	/**
@@ -543,5 +545,12 @@ public class Nlpmodel implements Serializable {
 	public void setContext(String context) {
 		this.context = context;
 	}
-	
+
+	public String getHistoryNo() {
+		return historyNo;
+	}
+
+	public void setHistoryNo(String historyNo) {
+		this.historyNo = historyNo;
+	}
 }

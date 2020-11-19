@@ -5658,7 +5658,7 @@ public class Flow extends BP.En.EntityNoName {
 	@Override
 	protected boolean beforeUpdate() throws Exception {
 		this.setVer(BP.DA.DataType.getCurrentDataTimess());
-		Node.CheckFlow(this);
+		 Node.CheckFlow(this);
 		 Flow fl = new Flow(this.getNo());
          fl.RetrieveFromDBSources();
 		 if(fl.getIsStartInMobile() != this.getIsStartInMobile() || fl.getIsCanStart() != this.getIsCanStart()){

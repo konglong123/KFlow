@@ -138,9 +138,9 @@ public class ComposeGroupController {
 
 
 
-    @RequestMapping("getComposeHistory")
+    @RequestMapping("getHistory")
     @ResponseBody
-    public JSONObject getComposeHistory(HttpServletRequest request){
+    public JSONObject getHistory(HttpServletRequest request){
         try {
             String no = request.getParameter("no");
             ComposeGroup composeGroup = new ComposeGroup(no);

@@ -1,5 +1,7 @@
 package BP.springCloud.controller;
 
+import BP.Ga.History;
+import BP.Ga.Historys;
 import BP.Nlp.NLPTool;
 import BP.Nlp.NlpmodelService;
 import BP.NodeGroup.NodeGroup;
@@ -36,10 +38,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @program: basic-services
@@ -73,7 +72,7 @@ public class NLPModelController {
 
     @RequestMapping("insert")
     @ResponseBody
-    public Long insertNLPModel(@RequestBody Nlpmodel nlpmodel){
+    public int insertNLPModel(@RequestBody Nlpmodel nlpmodel){
         return nlpmodelService.insertNlpmodel(nlpmodel);
     }
 
@@ -91,6 +90,9 @@ public class NLPModelController {
         nlpmodel.setModelFile(userFileDir+"/"+nlpmodel.getModelFile()+".txt");
         Word2VecTrainer trainerBuilder = new Word2VecTrainer();
         WordVectorModel wordVectorModel = trainerBuilder.train(nlpmodel.getTrainFile(), nlpmodel.getModelFile());
+        nlpmodel.setCreateTime(new Date());
+        long id= FeignTool.getSerialNumber("BP.Nlp.NlpModel");
+        nlpmodel.setNo(Integer.parseInt(id+""));
         nlpmodelService.insertNlpmodel(nlpmodel);
         return null;
     }
@@ -174,7 +176,7 @@ public class NLPModelController {
             Nlpmodel con=new Nlpmodel();
             String id=request.getParameter("id");
             if (!StringUtils.isEmpty(id))
-                con.setId(Long.parseLong(id));
+                con.setNo(Integer.parseInt(id));
             
             String name=request.getParameter("name");
             if (!StringUtils.isEmpty(name))
@@ -235,7 +237,7 @@ public class NLPModelController {
             LinearModel model = segment.getModel();
             try {
                 String id = config.getString("segment");
-                Nlpmodel nlpmode = nlpmodelService.getNlpmodel(Long.parseLong(id));
+                Nlpmodel nlpmode = nlpmodelService.getNlpmodel(Integer.parseInt(id));
                 nlpmodelService.updateNlpmodel(nlpmode);
                 String modelFile = nlpmode.getModelFile();
                 model.save(modelFile);
@@ -255,8 +257,8 @@ public class NLPModelController {
     public JSONObject trainCWS(@RequestBody Nlpmodel nlpmodel){
         try {
             PerceptronTrainer trainer = new CWSTrainer();
-            nlpmodel.setTrainFile("D:/Springboot/nlp/pku98/199801-train.txt");
-            nlpmodel.setTestFile("D:/Springboot/nlp/pku98/199801-test.txt");
+           // nlpmodel.setTrainFile("D:/Springboot/nlp/pku98/199801-train.txt");
+           // nlpmodel.setTestFile("D:/Springboot/nlp/pku98/199801-test.txt");
             initSegmentNlpModel(nlpmodel);
             PerceptronTrainer.Result modelResult=trainer.train(nlpmodel.getTrainFile(), nlpmodel.getTestFile(),nlpmodel.getModelFile(),nlpmodel.getCompressRate(),nlpmodel.getIterations(),nlpmodel.getNumThreads());
             nlpmodel.setCorrectRate(modelResult.getAccuracy());
@@ -264,17 +266,27 @@ public class NLPModelController {
             //对结果进行去小数点后2位
             List<Double> points=modelResult.getProgress();
             int len=points.size()-1;
-            List<Float> pointsF=new ArrayList<>(len);//最后一个是平均准确率
+            //最后一个是平均准确率
+            String historyNo= FeignTool.getSerialNumber("BP.History")+"";
+            int start=Integer.parseInt(historyNo)*500;
             for (int i=0;i<len;i++){
-                pointsF.add(Float.parseFloat(points.get(i).toString().substring(0,5)));
+                History history=new History();
+                history.setScore(points.get(i));
+                history.setHistoryNo(historyNo);
+                int no=start+i;
+                history.setNo(no+"");
+                history.Insert();
             }
 
-            nlpmodel.setContext(JSON.toJSONString(pointsF));
+            nlpmodel.setHistoryNo(historyNo);
+            long id= FeignTool.getSerialNumber("BP.Nlp.NlpModel");
+            nlpmodel.setNo(Integer.parseInt(id+""));
+            nlpmodel.setCreateTime(new Date());
             nlpmodelService.insertNlpmodel(nlpmodel);
             JSONObject result=new JSONObject();
             result.put("accuracy",modelResult.getAccuracy());
             result.put("message",modelResult.getMessage());
-            result.put("progress",pointsF);
+            result.put("historyNo",historyNo);
             return result;
         }catch (Exception e){
             logger.error(e.getMessage());
@@ -286,7 +298,7 @@ public class NLPModelController {
     @ResponseBody
     public JSONObject loadModel(HttpServletRequest request){
         String modelId=request.getParameter("modelId");
-        Nlpmodel nlpmodel=nlpmodelService.getNlpmodel(Long.parseLong(modelId));
+        Nlpmodel nlpmodel=nlpmodelService.getNlpmodel(Integer.parseInt(modelId));
         if (nlpmodel!=null){
             String modelFile=nlpmodel.getModelFile();
             //更新系统配置
@@ -365,17 +377,6 @@ public class NLPModelController {
             logger.error(e.getMessage());
         }
         return config;
-    }
-
-    @RequestMapping("getModelTrainData")
-    @ResponseBody
-    public JSONObject getModelTrainData(HttpServletRequest request){
-        String modelId=request.getParameter("modelId");
-        Nlpmodel nlpmodel=nlpmodelService.getNlpmodel(Long.parseLong(modelId));
-        String context=nlpmodel.getContext();
-        JSONObject result=new JSONObject();
-        result.put("progress",context);
-        return result;
     }
 
     @RequestMapping("deletedModel")
@@ -539,5 +540,25 @@ public class NLPModelController {
             logger.error(e.getMessage());
         }
         return result;
+    }
+
+    @RequestMapping("getHistory")
+    @ResponseBody
+    public JSONObject getHistory(String historyNo){
+        try {
+            Historys historys=new Historys();
+            JSONObject result=new JSONObject();
+            historys.Retrieve("history_no", historyNo);
+            List<History> historyList = historys.toList();
+            List<Double> aveHistory = new ArrayList<>();
+            for (History temp : historyList) {
+                aveHistory.add(temp.getScore());
+            }
+            result.put("history",aveHistory);
+            return result;
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+        return null;
     }
 }
