@@ -130,8 +130,7 @@ public class NodeTaskService {
         //更新项目进度
         if (generFlow.getParentWorkId()<0){//表明是最顶层流程实例，则需要更新项目进度
             ProjectTree projectTree=new ProjectTree(generFlow.getWorkGroupId()+"");
-            int useTime=projectTree.GetValIntByKey(ProjectTreeAttr.ActualDuring);
-            projectTree.SetValByKey(ProjectTreeAttr.ActualDuring,useTime+currentTask.getTotalTime());
+            projectTree.SetValByKey(ProjectTreeAttr.ActualDuring,generFlow.getUseTime());
             projectTree.Update();
         }
 

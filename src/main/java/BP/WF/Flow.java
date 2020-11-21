@@ -1651,6 +1651,8 @@ public class Flow extends BP.En.EntityNoName {
             msg.append(CheckFormFields());
 			// 表单字段数据类型检查-------End-----
 
+			boolean judgeAuto=false;//是否自动识别决策节点
+
 			for (Node nd : nds.ToJavaList()) {
 				// 设置它的位置类型.
 				nd.SetValByKey(NodeAttr.NodePosType, nd.GetHisNodePosType().getValue());
@@ -1698,18 +1700,23 @@ public class Flow extends BP.En.EntityNoName {
 					if (nd.getJudgeNodeId()==0)
 						msg.append("@错误:决策节点未设置匹配决策节点");
 					else {
-						try {
-							String judgeNodeId=nd.getJudgeNodeId()+"";
-							Node node=new Node(judgeNodeId);
+						int len=msg.length();
+						String judgeNodeId=nd.getJudgeNodeId()+"";
+						Nodes nodes=new Nodes();
+						nodes.Retrieve(NodeAttr.NodeID,judgeNodeId);
+						if (nodes.size()!=1){
+							msg.append("@错误:决策匹配节点不存在！");
+						}else {
+							Node node = (Node) nodes.get(0);
 							if (!node.getFK_Flow().equals(this.getNo()))
 								msg.append("@错误:决策匹配节点不在本流程！");
-							if (node.getHisRunModel()!=RunModel.Judge)
+							if (node.getHisRunModel() != RunModel.Judge)
 								msg.append("@错误:决策匹配节点不是决策节点！");
-							if (node.getJudgeNodeId()!=nd.getNodeID())
+							if (node.getJudgeNodeId() != nd.getNodeID())
 								msg.append("@错误:决策匹配节点没有匹配该节点！");
-						}catch (Exception e){
-							msg.append("@错误:决策匹配节点不存在");
 						}
+						if (len!=msg.length())
+							judgeAuto=true;
 					}
 				}
 
@@ -1807,6 +1814,9 @@ public class Flow extends BP.En.EntityNoName {
 					msg.append("@错误:分组"+nodeGroup.getNo()+"不符合分组单输入、单输出规则！");
 				}
 			}
+			//自动设置决策节点的匹配节点
+			if (judgeAuto)
+				initJudgeNode();
 
             //流程功能性描述
 			if (StringUtils.isEmpty(this.getNote()))
@@ -1823,6 +1833,11 @@ public class Flow extends BP.En.EntityNoName {
 		}
 	}
 
+	//可以根据流出、流入方向数目，自动设置节点的类型为决策节点，且可以自动设置决策接待的匹配节点
+	private boolean initJudgeNode() throws Exception{
+
+		return true;
+	}
 	/**
 	 * 节点表单字段数据类型检查，名字相同的字段出现类型不同的处理方法：依照不同于NDxxRpt表中同名字段类型为基准
 	 * 

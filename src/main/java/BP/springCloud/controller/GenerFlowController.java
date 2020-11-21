@@ -110,9 +110,14 @@ public class GenerFlowController {
     @RequestMapping("getDataForGeners")
     @ResponseBody
     public JSONObject getDataForGeners(@RequestBody GenerFlow generFlow){
-        List<GenerFlow> list=generFlowService.findGenerFlowList(generFlow);
-        JSONObject data=generFlowService.getShowData(list);
-        return data;
+        try {
+            List<GenerFlow> list = generFlowService.findGenerFlowList(generFlow);
+            JSONObject data = generFlowService.getShowData(list);
+            return data;
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+        return null;
     }
 
     /**

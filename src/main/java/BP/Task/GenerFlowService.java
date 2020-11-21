@@ -1,5 +1,6 @@
 package BP.Task;
 
+import BP.WF.Flow;
 import BP.springCloud.entity.GenerFlow;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.log4j.Logger;
@@ -67,7 +68,7 @@ public class GenerFlowService {
 	
 
 	//组装成流程统计图数据
-	public JSONObject getShowData(List<GenerFlow> list){
+	public JSONObject getShowData(List<GenerFlow> list) throws Exception{
 		list.sort(new Comparator<GenerFlow>() {
 			@Override
 			public int compare(GenerFlow o1, GenerFlow o2) {
@@ -80,12 +81,13 @@ public class GenerFlowService {
 		});
 		JSONObject data=new JSONObject();
 		int size=list.size();
-		List<Long> xAxis=new ArrayList<>(size);
+		List<String> xAxis=new ArrayList<>(size);
 		List<Integer> barDataUse=new ArrayList<>(size);
 		List<Integer> barDataAll=new ArrayList<>(size);
 		List<Float> lineData=new ArrayList<>(size);
 		for (GenerFlow gener:list){
-			xAxis.add(gener.getWorkId());
+			Flow flow=new Flow(gener.getFlowId()+"");
+			xAxis.add(gener.getWorkId()+"_"+flow.getName());
 			barDataAll.add(gener.getTotalTime());
 			if (gener.getStatus()==2) {//已经完成
 				lineData.add(1f);
