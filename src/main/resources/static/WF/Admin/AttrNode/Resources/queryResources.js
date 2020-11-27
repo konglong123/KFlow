@@ -25,13 +25,13 @@ function initDgSearchResource(abstracts) {
             {field:'name',title: '资源名',align: 'center',width:10},
             {field:'kind',title: '类别',align: 'center',width:10,
             formatter:function (val,rec) {
-                if (val==1)
+                if (val==0)
                     return '人力';
-                else if (val==2)
+                else if (val==1)
                     return '设备';
-                else if (val==3)
+                else if (val==2)
                     return '环境';
-                else if (val==4)
+                else if (val==3)
                     return '知识';
             }},
             {field:'deptId',title: '所属单位编号',align: 'center',width:10},

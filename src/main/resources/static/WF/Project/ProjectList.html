@@ -57,6 +57,7 @@
                 <div id="projectInfo2" style="width: 100%;height:600px;"></div>
             </td>
             <td style="width: 50%" >
+                <span>流程状态:<font color=red>异常</font>--<font color=green>已完成</font>--<font color=blue>正常运行</font></span>
                 <div id="projectInfo3" style="width: 100%;height:600px;"></div>
             </td>
         </tr>
@@ -109,12 +110,14 @@
                         else if (val==4)
                             return "<font color=red>异常</font>";
                         else if (val ==5)
-                            return "<font color=green>运行中</font>";
+                            return "<font color=blue>运行中</font>";
                     }},
                 {field:'action',title: '操作',align: 'center',width:50,
                     formatter:function(val,rec){
                         var str="<input type='button' value='流程树' id='btnToDetail' onclick='gotoProjectTree(\""+rec.No+"\")'/>";
-                        str+="<input type='button' value='启动项目' id='btnShowProgress' onclick='startProject(\""+rec.No+"\")'/>";
+                        str+="<input type='button' value='流程图' id='showProgressFlow' onclick='progressFlow(\""+rec.flow_no+"\")'/>";
+                        str+="<input type='button' value='甘特图' id='howProgressGante' onclick='showProgress(\""+rec.gener_flow_no+"\")'/>";
+                        str+="<input type='button' value='启动项目' id='startProgress' onclick='startProject(\""+rec.No+"\")'/>";
                         str+="<input type='button' value='终止项目' id='btnShowProgressFlow' onclick='finishProject(\""+rec.No+"\")'/>";
                         str+="<input type='button' value='详情' id='btnShowProgressFlow' onclick='gotoProjectDetail(\""+rec.No+"\")'/>";
                         return str;
@@ -184,6 +187,10 @@
         queryParams.creator = creator;
         $("#dgProjects").datagrid('reload');
 
+    }
+    function progressFlow(flowNo) {
+        url = "/WF/WF/Admin/CCBPMDesigner/Designer.htm?FK_Flow=" + flowNo+"&UserNo=admin&SID=&Flow_V=1";
+        var self = window.open(url);
     }
 </script>
 </body>
