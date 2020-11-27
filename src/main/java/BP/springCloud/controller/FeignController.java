@@ -264,6 +264,7 @@ public class FeignController {
                 nodeTask.SetValByKey(NodeTaskAttr.IsReady,9);//设置状态为“已经计划”
                 nodeTask.Update();
 
+
                 //更新资源占用信息
                 JSONArray resources=task.getJSONArray("resList");
                 for (int index=0;index<resources.size();index++){

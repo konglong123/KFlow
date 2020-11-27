@@ -1740,53 +1740,53 @@ public class Flow extends BP.En.EntityNoName {
 
 				MapAttrs mattrs = new MapAttrs("ND" + nd.getNodeID());
 
-                msg.append("@信息:开始对节点的访问规则进行检查.");
-
-				switch (nd.getHisDeliveryWay()) {
-					case NoSelect:
-						break;
-					case ByStation:
-						if (nd.getNodeStations().size() == 0) {
-							msg.append("@错误:您设置了该节点的访问规则是按岗位，但是您没有为节点绑定岗位。");
-						}
-						break;
-					case ByDept:
-						if (nd.getNodeDepts().size() == 0) {
-							msg.append("@错误:您设置了该节点的访问规则是按部门，但是您没有为节点绑定部门。");
-						}
-						break;
-					case ByBindEmp:
-						if (nd.getNodeEmps().size() == 0) {
-							msg.append("@错误:您设置了该节点的访问规则是按人员，但是您没有为节点绑定人员。");
-						}
-						break;
-					case BySpecNodeEmpStation: // 按指定的岗位计算.
-						if (nd.getDeliveryParas().trim().length() == 0) {
-							msg.append("@错误:您设置了该节点的访问规则是按指定的岗位计算，但是您没有设置节点编号.</font>");
-						} else {
-							String[] deliveryParas = nd.getDeliveryParas().split(",");
-							for (String str : deliveryParas) {
-								if (DataType.IsNumStr(str) == false) {
-									msg.append("@错误:您设置指定岗位的节点编号格式不正确，目前设置的为{" + nd.getDeliveryParas() + "}");
-								}
-							}
-						}
-						break;
-					case BySelected: // 由上一步发送人员选择
-						if (nd.getIsStartNode()) {
-							break;
-						}
-						break;
-					case ByPreviousNodeEmp: // 由上一步发送人员选择
-						if (nd.getIsStartNode()) {
-							msg.append("@错误:节点访问规则设置错误:开始节点，不允许设置与上一节点的工作人员相同.");
-							break;
-						}
-						break;
-					default:
-						break;
-				}
-                msg.append("@对节点的访问规则进行检查完成....");
+//                msg.append("@信息:开始对节点的访问规则进行检查.");
+//
+//				switch (nd.getHisDeliveryWay()) {
+//					case NoSelect:
+//						break;
+//					case ByStation:
+//						if (nd.getNodeStations().size() == 0) {
+//							msg.append("@错误:您设置了该节点的访问规则是按岗位，但是您没有为节点绑定岗位。");
+//						}
+//						break;
+//					case ByDept:
+//						if (nd.getNodeDepts().size() == 0) {
+//							msg.append("@错误:您设置了该节点的访问规则是按部门，但是您没有为节点绑定部门。");
+//						}
+//						break;
+//					case ByBindEmp:
+//						if (nd.getNodeEmps().size() == 0) {
+//							msg.append("@错误:您设置了该节点的访问规则是按人员，但是您没有为节点绑定人员。");
+//						}
+//						break;
+//					case BySpecNodeEmpStation: // 按指定的岗位计算.
+//						if (nd.getDeliveryParas().trim().length() == 0) {
+//							msg.append("@错误:您设置了该节点的访问规则是按指定的岗位计算，但是您没有设置节点编号.</font>");
+//						} else {
+//							String[] deliveryParas = nd.getDeliveryParas().split(",");
+//							for (String str : deliveryParas) {
+//								if (DataType.IsNumStr(str) == false) {
+//									msg.append("@错误:您设置指定岗位的节点编号格式不正确，目前设置的为{" + nd.getDeliveryParas() + "}");
+//								}
+//							}
+//						}
+//						break;
+//					case BySelected: // 由上一步发送人员选择
+//						if (nd.getIsStartNode()) {
+//							break;
+//						}
+//						break;
+//					case ByPreviousNodeEmp: // 由上一步发送人员选择
+//						if (nd.getIsStartNode()) {
+//							msg.append("@错误:节点访问规则设置错误:开始节点，不允许设置与上一节点的工作人员相同.");
+//							break;
+//						}
+//						break;
+//					default:
+//						break;
+//				}
+//                msg.append("@对节点的访问规则进行检查完成....");
 				/// #region 检查节点完成条件，方向条件的定义.
 				// 设置它没有流程完成条件.
 				nd.setIsCCFlow(false);
