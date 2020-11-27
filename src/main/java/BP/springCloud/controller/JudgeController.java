@@ -6,6 +6,7 @@ import BP.Judge.NodeRuleService;
 import BP.Sys.MapAttr;
 import BP.Sys.MapAttrAttr;
 import BP.Sys.MapAttrs;
+import BP.WF.Node;
 import BP.springCloud.entity.JudgeRuleM;
 import BP.springCloud.entity.NodeRule;
 import BP.springCloud.tool.PageTool;
@@ -112,7 +113,11 @@ public class JudgeController {
                 }
 
             }
-
+            nodeRule.setRuleName(rule.getAlias());
+            Node node=new Node(nodeRule.getNodeId());
+            nodeRule.setNodeName(node.getName());
+            node=new Node(nodeRule.getNextNodeId());
+            nodeRule.setNodeName(node.getName());
             nodeRuleService.insertNodeRule(nodeRule);
         }catch (Exception e){
             logger.error(e.getMessage());

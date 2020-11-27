@@ -61,12 +61,13 @@ public class NodeTaskService {
     }
 
     public List findNodeTaskList(NodeTaskM nodeTaskM){
-        try {
-            return nodeTaskManage.findNodeTaskList(nodeTaskM);
-        }catch (Exception e){
-            logger.error(e.getMessage());
-            return null;
-        }
+
+        List list=nodeTaskManage.findNodeTaskList(nodeTaskM);
+        if (list==null)
+            return new ArrayList(0);
+        else
+            return list;
+
     }
 
     public List findNodeTaskAllList(NodeTaskM nodeTaskM){
@@ -92,9 +93,15 @@ public class NodeTaskService {
     public boolean beforeFinishNodeTask(NodeTaskM nodeTaskM){
         NodeTaskM con=new NodeTaskM();
         con.setParentNodeTask(nodeTaskM.getNo()+"");
-        List childList=nodeTaskManage.findNodeTaskList(con);
+        List<NodeTaskM> childList=nodeTaskManage.findNodeTaskList(con);
         //所有子节点任务都已经完成
-        return childList == null || childList.size() == 0;
+        if (childList==null||childList.size()==0)
+            return true;
+        for (NodeTaskM taskM:childList){
+            if (taskM.getIsReady()!=3)
+                return false;
+        }
+        return true;
     }
     
     /**

@@ -106,6 +106,8 @@ public class FlowController {
 
         } catch (Exception e) {
             logger.error(e.getMessage());
+            result.put("success", false);
+            result.put("msg",e.getMessage());
         }
 
         return result;
@@ -141,6 +143,7 @@ public class FlowController {
         generFlow.setWorkGroupId(workGroupId);
         generFlow.setParentWorkId(parentWorkId);
         generFlow.setFlowId(Integer.valueOf(flow.getNo()));
+        generFlow.setFlowName(flow.getName());
         generFlow.setStatus(3);
         generFlow.setCreator(WebUser.getNo());
         generFlow.setTotalTime(sumTime);

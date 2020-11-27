@@ -58,6 +58,8 @@ function initProjectTree(elementId,projectTreeNo) {
                                     return '{b|' + param.name + '}'
                                 }else if (param.data.flag==4) {
                                     return '{c|' + param.name + '}'
+                                }else if (param.data.flag==2) {
+                                    return '{d|' + param.name + '}'
                                 }
                                 return param.name;
                             }
@@ -73,8 +75,12 @@ function initProjectTree(elementId,projectTreeNo) {
                                 lineHeight: 12
                             },
                             c:{
-                                color: 'yellow',
+                                color: 'red',
                                 lineHeight: 12
+                            },
+                            d:{
+                                color: 'green',
+                                lineHeight: 10
                             }
                         }
                     },

@@ -36,6 +36,8 @@ public class GenerFlow implements Serializable {
 	 */
 	private int flowId;
 
+	private String flowName;
+
 	private int totalTime;
 
 	private int useTime;
@@ -134,7 +136,15 @@ public class GenerFlow implements Serializable {
 	public void setFlowId(int flowId) {
 		this.flowId = flowId;
 	}
-	
+
+	public String getFlowName() {
+		return flowName;
+	}
+
+	public void setFlowName(String flowName) {
+		this.flowName = flowName;
+	}
+
 	/**
 	 * @return the creator
 	 */

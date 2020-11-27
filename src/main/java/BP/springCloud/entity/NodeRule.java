@@ -19,16 +19,22 @@ public class NodeRule implements Serializable {
 	 * 节点id
 	 */
 	private String nodeId;
+
+	private String nodeName;
 	
 	/**
 	 * 流向节点id
 	 */
 	private String nextNodeId;
+
+	private String nextNodeName;
 	
 	/**
 	 * 规则no
 	 */
 	private String ruleNo;
+
+	private String ruleName;
 	
 	/**
 	 * @return the No
@@ -85,5 +91,28 @@ public class NodeRule implements Serializable {
 	public void setRuleNo(String ruleNo) {
 		this.ruleNo = ruleNo;
 	}
-	
+
+	public String getNodeName() {
+		return nodeName;
+	}
+
+	public void setNodeName(String nodeName) {
+		this.nodeName = nodeName;
+	}
+
+	public String getNextNodeName() {
+		return nextNodeName;
+	}
+
+	public void setNextNodeName(String nextNodeName) {
+		this.nextNodeName = nextNodeName;
+	}
+
+	public String getRuleName() {
+		return ruleName;
+	}
+
+	public void setRuleName(String ruleName) {
+		this.ruleName = ruleName;
+	}
 }

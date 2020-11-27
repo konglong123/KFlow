@@ -20,7 +20,7 @@ function initDgNodeTasks() {
             {field:'workId',title: '工作编码',align: 'center',width:10},
             {field:'flowId',title: '流程编码',align: 'center',width:10},
             {field:'nodeId',title: '节点编码',align: 'center',width:10},
-            {field:'nodeName',title: '节点名',align: 'center',width:10},
+            {field:'nodeName',title: '节点名',align: 'center',width:20},
             {field:'totalTime',title: '总工作量',align: 'center',width:10},
             {field:'useTime',title: '已完成工作量',align: 'center',width:15},
             {field:'preNodeTask',title: '前置任务',align: 'center',width:10},
@@ -53,15 +53,15 @@ function getNodeTaskStatus(val) {
         case 3:
             return '已经完成';
         case 4:
-            return "<font color=red>逾期开始</font>"
+            return "<font color=red>逾期开始</font>";
         case 5:
-            return "<font color=#cd853f>警告开始</font>"
+            return "<font color=#cd853f>警告开始</font>";
         case 6:
-            return "<font color=green>正常</font>"
+            return "<font color=green>正常</font>";
         case 7:
-            return "<font color=red>逾期结束</font>"
+            return "<font color=red>逾期结束</font>";
         case 8:
-            return "<font color=#cd853f>警告结束</font>"
+            return "<font color=#cd853f>警告结束</font>";
         case 9:
             return "计划完成"
     }
@@ -135,7 +135,7 @@ function updateNodeTaskStatus(type) {
         contentType:'application/json',
         data:JSON.stringify(type),
         success:function (data) {
-            alert("更新成功！")
+            alert("更新成功！");
             if (type==1)
                 $('#dgNodeTasks').datagrid('reload');
             else if (type==2)

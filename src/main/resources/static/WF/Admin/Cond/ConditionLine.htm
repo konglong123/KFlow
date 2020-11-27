@@ -69,7 +69,7 @@
 
                 var en = data[i];
 
-                $("#list").append("<li> <div> <a id='a" + en.NodeID + "' href='javascript:void(0)' onclick=\"javascript:OpenCond(this,'" + en.NodeID + "');\" ><span class='nav' >到达:" + en.Name + "</span></a></div></li>");
+                $("#list").append("<li> <div> <a id='a" + en.NodeID + "' href='javascript:void(0)' onclick=\"OpenCond(this,'" + en.NodeID + "');\" ><span class='nav' >到达:" + en.Name + "</span></a></div></li>");
             }
 
             //增加方向条件设置.
@@ -80,7 +80,7 @@
 
         function OpenCond(ele, toNodeID) {
 
-            var url = "List.htm?CondType=" + GetQueryString("CondType") + "&FK_Flow=" + GetQueryString("FK_Flow") + "&FK_MainNode=" + GetQueryString("FK_Node") + "&FK_Node=" + GetQueryString("FK_Node") + "&ToNodeID=" + toNodeID + "&FK_Attr=" + GetQueryString("FK_Attr");
+            var url = "../AttrNode/RunModel/Judge.html?nodeId=" + GetQueryString("FK_Node") + "&ToNodeID=" + toNodeID;
             OpenUrlInRightFrame(ele, url);
         }
 

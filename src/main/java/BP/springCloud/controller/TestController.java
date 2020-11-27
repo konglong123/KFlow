@@ -4,10 +4,7 @@ import BP.Project.ProjectTree;
 import BP.Project.ProjectTreeAttr;
 import BP.Project.ProjectTrees;
 import BP.Resource.*;
-import BP.Task.NodeTask;
-import BP.Task.NodeTaskAttr;
-import BP.Task.NodeTaskService;
-import BP.Task.NodeTasks;
+import BP.Task.*;
 import BP.WF.Flow;
 import BP.WF.Flows;
 import BP.WF.Node;
@@ -16,6 +13,7 @@ import BP.WF.Template.FlowAttr;
 import BP.WF.Template.FlowExt;
 import BP.WF.Template.FlowExts;
 import BP.WF.Template.NodeAttr;
+import BP.springCloud.entity.NodeTaskM;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -221,11 +219,24 @@ public class TestController {
     }
 
 
-    //更新节点任务时间信息
+    //更新节点任务时间信息(模拟计划过程)
     @RequestMapping("updateNodeTask")
     public void updateNodeTask(String workGroupNo){
         NodeTasks tasks=new NodeTasks();
         try {
+            ProjectTree tree=new ProjectTree(workGroupNo);
+            tree.SetValByKey(ProjectTreeAttr.Status,5);//更新为已经计划
+            tree.Update();
+            //起始节点任务状态更新为可开始
+            Flow flow=new Flow(tree.GetValStrByKey(ProjectTreeAttr.FlowNo));
+            NodeTaskM NodeTaskCon = new NodeTaskM();
+            NodeTaskCon.setWorkGroupId(tree.getNo() + "");
+            NodeTaskCon.setNodeId(flow.getStartNodeID() + "");
+            List<NodeTaskM> list = nodeTaskService.findNodeTaskList(NodeTaskCon);
+            if (list != null && list.size() == 1) {
+                NodeTaskM startTask = list.get(0);
+                nodeTaskService.startNodeTask(startTask,null);
+            }
             tasks.Retrieve(NodeTaskAttr.WorkGroupId, workGroupNo);
             List<NodeTask> taskList=tasks.toList();
             for (NodeTask task:taskList){
@@ -242,6 +253,27 @@ public class TestController {
             logger.error(e.getMessage());
         }
 
+    }
+
+    //仿真完成某个流程中所有节点任务
+    @RequestMapping("sentNodeTask")
+    public void sentNodeTask(String workNo){
+        NodeTaskM con=new NodeTaskM();
+        con.setWorkId(workNo);
+        con.setIsReady(1);
+        List<NodeTaskM> taskMList=nodeTaskService.findNodeTaskList(con);
+        Queue<NodeTaskM> queue=new ArrayDeque();
+        queue.addAll(taskMList);
+        try {
+            while (queue.size() != 0) {
+                NodeTaskM task = queue.poll();
+                nodeTaskService.finishNodeTask(task);
+                taskMList=nodeTaskService.findNodeTaskList(con);
+                queue.addAll(taskMList);
+            }
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
     }
 
     //纠正资源需求中资源数量错误（设备和人力数量为0，环境知识为1）
@@ -272,7 +304,7 @@ public class TestController {
     @RequestMapping("initFlowAbstract")
     public void initFlowAbstract(){
         try {
-            FlowExts flows = new FlowExts();
+           /* FlowExts flows = new FlowExts();
             flows.RetrieveAll();
             List<FlowExt> flowList=flows.toList();
             for (FlowExt flow:flowList){
@@ -286,6 +318,15 @@ public class TestController {
                 }
                 flow.SetValByKey(FlowAttr.Note,sb.toString());
                 flow.Update();
+            }*/
+            FlowGeners geners=new FlowGeners();
+            geners.RetrieveAll();
+            List<FlowGener> list=geners.toList();
+            for (FlowGener gener:list){
+                String flowNo=gener.GetValStrByKey(FlowGenerAttr.FlowId);
+                Flow flow=new Flow(flowNo);
+                gener.SetValByKey(FlowGenerAttr.FlowName,flow.getName());
+                gener.Update();
             }
         }catch (Exception e){
             logger.error(e.getMessage());

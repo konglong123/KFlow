@@ -65,7 +65,9 @@ function initJudgeRuleDg() {
     })
 }
 
-function initDgJudgeRuleNode(nodeId) {
+function initDgJudgeRuleNode(nodeId,toNode) {
+    if (toNode==null)
+        toNode="";
     $("#dgJudgeRuleNode").datagrid({
         singleSelect:true,
         autoRowHeight:false,
@@ -75,7 +77,8 @@ function initDgJudgeRuleNode(nodeId) {
         nowrap:false,//数据多行显示
         fitColumns:true,//表头与数据对齐
         queryParams: {
-            nodeId: nodeId
+            nodeId: nodeId,
+            nextNodeId:toNode
         },
         loader : function(param, success, error) {
             $.ajax({
@@ -92,8 +95,11 @@ function initDgJudgeRuleNode(nodeId) {
         columns:[[
             {field:'no',title: '规则配置编码',align: 'center',width:100},
             {field:'nodeId',title: '所属节点',align: 'center',width:100},
+            {field:'nodeName',title: '所属节点名',align: 'center',width:100},
             {field:'nextNodeId',title: '流向节点',align: 'center',width:100},
+            {field:'nextNodeName',title: '流向节点名',align: 'center',width:100},
             {field:'ruleNo',title: '规则编码',align: 'center',width:100},
+            {field:'ruleName',title: '规则名',align: 'center',width:100},
             {field:'action',title: '操作',align: 'center',width:100,
                 formatter:function(val,rec){
                     var str="<input type='button' value='规则详情' onclick='gotoJudgeDetail(\""+rec.ruleNo+"\")'/>";
@@ -174,7 +180,7 @@ function initDgNextNode() {
         },
         columns:[[
             {field:'NodeID',title: '节点编码',align: 'center',width:100},
-            {field:'Name',title: '节点名',align: 'center',width:100},
+            {field:'Name',title: '节点名',align: 'center',width:150},
             {field:'action',title: '操作',align: 'center',width:100,
                 formatter:function(val,rec){
                     var str="<input type='button' value='应用规则' onclick='addNodeRule(\""+rec.NodeID+"\")'/>";

@@ -60,6 +60,23 @@ public class ProjectController {
         return data;
     }
 
+    @RequestMapping("getFlowTreeData")
+    @ResponseBody
+    public JSONObject getFlowTreeData(String nodeNo,String flowNo){
+        JSONObject data=new JSONObject();
+        try{
+            if (StringUtils.isEmpty(flowNo)){
+                Node node=new Node(nodeNo);
+                flowNo=node.getFK_Flow();
+            }
+            Flow flow=new Flow(flowNo);
+            data=getTreeData(flow,"");
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+        return data;
+    }
+
     private JSONObject getTreeData(Flow flow,String generNo) throws Exception{
         List<JSONObject> children=new ArrayList<>();
         Nodes nodes=flow.getHisNodes();

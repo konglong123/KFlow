@@ -87,11 +87,11 @@
             columns:[[
                 {field: 'ck',title: '选则', checkbox : true},
                 {field:'No',title: '项目编码',align: 'center',width:10},
-                {field:'project_name',title: '项目名',align: 'center',width:10,
+                {field:'project_name',title: '项目名',align: 'center',width:20,
                     formatter:function (val) { return "<span title='" + val + "'>" + val + "</span>" }},
                 {field:'gener_flow_no',title: '工作编码',align: 'center',width:10},
                 {field:'flow_no',title: '流程编码',align: 'center',width:10},
-                {field:'flow_name',title: '流程名',align: 'center',width:10,
+                {field:'flow_name',title: '流程名',align: 'center',width:20,
                     formatter:function (val) { return "<span title='" + val + "'>" + val + "</span>" }},
                 {field:'actual_during',title: '已完成工作量(/h)',align: 'center',width:10},
                 {field:'plan_during',title: '总工作量(/h)',align: 'center',width:10},
@@ -115,7 +115,7 @@
                     formatter:function(val,rec){
                         var str="<input type='button' value='流程树' id='btnToDetail' onclick='gotoProjectTree(\""+rec.No+"\")'/>";
                         str+="<input type='button' value='启动项目' id='btnShowProgress' onclick='startProject(\""+rec.No+"\")'/>";
-                        str+="<input type='button' value='挂起项目' id='btnShowProgressFlow' onclick='finishProject(\""+rec.No+"\")'/>";
+                        str+="<input type='button' value='终止项目' id='btnShowProgressFlow' onclick='finishProject(\""+rec.No+"\")'/>";
                         str+="<input type='button' value='详情' id='btnShowProgressFlow' onclick='gotoProjectDetail(\""+rec.No+"\")'/>";
                         return str;
                     }},
@@ -134,7 +134,10 @@
                 projectNo:no
             },
             success: function (dataTemp) {
-                alert("启动成功！");
+                if (dataTemp.success)
+                    alert("启动成功！");
+                else
+                    alert("启动失败！"+dataTemp.msg);
             },
             error:function (data) {
                 alert("启动失败！");
@@ -143,7 +146,7 @@
     }
     function gotoProjectTree(no) {
         var url='ProjectDetail.html?projectTreeNo='+no;
-        OpenEasyUiDialogExt(url,"流程结构",1500,800,false)
+        OpenEasyUiDialogExt(url,"流程结构",1500,800,false);
     }
     function gotoProjectDetail(no) {
         var enName = "BP.Project.ProjectTree";

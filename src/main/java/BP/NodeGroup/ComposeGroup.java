@@ -205,4 +205,5 @@ public class ComposeGroup extends EntityNo {
     public void setCreateTime(Date createTime) {
         this.SetValByKey(ComposeGroupAttr.createTime,createTime);
     }
+
 }

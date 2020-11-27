@@ -19,8 +19,8 @@ $(function(){
                     return "<input type='button' value='查看' onclick='gotoWorkflow(\""+rec.mysqlId+"\",\""+rec.name+"\")'/>";
                 }},
             {field:'mysqlId',title: '流程编号',align: 'center',width:10},
-            {field:'name',title: '流程名',align: 'center',width:10},
-            {field:'abstracts',title: '流程文本摘要',align: 'center',width:10,
+            {field:'name',title: '流程名',align: 'center',width:20},
+            {field:'abstracts',title: '流程文本摘要',align: 'center',width:30,
                 formatter:function (val) { return "<span title='" + val + "'>" + val + "</span>" }},
             {field:'score',title: '相似度分值',align: 'center',width:10},
             {field:'sensitiveHash',title: '局部敏感哈希',align: 'center',width:10},

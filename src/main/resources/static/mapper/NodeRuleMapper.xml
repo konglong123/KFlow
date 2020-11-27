@@ -6,6 +6,9 @@
 		<result column="node_id" property="nodeId" jdbcType="VARCHAR" />
 		<result column="next_node_id" property="nextNodeId" jdbcType="VARCHAR" />
 		<result column="rule_no" property="ruleNo" jdbcType="VARCHAR" />
+		<result column="node_name" property="nodeName" jdbcType="VARCHAR" />
+		<result column="next_node_name" property="nextNodeName" jdbcType="VARCHAR" />
+		<result column="rule_name" property="ruleName" jdbcType="VARCHAR" />
 	</resultMap>
 	
 	<sql id="Base_Column_List">
@@ -14,6 +17,9 @@
 		node_id,
 		next_node_id,
 		rule_no,
+		node_name,
+		next_node_name,
+		rule_name,
 		</trim>
 	</sql>
 	
@@ -56,13 +62,19 @@
 		node_id,
 		next_node_id,
 		rule_no,
+		node_name,
+		next_node_name,
+		rule_name,
 		</trim>
 		values 
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 		#{No,jdbcType=INTEGER}, 
 		#{nodeId,jdbcType=VARCHAR}, 
 		#{nextNodeId,jdbcType=VARCHAR}, 
-		#{ruleNo,jdbcType=VARCHAR}, 
+		#{ruleNo,jdbcType=VARCHAR},
+		#{nodeName,jdbcType=VARCHAR},
+		#{nextNodeName,jdbcType=VARCHAR},
+		#{ruleName,jdbcType=VARCHAR},
 		</trim>
 	</insert>
 		<!-- 修改实体 -->
@@ -82,6 +94,15 @@
 	        <if test="ruleNo != null">
 					rule_no = #{ruleNo,jdbcType=VARCHAR},
 	      		</if>
+			<if test="nodeName != null">
+					node_name = #{nodeName,jdbcType=VARCHAR},
+				</if>
+			<if test="nextNodeName != null">
+					next_node_name = #{nextNodeName,jdbcType=VARCHAR},
+				</if>
+			<if test="ruleName != null">
+					rule_name = #{ruleName,jdbcType=VARCHAR},
+				</if>
 			</trim>
 		</set>
 		where No = #{No,jdbcType=INTEGER}

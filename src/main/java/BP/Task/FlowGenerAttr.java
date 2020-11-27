@@ -11,8 +11,9 @@ public class FlowGenerAttr {
     public static final String WorkId = "work_id";
     public static final String ParentWorkId = "parent_work_id";
     public static final String WorkGroupId = "work_group_id";
-    public static final String Status = "status";
+    public static final String Status = "gener_status";
     public static final String FlowId = "flow_id";
+    public static final String FlowName = "flow_name";
     public static final String TotalTime = "total_time";
     public static final String UseTime = "use_time";
     public static final String ActivatedNodes = "activated_nodes";

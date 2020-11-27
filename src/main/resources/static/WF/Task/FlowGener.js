@@ -21,6 +21,7 @@ function initDgGenerFlows() {
             {field:'no',title: '实例编码',align: 'center',width:10},
             {field:'workId',title: '工作编码',align: 'center',width:10},
             {field:'flowId',title: '流程编码',align: 'center',width:10},
+            {field:'flowName',title: '流程名',align: 'center',width:20},
             {field:'workGroupId',title: '工作组',align: 'center',width:10},
             {field:'parentWorkId',title: '父工作',align: 'center',width:10},
             {field:'useTime',title: '已完成工作量',align: 'center',width:10},
@@ -36,6 +37,8 @@ function initDgGenerFlows() {
                         return "准备";
                     else if (val==2)
                         return "完成";
+                    else if (val==4)
+                        return "<font color=red>异常</font>";
                 }},
             {field:'action',title: '操作',align: 'center',width:50,
                 formatter:function(val,rec){
@@ -361,7 +364,7 @@ function initGenerFlow(con) {
     myChart.on("click",function (param) {
         //饼图联动
         if (param.seriesType=='bar'){
-            var generNo=param.name;
+            var generNo=param.name.split("_")[0];
             var data =getGenerInfoForOne(generNo);
             option.series[0].data=data.pieData;
             myChart.setOption(option);

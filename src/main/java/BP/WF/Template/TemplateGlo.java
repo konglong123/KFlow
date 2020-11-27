@@ -9,6 +9,7 @@ import BP.Sys.*;
 import BP.WF.CCBPM_DType;
 import BP.WF.Flow;
 import BP.WF.Node;
+import BP.springCloud.tool.FeignTool;
 
 /** 
  
@@ -73,8 +74,10 @@ public class TemplateGlo
 	public static Node CopyNode(String flowNo,Node node) throws Exception{
 		Node nodeNew=new Node();
 		//复制基本属性
+		String nodeId=FeignTool.getSerialNumber("BP.WF.Node")+"";
 		nodeNew.setRow(node.getRow());
 		nodeNew.setFK_Flow(flowNo);
+		nodeNew.setNodeID(Integer.valueOf(nodeId));
 		nodeNew.Insert();
 
 		String mapDataKeyOld="ND"+node.getNodeID();

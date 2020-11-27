@@ -21,8 +21,7 @@
         <ul>
             <li>在决策节点允许通过两个方式来决策下一步该如何流转。</li>
             <li>（1）决策表达式</li>
-            <li>    要求表达式的计算结果必须是一个字符串， 比如"{dayCount}>10"</li>
-            <li>    表明如果dayCount大于10，则流通</li>
+            <li>    比如"{dayCount}>10"，表明如果dayCount大于10，则流通</li>
             <li>（2）实现类Bean</li>
             <li>    通过指定一个实现了BP.Judge.JudgeCondition接口的类， 接口提供了handle方法</li>
         </ul>
@@ -52,7 +51,8 @@
     $(function(){
         initJudgeRuleDg();
         var nodeId=GetQueryString("nodeId");
-        initDgJudgeRuleNode(nodeId);
+        var toNodeId=GetQueryString("ToNodeID");
+        initDgJudgeRuleNode(nodeId,toNodeId);
     });
 </script>
 </body>

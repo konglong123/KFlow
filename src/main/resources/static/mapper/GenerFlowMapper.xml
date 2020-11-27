@@ -6,8 +6,9 @@
 		<result column="work_id" property="workId" jdbcType="BIGINT" />
 		<result column="work_group_id" property="workGroupId" jdbcType="BIGINT" />
 		<result column="parent_work_id" property="parentWorkId" jdbcType="BIGINT" />
-		<result column="status" property="status" jdbcType="TINYINT" />
+		<result column="gener_status" property="status" jdbcType="TINYINT" />
 		<result column="flow_id" property="flowId" jdbcType="INTEGER" />
+		<result column="flow_name" property="flowName" jdbcType="VARCHAR" />
 		<result column="use_time" property="useTime" jdbcType="INTEGER" />
 		<result column="total_time" property="totalTime" jdbcType="INTEGER" />
 		<result column="activated_nodes" property="activatedNodes" jdbcType="VARCHAR" />
@@ -23,8 +24,9 @@
 		work_id,
 		work_group_id,
 		parent_work_id,
-		status,
+		gener_status,
 		flow_id,
+		flow_name,
 		use_time,
 		total_time,
 		activated_nodes,
@@ -64,7 +66,7 @@
 					AND parent_work_id = #{parentWorkId,jdbcType=BIGINT}
 				</if>
 				<if test="status != 0">
-					AND status = #{status,jdbcType=TINYINT}
+					AND gener_status = #{status,jdbcType=TINYINT}
 				</if>
 				<if test="flowId != 0">
 					AND flow_id = #{flowId,jdbcType=INTEGER}
@@ -101,8 +103,9 @@
 		work_id,
 		work_group_id,
 		parent_work_id,
-		status,
+		gener_status,
 		flow_id,
+		flow_name,
 		use_time,
 		total_time,
 		activated_nodes,
@@ -119,6 +122,7 @@
 		#{parentWorkId,jdbcType=BIGINT},
 		#{status,jdbcType=TINYINT},
 		#{flowId,jdbcType=INTEGER},
+		#{flowName,jdbcType=VARCHAR},
 		#{useTime,jdbcType=INTEGER},
 		#{totalTime,jdbcType=INTEGER},
 		#{activatedNodes,jdbcType=VARCHAR},
@@ -143,11 +147,14 @@
 				parent_work_id = #{parentWorkId,jdbcType=BIGINT},
 			</if>
 			<if test="status != 0">
-					status = #{status,jdbcType=TINYINT},
+				gener_status = #{status,jdbcType=TINYINT},
 	      		</if>
 			<if test="flowId != 0">
 					flow_id = #{flowId,jdbcType=INTEGER},
 	      		</if>
+			<if test="flowName != null">
+					flow_name = #{flowName,jdbcType=VARCHAR},
+				</if>
 			<if test="useTime != 0">
 					use_time = #{useTime,jdbcType=INTEGER},
 				</if>
