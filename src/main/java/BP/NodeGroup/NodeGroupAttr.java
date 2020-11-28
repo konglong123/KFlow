@@ -21,4 +21,5 @@ public class NodeGroupAttr {
     public static final String sumTime = "sumTime";
     public static final String  inNodeNo= "inNodeNo";
     public static final String outNodeNo = "outNodeNo";
+    public static final String score = "score";
 }

@@ -63,6 +63,7 @@ public class NodeGroup extends EntityNo{
         map.AddDDLSysEnum(NodeGroupAttr.type, 2, "类型", true, true, NodeGroupAttr.type,
                 "@1=可调换分组@2=模块分组");
         map.AddTBString(NodeGroupAttr.detail, null, "详情", true, false, 0, 100, 100);
+        map.AddTBDecimal(NodeGroupAttr.score, 0d, "相似度值", true, false);
         map.AddTBStringDoc(NodeGroupAttr.abstracts, null, "概要", true, false);
 
         map.AddTBDateTime(NodeGroupAttr.create_time,"2000-01-01 00:00:00","创建时间",true,true);

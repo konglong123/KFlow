@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="../../Scripts/easyUI/themes/default/easyui.css" rel="stylesheet" type="text/css" />
+    <script src="../../Scripts/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="../../Scripts/easyUI/jquery.easyui.min.js" type="text/javascript"></script>
+    <script src="../../Scripts/QueryString.js" type="text/javascript"></script>
+    <script src="../../Scripts/EasyUIUtility.js" type="text/javascript"></script>
+    <script src="js/NodeGroup.js" type="text/javascript"></script>
+</head>
+<body>
+<div>
+    <fieldset>
+        <table cellpadding="5">
+            <tr>
+                <td>分组编号：</td>
+                <td><input id="groupNo"  class="easyui-textbox" type="text"></td>
+                <td>流程编号：</td>
+                <td><input class="easyui-textbox" type="text" id="flowNo" ></td>
+                <td>入口节点编号：</td>
+                <td><input class="easyui-textbox" type="text" id="inNodeNo" ></td>
+                <td>出口节点编码：</td>
+                <td><input class="easyui-textbox" type="text" id="outNodeNo" ></td>
+                <td>分组类型：</td>
+                <td><select class="easyui-textbox" type="text" id="groupType" >
+                    <option value="2">模块分组</option>
+                    <option value="1">顺序无关分组</option>
+                </select></td>
+            </tr>
+            <tr>
+                <div style="width:95%;border-top: 0px solid #C0C0C0;">
+                    <input type="button" value="查询节点分组" onclick="queryNodeGroup()" style="float:right"/>
+                </div>
+            </tr>
+        </table>
+    </fieldset>
+</div>
+<div>
+    <table style="width: 100%;">
+        <tr style="width: 100%;">
+            <td valign="top" style="width: 50%;">
+                <div>
+                    <table id="dgNodeGroups" title="节点分组列表">
+                    </table>
+                </div>
+            </td>
+            <td valign="top" style="width: 100%;">
+                <div id="nodeGroupItems">
+                    <table id="dgNearGroups" title="相似模块">
+                    </table>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+<script type="text/javascript">
+    $(function(){
+        initQueryNodeGroups();
+    });
+    function queryNodeGroup() {
+        var queryParams = $('#dgNodeGroups').datagrid('options').queryParams;
+        queryParams.flowNo = $("#flowNo").val().trim();
+        queryParams.type =$("#groupType").val().trim();
+        $("#dgNodeGroups").datagrid('reload');
+    }
+    function initQueryNodeGroups() {
+        $('#dgNodeGroups').datagrid({
+            singleSelect:true,
+            autoRowHeight:false,
+            pagination:true,
+            pageSize: 10,
+            pageList:[10,25,50,100],
+            nowrap:false,//数据多行显示
+            fitColumns:true,//表头与数据对齐
+            url:"/WF/composeGroup/findNodeGroup",
+            queryParams: {
+                flowNo: "",
+                groupNo:"",
+                inNodeNo:"",
+                outNodeNO:"",
+                type:2,
+            },
+            columns:[[
+                {field:'No',title: '分组编码',align: 'center',width:10},
+                {field:'flow_no',title: '流程编码',align: 'center',width:10},
+                {field:'flow_name',title: '流程名',align: 'center',width:20},
+                {field:'type',title: '分类',align: 'center',width:10,
+                    formatter:function (val,rec) {
+                        var str="";
+                        if (val==1)
+                            str="可调换分组";
+                        else if (val==2)
+                            str="模块分组";
+                        else
+                            str="错误模块";
+                        return str;
+                    }},
+                {field:'inNodeNo',title: '入口节点编码',align: 'center',width:10},
+                {field:'outNodeNo',title: '出口节点编码',align: 'center',width:10},
+                {field:'nodeNum',title: '节点数',align: 'center',width:10},
+                {field:'sumTime',title: '总工时(/h)',align: 'center',width:10},
+                {field:'abstracts',title: '摘要',align: 'center',width:20},
+                {field:'operation',title: '操作',align: 'center',width:30,
+                    formatter:function(val,rec){
+                        var str="<input type='button' value='可视化查看' onclick='gotoNodeGroupView(\""+rec.No+"\",\""+rec.flow_no+"\")'/>";
+                        str+="<input type='button' value='相似模块' onclick='getNearGroup(\""+rec.No+"\")'/>";
+                        str+="<input type='button' value='详情' onclick='gotoNodeGroupDetail(\""+rec.No+"\")'/>";
+                        return str;}},
+            ]]
+        });
+    }
+    function getNearGroup(groupNo) {
+        $('#dgNearGroups').datagrid({
+            singleSelect:true,
+            autoRowHeight:false,
+            pagination:true,
+            pageSize: 10,
+            pageList:[10,25,50,100],
+            nowrap:false,//数据多行显示
+            fitColumns:true,//表头与数据对齐
+            url:"/WF/composeGroup/recommendNodeGroup",
+            queryParams: {
+                groupNo:groupNo,
+            },
+            columns:[[
+                {field:'No',title: '分组编码',align: 'center',width:10},
+                {field:'flow_no',title: '流程编码',align: 'center',width:10},
+                {field:'flow_name',title: '流程名',align: 'center',width:20},
+                {field:'type',title: '分类',align: 'center',width:10,
+                    formatter:function (val,rec) {
+                        var str="";
+                        if (val==1)
+                            str="可调换分组";
+                        else if (val==2)
+                            str="模块分组";
+                        else
+                            str="错误模块";
+                        return str;
+                    }},
+                {field:'inNodeNo',title: '入口节点编码',align: 'center',width:10},
+                {field:'outNodeNo',title: '出口节点编码',align: 'center',width:10},
+                {field:'nodeNum',title: '节点数',align: 'center',width:10},
+                {field:'sumTime',title: '总工时(/h)',align: 'center',width:10},
+                {field:'score',title: '相似度值',align: 'center',width:10},
+                {field:'operation',title: '操作',align: 'center',width:30,
+                    formatter:function(val,rec){
+                        var str="<input type='button' value='可视化查看' onclick='gotoNodeGroupView(\""+rec.No+"\",\""+rec.flow_no+"\")'/>";
+                        str+="<input type='button' value='详情' onclick='gotoNodeGroupDetail(\""+rec.No+"\")'/>";
+                        return str;}},
+            ]]
+        });
+    }
+</script>
+</body>
+</html>

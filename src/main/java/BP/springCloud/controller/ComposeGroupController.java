@@ -2,6 +2,7 @@ package BP.springCloud.controller;
 
 import BP.Ga.*;
 import BP.NodeGroup.*;
+import BP.Tools.BeanTool;
 import BP.Tools.Json;
 import BP.WF.Flow;
 import BP.WF.Node;
@@ -136,7 +137,43 @@ public class ComposeGroupController {
         return null;
     }
 
-
+    @RequestMapping("findNodeGroup")
+    @ResponseBody
+    public JSONObject findNodeGroup(HttpServletRequest request,HttpServletResponse response) {
+        try {
+            String flowNo = request.getParameter("flowNo");
+            String type=request.getParameter("type");
+            NodeGroups groups = new NodeGroups();
+            if(StringUtils.isEmpty(flowNo))
+                groups.Retrieve(NodeGroupAttr.type, type);
+            else
+                groups.Retrieve(NodeGroupAttr.flow_no,flowNo,NodeGroupAttr.type,type);
+            PageTool.TransToResult(groups, request, response);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+        return null;
+    }
+    @RequestMapping("recommendNodeGroup")
+    @ResponseBody
+    public JSONObject recommendNodeGroup(HttpServletRequest request,HttpServletResponse response) {
+        try {
+            String groupNo = request.getParameter("groupNo");
+            NodeGroup forGroup=new NodeGroup(groupNo);
+            NLPModelController nlpModel= BeanTool.getBean(NLPModelController.class);
+            List<JSONObject> nodeGroups=nlpModel.queryNodeGroupByWord2(forGroup.GetValStrByKey(NodeGroupAttr.abstracts));
+            NodeGroups groups = new NodeGroups();
+            for(JSONObject nodeGroup:nodeGroups) {
+                NodeGroup group = (NodeGroup) nodeGroup.get("group");
+                group.SetValByKey(NodeGroupAttr.score, nodeGroup.getFloat("score"));
+                groups.add(group);
+            }
+            PageTool.TransToResult(groups, request, response);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+        return null;
+    }
 
     @RequestMapping("getHistory")
     @ResponseBody
