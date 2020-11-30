@@ -22,7 +22,7 @@ function initDgNodeGroups(flowNo) {
                 formatter:function (val,rec) {
                     var str="";
                     if (val==1)
-                        str="可调换分组";
+                        str="顺序无关分组";
                     else if (val==2)
                         str="模块分组";
                     else

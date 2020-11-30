@@ -1689,11 +1689,13 @@ public class Flow extends BP.En.EntityNoName {
 					nodeReturns.Retrieve(NodeReturnAttr.FK_Node, nd.getNodeID());
 					if (nodeReturns.size() == 0) {
 						msg.append("@错误:流程设计错误，您设置该节点可以退回指定的节点，但是指定的节点集合为空，请在节点属性设置它的指定节点。");
+					}else {
+						NodeReturn nodeReturn=(NodeReturn)nodeReturns.get(0);
+						List<Integer> needReturnNodes=Dev2Interface.getNeedReturnNodes(nodeReturn.getFK_Node(),nodeReturn.getReturnTo());
+						if (needReturnNodes==null)//检查不通过
+							msg.append("@错误:可回退节点设置不符合规则！");
 					}
-					NodeReturn nodeReturn=(NodeReturn)nodeReturns.get(0);
-					List<Integer> needReturnNodes=Dev2Interface.getNeedReturnNodes(nodeReturn.getFK_Node(),nodeReturn.getReturnTo());
-					if (needReturnNodes==null)//检查不通过
-						msg.append("@错误:可回退节点设置不符合规则！");
+
 				}
 
 				if (nd.getHisRunModel()==RunModel.Judge) {
@@ -1822,7 +1824,7 @@ public class Flow extends BP.En.EntityNoName {
 			if (StringUtils.isEmpty(this.getNote()))
 				msg.append("@警告:缺乏流程的功能性描述，将无法被检索！");
             msg.append("@信息:开始检查节点流程报表.");
-			this.DoCheck_CheckRpt(this.getHisNodes());
+			//this.DoCheck_CheckRpt(this.getHisNodes());
 
             msg.append("@流程报表检查完成...");
 
