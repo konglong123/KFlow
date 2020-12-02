@@ -325,7 +325,7 @@ function initGenerFlow(con) {
                 type: 'value',
                 name: '完成进度',
                 axisLabel: {
-                    formatter: '{value}'
+                    formatter: '{value}%'
                 }
             }
         ],
@@ -504,7 +504,7 @@ function initProjectProgress(status) {
                         type: 'value',
                         name: '完成进度',
                         axisLabel: {
-                            formatter: '{value}'
+                            formatter: '{value}%'
                         }
                     }
                 ],
@@ -532,7 +532,7 @@ function initProjectProgress(status) {
                 //饼图联动
                 if (param.seriesType=='bar'){
                     var treeNo=param.name.split("_")[0];
-                    initProjectTree("projectInfo3",treeNo);
+                   // initProjectTree("projectInfo3",treeNo);
                     initProgressGant(treeNo);
                 }
             });

@@ -243,7 +243,7 @@ public class FeignController {
             LinkedMultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
             headers.put("Content-Type", Collections.singletonList("application/json;charset=UTF-8"));
 
-            String url="http://192.168.1.101:8082/pms/projOpt/testOptResult";
+            String url="http://192.168.1.102:8082/pms/projOpt/testOptResult";
             HttpEntity<Map> requestEntity = new HttpEntity<>(data, headers);
             ResponseEntity<JSONObject> resTemp = FeignTool.template.postForEntity(url, requestEntity, JSONObject.class);
             JSONObject result=resTemp.getBody();

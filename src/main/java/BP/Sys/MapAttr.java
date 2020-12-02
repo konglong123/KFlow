@@ -228,11 +228,7 @@ public class MapAttr extends EntityMyPK {
 	 */
 	public final boolean getIsPK() {
 
-		if (this.getKeyOfEn().equals("OID") || this.getKeyOfEn().equals("No") || this.getKeyOfEn().equals("MyPK")) {
-			return true;
-		} else {
-			return false;
-		}
+        return this.getKeyOfEn().equals("OID") || this.getKeyOfEn().equals("No") || this.getKeyOfEn().equals("MyPK");
 	}
 
 	/**
@@ -583,11 +579,7 @@ public class MapAttr extends EntityMyPK {
 	 * 
 	 */
 	public final boolean getIsNull() {
-		if (this.getMinLen() == 0) {
-			return false;
-		} else {
-			return true;
-		}
+        return this.getMinLen() != 0;
 	}
 
 	/**
@@ -612,13 +604,10 @@ public class MapAttr extends EntityMyPK {
 	 * 
 	 */
 	public final boolean getIsBigDoc() {
-		if (this.getUIRows() > 1 && this.getMyDataType() == DataType.AppString) {
-			return true;
-		}
+        return this.getUIRows() > 1 && this.getMyDataType() == DataType.AppString;
 		// if (this.ColSpan == 4 && this.MyDataType == DataType.AppString)
 		// return true;
-		return false;
-	}
+    }
 
 	/**
 	 * textbox控件的行数.
@@ -1333,6 +1322,11 @@ public class MapAttr extends EntityMyPK {
 		sqls += "@DELETE FROM Sys_FrmSln WHERE KeyOfEn='" + this.getKeyOfEn() + "' AND FK_MapData='"
 				+ this.getFK_MapData() + "'";
 
+		//附件类型，需要增加frmAttachment数据
+		if (this.getUIContralType()== UIContralType.AthShow){
+			FrmAttachment attachment=new FrmAttachment(this.GetValStrByKey(MapAttrAttr.MyPK));
+			attachment.Delete();
+		}
 		BP.DA.DBAccess.RunSQLs(sqls);
 		return super.beforeDelete();
 	}

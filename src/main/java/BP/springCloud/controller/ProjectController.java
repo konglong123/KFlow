@@ -190,10 +190,10 @@ public class ProjectController {
                     xAxis.add(project.getNo()+"_"+project.GetValStrByKey(ProjectTreeAttr.ProjectName));
                     barDataAll.add(generFlow.getTotalTime());
                     if (generFlow.getStatus()==2) {//已经完成
-                        lineData.add(1f);
+                        lineData.add(100f);
                         barDataUse.add(generFlow.getTotalTime());
                     }else {
-                        lineData.add((generFlow.getUseTime() + 0.0f) / generFlow.getTotalTime());
+                        lineData.add(((generFlow.getUseTime() + 0.0f))*100 / generFlow.getTotalTime());
                         barDataUse.add(generFlow.getUseTime());
                     }
                 }

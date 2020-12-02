@@ -50,16 +50,16 @@
 <div id="projectInfoShow" style="width: 100%;height:600px;">
     <table style="width: 100%;table-layout: fixed">
         <tr style="width: 100%">
-            <td style="width: 20%">
+            <td style="width: 40%">
                 <div id="projectInfo1" style="width: 100%;height:600px;"></div>
             </td>
-            <td style="width: 30%" >
+            <td style="width: 60%" >
                 <div id="projectInfo2" style="width: 100%;height:600px;"></div>
             </td>
-            <td style="width: 50%" >
-                <span>流程状态:<font color=red>异常</font>--<font color=green>已完成</font>--<font color=blue>正常运行</font></span>
+            <!--<td style="width: 50%" >
+                <span>流程状态:<font color=red>异常</font>&#45;&#45;<font color=green>已完成</font>&#45;&#45;<font color=blue>正常运行</font></span>
                 <div id="projectInfo3" style="width: 100%;height:600px;"></div>
-            </td>
+            </td>-->
         </tr>
     </table>
 </div>
@@ -149,7 +149,7 @@
     }
     function gotoProjectTree(no) {
         var url='ProjectDetail.html?projectTreeNo='+no;
-        OpenEasyUiDialogExt(url,"流程结构",1500,800,false);
+        OpenEasyUiDialogExt(url,"流程结构",800,600,false);
     }
     function gotoProjectDetail(no) {
         var enName = "BP.Project.ProjectTree";

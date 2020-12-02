@@ -90,10 +90,10 @@ public class GenerFlowService {
 			xAxis.add(gener.getWorkId()+"_"+flow.getName());
 			barDataAll.add(gener.getTotalTime());
 			if (gener.getStatus()==2) {//已经完成
-				lineData.add(1f);
+				lineData.add(100f);
 				barDataUse.add(gener.getTotalTime());
 			}else {
-				lineData.add((gener.getUseTime() + 0.0f) / gener.getTotalTime());
+				lineData.add(((gener.getUseTime() + 0.0f) *100)/ gener.getTotalTime());
 				barDataUse.add(gener.getUseTime());
 			}
 		}
