@@ -340,10 +340,7 @@ public class NodeTaskController {
     @ResponseBody
     public boolean checkNodeTaskIsFinish(@RequestParam Long no){
         NodeTaskM nodeTaskM=nodeTaskService.getNodeTaskById(no);
-        if (nodeTaskM.getIsReady()==3){
-            return false;
-        }
-        return true;
+        return nodeTaskM.getIsReady() != 3;
     }
 
     /**
@@ -378,7 +375,7 @@ public class NodeTaskController {
             Emp emp=new Emp(executor);
             if (!org.springframework.util.StringUtils.isEmpty(emp.getMobile())) {
                 //FeignTool.sendPhoneMessage(emp.getMobile(), message);
-                //FeignTool.sendPhoneMessage(emp.getMobile(), task.getNo());
+                FeignTool.sendPhoneMessage(emp.getMobile(), task.getNo());
                 result="短信已经通知！";
             }else
                 result="人员信息中无手机号！";
