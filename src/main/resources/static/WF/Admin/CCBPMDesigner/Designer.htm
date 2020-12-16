@@ -588,11 +588,6 @@
 
                         var activeId = _canvas.getActiveId(); //右键当前的ID.
                         var str = activeId.substring(activeId.length - 2);
-                        if (str == "01") {
-                            /*如果是开始节点. */
-                            alert('开始节点不允许删除.');
-                            return;
-                        }
 
                         //节点.
                         var hander = new HttpHandler("BP.WF.HttpHandler.WF_Admin_CCBPMDesigner2018");

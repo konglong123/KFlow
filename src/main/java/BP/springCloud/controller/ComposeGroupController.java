@@ -163,10 +163,16 @@ public class ComposeGroupController {
             NLPModelController nlpModel= BeanTool.getBean(NLPModelController.class);
             List<JSONObject> nodeGroups=nlpModel.queryNodeGroupByWord2(forGroup.GetValStrByKey(NodeGroupAttr.abstracts));
             NodeGroups groups = new NodeGroups();
+            int count=0;
             for(JSONObject nodeGroup:nodeGroups) {
                 NodeGroup group = (NodeGroup) nodeGroup.get("group");
+                if (group.GetValIntByKey(NodeGroupAttr.type)==0)
+                    continue;
                 group.SetValByKey(NodeGroupAttr.score, nodeGroup.getFloat("score"));
                 groups.add(group);
+                count++;
+                if (count>=10)
+                    break;
             }
             PageTool.TransToResult(groups, request, response);
         } catch (Exception e) {

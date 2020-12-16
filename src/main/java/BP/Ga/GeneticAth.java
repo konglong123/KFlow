@@ -10,6 +10,7 @@ import BP.WF.Nodes;
 import BP.WF.Template.Direction;
 import BP.WF.Template.Directions;
 import BP.WF.Template.NodeAttr;
+import BP.springCloud.controller.ComposeGroupController;
 import BP.springCloud.controller.NLPModelController;
 import com.alibaba.fastjson.JSONObject;
 import java.util.*;
@@ -357,6 +358,10 @@ public class GeneticAth {
 				direction.setFK_Flow(newFlow.getNo());
 				direction.Insert();
 			}
+
+			//自动布局
+			ComposeGroupController composeGroupController=BeanTool.getBean(ComposeGroupController.class);
+			composeGroupController.autoLayout(newFlow.getNo());
 
 		}
 		return flowNoList;

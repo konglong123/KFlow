@@ -110,7 +110,6 @@ public class FlowGener extends EntityNo {
 
     @Override
     protected boolean beforeDelete() throws Exception {
-
         //删除对应的节点任务
         NodeTasks tasks=new NodeTasks();
         tasks.Retrieve(NodeTaskAttr.WorkId,this.GetValStrByKey(FlowGenerAttr.WorkId));
