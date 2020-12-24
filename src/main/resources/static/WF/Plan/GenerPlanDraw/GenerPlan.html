@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!--<script src="../DataUser/SFTable.js" type="text/javascript"></script>-->
+    <script type="text/javascript" src="../../Scripts/bootstrap/js/jquery.min.js"></script>
+    <script src="../../../DataUser/JSLibData/MyFlowPublic.js" type="text/javascript"></script>
+    <script src="../../../DataUser/JSLibData/CCFormRef.js" type="text/javascript"></script>
+    <script src="../../../DataUser/SFTable.js" type="text/javascript"></script>
+    <script src="../../Comm/JS/Calendar/WdatePicker.js" type="text/javascript"></script>
+
+    <!--引入图表-->
+    <!-- <script src="FusionCharts/fusioncharts.js" type="text/javascript"></script>-->
+    <script src="../../Comm/JS/echarts.js" type="text/javascript"></script>
+    <script src="../../Scripts/highcharts-gantt.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css"  />
+
+    <link href="../../Scripts/bootstrap/css/bootstrap.css" rel="Stylesheet" />
+    <link href="../../Scripts/bootstrap/css/font-awesome.css" rel="Stylesheet" />
+    <link rel="stylesheet" href="../../Scripts/bootstrap/css/css.css" type="text/css" media="all" />
+    <link href="../../Comm/JS/Calendar/skin/WdatePicker.css" rel="stylesheet" type="text/css" />
+
+    <script type="text/javascript" src="../../Scripts/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../Scripts/bootstrap/js/jquery.cokie.min.js"></script>
+    <script type="text/javascript" src="../../Scripts/Cookie.js"></script>
+    <script type="text/javascript" src="../../Scripts/QueryString2016.js"></script>
+    <script type="text/javascript" src="../../Scripts/QueryString.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../Scripts/easyUI/themes/default/easyui.css" />
+    <link rel="stylesheet" type="text/css" href="../../Scripts/easyUI145/themes/icon.css" />
+    <script type="text/javascript" src="../../Scripts/easyUI145/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="../../Scripts/easyUI145/locale/easyui-lang-zh_CN.js"></script>
+</head>
+<body>
+    <div style="width: 100%;height:400px;">
+        <div id="Echart1" style="height: 400px ; width: 100% ">
+
+        </div>
+    </div>
+    <button id="box" onclick="handleResult()"  title="计划状态启用" style="height: 20px ;width: 60px;vertical-align:middle">
+       <span style="font: icon;text-align: center">►</span>
+    </button>
+    <div id="tt" class="easyui-tabs" style="width:100%;height:600px;">
+        <div id="tab1" title="任务等待时间统计图" style="padding:20px;display:none;">
+            <div id="Echart2" style="height:600px ; width: 1200px">
+
+            </div>
+        </div>
+        <div title="人力资源统计图表"  style="overflow:auto;padding:20px;display:none;">
+            <div id="Echart3" style="height:600px ; width:1200px">
+
+            </div>
+        </div>
+        <div title="设备资源统计图表"  style="padding:20px;display:none;">
+            <div id="Echart4" style="height:600px ; width:1200px">
+
+            </div>
+        </div>
+        <div title="人力资源占用甘特图"  style="padding:20px;display:none;">
+            <div id="Echart5" style="height:600px ; width:1200px">
+
+            </div>
+        </div>
+        <div title="设备资源占用甘特图"  style="padding:20px;display:none;">
+            <div id="Echart6" style="height:600px ; width:1200px">
+
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        // function getcookie(){
+        //     console.log(JSON.parse(window.localStorage.getItem('dataTemp')))
+        // }
+        var projListTree= [];
+        var procList= [];
+        var optProcUidList= [];
+        var optProcList= [];
+        var optResult= {};
+        var procChartTaskList=[];
+        var procChartData= {};
+        var zoneTime= 0;
+        var taskList= [];
+        var  arList= [];
+        var  humanArList= [];
+        var  equipArList= [];
+        var optResult;
+        function handleResult() {
+            // 获取页面参数，刷新任务列表数据
+            optResult = JSON.parse(window.localStorage.getItem('dataTemp')).simData;
+            console.log("optResult", optResult);
+            // this.optProcList = JSON.parse(this.$route.query.optProcList)
+            procChartTaskList = optResult.procChartTaskList;
+            console.log(typeof optResult.taskList);
+            optResult.taskList.sort((a, b) => {
+                if (a.pmsTask.taskProcUid !== b.pmsTask.taskProcUid) {
+                    return a.pmsTask.taskProcUid.localeCompare(b.pmsTask.taskProcUid)
+                } else {
+                    return a.pmsTask.taskId - b.pmsTask.taskId
+                }
+            })
+            taskList = optResult.taskList;
+            // 给任务增加紧前任务UID数组属性以及等待时间taskWait属性
+            const Day = 1000 * 3600 * 24
+            for (let i = 0, len = taskList.length; i < len; i++) {
+                let preTasks = [];
+                const preTaskUids = [];
+                let taskWait = 0;
+                let lastFinish = 0;
+                if (taskList[i].taskRealPreTasks !== undefined && taskList[i].taskRealPreTasks !== null && taskList[i].taskRealPreTasks.length > 0) {
+                    preTasks = taskList[i].taskRealPreTasks
+                } else {
+                    if (taskList[i].taskNormalPreTasks !== undefined && taskList[i].taskNormalPreTasks !== null && taskList[i].taskNormalPreTasks.length > 0) {
+                        preTasks =taskList[i].taskNormalPreTasks
+                    }
+                }
+                for (let i = 0, len = preTasks.length; i < len; i++) {
+                    const pmsTask = preTasks[i]
+                    const preTaskFinish = new Date(pmsTask.taskPlanFinishDateTime).getTime()
+                    if (preTaskFinish > lastFinish) {
+                        lastFinish = preTaskFinish
+                    }
+                    preTaskUids.push(pmsTask.taskUid)
+                }
+                if (lastFinish !== 0) {
+                    taskWait = (new Date(taskList[i].pmsTask.taskPlanStartDateTime).getTime() - lastFinish) / Day
+                }
+                taskList[i].preTaskUids = preTaskUids
+                taskList[i].taskWait = taskWait
+                taskWait = 0
+                lastFinish = 0
+            }
+            arList = optResult.resOcpyNodesList
+            arList.sort((a, b) => {
+                return a[0].resName.localeCompare(b[0].resName)
+            })
+            humanArList = []
+            equipArList = []
+            for (let i = 0, len = arList.length; i < len; i++) {
+                const resAr = arList[i]
+                if (resAr[0].resType === 0) {
+                    humanArList.push(resAr)
+                }
+                if (resAr[0].resType === 1) {
+                    equipArList.push(resAr)
+                }
+            }
+            const procChartData2 = [];
+            const procChartLinks = [];
+            zoneTime = 9007199254740992;
+            for (let i = 0, ilen = procChartTaskList.length; i < ilen; i++) {
+                const tasks = procChartTaskList[i];
+                const jlen = tasks.length;
+                const interval = 1000 / (jlen + 1);
+                for (let j = 0; j < jlen; j++) {
+                    const task = {};
+                    task.name = tasks[j].pmsTask.taskName;
+                    task.start = new Date(tasks[j].pmsTask.taskPlanStartDateTime).getTime()
+                    task.finish = new Date(tasks[j].pmsTask.taskPlanFinishDateTime).getTime()
+                    //console.log(task.start,task.finish)
+                    task.y = interval * (j + 1);
+                    task.x = 300 * (i + 1);
+                    task.itemStyle = {
+                        normal: {
+                            color: 'red',
+                        }
+                    }
+                    // console.log('task.start', task.start)
+                    if (zoneTime > task.start) {
+                        zoneTime = task.start
+                    }
+                    procChartData2.push(task);
+                    const sucTasks = tasks[j].taskRealSucTasks;
+                    const klen = sucTasks.length;
+                    for (let k = 0; k < klen; k++) {
+                        const link = {};
+                        link.source = task.name;
+                        link.target = sucTasks[k].taskName;
+                        procChartLinks.push(link)
+                    }
+                }
+            }
+            procChartData.procChartData = procChartData2;
+            procChartData.procChartLinks = procChartLinks;
+            procChart();
+            taskWaitEchart();
+            humArCountEchart();
+            equipArCountEchart()
+            humResGantt()
+            equipResGantt()
+        }
+        // 计划流程图
+        function procChart() {
+            //this.$message.success('仿真开始！')
+            alert('仿真开始！');
+            const myChart = echarts.init(document.getElementById('Echart1'))
+            const data = procChartData.procChartData;
+            console.log("data: ", data)
+            const links = procChartData.procChartLinks;
+            const option = {
+                title: {
+                    text: '流程计划仿真',
+                    subtext: '红色：未开始；橙色：进行中；绿色：已完成'
+                },
+                tooltip: {},
+                animationDurationUpdate: 1500,
+                animationEasingUpdate: 'quinticInOut',
+                series: [
+                    {
+                        type: 'graph',
+                        layout: 'none',
+                        symbolSize: 30,
+                        roam: true,
+
+                        edgeSymbol: ['circle', 'arrow'],
+                        edgeSymbolSize: [4, 10],
+                        edgeLabel: {
+                            fontSize: 20
+                        },
+                        symbol: 'rectangle',
+                        data: data,
+                        links: links,
+                        lineStyle: {
+                            opacity: 0.9,
+                            width: 2,
+                            curveness: 0
+                        },
+                        itemStyle: {
+
+                            normal: {
+                                label: {
+                                    show: true,
+                                    textStyle:{
+                                        color:'#6495ED',
+                                        fontStyle: 'normal' ,
+                                        fontWeight: 'bold',
+
+                                    },
+
+                                },
+                                color: 'red',
+                            },
+
+                        },
+
+                    }
+                ]
+            };
+            myChart.setOption(option)
+            const Day = 3600 * 24
+            const updateData = option.series[0].data
+            setTimeout(() => {
+                for (let i = 0, len = updateData.length; i < len; i++) {
+                    const task = updateData[i]
+                    const start = (task.start - zoneTime) / (Day * 8)
+                    const finish = (task.finish - zoneTime) / (Day * 8)
+                    setTimeout(() => {
+                        task.itemStyle.normal.color = '#F96'
+                        myChart.setOption(option)
+                    }, start)
+                    setTimeout(() => {
+                        task.itemStyle.normal.color = 'green'
+                        myChart.setOption(option)
+                    }, finish)
+                }
+            }, 3000)
+        }
+        // 任务等待时间统计图
+        function taskWaitEchart() {
+            // 基于准备好的dom，初始化echarts实例
+            const myChart = echarts.init(document.getElementById('Echart2'))
+            const dataAxis = []
+            const data = []
+            for (let i = 0, len = taskList.length; i < len; i++) {
+                const task = taskList[i]
+                if (task.taskWait > 0) {
+                    dataAxis.push(task.pmsTask.taskName)
+                    data.push(task.taskWait)
+                }
+            }
+
+            const option = {
+                title: {
+                    text: '任务等待时间统计'
+                },
+                xAxis: {
+                    data: dataAxis,
+                    axisLabel: {
+                        textStyle: {
+                            color: '#666',
+                            fontSize: 16
+                        }
+                    },
+                    axisTick: {
+                        show: false
+                    },
+                    axisLine: {
+                        show: false
+                    },
+                    z: 10
+                },
+                yAxis: {
+                    axisLine: {
+                        show: false
+                    },
+                    axisTick: {
+                        show: false
+                    },
+                    axisLabel: {
+                        textStyle: {
+                            color: '#999'
+                        }
+                    }
+                },
+                dataZoom: [
+                    {
+                        type: 'inside'
+                    }
+                ],
+                series: [
+                    { // For shadow
+                        type: 'bar',
+                        itemStyle: {
+                            color: 'rgba(0,0,0,0.05)'
+                        },
+                        barGap: '-100%',
+                        barCategoryGap: '40%',
+                        animation: false
+                    },
+                    {
+                        type: 'bar',
+                        itemStyle: {
+                            normal: {
+                                label: {
+                                    show: true, // 开启显示
+                                    position: 'top', // 在上方显示
+                                    textStyle: { // 数值样式
+                                        color: '#666',
+                                        fontSize: 16
+                                    }
+                                }
+                            }
+                        },
+                        data: data
+                    }
+                ]
+            }
+
+            // Enable data zoom when user click bar.
+            const zoomSize = 6
+            myChart.on('click', function (params) {
+                console.log(dataAxis[Math.max(params.dataIndex - zoomSize / 2, 0)])
+                myChart.dispatchAction({
+                    type: 'dataZoom',
+                    startValue: dataAxis[Math.max(params.dataIndex - zoomSize / 2, 0)],
+                    endValue: dataAxis[Math.min(params.dataIndex + zoomSize / 2, data.length - 1)]
+                })
+            })
+            // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option)
+        }
+        // 人力资源占用甘特图
+        function humResGantt() {
+            const map =Highcharts.map
+            const timeDiff = 1000 * 3600 * 8
+            // Parse car data into series.
+            const series = humanArList.map(function (resAr, i) {
+                const data = resAr.map(function (deal) {
+                    return {
+                        id: 'deal-' + i,
+                        projName: deal.projName,
+                        taskName: deal.taskName,
+                        start: new Date(deal.resStartDateTime).getTime() + timeDiff,
+                        end: new Date(deal.resFinishDateTime).getTime() + timeDiff,
+                        y: i
+                    }
+                })
+                return {
+                    name: resAr[0].resName,
+                    data: data
+                }
+            })
+            Highcharts.ganttChart('Echart5', {
+                navigator: {
+                    enabled: true,
+                    series: {
+                        type: 'gantt',
+                        pointPlacement: 0.5,
+                        pointPadding: 0.25
+                    },
+                    yAxis: {
+                        min: 0,
+                        max: 3,
+                        reversed: true,
+                        categories: []
+                    }
+                },
+                scrollbar: {
+                    enabled: true
+                },
+                series: series,
+                tooltip: {
+                    xDateFormat: '%Y %m %d, %H:%M',
+                    pointFormat: '<span>项目: {point.projName}</span>' +
+                        '<br/><span>任务: {point.taskName}</span>' +
+                        '<br/><span>开始: {point.start:%Y-%m-%d, %H:%M}</span>' +
+                        '<br/><span>结束: {point.end:%Y-%m-%d, %H:%M}</span>'
+                },
+                // xAxis: {
+                //   type: 'datetime',
+                //   // tickInterval: 7 * 24 * 3600 * 1000,
+                //   dateTimeLabelFormats: {
+                //     day: '%m/%d',
+                //     month: '%y年%m月',
+                //     week: '%m/%d',
+                //     year: '%Y年',
+                //     millisecond: '%b/%e'
+                //   }
+                // },
+                yAxis: {
+                    type: 'category',
+                    grid: {
+                        columns: [{
+                            title: {
+                                text: '名称'
+                            },
+                            categories: map(series, function (s) {
+                                return s.name
+                            })
+                        }]
+                    }
+                }
+            })
+        }
+        // 人力资源统计图表
+        function humArCountEchart() {
+            // 基于准备好的dom，初始化echarts实例
+            const myChart =echarts.init(document.getElementById('Echart3'))
+            const dataAxis = []
+            const data = []
+            for (let i = 0, len = this.humanArList.length; i < len; i++) {
+                const resAr = this.humanArList[i]
+                dataAxis.push(resAr[0].resName)
+                let work = 0
+                for (let j = 0, rlen = resAr.length; j < rlen; j++) {
+                    work = work + resAr[j].resWork
+                }
+                data.push(work)
+            }
+
+            const option = {
+                title: {
+                    text: '人力资源统计'
+                },
+                xAxis: {
+                    data: dataAxis,
+                    axisLabel: {
+                        textStyle: {
+                            color: '#666',
+                            fontSize: 16
+                        }
+                    },
+                    axisTick: {
+                        show: false
+                    },
+                    axisLine: {
+                        show: false
+                    },
+                    z: 10
+                },
+                yAxis: {
+                    axisLine: {
+                        show: false
+                    },
+                    axisTick: {
+                        show: false
+                    },
+                    axisLabel: {
+                        textStyle: {
+                            color: '#999'
+                        }
+                    }
+                },
+                dataZoom: [
+                    {
+                        type: 'inside'
+                    }
+                ],
+                series: [
+                    { // For shadow
+                        type: 'bar',
+                        itemStyle: {
+                            color: 'rgba(0,0,0,0.05)'
+                        },
+                        barGap: '-100%',
+                        barCategoryGap: '40%',
+                        animation: false
+                    },
+                    {
+                        type: 'bar',
+                        itemStyle: {
+                            normal: {
+                                label: {
+                                    show: true, // 开启显示
+                                    position: 'top', // 在上方显示
+                                    textStyle: { // 数值样式
+                                        color: '#666',
+                                        fontSize: 16
+                                    }
+                                }
+                            }
+                        },
+                        data: data
+                    }
+                ]
+            }
+
+        // function f() {
+        //     var loc = location.href;
+        //     var n1 = loc.length;
+        //     var n2 = loc.indexOf('=');
+        //     var txt = decodeURI(loc.substr(n2+1,n1-n2));
+        //     var box = document.getElementById('box');
+        //     console.log(txt)
+        //     box.innerText=txt;
+        // }
+            // Enable data zoom when user click bar.
+            const zoomSize = 6
+            myChart.on('click', function (params) {
+                console.log(dataAxis[Math.max(params.dataIndex - zoomSize / 2, 0)])
+                myChart.dispatchAction({
+                    type: 'dataZoom',
+                    startValue: dataAxis[Math.max(params.dataIndex - zoomSize / 2, 0)],
+                    endValue: dataAxis[Math.min(params.dataIndex + zoomSize / 2, data.length - 1)]
+                })
+            })
+            // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option)
+        }
+        // 设备资源占用甘特图
+        function equipResGantt() {
+            const map = Highcharts.map
+            const timeDiff = 1000 * 3600 * 8
+            // Parse car data into series.
+            const series = equipArList.map(function (resAr, i) {
+                const data = resAr.map(function (deal) {
+                    return {
+                        id: 'deal-' + i,
+                        projName: deal.projName,
+                        taskName: deal.taskName,
+                        start: new Date(deal.resStartDateTime).getTime() + timeDiff,
+                        end: new Date(deal.resFinishDateTime).getTime() + timeDiff,
+                        y: i
+                    }
+                })
+                return {
+                    name: resAr[0].resName,
+                    data: data
+                }
+            })
+            Highcharts.ganttChart('Echart6', {
+                navigator: {
+                    enabled: true,
+                    series: {
+                        type: 'gantt',
+                        pointPlacement: 0.5,
+                        pointPadding: 0.25
+                    },
+                    yAxis: {
+                        min: 0,
+                        max: 3,
+                        reversed: true,
+                        categories: []
+                    }
+                },
+                scrollbar: {
+                    enabled: true
+                },
+                series: series,
+                tooltip: {
+                    xDateFormat: '%Y %m %d, %H:%M',
+                    pointFormat: '<span>项目: {point.projName}</span>' +
+                        '<br/><span>任务: {point.taskName}</span>' +
+                        '<br/><span>开始: {point.start:%Y-%m-%d, %H:%M}</span>' +
+                        '<br/><span>结束: {point.end:%Y-%m-%d, %H:%M}</span>'
+                },
+                // xAxis: {
+                //   type: 'datetime',
+                //   // tickInterval: 7 * 24 * 3600 * 1000,
+                //   dateTimeLabelFormats: {
+                //     day: '%m/%d',
+                //     month: '%y年%m月',
+                //     week: '%m/%d',
+                //     year: '%Y年',
+                //     millisecond: '%b/%e'
+                //   }
+                // },
+                yAxis: {
+                    type: 'category',
+                    grid: {
+                        columns: [{
+                            title: {
+                                text: '名称'
+                            },
+                            categories: map(series, function (s) {
+                                return s.name
+                            })
+                        }]
+                    }
+                }
+            })
+        }
+        // 设备资源统计图表
+        function equipArCountEchart() {
+            // 基于准备好的dom，初始化echarts实例
+            const myChart = echarts.init(document.getElementById('Echart4'));
+            const dataAxis = []
+            const data = []
+            for (let i = 0, len =equipArList.length; i < len; i++) {
+                const resAr = equipArList[i]
+                dataAxis.push(resAr[0].resName)
+                let work = 0
+                for (let j = 0, rlen = resAr.length; j < rlen; j++) {
+                    work = work + resAr[j].resWork
+                }
+                data.push(work)
+            }
+
+            const option = {
+                title: {
+                    text: '设备资源统计'
+                },
+                xAxis: {
+                    data: dataAxis,
+                    axisLabel: {
+                        textStyle: {
+                            color: '#666',
+                            fontSize: 16
+                        }
+                    },
+                    axisTick: {
+                        show: false
+                    },
+                    axisLine: {
+                        show: false
+                    },
+                    z: 10
+                },
+                yAxis: {
+                    axisLine: {
+                        show: false
+                    },
+                    axisTick: {
+                        show: false
+                    },
+                    axisLabel: {
+                        textStyle: {
+                            color: '#999'
+                        }
+                    }
+                },
+                dataZoom: [
+                    {
+                        type: 'inside'
+                    }
+                ],
+                series: [
+                    { // For shadow
+                        type: 'bar',
+                        itemStyle: {
+                            color: 'rgba(0,0,0,0.05)'
+                        },
+                        barGap: '-100%',
+                        barCategoryGap: '40%',
+                        animation: false
+                    },
+                    {
+                        type: 'bar',
+                        itemStyle: {
+                            normal: {
+                                label: {
+                                    show: true, // 开启显示
+                                    position: 'top', // 在上方显示
+                                    textStyle: { // 数值样式
+                                        color: '#666',
+                                        fontSize: 16
+                                    }
+                                }
+                            }
+                        },
+                        data: data
+                    }
+                ]
+            }
+
+            // Enable data zoom when user click bar.
+            const zoomSize = 6
+            myChart.on('click', function (params) {
+                console.log(dataAxis[Math.max(params.dataIndex - zoomSize / 2, 0)])
+                myChart.dispatchAction({
+                    type: 'dataZoom',
+                    startValue: dataAxis[Math.max(params.dataIndex - zoomSize / 2, 0)],
+                    endValue: dataAxis[Math.min(params.dataIndex + zoomSize / 2, data.length - 1)]
+                })
+            })
+            // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option)
+        }
+    </script>
+</body>
+</html>

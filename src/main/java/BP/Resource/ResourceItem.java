@@ -45,6 +45,7 @@ public class ResourceItem extends EntityNoName {
         map.AddTBString(ResourceItemAttr.Kind, null, "资源组编码", true, false, 0, 100, 100);
         map.AddTBString(ResourceItemAttr.DeptId, null, "所属部门", true, false, 0, 100, 100);
         map.AddTBStringDoc(ResourceItemAttr.Abstracts, null, "性能参数", true, false);
+        map.AddTBString(ResourceItemAttr.Name, null, "资源名称", true, false, 0, 100, 100);
 
         map.AddSearchAttr(ResourceItemAttr.KindName);
         this.set_enMap(map);

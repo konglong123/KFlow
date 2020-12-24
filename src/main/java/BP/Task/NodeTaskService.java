@@ -2,6 +2,7 @@ package BP.Task;
 
 import BP.DA.DataRow;
 import BP.DA.DataTable;
+import BP.En.EntityNoNameAttr;
 import BP.NodeGroup.*;
 import BP.Project.ProjectTree;
 import BP.Project.ProjectTreeAttr;
@@ -1020,19 +1021,23 @@ public class NodeTaskService {
             switch (type){
                 case 0:
                     item.put("humUid",resourceItem.getNo());
+                    item.put("humName",resource.GetValStringByKey(ResourceAttr.Name));
                     resourceHumanList.add(item);
                     break;
                 case 1:
                     item.put("equipUid",resourceItem.getNo());
+                    item.put("equipName",resourceItem.GetValStringByKey(EntityNoNameAttr.Name));
                     resourceEquipmentList.add(item);
                     break;
                 case 2:
                     item.put("placeUid",resourceItem.getNo());
+                    item.put("placeName",resourceItem.GetValStringByKey(ResourceAttr.Name));
                     item.put("placeArea",resource.GetValIntByKey(ResourceAttr.Num));
                     resourcePlaceList.add(item);
                     break;
                 case 3:
                     item.put("knowlUid",resourceItem.getNo());
+                    item.put("knowlName",resourceItem.GetValStringByKey(ResourceAttr.Name));
                     item.put("knowlAmount",resource.GetValIntByKey(ResourceAttr.Num));
                     resourceKnowledgeList.add(item);
                     break;

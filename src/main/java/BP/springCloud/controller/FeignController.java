@@ -71,10 +71,10 @@ public class FeignController {
 
     /**
     *@Description: RestTemplate属性设置
-    *@Param:  
-    *@return:  
+    *@Param:
+    *@return:
     *@Author: Mr.kong
-    *@Date: 2019/12/26 
+    *@Date: 2019/12/26
     */
     private void setTemplate() throws Exception {
 
@@ -140,6 +140,7 @@ public class FeignController {
     @RequestMapping("planAllTask")
     public JSONObject planAllTask(@RequestBody JSONObject con) {
         JSONObject resultMes=new JSONObject();
+
         try {
             ProjectTrees projectList=new ProjectTrees();
             projectList.Retrieve(ProjectTreeAttr.Status,1);
@@ -152,6 +153,7 @@ public class FeignController {
             return resultMes;
         }
         resultMes.put("meg","计划成功！");
+        System.out.println(resultMes);
         return resultMes;
     }
 
@@ -176,26 +178,36 @@ public class FeignController {
 
     @ResponseBody
     @RequestMapping("planProjects")
-    public JSONObject planProjects(@RequestBody List<String> projectNos) {
+    public String planProjects(@RequestBody List<String> projectNos) {
         JSONObject resultMes=new JSONObject();
+        JSONObject simData;
         try {
             ProjectTrees projectList=new ProjectTrees();
             for (String projectNo:projectNos){
                 ProjectTree tree=new ProjectTree(projectNo);
                 projectList.add(tree);
             }
-            planProjects(projectList);
+            simData=planProjects(projectList);
             updateProject(projectList);
+            //System.out.println(simData);
+            resultMes.put("simData",simData);
         }catch (Exception e){
             logger.error(e.getMessage());
             resultMes.put("meg",e.getMessage());
-            return resultMes;
+            return resultMes.toString();
         }
-        resultMes.put("meg","计划成功！");
-        return resultMes;
+        //resultMes.put("meg","计划成功！");
+        System.out.println(resultMes);
+        return resultMes.toString();
     }
-
-    private void planProjects(ProjectTrees projectList) throws Exception{
+    /**
+     *@Description: 修改了echarts的返回值
+     *@Param:
+     *@return:
+     *@Author: Mr.kong
+     *@Date: 2020/9/14
+     */
+    private JSONObject planProjects(ProjectTrees projectList) throws Exception{
 
             JSONObject data=new JSONObject();
             //封装项目信息
@@ -212,6 +224,13 @@ public class FeignController {
             for (String projectNo:projectNoList){
                 taskCon.setWorkGroupId(projectNo);
                 List<NodeTaskM> tempList=nodeTaskService.findNodeTaskList(taskCon);
+
+//                System.out.println("taskCon:");
+//                System.out.println(taskCon);
+//                System.out.println("projectList:");
+//                System.out.println(projectList);
+
+
                 //过滤已经完成的任务
                 for(NodeTaskM temp:tempList){
                     if (temp.getIsReady()==3){//任务已经完成，不进行计划
@@ -222,6 +241,8 @@ public class FeignController {
             }
             JSONObject taskData=nodeTaskService.getPlanData(tasks);
             data.putAll(taskData);
+
+
 
             //封装任务连接信息
             JSONObject linkData=nodeTaskService.getPlanLinkData(tasks);
@@ -243,7 +264,9 @@ public class FeignController {
             LinkedMultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
             headers.put("Content-Type", Collections.singletonList("application/json;charset=UTF-8"));
 
-            String url="http://192.168.1.102:8082/pms/projOpt/testOptResult";
+            System.out.println("DATA: "+data);
+
+            String url="http://localhost:8082/pms/projOpt/testOptResult";
             HttpEntity<Map> requestEntity = new HttpEntity<>(data, headers);
             ResponseEntity<JSONObject> resTemp = FeignTool.template.postForEntity(url, requestEntity, JSONObject.class);
             JSONObject result=resTemp.getBody();
@@ -251,6 +274,10 @@ public class FeignController {
             //处理返回的数据
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             JSONArray newTasks=result.getJSONArray("nodeTask");
+            System.out.println(newTasks);
+            //echarts需要的数据 simData
+            JSONObject simData=result.getJSONObject("simData");
+            System.out.println(simData);
             for (int i=0;i<newTasks.size();i++){
                 //更新资源任务信息
                 JSONObject task=(JSONObject) newTasks.get(i);
@@ -291,6 +318,7 @@ public class FeignController {
             //更新分组内节点连接方向
             updateFlowDirection(newTasks,groupData);
 
+            return simData;
 
     }
 

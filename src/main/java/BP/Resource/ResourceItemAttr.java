@@ -21,4 +21,6 @@ public class ResourceItemAttr {
 
     public static final String DeptId = "deptId";
 
+    public static final String Name = "Name";
+
 }

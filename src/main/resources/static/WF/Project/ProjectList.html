@@ -170,7 +170,11 @@
             contentType:'application/json',
             data: JSON.stringify(projectNos),
             success: function (dataTemp) {
-                alert(dataTemp.meg);
+                alert("计划成功");
+                console.log("dataTemp: ", dataTemp);
+                //location.herf='../Plan/GenerPlanDraw/GenerPlan.html?'+'txt='+encodeURI(dataTemp)
+                var obj=JSON.stringify(dataTemp)
+                window.localStorage.setItem('dataTemp',obj)
             }
         });
     }

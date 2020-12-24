@@ -24,7 +24,7 @@ public abstract class EntityNo extends Entity
 	{
 		return this.GetValStringByKey(EntityNoNameAttr.No);
 	}
-	
+
 	public void setNo(String value)
 	{
 		this.SetValByKey(EntityNoNameAttr.No, value);

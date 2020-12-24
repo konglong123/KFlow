@@ -435,6 +435,7 @@ function planTask() {
         data: JSON.stringify(con),
         success: function (dataTemp) {
             alert(dataTemp.meg);
+           // console.log(dataTemp.simData)
         }
     });
 }
